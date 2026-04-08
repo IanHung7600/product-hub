@@ -256,6 +256,7 @@ const CustomSelectField = React.forwardRef<HTMLDivElement, SelectFieldProps>(
             className={cn(
               fieldWrapperStyles({ mode: 'edit', size }),
               !isTextDisplay && value && !searchable && tagPadding[size],
+              open && !error && 'border-primary',
               error && ['border-error hover:border-error-hover', 'focus-within:border-error focus-within:hover:border-error'],
               'cursor-pointer',
               className,

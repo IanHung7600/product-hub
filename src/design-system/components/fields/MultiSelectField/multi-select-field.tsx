@@ -301,6 +301,7 @@ function CustomMultiSelectField({
           role="combobox" aria-expanded={open} tabIndex={0}
           className={cn(fieldWrapperStyles({ mode: 'edit', size }), tagPadding[size], 'relative cursor-pointer',
             wrap && 'items-start py-1',
+            open && !error && 'border-primary',
             error && ['border-error hover:border-error-hover', 'focus-within:border-error focus-within:hover:border-error'], className)}
           style={{ paddingRight: '0.75rem', ...(wrap ? { height: 'auto' } : undefined) }}
           data-field-mode="edit" data-error={error ? '' : undefined}>
