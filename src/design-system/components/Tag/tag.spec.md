@@ -52,13 +52,16 @@ Tag 是 inline label，用於分類標籤、狀態標記、多選已選值。不
 
 **yellow 例外**：yellow solid 背景亮度高，白字對比不足，改用 `--warning-foreground`（深色文字）。
 
-### Solid 模式的 Dismiss 行為
+### Dismiss 行為（Inline Action 客製）
 
-Solid 模式下 dismiss 按鈕在深色底上，不適用 subtle 的 `fg-muted → foreground` 色階：
+Dismiss 是 Inline Action，但 icon 色繼承 Tag 文字色（非 `fg-muted`），因為宿主有色彩：
 
-- 預設：繼承 currentColor（白/深），`opacity-70`
-- Hover：`opacity-100` + `bg-white/20` 半透明背景
-- 原因：深色底上無法用 `--fg-muted` / `--neutral-hover`（為淺色 UI 設計），改用 opacity 控制層次
+| 模式 | Icon 色 | Hover 背景 |
+|---|---|---|
+| subtle | 繼承 Tag 文字色 | `neutral-hover` |
+| solid | 繼承 Tag 文字色（白或 --warning-foreground） | 無（cursor:pointer 即可） |
+
+Inline Action 的其他規則（尺寸、hover 背景 pattern）不變。
 
 ---
 

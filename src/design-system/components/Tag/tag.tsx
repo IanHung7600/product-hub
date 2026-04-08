@@ -94,7 +94,7 @@ function TagDismiss({ onDismiss, label, solid }: { onDismiss: () => void; label:
       <span
         className={cn(
           'absolute rounded-sm pointer-events-none transition-colors',
-          solid ? 'bg-transparent group-hover/action:bg-[var(--white-a12)]' : 'bg-transparent group-hover/action:bg-neutral-hover group-active/action:bg-neutral-active',
+          !solid && 'bg-transparent group-hover/action:bg-neutral-hover group-active/action:bg-neutral-active',
         )}
         style={{ width: 18, height: 18, top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
         aria-hidden

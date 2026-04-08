@@ -525,11 +525,11 @@ export const ColorMatrix = {
             <thead><tr><Th>模式</Th><Th>狀態</Th><Th>Icon 色</Th><Th>Hover 背景</Th></tr></thead>
             <tbody>
               {[
-                { mode: 'Subtle', state: 'default', iconColor: '--fg-muted', hoverBg: 'transparent' },
-                { mode: '', state: 'hover', iconColor: '--foreground', hoverBg: '--neutral-hover' },
-                { mode: '', state: 'active', iconColor: '--foreground', hoverBg: '--neutral-active' },
-                { mode: 'Solid', state: 'default', iconColor: 'inherit (opacity-70)', hoverBg: 'transparent' },
-                { mode: '', state: 'hover', iconColor: 'inherit (opacity-100)', hoverBg: 'white/20' },
+                { mode: 'Subtle', state: 'default', iconColor: '繼承 Tag 文字色', hoverBg: 'transparent' },
+                { mode: '', state: 'hover', iconColor: '繼承 Tag 文字色', hoverBg: '--neutral-hover' },
+                { mode: '', state: 'active', iconColor: '繼承 Tag 文字色', hoverBg: '--neutral-active' },
+                { mode: 'Solid', state: 'default', iconColor: '繼承 Tag 文字色', hoverBg: 'transparent' },
+                { mode: '', state: 'hover', iconColor: '繼承 Tag 文字色', hoverBg: '無（cursor:pointer）' },
               ].map(({ mode, state, iconColor, hoverBg }, i) => (
                 <tr key={i}>
                   {mode ? <td className="p-2 border-b border-divider align-top text-caption font-mono font-medium" rowSpan={mode === 'Subtle' ? 3 : 2}>{mode}</td> : null}
