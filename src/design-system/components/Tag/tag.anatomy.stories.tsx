@@ -16,20 +16,34 @@ export default meta
 type VariantKey = 'neutral' | 'blue' | 'red' | 'green' | 'yellow' | 'turquoise' | 'purple' | 'magenta' | 'indigo'
 type SizeKey = 'sm' | 'md' | 'lg'
 type ColorSpec = { bg: string; text: string; border: string }
+type SolidSpec = 'subtle' | 'solid'
 
 const VARIANTS: VariantKey[] = ['neutral', 'blue', 'red', 'green', 'yellow', 'turquoise', 'purple', 'magenta', 'indigo']
 const SIZES: SizeKey[] = ['sm', 'md', 'lg']
 
-const TOKEN_MAP: Record<VariantKey, ColorSpec> = {
-  neutral:   { bg: '--muted',            text: '--foreground',           border: 'transparent' },
-  blue:      { bg: '--info-subtle',      text: '--color-blue-7',        border: 'transparent' },
-  red:       { bg: '--error-subtle',     text: '--color-deep-orange-7', border: 'transparent' },
-  green:     { bg: '--success-subtle',   text: '--color-green-7',       border: 'transparent' },
-  yellow:    { bg: '--warning-subtle',   text: '--color-yellow-7',      border: 'transparent' },
-  turquoise: { bg: '--turquoise-subtle', text: '--color-turquoise-7',   border: 'transparent' },
-  purple:    { bg: '--purple-subtle',    text: '--color-purple-7',      border: 'transparent' },
-  magenta:   { bg: '--magenta-subtle',   text: '--color-magenta-7',     border: 'transparent' },
-  indigo:    { bg: '--indigo-subtle',    text: '--color-indigo-7',      border: 'transparent' },
+const TOKEN_MAP: Record<SolidSpec, Record<VariantKey, ColorSpec>> = {
+  subtle: {
+    neutral:   { bg: '--muted',            text: '--foreground',           border: 'transparent' },
+    blue:      { bg: '--info-subtle',      text: '--color-blue-7',        border: 'transparent' },
+    red:       { bg: '--error-subtle',     text: '--color-deep-orange-7', border: 'transparent' },
+    green:     { bg: '--success-subtle',   text: '--color-green-7',       border: 'transparent' },
+    yellow:    { bg: '--warning-subtle',   text: '--color-yellow-7',      border: 'transparent' },
+    turquoise: { bg: '--turquoise-subtle', text: '--color-turquoise-7',   border: 'transparent' },
+    purple:    { bg: '--purple-subtle',    text: '--color-purple-7',      border: 'transparent' },
+    magenta:   { bg: '--magenta-subtle',   text: '--color-magenta-7',     border: 'transparent' },
+    indigo:    { bg: '--indigo-subtle',    text: '--color-indigo-7',      border: 'transparent' },
+  },
+  solid: {
+    neutral:   { bg: '--fg-secondary',     text: 'white (#fff)',           border: 'transparent' },
+    blue:      { bg: '--primary',          text: 'white (#fff)',           border: 'transparent' },
+    red:       { bg: '--error',            text: 'white (#fff)',           border: 'transparent' },
+    green:     { bg: '--success',          text: 'white (#fff)',           border: 'transparent' },
+    yellow:    { bg: '--warning',          text: '--warning-foreground',   border: 'transparent' },
+    turquoise: { bg: '--turquoise',        text: 'white (#fff)',           border: 'transparent' },
+    purple:    { bg: '--purple',           text: 'white (#fff)',           border: 'transparent' },
+    magenta:   { bg: '--magenta',          text: 'white (#fff)',           border: 'transparent' },
+    indigo:    { bg: '--indigo',           text: 'white (#fff)',           border: 'transparent' },
+  },
 }
 
 const VARIANT_DESC: Record<VariantKey, string> = {
@@ -227,6 +241,7 @@ export const Overview = {
                 ['icon', 'LucideIcon', '—', '左側 icon，統一 16px。與 avatar 互斥'],
                 ['avatar', 'ReactNode', '—', '左側 avatar（16px 圓形）。與 icon 互斥'],
                 ['onDismiss', '() => void', '—', '可移除——Tag 自動渲染 dismiss 按鈕'],
+                ['solid', 'boolean', 'false', '深底白字模式（step-6 背景 + 白色前景，yellow 例外）'],
               ].map(([p, t, d, desc]) => (
                 <tr key={p}><Td mono>{p}</Td><Td mono>{t}</Td><Td mono>{d}</Td><Td>{desc}</Td></tr>
               ))}
@@ -247,8 +262,9 @@ const InspectorInner = () => {
   const [size, setSize] = useState<SizeKey>('md')
   const [withIcon, setWithIcon] = useState(false)
   const [withDismiss, setWithDismiss] = useState(false)
+  const [solid, setSolid] = useState(false)
 
-  const colors = TOKEN_MAP[variant]
+  const colors = TOKEN_MAP[solid ? 'solid' : 'subtle'][variant]
   const s = SIZE_SPECS[size]
 
   return (
@@ -281,6 +297,13 @@ const InspectorInner = () => {
             <Tab active={withDismiss} onClick={() => setWithDismiss(true)}>on</Tab>
           </div>
         </div>
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] text-fg-muted w-16 shrink-0">Solid</span>
+          <div className="flex gap-1.5">
+            <Tab active={!solid} onClick={() => setSolid(false)}>off</Tab>
+            <Tab active={solid} onClick={() => setSolid(true)}>on</Tab>
+          </div>
+        </div>
       </div>
 
       {/* Preview + Panel */}
@@ -293,6 +316,7 @@ const InspectorInner = () => {
               size={size}
               icon={withIcon ? Hash : undefined}
               onDismiss={withDismiss ? () => {} : undefined}
+              solid={solid}
             >
               Label
             </Tag>

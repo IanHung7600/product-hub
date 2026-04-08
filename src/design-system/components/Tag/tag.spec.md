@@ -32,6 +32,36 @@ Tag 是 inline label，用於分類標籤、狀態標記、多選已選值。不
 
 ---
 
+## Solid 模式
+
+`solid` boolean prop，預設 false。開啟後使用 step-6 全色背景 + 白色前景，適合需要更強視覺權重的場景（狀態標記、重點標籤）。
+
+### Subtle vs Solid 色彩對照
+
+| Variant | Subtle 背景 | Subtle 文字 | Solid 背景 | Solid 文字 |
+|---|---|---|---|---|
+| neutral | `--muted` | `--foreground` | `--fg-secondary` | white |
+| blue | `--info-subtle` | step-7 | `--primary` | white |
+| red | `--error-subtle` | step-7 | `--error` | white |
+| green | `--success-subtle` | step-7 | `--success` | white |
+| yellow | `--warning-subtle` | step-7 | `--warning` | **`--warning-foreground`** |
+| turquoise | `--turquoise-subtle` | step-7 | `--turquoise` | white |
+| purple | `--purple-subtle` | step-7 | `--purple` | white |
+| magenta | `--magenta-subtle` | step-7 | `--magenta` | white |
+| indigo | `--indigo-subtle` | step-7 | `--indigo` | white |
+
+**yellow 例外**：yellow solid 背景亮度高，白字對比不足，改用 `--warning-foreground`（深色文字）。
+
+### Solid 模式的 Dismiss 行為
+
+Solid 模式下 dismiss 按鈕在深色底上，不適用 subtle 的 `fg-muted → foreground` 色階：
+
+- 預設：繼承 currentColor（白/深），`opacity-70`
+- Hover：`opacity-100` + `bg-white/20` 半透明背景
+- 原因：深色底上無法用 `--fg-muted` / `--neutral-hover`（為淺色 UI 設計），改用 opacity 控制層次
+
+---
+
 ## 尺寸
 
 三種尺寸（子元件補齊原則），不隨 density 變化。尺寸在元件內定義，不引用 field-height token——Tag 和 Button 尺寸是獨立的設計決策。
@@ -62,6 +92,7 @@ Tag 是 inline label，用於分類標籤、狀態標記、多選已選值。不
 | `icon` | `LucideIcon` | 左側 icon，Tag 統一 16px。與 avatar 互斥 |
 | `avatar` | `ReactNode` | 左側 avatar。與 icon 互斥 |
 | `onDismiss` | `() => void` | 可移除——Tag 自動渲染 dismiss 按鈕並控制尺寸與互動樣式 |
+| `solid` | `boolean` | 深底白字模式（step-6 背景 + 白色前景，yellow 例外），預設 false |
 
 ## 圓角
 

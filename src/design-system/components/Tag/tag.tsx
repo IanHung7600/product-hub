@@ -82,16 +82,12 @@ export interface TagProps
 // Inline action：16px icon，18px hover 背景，由 Tag 內部渲染。
 
 function TagDismiss({ onDismiss, label, solid }: { onDismiss: () => void; label: string; solid?: boolean }) {
-  // subtle: fg-muted → hover foreground（標準 Inline Action）
-  // solid: inherit currentColor（白色/深色底上必須可見）→ hover opacity
+  // dismiss icon 繼承 Tag 文字色（跟 label 同色），用 opacity 做 hover 區分
   return (
     <button
       type="button"
       onClick={(e) => { e.stopPropagation(); onDismiss() }}
-      className={cn(
-        'group/action relative grid place-content-center transition-colors cursor-pointer',
-        solid ? 'opacity-70 hover:opacity-100' : 'text-fg-muted hover:text-foreground active:text-foreground',
-      )}
+      className="group/action relative grid place-content-center cursor-pointer opacity-70 hover:opacity-100 transition-opacity"
       style={{ width: 16, height: 16 }}
       aria-label={`移除 ${label}`}
     >
