@@ -100,10 +100,13 @@ Field 內部所有不會觸發獨立 action 的元素必須 `pointer-events-none
 
 ## Icon 色彩原則
 
-Field 內的 icon 色彩取決於它的角色：
+跨元件統一規則（詳見 `item-layout.spec.md`）：**icon 代表內容/類別 → 與 label 同色；icon 純指示方向 → fg-muted（neutral-7）。**
 
-- **指示用途的 icon**（startIcon、ChevronDown 下拉箭頭）：`fg-muted`——它描述 input 的性質，不是 value 本身，視覺上退到背景
-- **代表 value 或屬性的 icon**：繼承文字色——當 icon 本身就是 value 的一部分（如狀態 icon），不需要弱化
+Field 內的具體套用：
+
+- **startIcon**（Search、Calendar）：`fg-muted`——指示 field 用途，不是 value
+- **ChevronDown 下拉箭頭**：`fg-muted`——指示可下拉
+- **代表 value 的 icon**（如狀態 icon）：**foreground**——icon 本身就是 value 的一部分
 - **disabled 時**：所有 icon 統一 `fg-disabled`
 
 ## startIcon

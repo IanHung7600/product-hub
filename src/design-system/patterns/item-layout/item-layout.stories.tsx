@@ -1,5 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { Mail, Bell, Settings, Star, ChevronRight, ExternalLink, User } from 'lucide-react'
+import {
+  Mail, Bell, Settings, Star, ChevronRight, ExternalLink, User,
+  Search, Calendar, Trash2, Copy, Archive,
+} from 'lucide-react'
 import { SelectMenuItem, SelectMenuGroup } from '@/design-system/components/SelectMenu/select-menu-item'
 import { SelectionItem } from '@/design-system/components/SelectionControl/selection-item'
 import { Checkbox } from '@/design-system/components/Checkbox/checkbox'
@@ -57,11 +60,99 @@ const AvatarImg = ({ bg = '#e0e7ff' }: { bg?: string }) => (
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   1. Padding 公式
+   1. 總覽
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+export const Overview: StoryObj = {
+  name: '1. 總覽',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <SectionTitle>Item Layout 三區域結構</SectionTitle>
+        <SectionDesc>
+          所有「prefix + content + suffix」結構的元件共用此佈局邏輯。
+          這不是一個元件，是一組設計規則——每個元件獨立實作，但遵循同一套公式。
+        </SectionDesc>
+      </div>
+
+      {/* ASCII diagram */}
+      <div className="bg-surface-raised border border-border rounded-lg p-6 font-mono text-caption max-w-[680px]">
+        <div className="text-fg-muted mb-3">完整結構：</div>
+        <pre className="text-foreground leading-relaxed">{`[prefix h-ref]  [content flex-1 min-w-0]  [suffix h-ref ml-auto]
+
+外層：flex items-start（多行時 prefix/suffix Y 不動）
+
+prefix h-ref：
+  內容物 <= 24px  ->  h-[1lh]           對齊第一行 label 垂直中心
+  內容物 >  24px  ->  h-[calc(...)]     對齊 label+gap+desc 文字塊
+
+suffix h-ref：
+  與 prefix 共用規則，但通常 <= 24px，所以幾乎總是 h-[1lh]`}</pre>
+      </div>
+
+      {/* Live structure breakdown */}
+      <div className="flex flex-col gap-6">
+        <Dim>只有 prefix</Dim>
+        <MenuFrame width={380}>
+          <SelectMenuGroup>
+            <SelectMenuItem startIcon={Mail} description="每日寄送摘要信件">
+              電子郵件通知
+            </SelectMenuItem>
+          </SelectMenuGroup>
+        </MenuFrame>
+        <Label>[prefix: icon h-[1lh]] --gap-2-- [content: label + desc]</Label>
+
+        <Dim>prefix + suffix</Dim>
+        <MenuFrame width={380}>
+          <SelectMenuGroup>
+            {/* Custom layout to show full 3-region structure */}
+            <div className="flex items-start gap-2 px-3 w-full text-body leading-compact py-[calc((var(--field-height-md)-1lh)/2)] cursor-pointer hover:bg-neutral-hover">
+              <div className="h-[1lh] flex items-center shrink-0">
+                <Settings size={16} />
+              </div>
+              <div className="flex flex-col min-w-0 flex-1">
+                <span className="truncate">外觀主題</span>
+                <span className="mt-0.5 text-caption text-fg-secondary">切換介面顏色主題</span>
+              </div>
+              <div className="h-[1lh] flex items-center gap-1 ml-auto shrink-0">
+                <span className="text-body leading-compact text-fg-muted">深色</span>
+                <ChevronRight size={16} className="text-fg-muted" />
+              </div>
+            </div>
+          </SelectMenuGroup>
+        </MenuFrame>
+        <Label>[prefix: icon h-[1lh]] --gap-2-- [content: label + desc, flex-1] --ml-auto-- [suffix: value + chevron, h-[1lh]]</Label>
+
+        <Dim>只有 content（無 prefix、無 suffix）</Dim>
+        <MenuFrame width={380}>
+          <SelectMenuGroup>
+            <SelectMenuItem>純文字選項</SelectMenuItem>
+          </SelectMenuGroup>
+        </MenuFrame>
+        <Label>[content] -- 無 prefix/suffix 時 content 獨佔整行</Label>
+
+        <Dim>SelectionItem（prefix = control，無 suffix）</Dim>
+        <div className="max-w-[380px]">
+          <SelectionItem
+            size="md"
+            control={<Checkbox size="md" />}
+            label="接受使用條款"
+            description="勾選表示您同意我們的服務條款與隱私權政策"
+          />
+        </div>
+        <Label>[prefix: checkbox h-[1lh]] --gap-2-- [content: label + desc]</Label>
+      </div>
+    </div>
+  ),
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. Padding 公式
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const PaddingFormula: StoryObj = {
-  name: '1. Padding 公式',
+  name: '2. Padding 公式',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -72,51 +163,58 @@ export const PaddingFormula: StoryObj = {
         </SectionDesc>
       </div>
 
+      {/* Size comparison table */}
+      <div className="border border-border rounded-lg overflow-hidden max-w-[540px]">
+        <table className="w-full text-body">
+          <thead>
+            <tr className="bg-surface-raised">
+              <th className="text-left px-4 py-2 text-caption font-medium text-fg-muted">Size</th>
+              <th className="text-left px-4 py-2 text-caption font-medium text-fg-muted">field-height</th>
+              <th className="text-left px-4 py-2 text-caption font-medium text-fg-muted">font / 1lh</th>
+              <th className="text-left px-4 py-2 text-caption font-medium text-fg-muted">py calc</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border font-mono text-caption">
+            <tr><td className="px-4 py-2">sm</td><td className="px-4 py-2">28px</td><td className="px-4 py-2">14px, lh 1.5 = 21px</td><td className="px-4 py-2">(28-21)/2 = 3.5px</td></tr>
+            <tr><td className="px-4 py-2">md</td><td className="px-4 py-2">32px</td><td className="px-4 py-2">14px, lh 1.5 = 21px</td><td className="px-4 py-2">(32-21)/2 = 5.5px</td></tr>
+            <tr><td className="px-4 py-2">lg</td><td className="px-4 py-2">36px</td><td className="px-4 py-2">16px, lh 1.5 = 24px</td><td className="px-4 py-2">(36-24)/2 = 6px</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      {/* Live examples per size */}
       <div className="flex flex-col gap-6">
-        {(['sm', 'md', 'lg'] as const).map((sz) => {
-          const fieldH = { sm: '28px', md: '32px', lg: '36px' }[sz]
-          const font = sz === 'lg' ? '16px' : '14px'
-          const lh = sz === 'lg' ? '16×1.5=24px' : '14×1.5=21px'
-          const pyCalc = sz === 'lg' ? '(36-24)/2 = 6px' : sz === 'md' ? '(32-21)/2 = 5.5px' : '(28-21)/2 = 3.5px'
-
-          return (
-            <div key={sz} className="flex items-start gap-6">
-              {/* Annotated dimension column */}
-              <div className="w-[200px] shrink-0 flex flex-col gap-1">
-                <Dim>size="{sz}"</Dim>
-                <Dim>field-height: {fieldH}</Dim>
-                <Dim>font: {font}, 1lh: {lh}</Dim>
-                <Dim>py: {pyCalc}</Dim>
-              </div>
-
-              {/* Live example — SelectionItem (reading mode) */}
-              <div className="flex flex-col gap-1">
-                <div className="border border-dashed border-border rounded px-3 relative">
-                  <SelectionItem
-                    size={sz}
-                    control={<Checkbox size={sz} />}
-                    label="單行 — 高度 = field-height"
-                  />
-                  {/* Top/bottom padding indicators */}
-                  <div className="absolute left-0 top-0 w-1 bg-primary/30" style={{ height: '100%' }} />
-                </div>
-                <Label>SelectionItem size="{sz}" — 閱讀模式</Label>
-              </div>
-
-              {/* Live example — SelectMenuItem (scanning mode) */}
-              <div className="flex flex-col gap-1">
-                <MenuFrame width={260}>
-                  <SelectMenuGroup>
-                    <SelectMenuItem size={sz} startIcon={Mail}>
-                      單行 — 高度 = field-height
-                    </SelectMenuItem>
-                  </SelectMenuGroup>
-                </MenuFrame>
-                <Label>SelectMenuItem size="{sz}" — 掃描模式</Label>
-              </div>
+        {(['sm', 'md', 'lg'] as const).map((sz) => (
+          <div key={sz} className="flex items-start gap-6">
+            <div className="w-[100px] shrink-0">
+              <Dim>size="{sz}"</Dim>
             </div>
-          )
-        })}
+
+            {/* SelectionItem (reading mode) */}
+            <div className="flex flex-col gap-1">
+              <div className="border border-dashed border-border rounded px-3">
+                <SelectionItem
+                  size={sz}
+                  control={<Checkbox size={sz} />}
+                  label="單行 — 高度 = field-height"
+                />
+              </div>
+              <Label>SelectionItem (閱讀模式)</Label>
+            </div>
+
+            {/* SelectMenuItem (scanning mode) */}
+            <div className="flex flex-col gap-1">
+              <MenuFrame width={260}>
+                <SelectMenuGroup>
+                  <SelectMenuItem size={sz} startIcon={Mail}>
+                    單行 — 高度 = field-height
+                  </SelectMenuItem>
+                </SelectMenuGroup>
+              </MenuFrame>
+              <Label>SelectMenuItem (掃描模式)</Label>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Multi-line demo */}
@@ -153,11 +251,154 @@ export const PaddingFormula: StoryObj = {
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   2. 兩種閱讀模式對比
+   3. 對齊模式
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+export const AlignmentModes: StoryObj = {
+  name: '3. 對齊模式',
+  render: () => (
+    <div className="flex flex-col gap-8">
+      <div>
+        <SectionTitle>Prefix 對齊——24px 閾值</SectionTitle>
+        <SectionDesc>
+          prefix 內容物 ≤ 24px 時，容器設 h-[1lh] 對齊第一行 label 的垂直中心（inline 模式）。
+          prefix 內容物 {'>'} 24px 且有 description 時，容器拉高對齊整個文字塊（block 模式）。
+          無 description 時 prefix 上限 24px，強制 inline。
+        </SectionDesc>
+      </div>
+
+      {/* ── Inline examples ── */}
+      <div className="flex flex-col gap-4">
+        <h4 className="text-body font-medium text-foreground">Inline 對齊 (prefix ≤ 24px, h-[1lh])</h4>
+
+        <div className="flex flex-col gap-4">
+          {/* icon 16px */}
+          <div className="flex flex-col gap-1">
+            <Dim>icon 16px ≤ 24px</Dim>
+            <MenuFrame width={360}>
+              <SelectMenuGroup>
+                <SelectMenuItem startIcon={Mail} description="每日寄送摘要信件">
+                  電子郵件通知
+                </SelectMenuItem>
+              </SelectMenuGroup>
+            </MenuFrame>
+            <Label>icon (16px) 在 h-[1lh] 容器內，對齊第一行 label 中心</Label>
+          </div>
+
+          {/* checkbox + icon */}
+          <div className="flex flex-col gap-1">
+            <Dim>checkbox 16px + icon 16px，全部 ≤ 24px</Dim>
+            <MenuFrame width={360}>
+              <SelectMenuGroup>
+                <SelectMenuItem checkbox checked={true} startIcon={Mail} description="每日寄送摘要信件">
+                  電子郵件通知
+                </SelectMenuItem>
+              </SelectMenuGroup>
+            </MenuFrame>
+            <Label>checkbox + icon 都在同一個 h-[1lh] 容器內，gap-2 分隔</Label>
+          </div>
+
+          {/* avatar inline (no description) */}
+          <div className="flex flex-col gap-1">
+            <Dim>avatar 24px ≤ 24px（無 description，強制 inline）</Dim>
+            <MenuFrame width={360}>
+              <SelectMenuGroup>
+                <SelectMenuItem avatar={<AvatarImg />}>
+                  Alice Chen
+                </SelectMenuItem>
+              </SelectMenuGroup>
+            </MenuFrame>
+            <Label>無 description 時 avatar 使用 inline 尺寸 (20/24px)，h-[1lh] 對齊</Label>
+          </div>
+
+          {/* SelectionItem — control always inline */}
+          <div className="flex flex-col gap-1">
+            <Dim>checkbox 16px ≤ 24px（SelectionItem — control 永遠 inline）</Dim>
+            <div className="max-w-[360px]">
+              <SelectionItem
+                size="md"
+                control={<Checkbox size="md" />}
+                label="接受使用條款"
+                description="勾選表示您同意我們的服務條款與隱私權政策，包括資料收集與使用方式"
+              />
+            </div>
+            <Label>control (16px) 永遠 inline — 即使多行 description，prefix 只對齊第一行</Label>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Block examples ── */}
+      <div className="flex flex-col gap-4">
+        <h4 className="text-body font-medium text-foreground">Block 對齊 (prefix {'>'} 24px, h-[calc(1lh + 2px + desc_1lh)])</h4>
+
+        <div className="flex flex-col gap-1">
+          <Dim>avatar 32px {'>'} 24px（有 description，block 對齊）</Dim>
+          <MenuFrame width={360}>
+            <SelectMenuGroup>
+              <SelectMenuItem avatar={<AvatarImg />} description="設計部門">
+                Alice Chen
+              </SelectMenuItem>
+            </SelectMenuGroup>
+          </MenuFrame>
+          <Label>avatar + description — 使用 block 尺寸 (32px)，對齊 label+gap+desc 文字塊</Label>
+        </div>
+
+        <div className="flex flex-col gap-1">
+          <Dim>avatar 32px {'>'} 24px（有 description + checkbox）</Dim>
+          <MenuFrame width={360}>
+            <SelectMenuGroup>
+              <SelectMenuItem checkbox checked={true} avatar={<AvatarImg />} description="設計部門">
+                Alice Chen
+              </SelectMenuItem>
+            </SelectMenuGroup>
+          </MenuFrame>
+          <Label>checkbox + avatar 都在 block 容器內，一起對齊文字塊中心</Label>
+        </div>
+      </div>
+
+      {/* ── Suffix behavior with block prefix ── */}
+      <div className="flex flex-col gap-4">
+        <h4 className="text-body font-medium text-foreground">Suffix 永遠對齊第一行</h4>
+        <SectionDesc>
+          即使 prefix 使用 block 對齊（容器較高），suffix 仍維持 h-[1lh]，對齊第一行 label。
+          Suffix 通常 ≤ 24px（icon + badge），所以幾乎總是 inline。
+        </SectionDesc>
+
+        <div className="flex flex-col gap-1">
+          <Dim>prefix = block (avatar 32px), suffix = inline (h-[1lh])</Dim>
+          <MenuFrame width={400}>
+            <SelectMenuGroup>
+              {/* Custom to show suffix + block prefix */}
+              <div className="flex items-start gap-2 px-3 w-full text-body leading-compact py-[calc((var(--field-height-md)-1lh)/2)] cursor-pointer hover:bg-neutral-hover">
+                <div className="h-[calc(1lh+2px+var(--font-caption-size)*1.3)] flex items-center gap-2 shrink-0">
+                  <div className="shrink-0 rounded-full overflow-hidden w-8 h-8">
+                    <AvatarImg />
+                  </div>
+                </div>
+                <div className="flex flex-col min-w-0 flex-1">
+                  <span className="truncate">Alice Chen</span>
+                  <span className="mt-0.5 text-caption text-fg-secondary">設計部門</span>
+                </div>
+                <div className="h-[1lh] flex items-center gap-1 ml-auto shrink-0">
+                  <ExternalLink size={16} className="text-fg-muted" />
+                </div>
+              </div>
+            </SelectMenuGroup>
+          </MenuFrame>
+          <Label>prefix 對齊文字塊中心 (block)，suffix 對齊第一行 label 中心 (inline)——各自獨立</Label>
+        </div>
+      </div>
+    </div>
+  ),
+}
+
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. 兩種閱讀模式
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const ReadingModes: StoryObj = {
-  name: '2. 兩種閱讀模式對比',
+  name: '4. 兩種閱讀模式',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -169,9 +410,9 @@ export const ReadingModes: StoryObj = {
       </div>
 
       {(['sm', 'md', 'lg'] as const).map((sz) => {
-        const scanFont = sz === 'lg' ? 'text-body-lg leading-compact (16px, lh 1.3)' : 'text-body leading-compact (14px, lh 1.3)'
+        const scanLabel = sz === 'lg' ? 'text-body-lg leading-compact (16px, lh 1.3)' : 'text-body leading-compact (14px, lh 1.3)'
         const scanDesc = sz === 'lg' ? 'text-body leading-compact (14px, lh 1.3)' : 'text-caption (12px, lh 1.3)'
-        const readFont = sz === 'lg' ? 'text-body-lg (16px, lh 1.5)' : 'text-body (14px, lh 1.5)'
+        const readLabel = sz === 'lg' ? 'text-body-lg (16px, lh 1.5)' : 'text-body (14px, lh 1.5)'
 
         return (
           <div key={sz} className="flex flex-col gap-3">
@@ -193,8 +434,8 @@ export const ReadingModes: StoryObj = {
                     </SelectMenuItem>
                   </SelectMenuGroup>
                 </MenuFrame>
-                <Label>label: {scanFont}</Label>
-                <Label>description: {scanDesc} + fg-secondary</Label>
+                <Label>label: {scanLabel}</Label>
+                <Label>desc: {scanDesc} + fg-secondary</Label>
                 <Label>層級靠「字體大小差 + 顏色差 + 2px gap」建立</Label>
               </div>
 
@@ -224,8 +465,8 @@ export const ReadingModes: StoryObj = {
                     htmlFor={`read-${sz}-settings`}
                   />
                 </RadioGroup>
-                <Label>label: {readFont}</Label>
-                <Label>description: {readFont} + fg-secondary（同字體）</Label>
+                <Label>label: {readLabel}</Label>
+                <Label>desc: {readLabel} + fg-secondary（同字體）</Label>
                 <Label>層級僅靠「顏色差 + 2px gap」，保持段落韻律</Label>
               </div>
             </div>
@@ -238,176 +479,131 @@ export const ReadingModes: StoryObj = {
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   3. 24px 閾值
+   5. Icon 色彩原則
    ═══════════════════════════════════════════════════════════════════════════ */
 
-export const PrefixThreshold: StoryObj = {
-  name: '3. 24px 閾值',
+export const IconColorRules: StoryObj = {
+  name: '5. Icon 色彩原則',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
-        <SectionTitle>Prefix 對齊——24px 閾值</SectionTitle>
+        <SectionTitle>Icon 色彩原則</SectionTitle>
         <SectionDesc>
-          prefix 內容物 ≤ 24px 時，容器設 h-[1lh] 對齊第一行 label 的垂直中心。
-          prefix 內容物 {'>'} 24px（且有 description）時，容器拉高對齊整個文字塊。
-          無 description 時 prefix 上限 24px，強制 inline。
+          Menu item 和 Field 的 icon 色彩規則不同。差異原因：Menu item 的 prefix icon 是「描述 item 內容」，
+          本身就是內容的一部分，應與 label 等重。Field 的 startIcon 是「描述 field 用途的提示」（像 placeholder），所以弱化。
         </SectionDesc>
       </div>
 
-      <div className="flex flex-col gap-6">
-        {/* Inline: icon 16px ≤ 24px */}
-        <div className="flex flex-col gap-1">
-          <Dim>{'<='} 24px — icon 16px, prefix 容器 h-[1lh], 對齊第一行</Dim>
-          <MenuFrame width={360}>
-            <SelectMenuGroup>
-              <SelectMenuItem startIcon={Mail} description="每日寄送摘要信件">
-                電子郵件通知
-              </SelectMenuItem>
-            </SelectMenuGroup>
-          </MenuFrame>
-          <Label>icon (16px) {'<='} 24px — prefix 對齊第一行 label 中心</Label>
-        </div>
+      {/* ── Menu Item icon colors ── */}
+      <div className="flex flex-col gap-4">
+        <h4 className="text-body font-medium text-foreground">Menu Item（SelectMenuItem、DropdownMenuItem）</h4>
 
-        {/* Inline: checkbox 16px ≤ 24px */}
-        <div className="flex flex-col gap-1">
-          <Dim>{'<='} 24px — checkbox 16px, prefix 容器 h-[1lh], 對齊第一行</Dim>
-          <MenuFrame width={360}>
-            <SelectMenuGroup>
-              <SelectMenuItem checkbox checked={true} startIcon={Mail} description="每日寄送摘要信件">
-                電子郵件通知
-              </SelectMenuItem>
-            </SelectMenuGroup>
-          </MenuFrame>
-          <Label>checkbox (16px) + icon (16px) 都 {'<='} 24px — 全部 inline 對齊</Label>
-        </div>
-
-        {/* Inline: avatar 20/24px ≤ 24px, no description */}
-        <div className="flex flex-col gap-1">
-          <Dim>{'<='} 24px — avatar inline (24px), 無 description, 強制 inline</Dim>
-          <MenuFrame width={360}>
-            <SelectMenuGroup>
-              <SelectMenuItem avatar={<AvatarImg />}>
-                Alice Chen
-              </SelectMenuItem>
-            </SelectMenuGroup>
-          </MenuFrame>
-          <Label>avatar 無 description — 使用 inline 尺寸 (20/24px), h-[1lh] 對齊</Label>
-        </div>
-
-        {/* Block: avatar 32px > 24px */}
-        <div className="flex flex-col gap-1">
-          <Dim>{'>'} 24px — avatar block (32px), 有 description, block 對齊</Dim>
-          <MenuFrame width={360}>
-            <SelectMenuGroup>
-              <SelectMenuItem avatar={<AvatarImg />} description="設計部門">
-                Alice Chen
-              </SelectMenuItem>
-            </SelectMenuGroup>
-          </MenuFrame>
-          <Label>avatar + description — 使用 block 尺寸 (32px), 對齊 label+gap+desc 文字塊</Label>
-        </div>
-
-        {/* SelectionItem: control always ≤ 24px */}
-        <div className="flex flex-col gap-1">
-          <Dim>SelectionItem — control 永遠 {'<='} 24px (16/20px), 不需 block 對齊</Dim>
-          <div className="max-w-[360px]">
-            <SelectionItem
-              size="md"
-              control={<Checkbox size="md" />}
-              label="接受使用條款"
-              description="勾選表示您同意我們的服務條款與隱私權政策，包括資料收集與使用方式"
-            />
+        <div className="flex items-start gap-8">
+          {/* Prefix icon = foreground */}
+          <div className="flex flex-col gap-1">
+            <Dim>prefix icon = foreground（跟 label 同色）</Dim>
+            <MenuFrame width={300}>
+              <SelectMenuGroup>
+                <SelectMenuItem startIcon={Mail}>電子郵件</SelectMenuItem>
+                <SelectMenuItem startIcon={Copy}>複製</SelectMenuItem>
+                <SelectMenuItem startIcon={Archive}>封存</SelectMenuItem>
+              </SelectMenuGroup>
+            </MenuFrame>
+            <Label>prefix icon 是 label 的一部分，不加 text-fg-muted</Label>
           </div>
-          <Label>checkbox (16px) 永遠 inline — 即使有多行 description，prefix 也只對齊第一行</Label>
-        </div>
-      </div>
-    </div>
-  ),
-}
 
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   4. Prefix / Suffix 對稱對齊
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-export const PrefixSuffixSymmetry: StoryObj = {
-  name: '4. Prefix/Suffix 對稱',
-  render: () => (
-    <div className="flex flex-col gap-8">
-      <div>
-        <SectionTitle>Prefix / Suffix 對稱對齊</SectionTitle>
-        <SectionDesc>
-          prefix 和 suffix 使用完全相同的對齊邏輯（h-ref），不管另一方是否存在。
-          suffix 通常 {'<='} 24px（icon + badge），幾乎總是 h-[1lh]。
-        </SectionDesc>
-      </div>
-
-      <div className="flex flex-col gap-6">
-        {/* Neither */}
-        <div className="flex flex-col gap-1">
-          <Dim>兩者都沒有：[content]</Dim>
-          <MenuFrame width={360}>
-            <SelectMenuGroup>
-              <SelectMenuItem>純文字選項，無 prefix 也無 suffix</SelectMenuItem>
-            </SelectMenuGroup>
-          </MenuFrame>
-        </div>
-
-        {/* Prefix only */}
-        <div className="flex flex-col gap-1">
-          <Dim>只有 prefix：[prefix h-ref] [content flex-1]</Dim>
-          <MenuFrame width={360}>
-            <SelectMenuGroup>
-              <SelectMenuItem startIcon={Mail} description="每日摘要信件">
-                電子郵件通知
-              </SelectMenuItem>
-            </SelectMenuGroup>
-          </MenuFrame>
-          <Label>prefix icon 對齊第一行 label 中心，content 佔滿剩餘空間</Label>
-        </div>
-
-        {/* Suffix only — using a custom render to show suffix concept */}
-        <div className="flex flex-col gap-1">
-          <Dim>只有 suffix：[content flex-1] [suffix h-ref ml-auto]</Dim>
-          <MenuFrame width={360}>
-            <SelectMenuGroup>
-              {/* Simulate suffix with custom layout */}
-              <div className="flex items-start gap-2 px-3 w-full text-body leading-compact py-[calc((var(--field-height-md)-1lh)/2)] cursor-pointer hover:bg-neutral-hover">
-                <div className="flex flex-col min-w-0 flex-1">
-                  <span className="truncate">外觀主題</span>
-                  <span className="mt-0.5 text-caption text-fg-secondary">切換介面顏色主題</span>
+          {/* Suffix indicator = fg-muted */}
+          <div className="flex flex-col gap-1">
+            <Dim>suffix indicator icon = fg-muted</Dim>
+            <MenuFrame width={300}>
+              <SelectMenuGroup>
+                {/* Submenu indicator with value */}
+                <div className="flex items-start gap-2 px-3 w-full text-body leading-compact py-[calc((var(--field-height-md)-1lh)/2)] cursor-pointer hover:bg-neutral-hover">
+                  <div className="h-[1lh] flex items-center shrink-0">
+                    <Settings size={16} />
+                  </div>
+                  <div className="flex flex-col min-w-0 flex-1">
+                    <span className="truncate">外觀主題</span>
+                  </div>
+                  <div className="h-[1lh] flex items-center gap-1 ml-auto shrink-0">
+                    <span className="text-body leading-compact text-fg-muted">深色</span>
+                    <ChevronRight size={16} className="text-fg-muted" />
+                  </div>
                 </div>
-                <div className="h-[1lh] flex items-center gap-1 ml-auto shrink-0">
-                  <span className="text-fg-muted">深色</span>
-                  <ChevronRight size={16} className="text-fg-muted" />
+                {/* External link */}
+                <div className="flex items-start gap-2 px-3 w-full text-body leading-compact py-[calc((var(--field-height-md)-1lh)/2)] cursor-pointer hover:bg-neutral-hover">
+                  <div className="h-[1lh] flex items-center shrink-0">
+                    <Star size={16} />
+                  </div>
+                  <div className="flex flex-col min-w-0 flex-1">
+                    <span className="truncate">說明文件</span>
+                  </div>
+                  <div className="h-[1lh] flex items-center gap-2 ml-auto shrink-0">
+                    <ExternalLink size={16} className="text-fg-muted" />
+                  </div>
                 </div>
-              </div>
-            </SelectMenuGroup>
-          </MenuFrame>
-          <Label>suffix 靠 ml-auto 推到右邊，h-[1lh] 對齊第一行。value 文字跟 label 同字體大小，顏色 fg-muted</Label>
+              </SelectMenuGroup>
+            </MenuFrame>
+            <Label>ChevronRight, ExternalLink 是方向指示，退到背景 (fg-muted)</Label>
+            <Label>value 文字跟 label 同字體大小，僅顏色 fg-muted</Label>
+          </div>
         </div>
 
-        {/* Both */}
+        {/* Danger variant */}
         <div className="flex flex-col gap-1">
-          <Dim>兩者皆有：[prefix h-ref] [content flex-1] [suffix h-ref ml-auto]</Dim>
-          <MenuFrame width={360}>
+          <Dim>danger prefix icon = text-error（跟 label 同色）</Dim>
+          <MenuFrame width={300}>
             <SelectMenuGroup>
-              <div className="flex items-start gap-2 px-3 w-full text-body leading-compact py-[calc((var(--field-height-md)-1lh)/2)] cursor-pointer hover:bg-neutral-hover">
+              <div className="flex items-start gap-2 px-3 w-full text-body leading-compact py-[calc((var(--field-height-md)-1lh)/2)] cursor-pointer hover:bg-neutral-hover text-error">
                 <div className="h-[1lh] flex items-center shrink-0">
-                  <Settings size={16} />
+                  <Trash2 size={16} />
                 </div>
                 <div className="flex flex-col min-w-0 flex-1">
-                  <span className="truncate">進階設定</span>
-                  <span className="mt-0.5 text-caption text-fg-secondary">設定通知偏好和頻率</span>
-                </div>
-                <div className="h-[1lh] flex items-center gap-2 ml-auto shrink-0">
-                  <ExternalLink size={16} className="text-fg-muted" />
+                  <span className="truncate">刪除</span>
                 </div>
               </div>
             </SelectMenuGroup>
           </MenuFrame>
-          <Label>prefix 和 suffix 各自 h-[1lh]，都對齊第一行 label 中心</Label>
+          <Label>危險操作：icon 和 label 都是 text-error，保持同色原則</Label>
         </div>
+      </div>
+
+      {/* ── Field icon colors ── */}
+      <div className="flex flex-col gap-4">
+        <h4 className="text-body font-medium text-foreground">Field（TextField、SelectField 等）</h4>
+
+        <div className="flex flex-col gap-1">
+          <Dim>startIcon = fg-muted（用途提示，像 placeholder）</Dim>
+          <div className="flex items-center gap-2 border border-border rounded-lg px-3 h-8 max-w-[300px]">
+            <Search size={16} className="text-fg-muted shrink-0" />
+            <span className="text-body text-fg-muted">搜尋...</span>
+          </div>
+          <div className="flex items-center gap-2 border border-border rounded-lg px-3 h-8 max-w-[300px] mt-2">
+            <Calendar size={16} className="text-fg-muted shrink-0" />
+            <span className="text-body text-fg-muted">選擇日期</span>
+          </div>
+          <Label>Field startIcon 是描述 field 用途的提示，弱化為 fg-muted</Label>
+        </div>
+      </div>
+
+      {/* ── Comparison table ── */}
+      <div className="border border-border rounded-lg overflow-hidden max-w-[600px]">
+        <table className="w-full text-body">
+          <thead>
+            <tr className="bg-surface-raised">
+              <th className="text-left px-4 py-2 text-caption font-medium text-fg-muted">情境</th>
+              <th className="text-left px-4 py-2 text-caption font-medium text-fg-muted">Icon 角色</th>
+              <th className="text-left px-4 py-2 text-caption font-medium text-fg-muted">顏色</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border text-caption">
+            <tr><td className="px-4 py-2">Menu prefix icon</td><td className="px-4 py-2">內容描述</td><td className="px-4 py-2 font-medium">foreground（跟 label 同色）</td></tr>
+            <tr><td className="px-4 py-2">Menu danger icon</td><td className="px-4 py-2">內容描述</td><td className="px-4 py-2 font-medium">text-error（跟 label 同色）</td></tr>
+            <tr><td className="px-4 py-2">Menu suffix icon</td><td className="px-4 py-2">方向指示</td><td className="px-4 py-2 font-medium">fg-muted</td></tr>
+            <tr><td className="px-4 py-2">Menu suffix value</td><td className="px-4 py-2">狀態值</td><td className="px-4 py-2 font-medium">fg-muted（同字體大小）</td></tr>
+            <tr><td className="px-4 py-2">Field startIcon</td><td className="px-4 py-2">用途提示</td><td className="px-4 py-2 font-medium">fg-muted</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   ),
@@ -415,11 +611,11 @@ export const PrefixSuffixSymmetry: StoryObj = {
 
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   5. Gap 慣例
+   6. Gap 慣例
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const GapConventions: StoryObj = {
-  name: '5. Gap 慣例',
+  name: '6. Gap 慣例',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -450,9 +646,9 @@ export const GapConventions: StoryObj = {
         </table>
       </div>
 
-      {/* Annotated live example — SelectMenuItem with checkbox + icon + description */}
+      {/* prefix 內部 gap + prefix↔content */}
       <div className="flex flex-col gap-3">
-        <Dim>prefix 內部 gap (8px) + prefix↔content gap (8px)</Dim>
+        <Dim>prefix 內部 gap-2 (8px) + prefix↔content gap-2 (8px)</Dim>
         <MenuFrame width={400}>
           <SelectMenuGroup>
             <SelectMenuItem checkbox checked={true} startIcon={Mail} description="每日寄送摘要信件">
@@ -460,12 +656,12 @@ export const GapConventions: StoryObj = {
             </SelectMenuItem>
           </SelectMenuGroup>
         </MenuFrame>
-        <Label>[checkbox] --8px-- [icon] --8px-- [label / desc(2px gap)]</Label>
+        <Label>[checkbox] --8px-- [icon] --8px-- [label / desc(2px)]</Label>
       </div>
 
-      {/* Annotated live example — suffix patterns */}
+      {/* Suffix: 獨立後綴 (gap-2) */}
       <div className="flex flex-col gap-3">
-        <Dim>獨立後綴 (gap-2, 8px)</Dim>
+        <Dim>獨立後綴 (gap-2, 8px): [badge] --8px-- [endIcon]</Dim>
         <MenuFrame width={400}>
           <SelectMenuGroup>
             <div className="flex items-start gap-2 px-3 w-full text-body leading-compact py-[calc((var(--field-height-md)-1lh)/2)] cursor-pointer hover:bg-neutral-hover">
@@ -485,8 +681,9 @@ export const GapConventions: StoryObj = {
         <Label>[prefix icon] --8px-- [label] --ml-auto-- [badge] --8px-- [endIcon]</Label>
       </div>
 
+      {/* Suffix: 子選單指示 (gap-1) */}
       <div className="flex flex-col gap-3">
-        <Dim>子選單指示 (gap-1, 4px)</Dim>
+        <Dim>子選單指示 (gap-1, 4px): [value] --4px-- [ChevronRight]</Dim>
         <MenuFrame width={400}>
           <SelectMenuGroup>
             <div className="flex items-start gap-2 px-3 w-full text-body leading-compact py-[calc((var(--field-height-md)-1lh)/2)] cursor-pointer hover:bg-neutral-hover">
@@ -497,7 +694,7 @@ export const GapConventions: StoryObj = {
                 <span className="truncate">外觀主題</span>
               </div>
               <div className="h-[1lh] flex items-center gap-1 ml-auto shrink-0">
-                <span className="text-fg-muted">深色</span>
+                <span className="text-body leading-compact text-fg-muted">深色</span>
                 <ChevronRight size={16} className="text-fg-muted" />
               </div>
             </div>
@@ -506,9 +703,9 @@ export const GapConventions: StoryObj = {
         <Label>[prefix icon] --8px-- [label] --ml-auto-- [value] --4px-- [ChevronRight]</Label>
       </div>
 
-      {/* label ↔ description gap */}
+      {/* label ↔ description gap — both modes */}
       <div className="flex flex-col gap-3">
-        <Dim>label ↔ description gap (2px, mt-0.5) — 兩種模式統一</Dim>
+        <Dim>label ↔ description (2px, mt-0.5) — 兩種模式統一</Dim>
         <div className="flex items-start gap-8">
           <div className="flex flex-col gap-1">
             <MenuFrame width={340}>

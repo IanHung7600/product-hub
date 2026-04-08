@@ -33,6 +33,24 @@ Tailwind utility 透過 `@theme inline` 橋接語義 token，元件寫 `bg-prima
 弱化 icon hover 後變 `text-fg-secondary`。
 
 
+## Icon 色彩原則
+
+一條統一規則，跨所有元件：
+
+| 判斷 | 顏色 | 範例 |
+|---|---|---|
+| icon 代表內容或類別 | **與 label 同色**（foreground 或 text-error 等） | Mail「電子郵件」、Settings「設定」 |
+| icon 純指示方向/展開/導覽 | `fg-muted`（neutral-7） | ChevronRight、ChevronDown、ExternalLink |
+| disabled 時 | `fg-disabled` | 全部統一 |
+
+**判斷標準：「這個 icon 是在描述旁邊文字的內容，還是在指示一個方向？」**
+
+- 代表內容 → 跟文字同色（icon 是文字的視覺延伸）
+- 指示方向 → `fg-muted`（icon 是輔助指引，退到背景）
+
+詳細的元件套用表見 `item-layout.spec.md`。
+
+
 ## 語義色
 
 ### Action — Primary
