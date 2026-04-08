@@ -144,12 +144,12 @@ description 降一級：sm/md 的 label 14px → description 12px；lg 的 label
 
 ### 選中指示器
 
-**統一用 prefix ✓ 勾號，不用 bg 背景色。** 跟 DropdownMenu 的 RadioItem / CheckboxItem 一致。
+| 模式 | 選中指示器 |
+|---|---|
+| 單選 | `bg-neutral-active` 背景高亮 |
+| 多選 | Checkbox 勾選 |
 
-| 模式 | 選中指示器 | 未選中 |
-|---|---|---|
-| 單選 | ✓ 勾號（opacity-100） | ✓ 空間保留（opacity-0），對齊 |
-| 多選 | ☑ Checkbox 勾選 | ☐ Checkbox 未勾選 |
+單選和 DropdownMenu RadioItem 統一用 `bg-neutral-active`。不用 ✓ 勾號——勾號在 prefix 會影響群組內對齊。
 
 disabled 時所有元素（icon、checkbox、文字）統一 `fg-disabled`。
 

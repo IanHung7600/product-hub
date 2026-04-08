@@ -6,7 +6,7 @@ import {
   DropdownMenuCheckboxItem, DropdownMenuRadioItem, DropdownMenuRadioGroup,
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut,
   DropdownMenuGroup, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent,
-  DropdownMenuItemSuffix, DropdownMenuItemPrefix,
+  DropdownMenuItemIcon,
 } from './dropdown-menu'
 import { Button } from '@/design-system/components/Button/button'
 import { Badge } from '@/design-system/components/Badge/badge'
@@ -28,18 +28,18 @@ export const Basic: StoryObj = {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem>
-          <DropdownMenuItemPrefix><Copy size={16} /></DropdownMenuItemPrefix>
+          <DropdownMenuItemIcon><Copy size={16} /></DropdownMenuItemIcon>
           複製
           <DropdownMenuShortcut>⌘C</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <DropdownMenuItemPrefix><Pencil size={16} /></DropdownMenuItemPrefix>
+          <DropdownMenuItemIcon><Pencil size={16} /></DropdownMenuItemIcon>
           編輯
           <DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <DropdownMenuItemPrefix><Trash2 size={16} className="text-error" /></DropdownMenuItemPrefix>
+          <DropdownMenuItemIcon><Trash2 size={16} className="text-error" /></DropdownMenuItemIcon>
           <span className="text-error">刪除</span>
           <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
         </DropdownMenuItem>
@@ -61,17 +61,17 @@ export const Groups: StoryObj = {
         <DropdownMenuGroup>
           <DropdownMenuLabel>我的帳號</DropdownMenuLabel>
           <DropdownMenuItem>
-            <DropdownMenuItemPrefix><User size={16} /></DropdownMenuItemPrefix>
+            <DropdownMenuItemIcon><User size={16} /></DropdownMenuItemIcon>
             個人資料
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <DropdownMenuItemPrefix><Settings size={16} /></DropdownMenuItemPrefix>
+            <DropdownMenuItemIcon><Settings size={16} /></DropdownMenuItemIcon>
             設定
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <DropdownMenuItemPrefix><LogOut size={16} /></DropdownMenuItemPrefix>
+          <DropdownMenuItemIcon><LogOut size={16} /></DropdownMenuItemIcon>
           登出
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -90,21 +90,21 @@ export const WithSuffix: StoryObj = {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem>
-          <DropdownMenuItemPrefix><Mail size={16} /></DropdownMenuItemPrefix>
+          <DropdownMenuItemIcon><Mail size={16} /></DropdownMenuItemIcon>
           收件匣
-          <DropdownMenuItemSuffix>
+          <div className="h-[1lh] flex items-center ml-auto shrink-0">
             <Badge count={12} />
-          </DropdownMenuItemSuffix>
+          </div>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <DropdownMenuItemPrefix><ExternalLink size={16} /></DropdownMenuItemPrefix>
+          <DropdownMenuItemIcon><ExternalLink size={16} /></DropdownMenuItemIcon>
           在新視窗開啟
-          <DropdownMenuItemSuffix>
+          <div className="h-[1lh] flex items-center ml-auto shrink-0">
             <ExternalLink size={16} className="text-fg-muted" />
-          </DropdownMenuItemSuffix>
+          </div>
         </DropdownMenuItem>
         <DropdownMenuItem disabled>
-          <DropdownMenuItemPrefix><Plus size={16} /></DropdownMenuItemPrefix>
+          <DropdownMenuItemIcon><Plus size={16} /></DropdownMenuItemIcon>
           新增（已停用）
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -125,26 +125,26 @@ const SubMenuDemo = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem>
-          <DropdownMenuItemPrefix><User size={16} /></DropdownMenuItemPrefix>
+          <DropdownMenuItemIcon><User size={16} /></DropdownMenuItemIcon>
           個人資料
         </DropdownMenuItem>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger value={themeLabels[theme]}>
-            <DropdownMenuItemPrefix><Monitor size={16} /></DropdownMenuItemPrefix>
+            <DropdownMenuItemIcon><Monitor size={16} /></DropdownMenuItemIcon>
             主題
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
               <DropdownMenuRadioItem value="light">
-                <DropdownMenuItemPrefix><Sun size={16} /></DropdownMenuItemPrefix>
+                <DropdownMenuItemIcon><Sun size={16} /></DropdownMenuItemIcon>
                 淺色
               </DropdownMenuRadioItem>
               <DropdownMenuRadioItem value="dark">
-                <DropdownMenuItemPrefix><Moon size={16} /></DropdownMenuItemPrefix>
+                <DropdownMenuItemIcon><Moon size={16} /></DropdownMenuItemIcon>
                 深色
               </DropdownMenuRadioItem>
               <DropdownMenuRadioItem value="system">
-                <DropdownMenuItemPrefix><Monitor size={16} /></DropdownMenuItemPrefix>
+                <DropdownMenuItemIcon><Monitor size={16} /></DropdownMenuItemIcon>
                 跟隨系統
               </DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
@@ -152,7 +152,7 @@ const SubMenuDemo = () => {
         </DropdownMenuSub>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <DropdownMenuItemPrefix><LogOut size={16} /></DropdownMenuItemPrefix>
+          <DropdownMenuItemIcon><LogOut size={16} /></DropdownMenuItemIcon>
           登出
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -220,7 +220,7 @@ const RadioDemo = () => {
 }
 
 export const RadioItems: StoryObj = {
-  name: 'Radio',
+  name: '單選',
   render: () => <RadioDemo />,
 }
 
@@ -237,16 +237,16 @@ export const Sizes: StoryObj = {
           </DropdownMenuTrigger>
           <DropdownMenuContent size={sz}>
             <DropdownMenuItem>
-              <DropdownMenuItemPrefix><Copy size={sz === 'lg' ? 20 : 16} /></DropdownMenuItemPrefix>
+              <DropdownMenuItemIcon><Copy size={sz === 'lg' ? 20 : 16} /></DropdownMenuItemIcon>
               複製
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <DropdownMenuItemPrefix><Pencil size={sz === 'lg' ? 20 : 16} /></DropdownMenuItemPrefix>
+              <DropdownMenuItemIcon><Pencil size={sz === 'lg' ? 20 : 16} /></DropdownMenuItemIcon>
               編輯
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <DropdownMenuItemPrefix><Trash2 size={sz === 'lg' ? 20 : 16} /></DropdownMenuItemPrefix>
+              <DropdownMenuItemIcon><Trash2 size={sz === 'lg' ? 20 : 16} /></DropdownMenuItemIcon>
               <span className="text-error">刪除</span>
             </DropdownMenuItem>
           </DropdownMenuContent>

@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { Check } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/design-system/components/Checkbox/checkbox'
@@ -102,14 +101,10 @@ export interface SelectMenuItemProps
   checkbox?: boolean
   /** Checkbox 選中狀態 */
   checked?: boolean | 'indeterminate'
-  /** 單選選中（prefix ✓ 勾號） */
+  /** 單選選中（bg-neutral-active 背景高亮） */
   selected?: boolean
-  /** 後綴 Tag（ReactNode） */
-  suffixTag?: React.ReactNode
-  /** 後綴 Badge（ReactNode） */
-  suffixBadge?: React.ReactNode
-  /** 後綴 icon（LucideIcon），指示方向用，fg-muted */
-  suffixIcon?: LucideIcon
+  /** 後綴 Tag（ReactNode），靠右對齊 */
+  tag?: React.ReactNode
   /** 停用 */
   disabled?: boolean
   /** 作為群組標題（不可選，font-medium，fg-muted） */
@@ -126,9 +121,7 @@ const SelectMenuItem = React.forwardRef<HTMLDivElement, SelectMenuItemProps>(
       checkbox,
       checked,
       selected,
-      suffixTag,
-      suffixBadge,
-      suffixIcon: SuffixIcon,
+      tag,
       disabled,
       header,
       size,
@@ -152,7 +145,7 @@ const SelectMenuItem = React.forwardRef<HTMLDivElement, SelectMenuItemProps>(
       ? (`block-${sizeKey}` as const)
       : 'inline'
 
-    const hasPrefix = !!StartIcon || !!avatar || checkbox || selected !== undefined
+    const hasPrefix = !!StartIcon || !!avatar || checkbox
 
     // ── Header variant ──
     if (header) {
@@ -182,7 +175,8 @@ const SelectMenuItem = React.forwardRef<HTMLDivElement, SelectMenuItemProps>(
         data-disabled={disabled ? '' : undefined}
         className={cn(
           menuItemVariants({ size }),
-          !disabled && 'hover:bg-neutral-hover',
+          !disabled && !selected && 'hover:bg-neutral-hover',
+          !disabled && selected && 'bg-neutral-active',
           disabled && 'pointer-events-none text-fg-disabled cursor-default',
           className,
         )}
@@ -191,14 +185,6 @@ const SelectMenuItem = React.forwardRef<HTMLDivElement, SelectMenuItemProps>(
         {/* Prefix 對齊容器 */}
         {hasPrefix && (
           <div className={cn(prefixAlignVariants({ align: prefixAlign }))}>
-            {/* 單選 ✓ 勾號（保留空間，未選中時 invisible） */}
-            {selected !== undefined && !checkbox && (
-              <Check
-                size={iconPx}
-                className={cn('shrink-0', selected ? 'opacity-100' : 'opacity-0', disabled && 'text-fg-disabled')}
-                aria-hidden
-              />
-            )}
             {checkbox && (
               <Checkbox
                 size={CHECKBOX_SIZE[sizeKey]}
@@ -247,14 +233,10 @@ const SelectMenuItem = React.forwardRef<HTMLDivElement, SelectMenuItemProps>(
           )}
         </div>
 
-        {/* Suffix：tag / badge / icon，靠右對齊 */}
-        {(suffixTag || suffixBadge || SuffixIcon) && (
-          <div className="h-[1lh] flex items-center gap-2 ml-auto shrink-0">
-            {suffixTag}
-            {suffixBadge}
-            {SuffixIcon && (
-              <SuffixIcon size={iconPx} className={cn('text-fg-muted', disabled && 'text-fg-disabled')} aria-hidden />
-            )}
+        {/* Suffix：tag，靠右對齊 */}
+        {tag && (
+          <div className="h-[1lh] flex items-center ml-auto shrink-0">
+            {tag}
           </div>
         )}
       </div>

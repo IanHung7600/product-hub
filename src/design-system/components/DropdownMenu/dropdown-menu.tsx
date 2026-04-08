@@ -1,9 +1,10 @@
 import * as React from "react"
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu"
-import { Check, ChevronRight } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { Checkbox } from "@/design-system/components/Checkbox/checkbox"
 
 /**
  * DropdownMenu — Radix DropdownMenu + 設計系統 token
@@ -50,6 +51,7 @@ const floatingLayerClass = [
 type SizeKey = 'sm' | 'md' | 'lg'
 const SizeContext = React.createContext<SizeKey>('md')
 const ICON_SIZE: Record<SizeKey, number> = { sm: 16, md: 16, lg: 20 }
+const CHECKBOX_SIZE: Record<SizeKey, 'sm' | 'md' | 'lg'> = { sm: 'sm', md: 'md', lg: 'lg' }
 
 // ── Root ──
 const DropdownMenu = DropdownMenuPrimitive.Root
@@ -88,6 +90,7 @@ const DropdownMenuContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       align={align}
+      onCloseAutoFocus={(e) => e.preventDefault()}
       className={cn(floatingLayerClass, 'py-2', maxHeight && 'overflow-y-auto', className)}
       style={{
         boxShadow: 'var(--elevation-200)',
@@ -188,17 +191,13 @@ const DropdownMenuCheckboxItem = React.forwardRef<
       {...props}
     >
       <div className="h-[1lh] flex items-center shrink-0">
-        <div className={cn(
-          'grid place-content-center shrink-0 rounded-md border border-border bg-surface',
-          size === 'lg' ? 'h-5 w-5' : 'h-4 w-4',
-          checked && 'bg-primary border-primary text-white',
-          props.disabled && 'bg-disabled border-transparent',
-          props.disabled && checked && 'text-fg-disabled',
-        )}>
-          <DropdownMenuPrimitive.ItemIndicator>
-            <Check style={{ width: size === 'lg' ? 16 : 12, height: size === 'lg' ? 16 : 12 }} />
-          </DropdownMenuPrimitive.ItemIndicator>
-        </div>
+        <Checkbox
+          size={CHECKBOX_SIZE[size]}
+          checked={!!checked}
+          disabled={props.disabled}
+          tabIndex={-1}
+          className="pointer-events-none"
+        />
       </div>
       {children}
     </DropdownMenuPrimitive.CheckboxItem>
@@ -206,31 +205,22 @@ const DropdownMenuCheckboxItem = React.forwardRef<
 })
 DropdownMenuCheckboxItem.displayName = DropdownMenuPrimitive.CheckboxItem.displayName
 
-// ── RadioItem（視覺同 CheckboxItem ✓，行為互斥）──
+// ── RadioItem（單選，選中 = bg-neutral-active，與 SelectMenu 統一）──
 const DropdownMenuRadioItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.RadioItem>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem>
 >(({ className, children, ...props }, ref) => {
   const size = React.useContext(SizeContext)
-  // RadioGroup 透過 value 比對判斷選中，Radix 在元素上設 data-state="checked"
-  // 但子 div 無法讀取父層 data-state，改用 group + group-data selector
   return (
     <DropdownMenuPrimitive.RadioItem
       ref={ref}
-      className={cn(menuItemVariants({ size }), 'group', className)}
+      className={cn(
+        menuItemVariants({ size }),
+        'data-[state=checked]:bg-neutral-active',
+        className,
+      )}
       {...props}
     >
-      <div className="h-[1lh] flex items-center shrink-0">
-        <div className={cn(
-          'grid place-content-center shrink-0 rounded-md border border-border bg-surface',
-          size === 'lg' ? 'h-5 w-5' : 'h-4 w-4',
-          'group-data-[state=checked]:bg-primary group-data-[state=checked]:border-primary group-data-[state=checked]:text-white',
-        )}>
-          <DropdownMenuPrimitive.ItemIndicator>
-            <Check style={{ width: size === 'lg' ? 16 : 12, height: size === 'lg' ? 16 : 12 }} />
-          </DropdownMenuPrimitive.ItemIndicator>
-        </div>
-      </div>
       {children}
     </DropdownMenuPrimitive.RadioItem>
   )
@@ -272,21 +262,13 @@ const DropdownMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTML
 )
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut"
 
-// ── Suffix helper（後綴容器：badge + endIcon 或子選單指示）──
-const DropdownMenuItemSuffix = ({ className, gap = 'gap-2', children }: { className?: string; gap?: 'gap-1' | 'gap-2'; children: React.ReactNode }) => (
-  <div className={cn("h-[1lh] flex items-center ml-auto shrink-0", gap, className)}>
-    {children}
-  </div>
-)
-DropdownMenuItemSuffix.displayName = "DropdownMenuItemSuffix"
-
-// ── Prefix helper（前綴容器）──
-const DropdownMenuItemPrefix = ({ className, children }: { className?: string; children: React.ReactNode }) => (
+// ── Icon wrapper（item 前綴 icon 的 h-[1lh] 對齊容器）──
+const DropdownMenuItemIcon = ({ className, children }: { className?: string; children: React.ReactNode }) => (
   <div className={cn("h-[1lh] flex items-center shrink-0", className)}>
     {children}
   </div>
 )
-DropdownMenuItemPrefix.displayName = "DropdownMenuItemPrefix"
+DropdownMenuItemIcon.displayName = "DropdownMenuItemIcon"
 
 export {
   DropdownMenu,
@@ -304,8 +286,7 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
-  DropdownMenuItemSuffix,
-  DropdownMenuItemPrefix,
+  DropdownMenuItemIcon,
   menuItemVariants,
   SizeContext,
 }

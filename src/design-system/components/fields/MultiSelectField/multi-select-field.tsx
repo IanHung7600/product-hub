@@ -342,7 +342,12 @@ function CustomMultiSelectField({
         align="start" sideOffset={8}>
         <Command shouldFilter={searchable && searchIn === 'menu'}>
           {searchable && searchIn === 'menu' && (
-            <div className="flex items-center gap-2 px-3 py-2 border-b border-divider">
+            <div className={cn(
+              'flex items-center gap-2 px-3 py-1 border-b border-divider',
+              size === 'lg' ? 'min-h-[calc(var(--field-height-lg)+8px)]'
+                : size === 'sm' ? 'min-h-[calc(var(--field-height-sm)+8px)]'
+                : 'min-h-[calc(var(--field-height-md)+8px)]',
+            )}>
               <span className="shrink-0 text-fg-muted" aria-hidden>
                 <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
