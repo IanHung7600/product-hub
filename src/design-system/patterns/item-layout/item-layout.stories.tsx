@@ -619,8 +619,8 @@ export const AlignmentThreshold = {
                 style={{ width: 72, height: '100%', background: Z.icon.bg, borderRight: `1.5px dashed ${Z.icon.border}` }}>
                 <div className="flex flex-col items-center gap-0.5">
                   <span className="text-[14px] font-mono font-bold" style={{ color: Z.icon.text }}>prefix</span>
-                  <span className="text-[9px] font-mono font-semibold" style={{ color: Z.icon.text }}>h-[calc(1lh</span>
-                  <span className="text-[9px] font-mono font-semibold" style={{ color: Z.icon.text }}>+2px+desc)]</span>
+                  <span className="text-[9px] font-mono" style={{ color: Z.icon.text }}>label行高</span>
+                  <span className="text-[9px] font-mono" style={{ color: Z.icon.text }}>+2px+desc行高</span>
                 </div>
               </div>
               <div className="flex items-center justify-center shrink-0"
@@ -637,8 +637,8 @@ export const AlignmentThreshold = {
                 style={{ width: 72, height: '100%', background: Z.suffix.bg, borderLeft: `1.5px dashed ${Z.suffix.border}` }}>
                 <div className="flex flex-col items-center gap-0.5">
                   <span className="text-[14px] font-mono font-bold" style={{ color: Z.suffix.text }}>suffix</span>
-                  <span className="text-[9px] font-mono font-semibold" style={{ color: Z.suffix.text }}>h-[calc(1lh</span>
-                  <span className="text-[9px] font-mono font-semibold" style={{ color: Z.suffix.text }}>+2px+desc)]</span>
+                  <span className="text-[9px] font-mono" style={{ color: Z.suffix.text }}>label行高</span>
+                  <span className="text-[9px] font-mono" style={{ color: Z.suffix.text }}>+2px+desc行高</span>
                 </div>
               </div>
             </div>
@@ -672,7 +672,7 @@ export const AlignmentThreshold = {
               </tr>
               <tr>
                 <Td>prefix &gt; 24px + 有 desc</Td>
-                <Td mono>h-[calc(1lh+2px+desc_1lh)]</Td>
+                <Td mono>label行高 + 2px + desc行高</Td>
                 <Td>label + gap + desc 文字塊中心</Td>
                 <Td>avatar (32/40px) with description</Td>
               </tr>
