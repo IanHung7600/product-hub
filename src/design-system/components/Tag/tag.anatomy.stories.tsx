@@ -533,7 +533,7 @@ export const ColorMatrix = {
                 { mode: '', state: 'active', iconColor: '繼承 Tag 文字色', hoverBg: '--neutral-active' },
               ].map(({ mode, state, iconColor, hoverBg }, i) => (
                 <tr key={i}>
-                  {mode ? <td className="p-2 border-b border-divider align-top text-caption font-mono font-medium" rowSpan={mode === 'Subtle' ? 3 : 2}>{mode}</td> : null}
+                  {mode ? <td className="p-2 border-b border-divider align-top text-caption font-mono font-medium" rowSpan={3}>{mode}</td> : null}
                   <Td mono>{state}</Td>
                   <Td>
                     <span className="font-mono text-fg-secondary text-[11px]">{iconColor}</span>
