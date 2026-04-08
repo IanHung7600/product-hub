@@ -104,6 +104,12 @@ export interface SelectMenuItemProps
   checked?: boolean | 'indeterminate'
   /** 單選選中（prefix ✓ 勾號） */
   selected?: boolean
+  /** 後綴 Tag（ReactNode） */
+  suffixTag?: React.ReactNode
+  /** 後綴 Badge（ReactNode） */
+  suffixBadge?: React.ReactNode
+  /** 後綴 icon（LucideIcon），指示方向用，fg-muted */
+  suffixIcon?: LucideIcon
   /** 停用 */
   disabled?: boolean
   /** 作為群組標題（不可選，font-medium，fg-muted） */
@@ -120,6 +126,9 @@ const SelectMenuItem = React.forwardRef<HTMLDivElement, SelectMenuItemProps>(
       checkbox,
       checked,
       selected,
+      suffixTag,
+      suffixBadge,
+      suffixIcon: SuffixIcon,
       disabled,
       header,
       size,
@@ -237,6 +246,17 @@ const SelectMenuItem = React.forwardRef<HTMLDivElement, SelectMenuItemProps>(
             </span>
           )}
         </div>
+
+        {/* Suffix：tag / badge / icon，靠右對齊 */}
+        {(suffixTag || suffixBadge || SuffixIcon) && (
+          <div className="h-[1lh] flex items-center gap-2 ml-auto shrink-0">
+            {suffixTag}
+            {suffixBadge}
+            {SuffixIcon && (
+              <SuffixIcon size={iconPx} className={cn('text-fg-muted', disabled && 'text-fg-disabled')} aria-hidden />
+            )}
+          </div>
+        )}
       </div>
     )
   }
