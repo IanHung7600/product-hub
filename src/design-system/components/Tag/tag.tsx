@@ -79,23 +79,45 @@ export interface TagProps
   solid?: boolean
 }
 
+// ── Solid dismiss hover/active bg（用色相自己的 hover/active token）──
+const SOLID_DISMISS_HOVER: Record<string, { hover: string; active: string }> = {
+  neutral:   { hover: 'var(--fg-muted)',           active: 'var(--foreground)' },
+  blue:      { hover: 'var(--primary-hover)',       active: 'var(--primary-active)' },
+  red:       { hover: 'var(--error-hover)',         active: 'var(--error-active)' },
+  green:     { hover: 'var(--success-hover)',       active: 'var(--success-active)' },
+  yellow:    { hover: 'var(--warning-hover)',       active: 'var(--warning-active)' },
+  turquoise: { hover: 'var(--turquoise-hover)',     active: 'var(--turquoise-active)' },
+  purple:    { hover: 'var(--purple-hover)',        active: 'var(--purple-active)' },
+  magenta:   { hover: 'var(--magenta-hover)',       active: 'var(--magenta-active)' },
+  indigo:    { hover: 'var(--indigo-hover)',        active: 'var(--indigo-active)' },
+}
+
 // ── Dismiss（internal）────────────────────────────────────────────────────
 // Inline action：16px icon，18px hover 背景，由 Tag 內部渲染。
 
-function TagDismiss({ onDismiss, label, solid }: { onDismiss: () => void; label: string; solid?: boolean }) {
-  // dismiss icon 繼承 Tag 文字色（跟 label 同色），hover 靠背景色回饋
+function TagDismiss({ onDismiss, label, solid, variant }: { onDismiss: () => void; label: string; solid?: boolean; variant?: string }) {
+  // dismiss icon 繼承 Tag 文字色（跟 label 同色）
+  // subtle: hover bg = neutral-hover
+  // solid: hover bg = 色相自己的 hover/active token
+  const solidColors = solid && variant ? SOLID_DISMISS_HOVER[variant] : undefined
+
   return (
     <button
       type="button"
       onClick={(e) => { e.stopPropagation(); onDismiss() }}
       className="group/action relative grid place-content-center cursor-pointer"
-      style={{ width: 16, height: 16 }}
+      style={{
+        width: 16, height: 16,
+        ...(solidColors ? { '--dismiss-hover': solidColors.hover, '--dismiss-active': solidColors.active } as React.CSSProperties : {}),
+      }}
       aria-label={`移除 ${label}`}
     >
       <span
         className={cn(
           'absolute rounded-sm pointer-events-none transition-colors',
-          'bg-transparent group-hover/action:bg-neutral-hover group-active/action:bg-neutral-active',
+          solidColors
+            ? 'bg-transparent group-hover/action:bg-[var(--dismiss-hover)] group-active/action:bg-[var(--dismiss-active)]'
+            : 'bg-transparent group-hover/action:bg-neutral-hover group-active/action:bg-neutral-active',
         )}
         style={{ width: 18, height: 18, top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
         aria-hidden
@@ -150,7 +172,7 @@ function TagInner(
       {Icon && <Icon size={16} aria-hidden />}
       {avatar && <span className="shrink-0 w-4 h-4 rounded-full overflow-hidden inline-grid place-content-center [&>*]:w-full [&>*]:h-full">{avatar}</span>}
       <span data-tag-text="" className="px-1 truncate min-w-0">{children}</span>
-      {onDismiss && <TagDismiss onDismiss={onDismiss} label={label} solid={solid} />}
+      {onDismiss && <TagDismiss onDismiss={onDismiss} label={label} solid={solid} variant={variant ?? 'neutral'} />}
     </div>
   )
 
