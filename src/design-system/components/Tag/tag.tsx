@@ -52,6 +52,19 @@ const tagVariants = cva(
   }
 )
 
+// ── Solid variant 色彩（step-6 底 + 白字，warning 用 --warning-foreground）──
+const SOLID_CLASSES: Record<string, string> = {
+  neutral:   'bg-[var(--fg-secondary)] text-white',
+  blue:      'bg-primary text-white',
+  red:       'bg-error text-white',
+  green:     'bg-success text-white',
+  yellow:    'bg-warning text-[var(--warning-foreground)]',
+  turquoise: 'bg-turquoise text-white',
+  purple:    'bg-purple text-white',
+  magenta:   'bg-magenta text-white',
+  indigo:    'bg-indigo text-white',
+}
+
 export interface TagProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'prefix'>,
     VariantProps<typeof tagVariants> {
@@ -61,6 +74,8 @@ export interface TagProps
   avatar?: React.ReactNode
   /** 可移除——Tag 自動渲染 dismiss 按鈕並控制尺寸與互動樣式 */
   onDismiss?: () => void
+  /** 深底白字模式（step-6 背景 + 白色前景，warning 例外） */
+  solid?: boolean
 }
 
 // ── Dismiss（internal）────────────────────────────────────────────────────
@@ -86,9 +101,10 @@ function TagDismiss({ onDismiss, label }: { onDismiss: () => void; label: string
 }
 
 function TagInner(
-  { className, variant, size, icon: Icon, avatar, onDismiss, children, ...props }: TagProps,
+  { className, variant, size, icon: Icon, avatar, onDismiss, solid, children, ...props }: TagProps,
   forwardedRef: React.ForwardedRef<HTMLDivElement>,
 ) {
+  const solidClass = solid ? SOLID_CLASSES[variant ?? 'neutral'] : undefined
   const ownRef = React.useRef<HTMLDivElement>(null)
   const [isTruncated, setIsTruncated] = React.useState(false)
 
@@ -123,7 +139,7 @@ function TagInner(
         if (typeof forwardedRef === 'function') forwardedRef(el)
         else if (forwardedRef) (forwardedRef as React.MutableRefObject<HTMLDivElement | null>).current = el
       }}
-      className={cn(tagVariants({ variant, size }), 'w-fit min-w-0 max-w-40 overflow-hidden', className)}
+      className={cn(tagVariants({ variant, size }), solidClass, 'w-fit min-w-0 max-w-40 overflow-hidden', className)}
       {...props}
     >
       {Icon && <Icon size={16} aria-hidden />}

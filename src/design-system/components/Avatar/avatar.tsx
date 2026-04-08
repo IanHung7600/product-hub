@@ -77,16 +77,17 @@ export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: LucideIcon
   /** Icon / text fallback 的背景色，預設 neutral */
   color?: ColorKey
-  /** 色彩變體：subtle（淡底深字）或 solid（深底白字），預設 subtle */
-  variant?: VariantKey
+  /** 深底白字模式（step-6 背景 + 白色前景，warning 例外），預設 false */
+  solid?: boolean
 }
 
 const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
-  ({ size = 32, shape = 'circle', src, alt, icon: Icon, color = 'neutral', variant = 'subtle', className, style, ...props }, ref) => {
+  ({ size = 32, shape = 'circle', src, alt, icon: Icon, color = 'neutral', solid = false, className, style, ...props }, ref) => {
     const [imgError, setImgError] = React.useState(false)
     const iconPx = getIconSize(size)
     const fontSize = Math.round(size * 0.5)
-    const colors = COLOR_MAP[variant]?.[color] ?? COLOR_MAP.subtle.neutral
+    const variantKey: VariantKey = solid ? 'solid' : 'subtle'
+    const colors = COLOR_MAP[variantKey]?.[color] ?? COLOR_MAP.subtle.neutral
     const radius = shape === 'circle' ? '9999px' : '4px'
 
     // 決定內容

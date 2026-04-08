@@ -25,14 +25,25 @@ const variants = ['neutral', 'blue', 'red', 'green', 'yellow', 'turquoise', 'pur
 export const AllVariants: Story = {
   name: '全部 Variants',
   render: () => (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap gap-2">
-        {variants.map(v => (
-          <Tag key={v} variant={v}>{v}</Tag>
-        ))}
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <p className="text-caption font-medium text-fg-secondary">subtle（預設）</p>
+        <div className="flex flex-wrap gap-2">
+          {variants.map(v => (
+            <Tag key={v} variant={v}>{v}</Tag>
+          ))}
+        </div>
       </div>
-      <div>
-        <p className="text-caption text-fg-muted mb-2">建議用法</p>
+      <div className="flex flex-col gap-2">
+        <p className="text-caption font-medium text-fg-secondary">solid</p>
+        <div className="flex flex-wrap gap-2">
+          {variants.map(v => (
+            <Tag key={v} variant={v} solid>{v}</Tag>
+          ))}
+        </div>
+      </div>
+      <div className="flex flex-col gap-2">
+        <p className="text-caption text-fg-muted">建議用法</p>
         <div className="flex flex-wrap gap-2">
           <Tag variant="blue">進行中</Tag>
           <Tag variant="green">已完成</Tag>

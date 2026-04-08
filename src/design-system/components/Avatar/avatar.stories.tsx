@@ -98,31 +98,31 @@ export const Colors = {
       <div className="flex flex-col gap-1">
         <h3 className="text-h6 font-semibold text-foreground">色彩</h3>
         <p className="text-caption text-fg-muted max-w-[720px]">
-          Icon 和 Text 模式使用語義色的 subtle 背景 + 對應前景色。Image 模式不顯示背景色。
+          兩種變體：subtle（淡底深字）和 solid（深底白字）。Image 模式不顯示背景色。
         </p>
       </div>
-      <div className="flex flex-col gap-4">
-        <span className="text-caption font-medium text-fg-secondary">Icon 模式</span>
-        <div className="flex gap-4">
-          {ALL_COLORS.map((c) => (
-            <div key={c} className="flex flex-col items-center gap-2">
-              <Avatar size={32} icon={User} color={c} />
-              <span className="text-[10px] text-fg-muted font-mono">{c}</span>
+      {([false, true] as const).map((isSolid) => (
+        <div key={String(isSolid)} className="flex flex-col gap-4">
+          <span className="text-caption font-semibold text-fg-secondary">{isSolid ? 'solid' : 'subtle（預設）'}</span>
+          <div className="flex flex-col gap-3">
+            <div className="flex gap-4">
+              {ALL_COLORS.map((c) => (
+                <div key={c} className="flex flex-col items-center gap-2">
+                  <Avatar size={32} icon={User} color={c} solid={isSolid} />
+                  <span className="text-[10px] text-fg-muted font-mono">{c}</span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
-      <div className="flex flex-col gap-4">
-        <span className="text-caption font-medium text-fg-secondary">Text 模式</span>
-        <div className="flex gap-4">
-          {ALL_COLORS.map((c, i) => (
-            <div key={c} className="flex flex-col items-center gap-2">
-              <Avatar size={32} alt={String.fromCharCode(65 + i)} color={c} />
-              <span className="text-[10px] text-fg-muted font-mono">{c}</span>
+            <div className="flex gap-4">
+              {ALL_COLORS.map((c, i) => (
+                <div key={c} className="flex flex-col items-center gap-2">
+                  <Avatar size={32} alt={String.fromCharCode(65 + i)} color={c} solid={isSolid} />
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   ),
 }
