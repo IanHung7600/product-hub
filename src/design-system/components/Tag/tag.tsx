@@ -53,16 +53,17 @@ const tagVariants = cva(
 )
 
 // ── Solid variant 色彩（step-6 底 + 白字，warning 用 --warning-foreground）──
+// solid: step-6 底 + 白字，hover = step-5，active = step-7（跟 semantic token 同邏輯）
 const SOLID_CLASSES: Record<string, string> = {
-  neutral:   'bg-[var(--fg-secondary)] text-white',
-  blue:      'bg-primary text-white',
-  red:       'bg-error text-white',
-  green:     'bg-success text-white',
-  yellow:    'bg-warning text-[var(--warning-foreground)]',
-  turquoise: 'bg-turquoise text-white',
-  purple:    'bg-purple text-white',
-  magenta:   'bg-magenta text-white',
-  indigo:    'bg-indigo text-white',
+  neutral:   'bg-[var(--fg-secondary)] text-white hover:bg-[var(--fg-muted)] active:bg-[var(--foreground)]',
+  blue:      'bg-primary text-white hover:bg-primary-hover active:bg-primary-active',
+  red:       'bg-error text-white hover:bg-error-hover active:bg-error-active',
+  green:     'bg-success text-white hover:bg-success-hover active:bg-success-active',
+  yellow:    'bg-warning text-[var(--warning-foreground)] hover:bg-warning-hover active:bg-warning-active',
+  turquoise: 'bg-turquoise text-white hover:bg-[var(--turquoise-hover)] active:bg-[var(--turquoise-active)]',
+  purple:    'bg-purple text-white hover:bg-[var(--purple-hover)] active:bg-[var(--purple-active)]',
+  magenta:   'bg-magenta text-white hover:bg-[var(--magenta-hover)] active:bg-[var(--magenta-active)]',
+  indigo:    'bg-indigo text-white hover:bg-[var(--indigo-hover)] active:bg-[var(--indigo-active)]',
 }
 
 export interface TagProps
@@ -94,7 +95,7 @@ function TagDismiss({ onDismiss, label, solid }: { onDismiss: () => void; label:
       <span
         className={cn(
           'absolute rounded-sm pointer-events-none transition-colors',
-          'bg-transparent group-hover/action:bg-neutral-hover group-active/action:bg-neutral-active',
+          !solid && 'bg-transparent group-hover/action:bg-neutral-hover group-active/action:bg-neutral-active',
         )}
         style={{ width: 18, height: 18, top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}
         aria-hidden
