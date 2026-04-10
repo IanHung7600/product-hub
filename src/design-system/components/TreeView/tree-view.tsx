@@ -12,7 +12,7 @@ import {
   type DragEndEvent,
   type DragOverEvent,
 } from '@dnd-kit/core'
-import { ChevronRight, GripVertical } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -620,8 +620,9 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
     const iconPx = ICON_PX[size]
     const indentPx = depth * INDENT_STEP[size]
 
-    // ── Drag hooks(只在 draggable 時啟用)──
-    const { attributes: dragAttrs, listeners: dragListeners, setNodeRef: setDragRef } = useDraggable({
+    // ── Drag hooks ──
+    // Figma 風格:整列可拖(不用 grip handle),靠 distance:5 區分 click vs drag
+    const { attributes: dragAttrs, listeners: dragListeners, setNodeRef: setDragRef, isDragging: dndIsDragging } = useDraggable({
       id, disabled: !draggable || disabled,
     })
     const { setNodeRef: setDropRef } = useDroppable({
@@ -744,21 +745,11 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
               paddingRight: 'var(--tree-px)',
             }}
             onClick={handleRowClick}
+            // Figma 風格:整列可拖,distance:5 區分 click vs drag
+            ref={draggable ? setDragRef : undefined}
+            {...(draggable ? { ...dragListeners, ...dragAttrs } : {})}
             {...props}
           >
-            {/* Drag handle — indent 之後、chevron 之前(spec 規定的位置) */}
-            {draggable && !disabled && (
-              <span
-                ref={setDragRef}
-                className="h-[1lh] shrink-0 flex items-center cursor-grab active:cursor-grabbing text-fg-muted hover:text-foreground opacity-0 group-hover/tree-item:opacity-100 transition-opacity"
-                style={{ width: iconPx }}
-                {...dragListeners}
-                {...dragAttrs}
-              >
-                <GripVertical size={iconPx} />
-              </span>
-            )}
-
             {chevronSlot}
 
             {/* Checkbox 在 icon 前——h-[1lh] 對齊第一行 */}
