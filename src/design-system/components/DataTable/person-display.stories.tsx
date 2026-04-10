@@ -77,16 +77,23 @@ export const Multi: Story = {
 }
 
 /* ── 尺寸與 Button 對齊 ── */
+const SizePicker = ({ size }: { size: 'sm' | 'md' | 'lg' }) => {
+  const [val, setVal] = React.useState<PersonValue | null>(samplePeople[0])
+  return (
+    <div className="flex items-center gap-3">
+      <PeoplePicker size={size} value={val} people={samplePeople} onChange={(v) => setVal(v[0] ?? null)} className="max-w-xs" />
+      <Button size={size}>送出</Button>
+      <span className="text-caption text-fg-muted">size="{size}"</span>
+    </div>
+  )
+}
+
 export const SizeAlignment: Story = {
   name: '尺寸',
   render: () => (
     <div className="flex flex-col gap-4">
       {(['sm', 'md', 'lg'] as const).map(size => (
-        <div key={size} className="flex items-center gap-3">
-          <PeoplePicker size={size} value={samplePeople[0]} people={samplePeople} className="max-w-xs" />
-          <Button size={size}>送出</Button>
-          <span className="text-caption text-fg-muted">size="{size}"</span>
-        </div>
+        <SizePicker key={size} size={size} />
       ))}
     </div>
   ),
