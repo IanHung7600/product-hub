@@ -237,7 +237,7 @@ export function SelectMenu({
             (!size || size === 'md') && 'min-h-[calc(var(--field-height-md)*3+16px)]',
           )}>
             {/* 空狀態:absolute 填滿 CommandList,文案垂直 + 水平居中 */}
-            <CommandEmpty className="absolute inset-0 flex items-center justify-center text-body text-fg-muted">
+            <CommandEmpty className="absolute inset-0 flex items-center justify-center text-body leading-compact text-fg-muted">
               {emptyText}
             </CommandEmpty>
 
