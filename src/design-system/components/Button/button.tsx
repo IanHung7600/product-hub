@@ -4,6 +4,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { Loader2 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useFieldContext } from '@/design-system/components/Field/field'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/design-system/components/Tooltip/tooltip'
 
 /**
@@ -226,6 +227,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
+    // ── FieldContext：在 Field 內時自動讀 size，讓 Button 跟 Input 同高 ──
+    const fieldCtx = useFieldContext?.()
+    const resolvedSize = size ?? (fieldCtx?.size as typeof size) ?? 'sm'
+
     // shadcn compat：AlertDialog、Toast 等元件內部會傳入這些 alias，
     // 在此靜默轉換，不暴露到型別或自動完成。
     const resolvedVariant: InternalVariant =
@@ -240,7 +245,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const resolvedFullWidth = fullWidth || !!groupCtx.fullWidth
 
     const Comp = asChild ? Slot : 'button'
-    const iconSize = size === 'lg' ? 20 : 16
+    const iconSize = resolvedSize === 'lg' ? 20 : 16
 
     // loading 行為：spinner 永遠在 prefix 位置
     //   有 prefix icon → icon 換成 spinner（同位置，零 layout shift）
@@ -262,7 +267,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const buttonEl = (
       <Comp
         className={cn(
-          buttonVariants({ variant: resolvedVariant, danger: resolvedDanger, size, className }),
+          buttonVariants({ variant: resolvedVariant, danger: resolvedDanger, size: resolvedSize, className }),
           iconOnly && 'aspect-square p-0 min-w-0',
           resolvedFullWidth && 'w-full',
         )}
