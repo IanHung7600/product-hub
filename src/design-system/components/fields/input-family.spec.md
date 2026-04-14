@@ -165,13 +165,19 @@ tagPadding 只在有 Tag 時才套用。Placeholder/空值狀態使用 fieldWrap
 <Input endAction={{ icon: X, label: '清除', onClick: handleClear }} />
 ```
 
-Field 內部根據 size tier 自動決定 icon 尺寸和 hover 背景大小，消費者不需要指定。共用規則見 `uiSize.spec.md` 的 Inline Action 段落。
+Field 內部用 `<ItemInlineAction>`(`item-layout.tsx` 共用元件)渲染 — 跟 Sidebar / TreeView / DropdownMenu 的 inline action **完全同一套** canonical 實作,不再有「每個 host 自己複製 18 行 button JSX」的漂移。
 
-Icon 色彩遵循 Inline Action 統一規則：預設 `fg-muted`，hover 時 `foreground`。
+- 共用規則見 `uiSize.spec.md` 的 Inline Action 段落
+- Helper 規格與 API 見 `item-layout.spec.md` 的「Inline action 共用元件」節
+- Field host 必須傳 `size={size}` 給 `<ItemInlineAction>`(field 不在 `RowSizeContext` 內,需明確覆寫)
+
+Icon 色彩遵循 Inline Action 統一規則:預設 `fg-muted`,hover 時 `foreground`。
 
 - disabled / readonly 模式不渲染 endAction
-- 條件渲染即可——消失後不佔位，input 自然擴展
-- 下拉箭頭不屬於 endAction，屬於 Select / Combobox
+- 條件渲染即可——消失後不佔位,input 自然擴展
+- 下拉箭頭不屬於 endAction,屬於 Select / Combobox
+
+**特例:Tag dismiss**——Tag 的 dismiss button 需要 chromatic hover bg(跟 tag 的 solid variant 色相一致),不是中性的 neutral-hover,因此**沒有**用 `ItemInlineAction`,維持自己的內部 JSX。這是合理特例,見 `tag.tsx:104` 的詳細註解。
 
 ---
 

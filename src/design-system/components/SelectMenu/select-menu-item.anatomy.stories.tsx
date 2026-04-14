@@ -400,7 +400,7 @@ const InspectorInner = () => {
                   checked={isMulti ? selected : undefined}
                   selected={!isMulti ? selected : undefined}
                   disabled={disabled}
-                  tag={hasTag ? <Tag size={size} variant="secondary">標籤</Tag> : undefined}
+                  tag={hasTag ? <Tag size={size} variant="neutral">標籤</Tag> : undefined}
                 >
                   電子郵件通知
                 </SelectMenuItem>
@@ -755,7 +755,7 @@ export const SizeMatrix = {
                   <SelectMenuItem size={sz} checkbox checked={true} startIcon={Bell}>
                     推播通知
                   </SelectMenuItem>
-                  <SelectMenuItem size={sz} tag={<Tag size={sz} variant="secondary">Admin</Tag>}>
+                  <SelectMenuItem size={sz} tag={<Tag size={sz} variant="neutral">Admin</Tag>}>
                     權限標記
                   </SelectMenuItem>
                 </SelectMenuGroup>

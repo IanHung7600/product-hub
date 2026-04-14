@@ -269,18 +269,24 @@ hover 和 selected 的視覺跟 SelectMenuItem 一致——因為 tree item 和 
 
 TreeItem 填滿容器寬度(hover / selected bg 全幅)。水平 padding 由 `context` prop 決定:
 
-| Context | Item padding-x | 容器 padding-y | 適用場景 |
-|---|---|---|---|
-| `'sidebar'`(預設) | `--layout-space-loose`(md=16px / lg=24px) | 無(容器自行決定) | 頁面側邊欄 |
-| `'menu'` | `12px`(對齊 SelectMenuItem) | `py-2`(8px,跟 DropdownMenu group 一致) | 浮層選單 / tree select dropdown |
+| Context | Item padding-x | 適用場景 |
+|---|---|---|
+| `'sidebar'`(預設) | `--layout-space-loose`(md=16px / lg=24px) | 頁面側邊欄 |
+| `'menu'` | `12px`(對齊 SelectMenuItem) | 浮層選單 / tree select dropdown |
 
-### 為什麼 menu 有 py-2
-
-跟 DropdownMenu / SelectMenu 的 group 一致——浮層選單的 item group 上下都有 8px padding(`py-2`),讓選項跟容器邊框之間有呼吸空間。TreeView 在 `context='menu'` 時自動加上,consumer 不需要手動設。
+**垂直 padding 的歸屬**——TreeView root 不加任何 py,呼吸空間由**外層容器負責**(SidebarGroup / DropdownMenuContent / story wrapper 自己加 `py-2`)。詳見 `item-layout.spec.md` 的「垂直 padding 歸屬」一節,這是 row primitive 的共同規則不是 TreeView 專屬。
 
 ### 為什麼 sidebar 用 layout-space-loose
 
 Sidebar 是頁面級容器,padding 應該跟其他頁面區塊的間距一致(都用 `--layout-space-loose`)。用硬寫的 px 值會在 density 切換時跟其他區塊脫節。
+
+### Sidebar icon 模式下 TreeView 的行為
+
+當 TreeView 住在 `context="sidebar"` 且外層 Sidebar 處於 `collapsible="icon"` 的收合狀態時,**整個 TreeView 區塊必須隱藏**(而非嘗試 icon 化、flyout、popover)。
+
+**為什麼**:tree 是任意深度的遞迴結構,沒有任何方式可以壓縮成單排 icon。Gmail / Linear / Notion 一致採取「隱藏」——使用者要看 tree 必須先展開 sidebar。詳見 `sidebar.spec.md` 的 icon 模式規則。
+
+實作上由 Sidebar 元件透過 CSS `group-data-[collapsible=icon]:hidden` 自動隱藏,TreeView 本身不需特殊處理。
 
 ### 為什麼 menu 用 px-3
 
@@ -328,7 +334,24 @@ TreeItem 右側的 `actions` slot **只在 hover 該列時出現**(opacity 0 →
 - 每個 action 之間:`gap-2`(8px,跟 Select 的 clear X ↔ ChevronDown 間距一致)
 - 包在 `h-[1lh]` 容器裡,對齊 label 第一行
 
-程式化:TreeItem 自動處理 `opacity-0 → group-hover:opacity-100` transition。Consumer 只需傳 `actions={<><Button .../><Button .../></>}`,不用自己管 hover 邏輯。
+**API**(宣告式,對齊 `uiSize.spec.md`「Inline Action」與 `SidebarMenuButton.inlineActions`):
+
+```tsx
+<TreeItem
+  id="inbox"
+  icon={Inbox}
+  label="Inbox"
+  inlineActions={[
+    { icon: MoreHorizontal, label: '更多', onClick: handleMore },
+    { icon: Plus,           label: '新增', onClick: handleAdd },
+  ]}
+  actionsReveal="hover"  // 預設:hover/keyboard focus 才顯示。傳 false → 常駐
+/>
+```
+
+**程式化保證**:TreeItem 內部用 `<ItemInlineAction>` helper 渲染——consumer **不可以**手刻 button JSX(canonical 實作在 `item-layout.tsx`,跟 SidebarMenuButton / 未來其他 row primitive 共用同一套 size 查表 / Tooltip / hover bg / aria 規則)。
+
+Hover-reveal 用 `group-has-[:focus-visible]/tree-item:opacity-100` 而非 `group-focus-within`——前者只在鍵盤 tab 觸發,mouse click 不會讓 actions 永久顯示。這個細節同樣由 TreeItem 內部處理,consumer 不需知道。
 
 ---
 
@@ -408,7 +431,8 @@ TreeItem 透過 props 提供 slots,讓不同 consumer 決定 node 的視覺:
 |---|---|---|
 | `icon` | `LucideIcon` | 左側 icon(chevron 之後) |
 | `label` | `ReactNode` | 主要文字(必填) |
-| `actions` | `ReactNode` | 右側 hover-only inline action(⋯ menu、+、delete 等) |
+| `inlineActions` | `InlineActionConfig[]` | 右側 inline actions(宣告式 API,host 用 `<ItemInlineAction>` 自動渲染)。詳見 `item-layout.spec.md` |
+| `actionsReveal` | `false \| "hover"` | 預設 `"hover"`(滑鼠 hover 或鍵盤 focus-visible 才淡入)/ `false` 常駐顯示 |
 | `status` | `'default' \| 'active' \| 'completed' \| 'error'` | Stepper 用,控制 node 的狀態視覺 |
 | `indicator` | `ReactNode` | 取代 **icon** 的位置(不是 chevron——chevron 永遠存在)。Stepper 用 status dot / checkmark |
 

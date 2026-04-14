@@ -5,6 +5,12 @@ import { ChevronRight, type LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import type { AvatarData } from "@/design-system/components/Avatar/avatar"
 import { SelectMenuItem } from "@/design-system/components/SelectMenu/select-menu-item"
+import {
+  RowSizeProvider,
+  useRowSize,
+  ICON_SIZE as ROW_ICON_SIZE,
+  type RowSize,
+} from "@/design-system/patterns/item-layout/item-layout"
 
 /**
  * DropdownMenu — Radix DropdownMenu + SelectMenuItem visual layer
@@ -28,10 +34,10 @@ const floatingLayerClass = [
   'origin-[--radix-dropdown-menu-content-transform-origin]',
 ].join(' ')
 
-// ── Size context ──
-type SizeKey = 'sm' | 'md' | 'lg'
-const SizeContext = React.createContext<SizeKey>('md')
-const ICON_SIZE: Record<SizeKey, number> = { sm: 16, md: 16, lg: 20 }
+// ── Size:統一用 RowSizeContext(item-layout module),消除本地 SizeContext 漂移 ──
+type SizeKey = RowSize
+// Re-export for backward compat(內部命名)
+const ICON_SIZE = ROW_ICON_SIZE
 
 // ── Shared item classes on Radix primitive ──
 const radixItemClass = [
@@ -87,9 +93,9 @@ const DropdownMenuContent = React.forwardRef<
       }}
       {...props}
     >
-      <SizeContext.Provider value={size}>
+      <RowSizeProvider value={size}>
         {children}
-      </SizeContext.Provider>
+      </RowSizeProvider>
     </DropdownMenuPrimitive.Content>
   </DropdownMenuPrimitive.Portal>
 ))
@@ -100,7 +106,7 @@ const DropdownMenuSubContent = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.SubContent>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubContent>
 >(({ className, children, ...props }, ref) => {
-  const size = React.useContext(SizeContext)
+  const size = useRowSize()
   return (
     <DropdownMenuPrimitive.SubContent
       ref={ref}
@@ -109,9 +115,9 @@ const DropdownMenuSubContent = React.forwardRef<
       style={{ boxShadow: 'var(--elevation-200)', minWidth: 180 }}
       {...props}
     >
-      <SizeContext.Provider value={size}>
+      <RowSizeProvider value={size}>
         {children}
-      </SizeContext.Provider>
+      </RowSizeProvider>
     </DropdownMenuPrimitive.SubContent>
   )
 })
@@ -162,7 +168,7 @@ const DropdownMenuItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Item>,
   DropdownMenuItemProps
 >(({ className, children, startIcon, avatar, description, tag, badge, endIcon, shortcut, selected, disabled, ...props }, ref) => {
-  const size = React.useContext(SizeContext)
+  const size = useRowSize()
   const endContent = buildEndContent(size, badge, endIcon, shortcut)
 
   return (
@@ -211,7 +217,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.SubTrigger>,
   DropdownMenuSubTriggerProps
 >(({ className, children, startIcon, value, badge, ...props }, ref) => {
-  const size = React.useContext(SizeContext)
+  const size = useRowSize()
   const iconPx = ICON_SIZE[size]
 
   // SubTrigger suffix: [value?] [badge?] [ChevronRight] with gap-1
@@ -261,7 +267,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.CheckboxItem>,
   DropdownMenuCheckboxItemProps
 >(({ className, children, startIcon, description, checked, disabled, ...props }, ref) => {
-  const size = React.useContext(SizeContext)
+  const size = useRowSize()
 
   return (
     <DropdownMenuPrimitive.CheckboxItem
@@ -294,7 +300,7 @@ const DropdownMenuLabel = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Label>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label>
 >(({ className, children, ...props }, ref) => {
-  const size = React.useContext(SizeContext)
+  const size = useRowSize()
   return (
     <DropdownMenuPrimitive.Label
       ref={ref}
@@ -342,6 +348,5 @@ export {
   DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
   floatingLayerClass,
-  SizeContext,
 }
 export type { SizeKey, DropdownMenuItemProps }

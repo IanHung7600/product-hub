@@ -1,9 +1,8 @@
 import * as React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import {
-  LayoutDashboard, Users, Settings, Bell,
-  ShieldCheck, SlidersHorizontal, FileText,
-  MoreHorizontal, Plus,
+  LayoutDashboard, Inbox, Users, Settings, Bell,
+  Folder, FileText, FileCode, Plus, MoreHorizontal,
 } from 'lucide-react'
 import {
   SidebarProvider,
@@ -12,23 +11,15 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarTrigger,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
 } from './sidebar'
 import { TreeView, TreeItem } from '@/design-system/components/TreeView/tree-view'
-import { Avatar } from '@/design-system/components/Avatar/avatar'
-
-/**
- * Inline action button for tree items (same as TreeView stories).
- */
-const TreeAction = ({ icon: Icon, label }: { icon: React.ComponentType<{ size: number; className?: string }>; label: string }) => (
-  <button
-    type="button"
-    className="relative flex items-center justify-center w-4 h-4 text-fg-muted hover:text-foreground transition-colors before:absolute before:inset-[-1px] before:rounded-sm before:bg-transparent hover:before:bg-neutral-hover before:transition-colors"
-    aria-label={label}
-    onClick={(e) => e.stopPropagation()}
-  >
-    <Icon size={16} className="relative" />
-  </button>
-)
+import { ItemAvatar, ItemLabel } from '@/design-system/patterns/item-layout/item-layout'
 
 const meta: Meta = {
   title: 'Design System/Components/Sidebar/展示',
@@ -38,213 +29,417 @@ export default meta
 
 type Story = StoryObj
 
-// ── Full Page Layout ───────────────────────────────────────────────────────
+// ── 主導覽(設計好的 1 層扁平,每項必須有 icon 以支援 icon 模式)──────────
+const MAIN_NAV = [
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'inbox', label: 'Inbox', icon: Inbox },
+  { id: 'team', label: 'Team', icon: Users },
+  { id: 'notifications', label: 'Notifications', icon: Bell },
+  { id: 'settings', label: 'Settings', icon: Settings },
+] as const
 
-export const FullPageLayout: Story = {
-  name: '完整頁面佈局',
-  render: () => (
-    <SidebarProvider>
-      <div className="flex h-screen bg-canvas">
-        <Sidebar>
+// ── 共用元件 ─────────────────────────────────────────────────────────────
+
+/**
+ * Workspace 品牌 header——Avatar 方塊 + workspace 名稱。
+ * 不加 padding——SidebarHeader 已用 loose token 提供水平 padding。
+ *
+ * Chrome typography:`text-body-lg font-medium`(16px)——跟 page title 同級。
+ */
+const WorkspaceBrand = () => (
+  <div className="flex items-center gap-2 min-w-0 group-data-[collapsible=icon]:justify-center">
+    <ItemAvatar alt="Acme Inc" shape="square" color="blue" solid />
+    <span className="text-body-lg font-medium truncate group-data-[collapsible=icon]:hidden">Acme Inc</span>
+  </div>
+)
+
+/**
+ * User footer——用 SidebarMenu 結構,每個 footer 項目是一個 SidebarMenuButton。
+ * 未來可加更多選項(Settings / Help / Logout 等),全部共用同一套 item-layout。
+ *
+ * **Avatar 尺寸遵守 item-layout.spec 的預設**:
+ * 無 description → inline 模式 24px @ md(20/24/24 for sm/md/lg)
+ * **不要為了跟 icon 對齊而把 avatar 改小**——不同 prefix 類型(icon 16 / avatar 24)
+ * 的 label x 位置略有差異是可接受的,每個 prefix 反映自己的視覺重量(詳見 spec)。
+ *
+ * asChild + h-[1lh] 容器強制 avatar 對齊第一行文字中線。
+ */
+const UserFooter = () => (
+  <SidebarMenu>
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild>
+        <button type="button">
+          <ItemAvatar alt="Alan Chen" color="blue" />
+          <span data-sidebar="menu-label" className="min-w-0 flex-1 truncate">Alan Chen</span>
+        </button>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  </SidebarMenu>
+)
+
+/**
+ * 主內容區——h-12 header 對齊 SidebarHeader 高度。
+ * Trigger 是唯一的 sidebar 切換入口。
+ */
+const PageContent = ({ title, description }: { title: string; description: React.ReactNode }) => (
+  <main className="flex-1 flex flex-col min-w-0 min-h-svh bg-canvas">
+    {/* Header 用 --chrome-header-height token,跟 SidebarHeader 自動同高對齊,隨 density 變 */}
+    <header className="flex h-[var(--chrome-header-height)] shrink-0 items-center gap-2 border-b border-divider bg-surface px-[var(--layout-space-loose)]">
+      {/* 不加 -ml-1(shadcn 原版的 offset 是補償 Button 的 px-3;我們 text iconOnly 是 p-0 無 padding,
+          trigger 直接貼 loose 邊界即對齊) */}
+      <SidebarTrigger />
+      {/* Chrome typography:跟 workspace brand 同 `text-body-lg font-medium` (16px),
+          平等 sibling。「當下在哪頁」的訊號由 sidebar active item 負責,不靠 title 字重 */}
+      <h1 className="text-body-lg font-medium">{title}</h1>
+    </header>
+    <div className="flex-1 overflow-auto p-8">
+      <div className="max-w-2xl">
+        <p className="text-body text-fg-secondary mb-6">{description}</p>
+        <div className="grid grid-cols-2 gap-4">
+          {['專案數量', '團隊成員', '本週提交', '待處理'].map((t) => (
+            <div key={t} className="rounded-lg border border-divider bg-surface p-4">
+              <p className="text-caption text-fg-muted">{t}</p>
+              <p className="text-h5 font-semibold mt-1">{Math.floor(Math.random() * 100)}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </main>
+)
+
+// ── 1. 完整佈局(icon 收合模式,預設推薦)────────────────────────────────
+
+export const IconCollapse: Story = {
+  name: '完整佈局(icon 收合)',
+  render: () => {
+    const [activeId, setActiveId] = React.useState<string>('dashboard')
+
+    return (
+      <SidebarProvider activeId={activeId} onActiveChange={setActiveId}>
+        <Sidebar collapsible="icon">
           <SidebarHeader>
-            <div className="flex items-center justify-between w-full gap-2 min-w-0">
-              <div className="flex items-center gap-2 min-w-0">
-                <div className="shrink-0 h-7 w-7 rounded-md bg-primary flex items-center justify-center">
-                  <span className="text-caption font-bold text-primary-foreground">A</span>
-                </div>
-                <span className="text-body font-semibold truncate">Acme Inc</span>
-              </div>
-              <SidebarTrigger />
-            </div>
+            <WorkspaceBrand />
           </SidebarHeader>
-
           <SidebarContent>
-            <TreeView
-              aria-label="側邊導覽"
-              defaultExpandedIds={['team', 'settings']}
-            >
-              <TreeItem
-                id="dashboard"
-                icon={LayoutDashboard}
-                label="Dashboard"
-                actions={<TreeAction icon={MoreHorizontal} label="更多" />}
-              />
-              <TreeItem
-                id="team"
-                icon={Users}
-                label="Team"
-                actions={
-                  <>
-                    <TreeAction icon={Plus} label="新增" />
-                    <TreeAction icon={MoreHorizontal} label="更多" />
-                  </>
-                }
-              >
-                <TreeItem
-                  id="members"
-                  icon={Users}
-                  label="Members"
-                  actions={<TreeAction icon={MoreHorizontal} label="更多" />}
-                />
-                <TreeItem
-                  id="roles"
-                  icon={ShieldCheck}
-                  label="Roles"
-                  actions={<TreeAction icon={MoreHorizontal} label="更多" />}
-                />
-              </TreeItem>
-              <TreeItem
-                id="notifications"
-                icon={Bell}
-                label="Notifications"
-                actions={<TreeAction icon={MoreHorizontal} label="更多" />}
-              />
-              <TreeItem
-                id="settings"
-                icon={Settings}
-                label="Settings"
-                actions={
-                  <>
-                    <TreeAction icon={Plus} label="新增" />
-                    <TreeAction icon={MoreHorizontal} label="更多" />
-                  </>
-                }
-              >
-                <TreeItem
-                  id="general"
-                  icon={SlidersHorizontal}
-                  label="General"
-                  actions={<TreeAction icon={MoreHorizontal} label="更多" />}
-                />
-                <TreeItem
-                  id="security"
-                  icon={ShieldCheck}
-                  label="Security"
-                  actions={<TreeAction icon={MoreHorizontal} label="更多" />}
-                />
-                <TreeItem
-                  id="billing"
-                  icon={FileText}
-                  label="Billing"
-                  actions={<TreeAction icon={MoreHorizontal} label="更多" />}
-                />
-              </TreeItem>
-            </TreeView>
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {MAIN_NAV.map((item) => (
+                    <SidebarMenuItem key={item.id}>
+                      <SidebarMenuButton
+                        id={item.id}
+                        startIcon={item.icon}
+                        tooltip={item.label}
+                      >
+                        {item.label}
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
           </SidebarContent>
-
           <SidebarFooter>
-            <div className="flex items-center gap-2 min-w-0">
-              <Avatar size={28} alt="Alan Chen" color="blue" />
-              <span className="text-body truncate">Alan Chen</span>
-            </div>
+            <UserFooter />
           </SidebarFooter>
         </Sidebar>
 
-        {/* Main content area */}
-        <main className="flex-1 p-8 overflow-auto">
-          <div className="max-w-2xl">
-            <h1 className="text-h4 font-semibold mb-4">Dashboard</h1>
-            <p className="text-body text-fg-secondary mb-6">
-              左側是 Sidebar 元件，包含 TreeView 導覽。點擊左上角的收合按鈕可切換 sidebar 寬度。
-            </p>
-            <div className="grid grid-cols-2 gap-4">
-              {['專案數量', '團隊成員', '本週提交', '待處理'].map((title) => (
-                <div key={title} className="rounded-lg border border-divider bg-surface p-4">
-                  <p className="text-caption text-fg-muted">{title}</p>
-                  <p className="text-h5 font-semibold mt-1">{Math.floor(Math.random() * 100)}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </main>
-      </div>
-    </SidebarProvider>
-  ),
+        <PageContent
+          title={MAIN_NAV.find((n) => n.id === activeId)?.label ?? 'Dashboard'}
+          description={
+            <>
+              扁平主導覽用 <code className="text-caption px-1 bg-neutral-hover rounded">SidebarMenu</code>,
+              每項必須有 icon。點左上角 <strong>SidebarTrigger</strong>(灰框按鈕)或按
+              <kbd className="text-caption px-1 bg-neutral-hover rounded">⌘B</kbd> 切換收合。
+              收合後變 icon rail,hover 顯示 tooltip。
+            </>
+          }
+        />
+      </SidebarProvider>
+    )
+  },
 }
 
-// ── Right Sidebar ──────────────────────────────────────────────────────────
+// ── 2. 混合內容(SidebarMenu + TreeView)─────────────────────────────────
 
-export const RightSidebar: Story = {
-  name: '右側 Sidebar',
-  render: () => (
-    <SidebarProvider>
-      <div className="flex h-screen bg-canvas">
-        <main className="flex-1 p-8 overflow-auto">
-          <div className="max-w-2xl">
-            <h1 className="text-h4 font-semibold mb-4">文件編輯器</h1>
-            <p className="text-body text-fg-secondary">
-              右側 Sidebar 適合放置屬性面板、inspector 等輔助資訊。
-            </p>
-          </div>
-        </main>
+const PROJECTS_TREE = [
+  { id: 'web', label: 'Web App', icon: Folder, children: [
+    { id: 'frontend', label: 'frontend', icon: Folder },
+    { id: 'backend', label: 'backend', icon: Folder },
+    { id: 'readme', label: 'README.md', icon: FileText },
+  ]},
+  { id: 'mobile', label: 'Mobile App', icon: Folder, children: [
+    { id: 'ios', label: 'iOS', icon: FileCode },
+    { id: 'android', label: 'Android', icon: FileCode },
+  ]},
+  { id: 'docs', label: 'Docs', icon: Folder },
+  { id: 'design', label: 'Design System', icon: Folder },
+  { id: 'infra', label: 'Infrastructure', icon: Folder },
+  { id: 'analytics', label: 'Analytics', icon: Folder },
+]
 
-        <Sidebar side="right">
+export const MixedContent: Story = {
+  name: '混合內容(SidebarMenu + TreeView)',
+  render: () => {
+    // 單一 active state 跨整個 sidebar——SidebarProvider 內建 single-selection,
+    // 每個 SidebarMenuButton 只要傳 `id`,點擊自動 setActiveId、isActive 自動算。
+    // TreeView 的 selectedIds 需要手動同步(TreeView 有自己的 selection state)。
+    const [activeId, setActiveId] = React.useState<string>('frontend')
+    const isInMainNav = MAIN_NAV.some((n) => n.id === activeId)
+    // Show-more 展示:預設只顯示前 2 個 project,點「查看更多」展開全部
+    const [showAllProjects, setShowAllProjects] = React.useState(false)
+    const visibleProjects = showAllProjects ? PROJECTS_TREE : PROJECTS_TREE.slice(0, 2)
+    const remainingCount = PROJECTS_TREE.length - 2
+
+    return (
+      <SidebarProvider activeId={activeId} onActiveChange={setActiveId}>
+        <Sidebar collapsible="icon">
           <SidebarHeader>
-            <div className="flex items-center justify-between w-full gap-2">
-              <SidebarTrigger side="right" />
-              <span className="text-body font-semibold truncate">屬性</span>
-            </div>
+            <WorkspaceBrand />
           </SidebarHeader>
-
           <SidebarContent>
-            <div className="px-[var(--layout-space-loose)] py-3 flex flex-col gap-3">
-              {['外觀', '佈局', '間距', '字體', '色彩'].map((section) => (
-                <div key={section}>
-                  <p className="text-caption font-medium text-fg-muted mb-2">{section}</p>
-                  <div className="h-8 rounded-md bg-neutral-hover" />
-                </div>
-              ))}
-            </div>
+            {/* 主導覽——`id` prop 讓每個 button 自動接 SidebarProvider 的 single-selection,
+                不需要 consumer 手動 isActive + onClick */}
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {MAIN_NAV.map((item) => (
+                    <SidebarMenuItem key={item.id}>
+                      <SidebarMenuButton
+                        id={item.id}
+                        startIcon={item.icon}
+                        tooltip={item.label}
+                      >
+                        {item.label}
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* User data:TreeView,icon 模式整區隱藏。
+                `collapsible` 讓整個 group 可收合——label 變 trigger + 自動 chevron,
+                content 用 Radix Collapsible 包起來。
+                群組之間的分隔線由 SidebarGroup 的 [&+&]:before 自動處理。 */}
+            <SidebarGroup collapsible className="group-data-[collapsible=icon]:hidden">
+              <SidebarGroupLabel>Projects</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <TreeView
+                  aria-label="Projects"
+                  defaultExpandedIds={['web']}
+                  selectedIds={new Set(isInMainNav ? [] : [activeId])}
+                  onSelectedChange={(ids) => {
+                    const first = Array.from(ids)[0]
+                    if (first) setActiveId(first)
+                  }}
+                >
+                  {visibleProjects.map((proj) => (
+                    <TreeItem key={proj.id} id={proj.id} icon={proj.icon} label={proj.label}>
+                      {proj.children?.map((child) => (
+                        <TreeItem key={child.id} id={child.id} icon={child.icon} label={child.label} />
+                      ))}
+                    </TreeItem>
+                  ))}
+                </TreeView>
+                {/* Section 底部的「查看更多」——variant="meta" 自動:
+                    - fg-muted 文字(視覺退到 meta 層)
+                    - font-normal(從 nav 的 medium 退下來)
+                    - 不參與 single-selection(不會變 active,不需 id)
+                    - hover 時升到 foreground,跟其他 row 共用 row rhythm
+                    無 icon——對齊 Linear / Notion / macOS Mail 的「Show more」慣例,
+                    label x 自然跟上方 tree items 錯位是 feature(meta != data 視覺訊號)*/}
+                {remainingCount > 0 && (
+                  <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        variant="meta"
+                        onClick={() => setShowAllProjects((v) => !v)}
+                      >
+                        {showAllProjects ? '顯示更少' : `查看更多 (${remainingCount})`}
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                )}
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* Favorites:扁平清單 + hover-reveal inline actions。
+                每個 item 傳 `id` 就自動參與整個 sidebar 的 single-selection——
+                選 alpha 會自動 deselect Dashboard / TreeView 的選項,反之亦然。 */}
+            <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+              <SidebarGroupLabel>Favorites</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {['alpha', 'beta', 'gamma'].map((name) => (
+                    <SidebarMenuItem key={name}>
+                      <SidebarMenuButton
+                        id={`fav-${name}`}
+                        startIcon={Folder}
+                        actionsReveal="hover"
+                        inlineActions={[
+                          { icon: MoreHorizontal, label: '更多動作', onClick: () => {} },
+                          { icon: Plus, label: '新增', onClick: () => {} },
+                        ]}
+                      >
+                        {name}
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
           </SidebarContent>
-        </Sidebar>
-      </div>
-    </SidebarProvider>
-  ),
-}
-
-// ── Default Collapsed ──────────────────────────────────────────────────────
-
-export const DefaultCollapsed: Story = {
-  name: '預設收合',
-  render: () => (
-    <SidebarProvider defaultCollapsed>
-      <div className="flex h-[480px] bg-canvas border border-divider rounded-lg overflow-hidden">
-        <Sidebar>
-          <SidebarHeader>
-            <div className="flex items-center justify-between w-full gap-2 min-w-0">
-              <div className="flex items-center gap-2 min-w-0">
-                <div className="shrink-0 h-7 w-7 rounded-md bg-primary flex items-center justify-center">
-                  <span className="text-caption font-bold text-primary-foreground">A</span>
-                </div>
-                <span className="text-body font-semibold truncate">Acme Inc</span>
-              </div>
-              <SidebarTrigger />
-            </div>
-          </SidebarHeader>
-
-          <SidebarContent>
-            <TreeView aria-label="側邊導覽">
-              <TreeItem id="dashboard" icon={LayoutDashboard} label="Dashboard" />
-              <TreeItem id="team" icon={Users} label="Team" />
-              <TreeItem id="notifications" icon={Bell} label="Notifications" />
-              <TreeItem id="settings" icon={Settings} label="Settings" />
-            </TreeView>
-          </SidebarContent>
-
           <SidebarFooter>
-            <div className="flex items-center gap-2 min-w-0">
-              <Avatar size={28} alt="Alan Chen" color="blue" />
-              <span className="text-body truncate">Alan Chen</span>
-            </div>
+            <UserFooter />
           </SidebarFooter>
         </Sidebar>
 
-        <main className="flex-1 p-8 overflow-auto">
-          <p className="text-body text-fg-secondary">
-            Sidebar 預設收合，點擊展開按鈕查看完整導覽。
-          </p>
-        </main>
-      </div>
-    </SidebarProvider>
-  ),
+        <PageContent
+          title={isInMainNav
+            ? MAIN_NAV.find((n) => n.id === activeId)?.label ?? ''
+            : activeId}
+          description={
+            <>
+              上方 <code className="text-caption px-1 bg-neutral-hover rounded">SidebarMenu</code> 是 designer 設計好的主導覽,
+              下方 <code className="text-caption px-1 bg-neutral-hover rounded">TreeView</code> 是使用者自建的 project 資料。
+              整個 sidebar 同時只有一個 active,切到 icon 模式後 TreeView 整段隱藏。
+            </>
+          }
+        />
+      </SidebarProvider>
+    )
+  },
 }
+
+// ── 3. Offcanvas 模式 ─────────────────────────────────────────────────────
+
+export const Offcanvas: Story = {
+  name: 'Offcanvas 收合',
+  render: () => {
+    const [activeId, setActiveId] = React.useState<string>('dashboard')
+
+    return (
+      <SidebarProvider activeId={activeId} onActiveChange={setActiveId}>
+        <Sidebar collapsible="offcanvas">
+          <SidebarHeader>
+            <WorkspaceBrand />
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {MAIN_NAV.map((item) => (
+                    <SidebarMenuItem key={item.id}>
+                      <SidebarMenuButton id={item.id} startIcon={item.icon}>
+                        {item.label}
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+          <SidebarFooter>
+            <UserFooter />
+          </SidebarFooter>
+        </Sidebar>
+
+        <PageContent
+          title={MAIN_NAV.find((n) => n.id === activeId)?.label ?? 'Dashboard'}
+          description={
+            <>
+              Offcanvas 模式:收合時整個 sidebar 滑出畫面。重新展開的唯一方法是點左上角
+              <strong> SidebarTrigger </strong>或按 <kbd className="text-caption px-1 bg-neutral-hover rounded">⌘B</kbd>。
+            </>
+          }
+        />
+      </SidebarProvider>
+    )
+  },
+}
+
+// ── 4. Mixed prefix(uniformPrefix:nav icon + brand logo)──────────────
+
+export const IntegrationSidebar: Story = {
+  name: 'Mixed prefix(icon + brand logo)',
+  render: () => {
+    const [activeId, setActiveId] = React.useState<string>('home')
+
+    // Linear / Raycast 風格:主導覽是 lucide icon,integration 是 brand logo,
+    // 兩者語意等價(都是「導覽目的地」),用 uniformPrefix 讓 label 齊左
+    const NAV_ITEMS = [
+      { id: 'home', label: 'Home', icon: LayoutDashboard },
+      { id: 'inbox-2', label: 'Inbox', icon: Inbox },
+      { id: 'team-2', label: 'Team', icon: Users },
+    ] as const
+
+    const INTEGRATIONS = [
+      { id: 'github', label: 'GitHub', color: 'neutral' as const },
+      { id: 'slack',  label: 'Slack',  color: 'purple'  as const },
+      { id: 'figma',  label: 'Figma',  color: 'red'     as const },
+    ]
+
+    return (
+      // uniformPrefix opt-in 啟用 school B(Notion/Linear 風格)的全域對齊。
+      // 預設是 false(school A),這個 demo 主動開啟讓混用的 icon + brand logo 對齊。
+      <SidebarProvider activeId={activeId} onActiveChange={setActiveId} uniformPrefix>
+        <Sidebar collapsible="icon">
+          <SidebarHeader>
+            <WorkspaceBrand />
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarGroupContent>
+                {/* SidebarProvider 開了 uniformPrefix → CSS :has() 偵測這個 menu 同時存在
+                    icon 跟 avatar prefix,自動套用 24px 固定槽:
+                    - icon items(16px)在 24px 槽內 justify-center
+                    - logo items(24px)填滿 24px 槽
+                    - 兩種 label x 完全對齊
+                    Notion / Raycast / Linear integrations 的 canonical 模式 */}
+                <SidebarMenu>
+                  {NAV_ITEMS.map((item) => (
+                    <SidebarMenuItem key={item.id}>
+                      <SidebarMenuButton id={item.id} startIcon={item.icon} tooltip={item.label}>
+                        {item.label}
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                  {INTEGRATIONS.map((app) => (
+                    <SidebarMenuItem key={app.id}>
+                      <SidebarMenuButton id={app.id} tooltip={app.label} asChild>
+                        <button type="button">
+                          <ItemAvatar shape="square" alt={app.label} color={app.color} />
+                          <ItemLabel>{app.label}</ItemLabel>
+                        </button>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+          <SidebarFooter>
+            <UserFooter />
+          </SidebarFooter>
+        </Sidebar>
+
+        <PageContent
+          title={
+            [...NAV_ITEMS, ...INTEGRATIONS].find((n) => n.id === activeId)?.label ?? 'Home'
+          }
+          description={
+            <>
+              <code className="text-caption px-1 bg-neutral-hover rounded">SidebarProvider uniformPrefix</code>
+              {' '}opt-in 後,CSS :has() 偵測整個 sidebar 子樹的混用 prefix,nav icon(16px)
+              和 brand logo(24px)在 24px 固定槽內共同對齊,兩種 label x 完全一致。Notion /
+              Raycast / Linear integrations 的混用模式。預設關閉(school A,explicit 立場)。
+            </>
+          }
+        />
+      </SidebarProvider>
+    )
+  },
+}
+

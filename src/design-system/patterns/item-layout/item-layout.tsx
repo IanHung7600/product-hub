@@ -1,0 +1,441 @@
+import * as React from "react"
+import type { LucideIcon } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { Avatar, type AvatarProps } from "@/design-system/components/Avatar/avatar"
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/design-system/components/Tooltip/tooltip"
+import type { InlineActionConfig } from "@/design-system/components/fields/field-types"
+
+/**
+ * Item Layout — 共用工具與常數
+ *
+ * 這個檔案不是元件,是 `item-layout.spec.md` 的 code-level 實作。
+ * 所有 row primitives(`SelectMenuItem` / `TreeItem` / `SidebarMenuButton` /
+ * `SelectionItem`)**必須 import 本 module 的 ICON_SIZE 和 helpers**,
+ * 不要各自複製常數或 wrapper className——單一 source of truth,避免不一致。
+ *
+ * 詳細規則見 `item-layout.spec.md`。
+ */
+
+// ── Types ──────────────────────────────────────────────────────────────────
+
+/** Row primitive 的 size 變體,對齊 `--field-height-*` token family */
+export type RowSize = "sm" | "md" | "lg"
+
+// ── Constants ──────────────────────────────────────────────────────────────
+
+/**
+ * Icon 尺寸(px)per row size。
+ *
+ * - sm / md: 16px(標準 row icon)
+ * - lg: 20px(對齊 text-body-lg 的視覺重量)
+ *
+ * **用法**:透過 Lucide icon 的 `size` prop 直接傳入,不要用 CSS `[&>svg]:size-*`
+ * selector——當 icon 被包在 `<ItemPrefix>` 的 `h-[1lh]` wrapper 內時,
+ * `>` 直接子選擇器會失效,Lucide icon 會 fallback 到預設 24px。
+ *
+ * ```tsx
+ * import { ICON_SIZE } from "@/design-system/patterns/item-layout/item-layout"
+ *
+ * const iconPx = ICON_SIZE[size]  // size: RowSize
+ * <MyLucideIcon size={iconPx} />
+ * ```
+ */
+export const ICON_SIZE: Record<RowSize, number> = {
+  sm: 16,
+  md: 16,
+  lg: 20,
+}
+
+/**
+ * Avatar 尺寸(px)per row size,分 inline / block 兩種模式。
+ *
+ * - **inline**(無 description,大宗情境)→ 對齊第一行 label,用 `h-[1lh]` 容器
+ *   sm: 20, md: 24, lg: 24
+ * - **block**(有 description,avatar 跨越 label + desc 兩行)→ 對齊文字塊中心
+ *   sm: 32, md: 32, lg: 40
+ *
+ * **用法**:所有 row primitive 的 consumer(包含 `asChild` pattern 的 Sidebar / Tree
+ * consumer)**必須**從本 module import 這個常數,**不可硬寫 `size={24}`**。
+ * 硬寫會讓 sm 變體的 avatar 尺寸錯誤、跟 ICON_SIZE 對齊規則脫鉤。
+ *
+ * ```tsx
+ * import { AVATAR_SIZE } from "@/design-system/patterns/item-layout/item-layout"
+ *
+ * const { size } = useSidebar()  // RowSize
+ * <Avatar size={AVATAR_SIZE.inline[size]} />
+ * ```
+ *
+ * Canonical 實作:`SelectMenuItem` 的內部 `AVATAR_SIZE` 查表(即將 re-export 自此)。
+ */
+export const AVATAR_SIZE = {
+  inline: { sm: 20, md: 24, lg: 24 },
+  block:  { sm: 32, md: 32, lg: 40 },
+} as const satisfies Record<"inline" | "block", Record<RowSize, number>>
+
+/**
+ * 回傳 uniform prefix slot 的 inline style(CSS variable form)。
+ *
+ * 用法:Row-primitive 頂層容器(例如 `<SidebarProvider uniformPrefix>` 的 wrapper)
+ * 把這個 style 套在 `style` prop 上(預先放在 `--mixed-prefix-slot` 候選位置,
+ * 由外層 CSS `:has()` 條件化套到 `--item-prefix-slot`),子樹內所有 `<ItemPrefix>` /
+ * `<ItemIcon>` / `<ItemAvatar>` 會自動用固定寬槽對齊。
+ *
+ * 槽寬 = `AVATAR_SIZE.inline[size]`(20/24/24 @ sm/md/lg)——以最大的 inline
+ * prefix(avatar)為基準,icon 在槽內 `justify-center`。
+ *
+ * ```tsx
+ * <ul style={getUniformPrefixSlotStyle(size)}>
+ *   <ItemIcon icon={Folder} />      ← 16px icon 在 24px 槽內置中
+ *   <ItemAvatar alt="GitHub" />     ← 24px logo 填滿槽
+ * </ul>
+ * ```
+ */
+export function getUniformPrefixSlotStyle(size: RowSize): React.CSSProperties {
+  return { "--item-prefix-slot": `${AVATAR_SIZE.inline[size]}px` } as React.CSSProperties
+}
+
+/**
+ * Inline action(suffix 裡的 hover-action icon button)hover 背景尺寸(px)。
+ * 規則:icon size + 2px(每邊 +1px,用 absolute positioning 溢出不影響排版)。
+ * 對齊 `uiSize.spec.md` 的 inline action 規則。
+ */
+export const INLINE_ACTION_HOVER_BG_SIZE: Record<RowSize, number> = {
+  sm: 18,
+  md: 18,
+  lg: 22,
+}
+
+// ── Helper components ──────────────────────────────────────────────────────
+
+/**
+ * `<ItemPrefix>` — Row primitive 的 prefix slot wrapper。
+ *
+ * 把 prefix(icon / avatar / checkbox / indicator)包進 `h-[1lh]` 容器,
+ * 強制對齊第一行文字中線。這是 item-layout 的底層規則(詳見 spec「Prefix 垂直對齊」)。
+ *
+ * **為什麼**:
+ * - Row primitive 的 outer flex 是 `items-start`(多行 label 時 prefix 不飄移)
+ * - 單行時 prefix 透過這個 wrapper 強制對齊第一行中線,視覺效果 = `items-center`
+ * - 不同尺寸的 prefix(icon 16、Avatar 24、Checkbox 20)都能穩定置中
+ *
+ * 用法:
+ * ```tsx
+ * <div className="flex items-start gap-2">
+ *   <ItemPrefix>
+ *     <Avatar size={24} />
+ *   </ItemPrefix>
+ *   <span className="min-w-0 flex-1 truncate">{label}</span>
+ * </div>
+ * ```
+ *
+ * asChild 的 consumer(例如 `<SidebarMenuButton asChild>`)**必須自己**用這個 wrapper
+ * 包 prefix,不能省略。
+ */
+export const ItemPrefix = React.forwardRef<
+  HTMLSpanElement,
+  React.HTMLAttributes<HTMLSpanElement>
+>(({ className, ...props }, ref) => (
+  <span
+    ref={ref}
+    className={cn(
+      "h-[1lh] shrink-0 flex items-center",
+      // Uniform prefix slot:讀取 `--item-prefix-slot` CSS variable,
+      // fallback `auto`(= 預設行為,不佔額外寬度、不 center)。
+      // Row-primitive 頂層容器(例如 `<SidebarProvider uniformPrefix>` 的 wrapper)
+      // 若設定這個 var,小尺寸 prefix(icon 16px)會在固定寬槽(24px @ md)內置中,
+      // 與大尺寸 prefix(app logo 24px)對齊,達成 label 齊左。
+      // 詳見 item-layout.spec.md「Uniform prefix slot」節。
+      "min-w-[var(--item-prefix-slot,auto)] justify-center",
+      className
+    )}
+    {...props}
+  />
+))
+ItemPrefix.displayName = "ItemPrefix"
+
+/**
+ * `<ItemLabel>` — Row primitive 的 label span。
+ *
+ * 預設 `min-w-0 flex-1 truncate`——單行截斷,佔滿剩餘 flex 空間。
+ * 加 `data-sidebar="menu-label"` attribute 讓 sidebar icon 模式的 CSS selector 能命中。
+ *
+ * 用法:
+ * ```tsx
+ * <ItemLabel>{label}</ItemLabel>
+ * ```
+ */
+export const ItemLabel = React.forwardRef<
+  HTMLSpanElement,
+  React.HTMLAttributes<HTMLSpanElement>
+>(({ className, ...props }, ref) => (
+  <span
+    ref={ref}
+    data-sidebar="menu-label"
+    className={cn("min-w-0 flex-1 truncate", className)}
+    {...props}
+  />
+))
+ItemLabel.displayName = "ItemLabel"
+
+// ── Row size context ──────────────────────────────────────────────────────
+//
+// 作用:讓 row primitive(Sidebar / SelectMenu / Tree / DropdownMenu)只 propagate
+// 一次 size,整個子樹內的 <ItemIcon> / <ItemAvatar> 都自動查到正確尺寸。
+//
+// **存在的唯一理由**:消除 asChild pattern 下 consumer 硬寫 `size={24}` 的可能性。
+// 過去 consumer 必須 `useSidebar().size` 再手動傳 `AVATAR_SIZE.inline[size]`,
+// 每個 consumer 都是一次漂移機會(曾發生:sm 欄 avatar 顯示 24 而非 20,破壞規格)。
+// 現在 consumer 只寫 `<ItemAvatar alt="..." />`,尺寸由 context 自動決定。
+//
+// Row primitive 實作者的責任:在元件內部用 `<RowSizeProvider value={size}>` 包裹
+// children(不論 asChild 或非 asChild 路徑),這樣任何 descendant 的 ItemIcon /
+// ItemAvatar 都會拿到正確尺寸。
+
+const RowSizeContext = React.createContext<RowSize | null>(null)
+
+export const RowSizeProvider = RowSizeContext.Provider
+
+/**
+ * 讀取當前 row size。在 row primitive 子樹外呼叫會回 fallback(預設 "md")。
+ * Row primitive 實作者不該呼叫這個——你們已經知道自己的 size。
+ * 這個 hook 是給 `<ItemIcon>` / `<ItemAvatar>` 和 asChild consumer 的逃生艙用。
+ */
+export function useRowSize(fallback: RowSize = "md"): RowSize {
+  return React.useContext(RowSizeContext) ?? fallback
+}
+
+// ── Prefab prefix elements ────────────────────────────────────────────────
+//
+// `<ItemIcon>` 和 `<ItemAvatar>` 是「prefix slot 的完成品元件」——自帶 ItemPrefix
+// wrapper + 自動查 ICON_SIZE / AVATAR_SIZE。
+//
+// **asChild consumer 必須用這兩個元件,禁止手動寫 `<Avatar size={N} />`**。
+// 禁令理由見 item-layout.spec.md「Avatar 尺寸選擇」節。
+
+export interface ItemIconProps
+  extends Omit<React.SVGAttributes<SVGSVGElement>, "children"> {
+  /** Lucide icon 元件(不是 JSX element) */
+  icon: LucideIcon
+}
+
+/**
+ * `<ItemIcon icon={Folder} />` — 自動查 `ICON_SIZE[rowSize]`,包在 `ItemPrefix` 內。
+ * 永遠對齊第一行 label(item-layout 的 icon 永遠 inline)。
+ */
+export const ItemIcon = React.forwardRef<SVGSVGElement, ItemIconProps>(
+  ({ icon: Icon, className, ...props }, ref) => {
+    const size = useRowSize()
+    return (
+      // data-prefix-type="icon" 讓 row-primitive 容器的 `:has()` selector 能偵測類型,
+      // 用於 `<SidebarProvider uniformPrefix>` opt-in 後的混用 auto-detection
+      <ItemPrefix data-prefix-type="icon">
+        <Icon
+          ref={ref}
+          size={ICON_SIZE[size]}
+          className={cn("shrink-0", className)}
+          aria-hidden
+          {...props}
+        />
+      </ItemPrefix>
+    )
+  }
+)
+ItemIcon.displayName = "ItemIcon"
+
+export interface ItemAvatarProps extends Omit<AvatarProps, "size"> {
+  /**
+   * 對齊模式(選填,預設 `"inline"`):
+   * - `"inline"`:視覺重量輕的 avatar,對齊第一行 label(20/24/24 @ sm/md/lg)
+   * - `"block"`:視覺重量重的 avatar,對齊 label + description 文字塊(32/32/40 @ sm/md/lg)
+   *
+   * 預設 inline——大宗情境(扁平 row、footer user、主清單)都用這個。
+   * 只有 avatar 是 item 主體(人物卡、顯著身份辨識)才用 block。
+   *
+   * 詳見 `item-layout.spec.md`「Avatar 尺寸選擇」節,含 24px 對齊模式閾值規則。
+   */
+  mode?: "inline" | "block"
+}
+
+/**
+ * `<ItemAvatar alt="Alan" color="blue" />` — 自動查 `AVATAR_SIZE[mode][rowSize]`,
+ * 包在 `ItemPrefix` 內。
+ *
+ * asChild consumer 的標準用法——不需知道 size,不需 import AVATAR_SIZE,
+ * 不可能硬寫錯誤尺寸。
+ */
+export const ItemAvatar = React.forwardRef<HTMLDivElement, ItemAvatarProps>(
+  ({ mode = "inline", ...props }, ref) => {
+    const size = useRowSize()
+    return (
+      // data-prefix-type="avatar" 讓 row-primitive 容器的 `:has()` selector 能偵測類型,
+      // 用於 `<SidebarProvider uniformPrefix>` opt-in 後的混用 auto-detection
+      <ItemPrefix data-prefix-type="avatar">
+        <Avatar ref={ref} size={AVATAR_SIZE[mode][size]} {...props} />
+      </ItemPrefix>
+    )
+  }
+)
+ItemAvatar.displayName = "ItemAvatar"
+
+// ── Inline action (suffix slot) ───────────────────────────────────────────
+//
+// 共用 row-primitive 的 suffix inline action 渲染——消除過去 Input / NumberInput /
+// Tag / LinkField / Combobox 各自複製 18 行 JSX 的狀況(見 `uiSize.spec.md`
+// 「Inline Action」節)。
+//
+// 規格(完全對齊 uiSize.spec.md):
+// - Icon 尺寸 = ICON_SIZE[rowSize]      (16/16/20)
+// - Hover bg 尺寸 = icon + 2            (18/18/22,INLINE_ACTION_HOVER_BG_SIZE)
+// - Hover bg 圓角 = rounded-sm (sm/md)/ rounded-md (lg)
+// - Icon 顏色:fg-muted → foreground on hover/active
+// - 必須 <button type="button">,aria-label = label,Tooltip(同 label)
+// - cursor-pointer
+
+export type { InlineActionConfig }
+
+// ── Low-level:ItemInlineActionButton ──
+//
+// Root 是 `<button>`(不是 Tooltip wrapper),可直接塞進 Radix `asChild` pattern
+// 例如 `<Collapsible.Trigger asChild>`, `<Popover.Trigger asChild>` 等。
+//
+// 自動從 `RowSizeContext` 查:
+//   - 寬高 = ICON_SIZE[size]
+//   - Hover bg 尺寸 = INLINE_ACTION_HOVER_BG_SIZE[size]
+//   - Hover bg 圓角 = rounded-sm (sm/md) / rounded-md (lg)
+//   - Icon color = fg-muted → foreground on hover/active
+//
+// 接受任何 button props 並 spread(讓 Radix Slot 可以 merge onClick / data-state 等)
+
+export interface ItemInlineActionButtonProps
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "children"> {
+  /** Lucide icon 元件 */
+  icon: LucideIcon
+  /** 可選:額外加在 icon 上的 className(例如 rotate transition) */
+  iconClassName?: string
+  /**
+   * Size 明確覆寫(用於 fields / Tag 等**不在 `RowSizeProvider` 樹內**的 host):
+   * 傳了就以此為準,否則從 `RowSizeContext` 讀(fallback "md")。
+   *
+   * 使用時機:
+   * - Row primitive 子樹(Sidebar / TreeView / SelectMenu / DropdownMenu)→ **不傳**,吃 context
+   * - Field / Tag(自有 size 系統,沒包 RowSizeProvider)→ **必傳** `size={hostSize}`
+   */
+  size?: RowSize
+}
+
+export const ItemInlineActionButton = React.forwardRef<
+  HTMLButtonElement,
+  ItemInlineActionButtonProps
+>(({ icon: Icon, className, iconClassName, style, type = "button", size: sizeProp, ...rest }, ref) => {
+  const contextSize = useRowSize()
+  const size = sizeProp ?? contextSize
+  const iconPx = ICON_SIZE[size]
+  const hoverBgPx = INLINE_ACTION_HOVER_BG_SIZE[size]
+  return (
+    <button
+      ref={ref}
+      type={type}
+      className={cn(
+        "group/action relative grid place-content-center shrink-0 cursor-pointer",
+        "text-fg-muted hover:text-foreground active:text-foreground transition-colors",
+        "focus-visible:outline-2 focus-visible:outline-ring",
+        className
+      )}
+      style={{ width: iconPx, height: iconPx, ...style }}
+      {...rest}
+    >
+      <span
+        aria-hidden
+        className={cn(
+          "absolute pointer-events-none",
+          size === "lg" ? "rounded-md" : "rounded-sm",
+          "bg-transparent group-hover/action:bg-neutral-hover group-active/action:bg-neutral-active",
+          "transition-colors"
+        )}
+        style={{
+          width: hoverBgPx,
+          height: hoverBgPx,
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      />
+      <Icon size={iconPx} className={cn("relative", iconClassName)} aria-hidden />
+    </button>
+  )
+})
+ItemInlineActionButton.displayName = "ItemInlineActionButton"
+
+// ── High-level:ItemInlineAction ──
+//
+// 宣告式 API:consumer 給 `{ icon, label, onClick }`,元件自動處理 Tooltip +
+// aria-label。適用於 row primitive 的 suffix slot(SidebarMenuButton inlineActions 等)。
+//
+// 內部用 `ItemInlineActionButton`——兩層共用同一套視覺規格、同一個 RowSizeContext 查表。
+// 需要接 Radix asChild(例如 collapsible trigger)時改用 `ItemInlineActionButton`,
+// 那層沒有 Tooltip 包裝,Root 就是 button,可直接塞進 Radix Slot。
+
+export interface ItemInlineActionProps {
+  action: InlineActionConfig
+  /** Size 覆寫(見 `ItemInlineActionButtonProps.size`)——fields/Tag 必傳 */
+  size?: RowSize
+}
+
+export const ItemInlineAction = React.forwardRef<
+  HTMLButtonElement,
+  ItemInlineActionProps
+>(({ action, size }, ref) => (
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <ItemInlineActionButton
+        ref={ref}
+        icon={action.icon}
+        aria-label={action.label}
+        onClick={action.onClick}
+        size={size}
+      />
+    </TooltipTrigger>
+    <TooltipContent>{action.label}</TooltipContent>
+  </Tooltip>
+))
+ItemInlineAction.displayName = "ItemInlineAction"
+
+// ── Item suffix slot ──────────────────────────────────────────────────────
+//
+// `<ItemSuffix>` — row primitive 的 suffix 容器。對齊 item-layout spec:
+// - `h-[1lh]`:suffix 永遠對齊第一行 label(跟 prefix 解耦)
+// - `ml-auto`:靠右
+// - `gap-2`:多個 inline action 之間的標準間距(uiSize.spec.md)
+// - `hoverReveal` opt-in:opacity 0→1 on 父層 `group/menu-item` hover(TreeView 模式)
+
+export interface ItemSuffixProps extends React.HTMLAttributes<HTMLSpanElement> {
+  /**
+   * Hover-reveal 模式:預設隱藏,父層 row(必須是 `group/menu-item`)hover 時才淡入。
+   * 對齊 TreeView 的 inline action 行為。預設 false(永遠顯示,如 Badge)。
+   */
+  hoverReveal?: boolean
+}
+
+export const ItemSuffix = React.forwardRef<HTMLSpanElement, ItemSuffixProps>(
+  ({ className, hoverReveal = false, ...props }, ref) => (
+    <span
+      ref={ref}
+      className={cn(
+        "h-[1lh] shrink-0 ml-auto flex items-center gap-2",
+        // hover-reveal:滑鼠 hover 或鍵盤 focus 時顯示。
+        // 用 `group-has-[:focus-visible]` 而非 `group-focus-within`——後者會被
+        // mouse click 觸發,導致 click 後 suffix 永久顯示直到焦點移走。
+        // focus-visible 只在鍵盤 tab 時啟動,mouse click 不會觸發。
+        hoverReveal &&
+          "opacity-0 group-hover/menu-item:opacity-100 group-has-[:focus-visible]/menu-item:opacity-100 transition-opacity duration-150",
+        className
+      )}
+      {...props}
+    />
+  )
+)
+ItemSuffix.displayName = "ItemSuffix"

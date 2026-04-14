@@ -64,16 +64,28 @@ const preview: Preview = {
         document.documentElement.setAttribute('data-density', density);
       }, [theme, density]);
 
-      // Storybook iframe 的背景由 wrapper div 控制，
-      // 確保 dark mode 時背景跟隨 --canvas
-      return (
-        <TooltipProvider delayDuration={500} skipDelayDuration={300}>
-          <div style={{
+      // Storybook iframe 的背景由 wrapper div 控制,確保 dark mode 時背景跟隨 --canvas。
+      //
+      // `margin: -1rem; padding: 1rem` 是為了配合 Storybook 預設的 `layout: 'padded'`
+      // ——用負 margin 抵消 Storybook 容器的 outer padding,再用自己的 padding 補回,
+      // 讓背景色 bleed 到視窗邊緣。
+      //
+      // **Fullscreen layout 必須跳過這個 trick**:使用 `position: fixed` 的元件
+      // (例如 Sidebar 的固定 panel)座標相對 viewport,而 flex 佈局在 wrapper
+      // padding 裡,兩者會錯位,主內容會被 sidebar 蓋住。
+      const isFullscreen = context.parameters?.layout === 'fullscreen';
+      const wrapperStyle: React.CSSProperties = isFullscreen
+        ? { backgroundColor: 'var(--canvas)', color: 'var(--foreground)' }
+        : {
             backgroundColor: 'var(--canvas)',
             color: 'var(--foreground)',
             margin: '-1rem',
             padding: '1rem',
-          }}>
+          };
+
+      return (
+        <TooltipProvider delayDuration={500} skipDelayDuration={300}>
+          <div style={wrapperStyle}>
             <Story />
           </div>
         </TooltipProvider>

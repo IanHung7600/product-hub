@@ -4,6 +4,8 @@ import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/design-system/components/Checkbox/checkbox'
 import { Avatar, type AvatarData } from '@/design-system/components/Avatar/avatar'
+// Row primitive 共用常數——統一從 item-layout pattern module 引入
+import { ICON_SIZE, AVATAR_SIZE } from '@/design-system/patterns/item-layout/item-layout'
 
 /**
  * SelectMenuItem — Select Menu 的選項元件
@@ -20,17 +22,7 @@ import { Avatar, type AvatarData } from '@/design-system/components/Avatar/avata
  *   sm / md / lg — 單行高度對齊 field-height token
  */
 
-// ── Icon tier（與 Button 共用） ──
-const ICON_SIZE: Record<string, number> = { sm: 16, md: 16, lg: 20 }
 const CHECKBOX_SIZE: Record<string, 'sm' | 'md' | 'lg'> = { sm: 'sm', md: 'md', lg: 'lg' }
-
-// ── Avatar 容器尺寸 ──
-// inline (≤ 24px)：對齊 Tag 高度
-// block (> 24px)：floor₈(1lh + 2px + desc_1lh)
-const AVATAR_SIZE = {
-  inline: { sm: 20, md: 24, lg: 24 },
-  block:  { sm: 32, md: 32, lg: 40 },
-} as const
 
 // ── Item variants ──
 const menuItemVariants = cva(
@@ -233,6 +225,7 @@ const SelectMenuItem = React.forwardRef<HTMLDivElement, SelectMenuItemProps>(
             )}
             {StartIcon && (
               <StartIcon
+                data-prefix-type="icon"
                 size={iconPx}
                 className={cn('shrink-0', disabled && 'text-fg-disabled')}
                 aria-hidden
@@ -240,6 +233,7 @@ const SelectMenuItem = React.forwardRef<HTMLDivElement, SelectMenuItemProps>(
             )}
             {avatar && (
               <Avatar
+                data-prefix-type="avatar"
                 src={avatar.src}
                 alt={avatar.alt}
                 color={avatar.color}

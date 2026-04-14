@@ -1,228 +1,1135 @@
-import * as React from 'react'
-import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
+import * as CollapsiblePrimitive from "@radix-ui/react-collapsible"
+import { cva, type VariantProps } from "class-variance-authority"
+import type { LucideIcon } from "lucide-react"
+import { ChevronDown, PanelLeft } from "lucide-react"
+
+import { useIsMobile } from "@/hooks/use-mobile"
+import { cn } from "@/lib/utils"
+import { Badge } from "@/design-system/components/Badge/badge"
+import { Button } from "@/design-system/components/Button/button"
+import { Input } from "@/design-system/components/Input/input"
+import { Separator } from "@/design-system/components/Separator/separator"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/design-system/components/Sheet/sheet"
+import { Skeleton } from "@/design-system/components/Skeleton/skeleton"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/design-system/components/Tooltip/tooltip"
+// Row primitive 共用常數與 helpers——單一 source of truth
+import {
+  ICON_SIZE,
+  ItemIcon,
+  ItemLabel,
+  ItemInlineAction,
+  ItemInlineActionButton,
+  RowSizeProvider,
+  getUniformPrefixSlotStyle,
+  type RowSize,
+  type InlineActionConfig,
+} from "@/design-system/patterns/item-layout/item-layout"
 
 /**
- * Sidebar — 佈局外殼元件
+ * Sidebar
+ * ─────────────────────────────────────────────────────────────
+ * 本元件的 item / label 視覺規格刻意對齊 SelectMenuItem(menuItemVariants)
+ * ——sidebar、dropdown-menu、select-menu 共用同一條 item-layout 公式:
  *
- * 提供三個 slot（Header / Content / Footer）的側邊欄容器。
- * 支援展開/收合，收合時寬度縮至 icon-only 模式。
+ *   px = var(--layout-space-loose)   (sidebar 脈絡;md=16 / lg=24)
+ *   py = calc((--field-height-md - 1lh) / 2)
+ *   font: text-body leading-compact font-medium
+ *   hover / selected: bg-neutral-hover / bg-neutral-selected
  *
- * 結構：
- *   SidebarProvider → 提供 collapsed 狀態 context
- *     Sidebar → 容器（bg-surface + border）
- *       SidebarHeader → 頂部 slot（logo、workspace）
- *       SidebarContent → 中間可捲動區域（TreeView 放這裡）
- *       SidebarFooter → 底部 slot（user、settings）
- *     SidebarTrigger → 展開/收合按鈕（可放在 sidebar 內或外）
+ * 這確保 SidebarGroupLabel(header 模式)和 SidebarMenuButton(互動模式)
+ * 擁有完全相同的 row height,消除「label 和 items 之間高度落差」的問題。
  */
 
-// ═══════════════════════════════════════════════════════════════════════════
-// Context
-// ═══════════════════════════════════════════════════════════════════════════
+const SIDEBAR_COOKIE_NAME = "sidebar_state"
+const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
+const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
-interface SidebarContextValue {
-  collapsed: boolean
-  setCollapsed: React.Dispatch<React.SetStateAction<boolean>>
-  width: number
-  collapsedWidth: number
+// ── Context ────────────────────────────────────────────────────────────────
+
+// Sidebar 的 size 直接用 item-layout pattern 的 RowSize type(sm/md/lg),
+// 跟所有 row primitives 保持同一套 size 語意
+type SidebarSize = RowSize
+
+type SidebarContextProps = {
+  state: "expanded" | "collapsed"
+  open: boolean
+  setOpen: (open: boolean) => void
+  openMobile: boolean
+  setOpenMobile: (open: boolean) => void
+  isMobile: boolean
+  toggleSidebar: () => void
+  // 全 sidebar 共用的 size(sm/md/lg)——透過 SidebarProvider 一次設定,
+  // 下游所有 SidebarMenuButton / SidebarGroupLabel / SidebarMenuSkeleton 自動繼承。
+  size: SidebarSize
+  // Single-selection state:整個 sidebar 同時只有一個 active item。
+  // SidebarMenuButton 傳 `id` prop,自動從這裡算 isActive、自動 onClick 時 setActiveId。
+  // Consumer 可 controlled(傳 activeId + onActiveChange)或 uncontrolled(僅傳
+  // defaultActiveId)。Router-driven 的 sidebar 通常 controlled(URL → activeId)。
+  activeId: string | undefined
+  setActiveId: (id: string) => void
 }
 
-const SidebarContext = React.createContext<SidebarContextValue | null>(null)
+const SidebarContext = React.createContext<SidebarContextProps | null>(null)
 
 function useSidebar() {
-  const ctx = React.useContext(SidebarContext)
-  if (!ctx) throw new Error('useSidebar must be used within <SidebarProvider>')
-  return ctx
+  const context = React.useContext(SidebarContext)
+  if (!context) {
+    throw new Error("useSidebar must be used within a SidebarProvider.")
+  }
+  return context
 }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SidebarProvider
-// ═══════════════════════════════════════════════════════════════════════════
+// ── Provider ───────────────────────────────────────────────────────────────
 
-interface SidebarProviderProps {
-  children: React.ReactNode
-  /** 預設是否收合 */
-  defaultCollapsed?: boolean
-  /** 展開時的寬度（px） */
-  width?: number
-  /** 收合時的寬度（px） */
-  collapsedWidth?: number
-}
+const SidebarProvider = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<"div"> & {
+    defaultOpen?: boolean
+    open?: boolean
+    onOpenChange?: (open: boolean) => void
+    /** Sidebar row 元件的預設尺寸(sm/md/lg),propagate 給所有 children。Default: "md" */
+    size?: SidebarSize
+    /** 當前 active item 的 id(controlled)——router-driven sidebar 從 URL 算出來傳進。 */
+    activeId?: string
+    /** 初始 active id(uncontrolled)。 */
+    defaultActiveId?: string
+    /** Active id 改變時的 callback(controlled 必傳)。 */
+    onActiveChange?: (id: string) => void
+    /**
+     * 全域 prefix 對齊。**預設 `false`**——只在「sidebar 內有大量 brand logo 跟一般 icon
+     * 混用,期待 label 齊左掃視」時 opt-in `true`。
+     *
+     * **典型 use case**(should opt-in):
+     * - Linear / Raycast 風格的 integration 清單:Home / Inbox(lucide icon)
+     *   + GitHub / Slack / Figma(brand logo,24px)混在同一個 menu
+     * - App launcher / workspace switcher / connected apps,brand logo 為主體
+     *
+     * **不該 opt-in**:
+     * - 全 icon 主導覽 + 全 avatar user footer(語意不同層級,該分 group 不該強迫對齊)
+     * - 沒有真實混用情境只想要「視覺整齊」(預設行為已經對)
+     *
+     * 開啟後機制:CSS `:has()` 偵測 sidebar 子樹同時存在 `data-prefix-type="icon"` 和
+     * `"avatar"`(由 `<ItemIcon>` / `<ItemAvatar>` 自動標記)時,套用固定 24px 槽,
+     * 跨 menu / 跨 group 全域 label 對齊。不混用時零成本。
+     *
+     * 為什麼預設關閉而非 always-on auto:explicit-over-implicit——sidebar 排版行為
+     * 應該從寫的 prop 一眼看出,不藏 CSS 魔法。詳見 `sidebar.spec.md`。
+     */
+    uniformPrefix?: boolean
+  }
+>(
+  (
+    {
+      defaultOpen = true,
+      open: openProp,
+      onOpenChange: setOpenProp,
+      size = "md",
+      activeId: activeIdProp,
+      defaultActiveId,
+      onActiveChange,
+      uniformPrefix = false,
+      className,
+      style,
+      children,
+      ...props
+    },
+    ref
+  ) => {
+    const [_activeId, _setActiveId] = React.useState<string | undefined>(defaultActiveId)
+    const activeId = activeIdProp ?? _activeId
+    const setActiveId = React.useCallback(
+      (id: string) => {
+        if (activeIdProp === undefined) _setActiveId(id)
+        onActiveChange?.(id)
+      },
+      [activeIdProp, onActiveChange]
+    )
+    const isMobile = useIsMobile()
+    const [openMobile, setOpenMobile] = React.useState(false)
 
-const SidebarProvider = ({
-  children,
-  defaultCollapsed = false,
-  width = 260,
-  collapsedWidth = 48,
-}: SidebarProviderProps) => {
-  const [collapsed, setCollapsed] = React.useState(defaultCollapsed)
+    const [_open, _setOpen] = React.useState(defaultOpen)
+    const open = openProp ?? _open
+    const setOpen = React.useCallback(
+      (value: boolean | ((value: boolean) => boolean)) => {
+        const openState = typeof value === "function" ? value(open) : value
+        if (setOpenProp) {
+          setOpenProp(openState)
+        } else {
+          _setOpen(openState)
+        }
+        document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+      },
+      [setOpenProp, open]
+    )
 
-  const value = React.useMemo(
-    () => ({ collapsed, setCollapsed, width, collapsedWidth }),
-    [collapsed, width, collapsedWidth],
-  )
+    const toggleSidebar = React.useCallback(() => {
+      return isMobile
+        ? setOpenMobile((o) => !o)
+        : setOpen((o) => !o)
+    }, [isMobile, setOpen, setOpenMobile])
 
-  return (
-    <SidebarContext.Provider value={value}>
-      {children}
-    </SidebarContext.Provider>
-  )
-}
-SidebarProvider.displayName = 'SidebarProvider'
+    React.useEffect(() => {
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (
+          event.key === SIDEBAR_KEYBOARD_SHORTCUT &&
+          (event.metaKey || event.ctrlKey)
+        ) {
+          event.preventDefault()
+          toggleSidebar()
+        }
+      }
+      window.addEventListener("keydown", handleKeyDown)
+      return () => window.removeEventListener("keydown", handleKeyDown)
+    }, [toggleSidebar])
 
-// ═══════════════════════════════════════════════════════════════════════════
-// Sidebar
-// ═══════════════════════════════════════════════════════════════════════════
+    const state = open ? "expanded" : "collapsed"
 
-interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** 側邊欄位置 */
-  side?: 'left' | 'right'
-  /** 是否支援收合 */
-  collapsible?: boolean
-}
+    const contextValue = React.useMemo<SidebarContextProps>(
+      () => ({
+        state,
+        open,
+        setOpen,
+        isMobile,
+        openMobile,
+        setOpenMobile,
+        toggleSidebar,
+        size,
+        activeId,
+        setActiveId,
+      }),
+      [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar, size, activeId, setActiveId]
+    )
 
-const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
-  ({ className, side = 'left', collapsible = true, children, ...props }, ref) => {
-    const { collapsed, width, collapsedWidth } = useSidebar()
-
-    const currentWidth = collapsible && collapsed ? collapsedWidth : width
+    // 不在此處包 TooltipProvider——shadcn 原版預設 delayDuration=0,會覆蓋
+    // 應用層的 delay 設定,造成 sidebar 內部 tooltip 行為跟其他地方不一致。
+    // TooltipProvider 應由應用層(Storybook preview.tsx、app root)統一設定。
+    // RowSizeProvider 讓整個 sidebar 子樹的 <ItemIcon> / <ItemAvatar> 都能 auto-size,
+    // asChild consumer 不需要再手動查 ICON_SIZE / AVATAR_SIZE。
+    //
+    // ── 全域 prefix 對齊(預設關閉,explicit opt-in)──
+    // false(預設):school A,各 menu 自然 prefix 寬度,跨 menu 不對齊
+    // true:opt-in CSS `:has()` auto-detect,混用時套用、不混用零成本(school B,Notion 慣例)
+    const slotStyle = getUniformPrefixSlotStyle(size)
+    const slotValue = slotStyle["--item-prefix-slot" as keyof typeof slotStyle]
+    const wrapperStyle: React.CSSProperties = uniformPrefix
+      ? ({ "--mixed-prefix-slot": slotValue, ...style } as React.CSSProperties)
+      : (style ?? {})
 
     return (
-      <aside
-        ref={ref}
-        data-collapsed={collapsed}
-        data-side={side}
-        className={cn(
-          'flex flex-col bg-surface shrink-0',
-          'transition-[width] duration-200 ease-in-out',
-          'overflow-hidden',
-          side === 'left' ? 'border-r border-divider' : 'border-l border-divider',
-          className,
-        )}
-        style={{ width: currentWidth }}
-        {...props}
-      >
-        {children}
-      </aside>
+      <SidebarContext.Provider value={contextValue}>
+        <RowSizeProvider value={size}>
+          <div
+            style={wrapperStyle}
+            className={cn(
+              "group/sidebar-wrapper flex min-h-svh w-full",
+              // CSS :has() 偵測 — 只在 uniformPrefix=true(預設)時掛
+              uniformPrefix &&
+                "has-[[data-prefix-type=icon]]:has-[[data-prefix-type=avatar]]:[--item-prefix-slot:var(--mixed-prefix-slot)]",
+              className
+            )}
+            ref={ref}
+            {...props}
+          >
+            {children}
+          </div>
+        </RowSizeProvider>
+      </SidebarContext.Provider>
     )
-  },
+  }
 )
-Sidebar.displayName = 'Sidebar'
+SidebarProvider.displayName = "SidebarProvider"
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SidebarHeader
-// ═══════════════════════════════════════════════════════════════════════════
+// ── Sidebar container ──────────────────────────────────────────────────────
 
+const Sidebar = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<"div"> & {
+    side?: "left" | "right"
+    collapsible?: "offcanvas" | "icon" | "none"
+  }
+>(
+  (
+    {
+      side = "left",
+      collapsible = "offcanvas",
+      className,
+      children,
+      ...props
+    },
+    ref
+  ) => {
+    const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+
+    if (collapsible === "none") {
+      return (
+        <div
+          className={cn(
+            "flex h-full w-[var(--sidebar-width)] flex-col bg-surface text-foreground",
+            className
+          )}
+          ref={ref}
+          {...props}
+        >
+          {children}
+        </div>
+      )
+    }
+
+    if (isMobile) {
+      return (
+        <Sheet open={openMobile} onOpenChange={setOpenMobile} {...props}>
+          <SheetContent
+            data-sidebar="sidebar"
+            data-mobile="true"
+            className="w-[var(--sidebar-width)] bg-surface p-0 text-foreground [&>button]:hidden"
+            style={
+              {
+                "--sidebar-width": "var(--sidebar-width-mobile)",
+              } as React.CSSProperties
+            }
+            side={side}
+          >
+            <SheetHeader className="sr-only">
+              <SheetTitle>Sidebar</SheetTitle>
+              <SheetDescription>Displays the mobile sidebar.</SheetDescription>
+            </SheetHeader>
+            <div className="flex h-full w-full flex-col">{children}</div>
+          </SheetContent>
+        </Sheet>
+      )
+    }
+
+    return (
+      <div
+        ref={ref}
+        className="group peer hidden shrink-0 text-foreground md:block"
+        data-state={state}
+        data-collapsible={state === "collapsed" ? collapsible : ""}
+        data-side={side}
+      >
+        {/* Gap div:佔據 sidebar 實際寬度,推開主內容 */}
+        <div
+          className={cn(
+            "relative w-[var(--sidebar-width)] min-w-[var(--sidebar-width-min)] bg-transparent transition-[width,min-width] duration-200 ease-linear",
+            "group-data-[collapsible=offcanvas]:!w-0 group-data-[collapsible=offcanvas]:!min-w-0",
+            "group-data-[side=right]:rotate-180",
+            "group-data-[collapsible=icon]:!w-[var(--sidebar-width-icon)] group-data-[collapsible=icon]:!min-w-0"
+          )}
+        />
+        <div
+          className={cn(
+            "fixed inset-y-0 z-10 hidden h-svh w-[var(--sidebar-width)] min-w-[var(--sidebar-width-min)] transition-[left,right,width,min-width] duration-200 ease-linear md:flex",
+            "group-data-[collapsible=icon]:!min-w-0",
+            side === "left"
+              ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
+              : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
+            "group-data-[collapsible=icon]:w-[var(--sidebar-width-icon)]",
+            "group-data-[side=left]:border-r group-data-[side=left]:border-divider",
+            "group-data-[side=right]:border-l group-data-[side=right]:border-divider",
+            className
+          )}
+          {...props}
+        >
+          <div
+            data-sidebar="sidebar"
+            className="flex h-full w-full flex-col bg-surface"
+          >
+            {children}
+          </div>
+        </div>
+      </div>
+    )
+  }
+)
+Sidebar.displayName = "Sidebar"
+
+// ── Trigger / Rail / Input ─────────────────────────────────────────────────
+
+// SidebarTrigger — 用 Button 原生的 size="sm" iconOnly,
+// 高度自動跟 density 走(field-height-sm @ md=28 / lg=32)
+// 不 override size,避免 density 切換時 trigger 不變
+const SidebarTrigger = React.forwardRef<
+  React.ElementRef<typeof Button>,
+  React.ComponentProps<typeof Button>
+>(({ className, onClick, ...props }, ref) => {
+  const { toggleSidebar } = useSidebar()
+
+  return (
+    <Button
+      ref={ref}
+      data-sidebar="trigger"
+      variant="text"
+      size="sm"
+      iconOnly
+      startIcon={PanelLeft}
+      aria-label="Toggle Sidebar"
+      className={className}
+      onClick={(event) => {
+        onClick?.(event)
+        toggleSidebar()
+      }}
+      {...props}
+    />
+  )
+})
+SidebarTrigger.displayName = "SidebarTrigger"
+
+// SidebarInput — 用 Input 元件原生高度(跟 density 自動走),不 override
+const SidebarInput = React.forwardRef<
+  React.ElementRef<typeof Input>,
+  React.ComponentProps<typeof Input>
+>(({ className, ...props }, ref) => {
+  return (
+    <Input
+      ref={ref}
+      data-sidebar="input"
+      className={cn("w-full", className)}
+      {...props}
+    />
+  )
+})
+SidebarInput.displayName = "SidebarInput"
+
+// ── Shell regions ──────────────────────────────────────────────────────────
+
+// SidebarHeader / SidebarFooter:
+//   - 固定高度 `var(--chrome-header-height)`(md=48 / lg=56,density-responsive)
+//   - 跨元件 chrome header 共享同一個 token,自動跟主內容 page header 對齊
+//   - 水平 padding 用 loose token(跟 items 的 px 對齊)
+//   - 邊框是結構邊界(分隔 fixed/scroll 區),full-width 不內縮
+//
+// 為什麼 density-responsive:chrome 裡放的 button 綁定 field-height token,
+// 會隨 density 變大。Chrome 如果不跟著放大,lg density 下 padding 會被擠壓。
 const SidebarHeader = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      'flex items-center shrink-0',
-      'px-[var(--layout-space-loose)] py-3',
-      'border-b border-divider',
-      className,
-    )}
-    {...props}
-  />
-))
-SidebarHeader.displayName = 'SidebarHeader'
+  React.ComponentProps<"div">
+>(({ className, ...props }, ref) => {
+  return (
+    <div
+      ref={ref}
+      data-sidebar="header"
+      className={cn(
+        "flex h-[var(--chrome-header-height)] shrink-0 items-center gap-2 border-b border-divider px-[var(--layout-space-loose)]",
+        // Icon 模式:拿掉水平 padding 讓內容(Avatar 24px)置中於 48px 正方形
+        "group-data-[collapsible=icon]:!px-0 group-data-[collapsible=icon]:!justify-center",
+        "transition-[padding] duration-200 ease-linear",
+        className
+      )}
+      {...props}
+    />
+  )
+})
+SidebarHeader.displayName = "SidebarHeader"
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SidebarContent
-// ═══════════════════════════════════════════════════════════════════════════
+// SidebarFooter — pinned 在 sidebar 底部的 menu group 容器,不是固定高度 chrome slot。
+// 行為跟 SidebarGroup 類似(flex flex-col py-2),但永遠靠底(shrink-0)且有 border-t 分隔。
+// Consumer 放 SidebarMenu + SidebarMenuButton,高度由內容決定(1~N 個 items)。
+// 典型內容:user menu、settings、help、logout 等底部選項群組。
+const SidebarFooter = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<"div">
+>(({ className, ...props }, ref) => {
+  return (
+    <div
+      ref={ref}
+      data-sidebar="footer"
+      className={cn(
+        "flex shrink-0 flex-col py-2 border-t border-divider",
+        className
+      )}
+      {...props}
+    />
+  )
+})
+SidebarFooter.displayName = "SidebarFooter"
+
+const SidebarSeparator = React.forwardRef<
+  React.ElementRef<typeof Separator>,
+  React.ComponentProps<typeof Separator>
+>(({ className, ...props }, ref) => {
+  // 預設對齊 loose token:分隔兩個 scrollable group 時,跟 item 內容對齊。
+  // 分隔 fixed 元件(Header/Footer 與 Content)時,consumer 可傳 className 覆寫成 mx-0。
+  return (
+    <Separator
+      ref={ref}
+      data-sidebar="separator"
+      className={cn(
+        "mx-[var(--layout-space-loose)] w-auto bg-divider",
+        className
+      )}
+      {...props}
+    />
+  )
+})
+SidebarSeparator.displayName = "SidebarSeparator"
 
 const SidebarContent = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      'flex-1 overflow-y-auto py-2',
-      className,
-    )}
-    {...props}
-  />
-))
-SidebarContent.displayName = 'SidebarContent'
+  React.ComponentProps<"div">
+>(({ className, ...props }, ref) => {
+  return (
+    <div
+      ref={ref}
+      data-sidebar="content"
+      // SidebarContent 只負責 scroll 與 flex-1——呼吸空間和分隔線由 SidebarGroup 自己處理
+      // (對齊 SelectMenuGroup 的 py-2 + [&+&]:border-t 模式)
+      className={cn(
+        "flex min-h-0 flex-1 flex-col overflow-auto group-data-[collapsible=icon]:overflow-hidden",
+        className
+      )}
+      {...props}
+    />
+  )
+})
+SidebarContent.displayName = "SidebarContent"
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SidebarFooter
-// ═══════════════════════════════════════════════════════════════════════════
+// ── Group ──────────────────────────────────────────────────────────────────
 
-const SidebarFooter = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      'flex items-center shrink-0',
-      'px-[var(--layout-space-loose)] py-3',
-      'border-t border-divider',
-      className,
-    )}
-    {...props}
-  />
-))
-SidebarFooter.displayName = 'SidebarFooter'
+// SidebarGroupContext——讓 `SidebarGroupLabel` 和 `SidebarGroupContent` 知道當前
+// 所在的 group 是否 collapsible,以自動切換渲染模式(label 變 trigger,content 變
+// `Collapsible.Content`)。沒有 context 就是舊行為(非 collapsible 的 plain div)。
+type SidebarGroupContextValue = {
+  collapsible: boolean
+}
+const SidebarGroupContext = React.createContext<SidebarGroupContextValue | null>(null)
 
-// ═══════════════════════════════════════════════════════════════════════════
-// SidebarTrigger
-// ═══════════════════════════════════════════════════════════════════════════
-
-interface SidebarTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  /** 對應的 sidebar 位置，決定 icon 方向 */
-  side?: 'left' | 'right'
+function useSidebarGroup() {
+  return React.useContext(SidebarGroupContext)
 }
 
-const SidebarTrigger = React.forwardRef<HTMLButtonElement, SidebarTriggerProps>(
-  ({ className, side = 'left', ...props }, ref) => {
-    const { collapsed, setCollapsed } = useSidebar()
+/**
+ * SidebarGroup
+ *
+ * 預設是非互動的 plain group(div)。當 `collapsible` = true 時自動切換成 Radix
+ * Collapsible:SidebarGroupLabel 變 trigger、SidebarGroupContent 變 Content、
+ * 自動渲染 chevron 於 label 尾端、chevron 依 open state 旋轉。
+ *
+ * ── API 設計決策 ──
+ * 為什麼是 group 層級的 prop 而不是 label 層級?因為「group 是否可收合」是結構層
+ * 的決定,影響 group 所有子 primitive 的渲染模式(label 變 button、content 變
+ * animated container)。把 prop 放在 label 上會讓 content 不知道自己該不該被包,
+ * 形成跨元件的 prop drilling。放在 group 上用 context 傳遞是 React 的標準做法。
+ */
+const SidebarGroup = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<"div"> & {
+    collapsible?: boolean
+    defaultOpen?: boolean
+    open?: boolean
+    onOpenChange?: (open: boolean) => void
+  }
+>(({ className, collapsible = false, defaultOpen = true, open, onOpenChange, children, ...props }, ref) => {
+  const contextValue = React.useMemo<SidebarGroupContextValue>(
+    () => ({ collapsible }),
+    [collapsible]
+  )
 
-    // left sidebar: collapsed → PanelLeftOpen (expand), expanded → PanelLeftClose (collapse)
-    // right sidebar: 反轉
-    const Icon = side === 'left'
-      ? (collapsed ? PanelLeftOpen : PanelLeftClose)
-      : (collapsed ? PanelLeftClose : PanelLeftOpen)
+  // 非 collapsible 就是 plain div,舊行為完全不變
+  const baseClass = cn(
+    "relative flex w-full min-w-0 flex-col py-2",
+    "[&+&]:before:absolute [&+&]:before:top-0 [&+&]:before:left-[var(--layout-space-loose)] [&+&]:before:right-[var(--layout-space-loose)] [&+&]:before:h-px [&+&]:before:bg-divider [&+&]:before:content-['']",
+    className
+  )
 
+  if (!collapsible) {
     return (
-      <button
+      <SidebarGroupContext.Provider value={contextValue}>
+        <div ref={ref} data-sidebar="group" className={baseClass} {...props}>
+          {children}
+        </div>
+      </SidebarGroupContext.Provider>
+    )
+  }
+
+  // Collapsible 模式:Radix Collapsible.Root 當 group container
+  return (
+    <SidebarGroupContext.Provider value={contextValue}>
+      <CollapsiblePrimitive.Root
         ref={ref}
-        type="button"
-        aria-label={collapsed ? '展開側邊欄' : '收合側邊欄'}
+        data-sidebar="group"
+        defaultOpen={defaultOpen}
+        open={open}
+        onOpenChange={onOpenChange}
+        className={baseClass}
+        // Collapsible 在 icon 模式下整個隱藏(跟 TreeView 一樣——icon rail 沒空間放展開的 tree)
+        // Consumer 若要在 icon 模式顯示整個 group,自行傳 className 覆寫
+        {...(props as React.ComponentProps<typeof CollapsiblePrimitive.Root>)}
+      >
+        {children}
+      </CollapsiblePrimitive.Root>
+    </SidebarGroupContext.Provider>
+  )
+})
+SidebarGroup.displayName = "SidebarGroup"
+
+const SidebarGroupContent = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<"div">
+>(({ className, ...props }, ref) => {
+  const group = useSidebarGroup()
+  if (group?.collapsible) {
+    return (
+      <CollapsiblePrimitive.Content
+        // Radix 提供 data-state="open|closed",搭配 animate 做展開/收合動畫
+        // (若之後需要,可在這個 div 上加 CSS animation)
+        data-sidebar="group-content"
+        className={cn("w-full overflow-hidden", className)}
+        {...(props as React.ComponentProps<typeof CollapsiblePrimitive.Content>)}
+      >
+        <div ref={ref}>{props.children}</div>
+      </CollapsiblePrimitive.Content>
+    )
+  }
+  return (
+    <div
+      ref={ref}
+      data-sidebar="group-content"
+      className={cn("w-full", className)}
+      {...props}
+    />
+  )
+})
+SidebarGroupContent.displayName = "SidebarGroupContent"
+
+// SidebarGroupLabel — 完全對齊 SelectMenuItem header 的視覺 + TreeView 的 sm/md/lg 尺寸:
+//   - 跟 SidebarMenuButton 共用 item-layout 公式(同 py 公式、同 text size、同 icon size)
+//   - 唯一差異:font-medium + text-fg-muted + pointer-events-none(header 語意)
+// 這樣 label 和 items 的 row height 在任何 size 下都完全對齊。
+//
+// Icon 模式:整列 display:none(不是 -mt + opacity 0,避免脆弱的 margin 計算)
+const sidebarGroupLabelVariants = cva(
+  [
+    // items-start 對齊 item-layout 規則(跟 SidebarMenuButton / TreeItem / SelectMenuItem 一致)
+    "flex w-full items-start gap-2",
+    "px-[var(--layout-space-loose)]",
+    "font-medium text-fg-muted",
+    "cursor-default select-none pointer-events-none outline-none",
+    // icon 模式:display:none 硬隱藏(跟 SidebarMenuButton label span 一致的策略)
+    "group-data-[collapsible=icon]:hidden",
+  ],
+  {
+    variants: {
+      size: {
+        sm: "text-body leading-compact py-[calc((var(--field-height-sm)-1lh)/2)]",
+        md: "text-body leading-compact py-[calc((var(--field-height-md)-1lh)/2)]",
+        lg: "text-body-lg leading-compact py-[calc((var(--field-height-lg)-1lh)/2)]",
+      },
+    },
+    defaultVariants: { size: "md" },
+  }
+)
+
+const SidebarGroupLabel = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<"div"> & { asChild?: boolean } & VariantProps<typeof sidebarGroupLabelVariants>
+>(({ className, asChild = false, size: sizeProp, children, ...props }, ref) => {
+  const { size: contextSize } = useSidebar()
+  const size = sizeProp ?? contextSize
+  const group = useSidebarGroup()
+
+  // Collapsible group:label 本身仍是 plain header(保留原本語意),
+  // chevron 是 suffix slot 裡的 inline action button,用 Radix Collapsible.Trigger asChild
+  // 包住 `ItemInlineActionButton`——視覺規格完全對齊 uiSize.spec.md「Inline Action」,
+  // 跟 SidebarMenuButton 的 suffix inline action 同一套 canonical 實作。
+  //
+  // **為什麼 chevron 是 inline action 而非整個 label 是 trigger**:
+  // 1. 同 sidebar 內的 inline action 視覺必須一致(fg-muted → foreground、hover bg、圓角)
+  // 2. Linear / Notion / Finder 等世界級 sidebar 都是「label 裝飾、chevron 互動」
+  // 3. 整個 label 當 trigger 會把 label 升格為 button,跟非 collapsible group 的 label
+  //    語意不一致(一個是 div、一個是 button),無障礙與視覺焦點都會跳動
+  if (group?.collapsible) {
+    return (
+      <div
+        ref={ref}
+        data-sidebar="group-label"
+        role="presentation"
         className={cn(
-          'inline-flex items-center justify-center',
-          'h-8 w-8 rounded-md',
-          'text-fg-muted hover:text-foreground',
-          'hover:bg-neutral-hover active:bg-neutral-active',
-          'transition-colors',
-          className,
+          sidebarGroupLabelVariants({ size }),
+          // Single-line group header:改用 items-center 讓 chevron button(16×16)跟 text 垂直精確置中。
+          // cva base 的 `items-start` 是 multi-line safety,單行 header 用不到,明確覆寫成 center。
+          "!items-center",
+          className
         )}
-        onClick={() => setCollapsed((prev) => !prev)}
         {...props}
       >
-        <Icon size={16} />
-      </button>
+        <span className="min-w-0 flex-1 truncate">{children}</span>
+        {/* Chevron:inline action button,Radix Collapsible.Trigger asChild 包住,
+            Radix 會 merge onClick + aria-expanded + data-state 到 button。
+            ── Suffix 位置的 chevron 用 accordion 慣例 ──
+            base = ChevronDown (`v`),open 時 rotate-180° → `^`。
+            對齊 Radix Accordion / shadcn Collapsible / Material Expansion / Linear 的 section header。
+            (Prefix 位置的 chevron 如 TreeView 才用 ChevronRight + rotate-90 的 tree disclosure 慣例) */}
+        <CollapsiblePrimitive.Trigger asChild>
+          <ItemInlineActionButton
+            icon={ChevronDown}
+            aria-label="展開或收合"
+            className="pointer-events-auto ml-auto"
+            iconClassName="transition-transform duration-150 [[data-state=open]_&]:rotate-180"
+          />
+        </CollapsiblePrimitive.Trigger>
+      </div>
     )
-  },
-)
-SidebarTrigger.displayName = 'SidebarTrigger'
+  }
 
-// ═══════════════════════════════════════════════════════════════════════════
-// Exports
-// ═══════════════════════════════════════════════════════════════════════════
+  // 非 collapsible:plain label(div,pointer-events-none)
+  const Comp = asChild ? Slot : "div"
+  return (
+    <Comp
+      ref={ref}
+      data-sidebar="group-label"
+      role="presentation"
+      className={cn(sidebarGroupLabelVariants({ size }), className)}
+      {...props}
+    >
+      {children}
+    </Comp>
+  )
+})
+SidebarGroupLabel.displayName = "SidebarGroupLabel"
+
+const SidebarGroupAction = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentProps<"button"> & { asChild?: boolean }
+>(({ className, asChild = false, ...props }, ref) => {
+  const Comp = asChild ? Slot : "button"
+  return (
+    <Comp
+      ref={ref}
+      data-sidebar="group-action"
+      className={cn(
+        "absolute right-[var(--layout-space-loose)] top-2 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-fg-muted outline-none ring-ring transition-colors hover:bg-neutral-hover hover:text-foreground focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+        "after:absolute after:-inset-2 after:md:hidden",
+        "group-data-[collapsible=icon]:hidden",
+        className
+      )}
+      {...props}
+    />
+  )
+})
+SidebarGroupAction.displayName = "SidebarGroupAction"
+
+// ── Menu ───────────────────────────────────────────────────────────────────
+
+// SidebarMenu — items 容器
+//
+// Prefix 對齊由 `SidebarProvider` 全域 auto-detect 處理(school B,Notion/Linear 慣例):
+// 整個 sidebar 子樹同時存在 icon 和 avatar prefix 時,自動套用固定槽,跨 menu 跨 group 對齊。
+// 若要關閉,在 `<SidebarProvider uniformPrefix={false}>` 全域控制。SidebarMenu 沒有
+// per-menu 覆寫——沒有真實 use case,YAGNI。
+const SidebarMenu = React.forwardRef<
+  HTMLUListElement,
+  React.ComponentProps<"ul">
+>(({ className, ...props }, ref) => (
+  <ul
+    ref={ref}
+    data-sidebar="menu"
+    // 無 gap:items 連續緊貼(對齊 DropdownMenu / TreeView 的視覺節奏)
+    className={cn("flex w-full min-w-0 flex-col", className)}
+    {...props}
+  />
+))
+SidebarMenu.displayName = "SidebarMenu"
+
+const SidebarMenuItem = React.forwardRef<
+  HTMLLIElement,
+  React.ComponentProps<"li">
+>(({ className, ...props }, ref) => (
+  <li
+    ref={ref}
+    data-sidebar="menu-item"
+    className={cn("group/menu-item relative", className)}
+    {...props}
+  />
+))
+SidebarMenuItem.displayName = "SidebarMenuItem"
+
+/**
+ * SidebarMenuButton
+ *
+ * 對齊 SelectMenuItem / TreeItem 的 item-layout,支援 sm/md/lg 三種尺寸:
+ *   - horizontal: px = var(--layout-space-loose)
+ *   - vertical:   py = calc((--field-height-{size} - 1lh) / 2)
+ *   - typography: text-body leading-compact(sm/md)/ text-body-lg(lg)+ font-medium
+ *   - icon:       size-4 (sm/md) / size-5 (lg)
+ *   - hover:      bg-neutral-hover
+ *   - selected:   bg-neutral-selected(data-active=true)
+ *
+ * Icon 模式:button 保持 w-full 填滿 sidebar icon rail,鎖高為 field-height-{size},
+ * content 用 justify-center 居中,label span 以 display:none 硬隱藏。
+ */
+const sidebarMenuButtonVariants = cva(
+  [
+    "peer/menu-button group/menu-button",
+    // items-start(跟 TreeItem / SelectMenuItem 一致的 item-layout 規則):
+    // 多行 label 時 prefix 留在第一行不飄移。
+    // 單行 label 時(我們的預設情境,truncate = line-clamp-1),效果跟 items-center 完全相同,
+    // 因為 prefix 被包在 `h-[1lh] flex items-center` 容器,強制對齊第一行文字中線。
+    "flex w-full items-start gap-2 text-left overflow-hidden",
+    "px-[var(--layout-space-loose)]",
+    "font-medium text-fg-secondary",
+    "cursor-pointer select-none outline-none",
+    // 同時 transition 顏色 / 寬高 / padding / gap——sidebar 收合時一起動,視覺連續
+    "transition-[width,height,padding,gap,background-color,color] duration-200 ease-linear",
+    "hover:bg-neutral-hover hover:text-foreground",
+    "focus-visible:bg-neutral-hover focus-visible:text-foreground",
+    "disabled:pointer-events-none disabled:opacity-disabled",
+    "aria-disabled:pointer-events-none aria-disabled:opacity-disabled",
+    "data-[active=true]:bg-neutral-selected data-[active=true]:text-foreground",
+    "group-has-[[data-sidebar=menu-action]]/menu-item:pr-8",
+    // Icon mode:
+    //   - !px-0 !py-0 !gap-0:歸零所有 spacing,icon 能完美 justify-center
+    //   - !items-center !justify-center:垂直水平都置中(蓋掉 base 的 items-start / 預設 justify-start)
+    //   - label span 透過子選擇器 display:none(讓 flex 只剩 icon 一個 child,justify-center 才能真正置中)
+    "group-data-[collapsible=icon]:!px-0 group-data-[collapsible=icon]:!py-0 group-data-[collapsible=icon]:!gap-0",
+    "group-data-[collapsible=icon]:!items-center group-data-[collapsible=icon]:!justify-center",
+    "group-data-[collapsible=icon]:[&_[data-sidebar=menu-label]]:hidden",
+  ],
+  {
+    variants: {
+      size: {
+        sm: [
+          "text-body leading-compact py-[calc((var(--field-height-sm)-1lh)/2)]",
+          "group-data-[collapsible=icon]:!h-[var(--field-height-sm)]",
+        ],
+        md: [
+          "text-body leading-compact py-[calc((var(--field-height-md)-1lh)/2)]",
+          "group-data-[collapsible=icon]:!h-[var(--field-height-md)]",
+        ],
+        lg: [
+          "text-body-lg leading-compact py-[calc((var(--field-height-lg)-1lh)/2)]",
+          "group-data-[collapsible=icon]:!h-[var(--field-height-lg)]",
+        ],
+      },
+      variant: {
+        /** 預設 — 導覽 item,參與 single-selection */
+        default: "",
+        /**
+         * Meta 命令 row(例:「查看更多」「載入更多」「Show all」「+ 新增專案」)。
+         *
+         * 語意上**不是導覽目的地**,是 section 底部的命令。規格:
+         * - 文字從 `text-fg-secondary` 退到 `text-fg-muted`(視覺重量下沉,hover 才升到 foreground)
+         * - **不該參與 single-selection**:不傳 `id`,TS 階段提醒;執行階段傳了也不會 active
+         * - `font-medium` 降為 `font-normal`(更輕,signal「這不是 primary 導覽」)
+         * - 世界級對照:Linear "Show N more"、Notion "Show N more"、Slack "Show more"、
+         *   Gmail Labels "More"
+         */
+        meta: [
+          "font-normal text-fg-muted",
+          // meta variant 不該有 active 態;即使誤傳 isActive 也不啟動
+          "data-[active=true]:bg-transparent data-[active=true]:text-fg-muted",
+        ],
+      },
+    },
+    defaultVariants: { size: "md", variant: "default" },
+  }
+)
+
+const SidebarMenuButton = React.forwardRef<
+  HTMLButtonElement,
+  Omit<React.ComponentProps<"button">, "id"> & {
+    asChild?: boolean
+    /**
+     * Item 的唯一識別(對齊 `SidebarProvider.activeId`)。**強烈建議傳**——
+     * 傳了之後 `isActive` 自動從 context 算、`onClick` 自動 setActiveId,
+     * 整個 sidebar 的 single-selection 自動成立,不會寫出啞 item。
+     */
+    id?: string
+    /**
+     * 手動覆寫 active 狀態(極少用)。預設從 `SidebarProvider.activeId === id` 自動算。
+     * 兩者都傳時以 `isActive` 為準。
+     */
+    isActive?: boolean
+    startIcon?: LucideIcon
+    tooltip?: string | React.ComponentProps<typeof TooltipContent>
+    /**
+     * Suffix slot 的 inline actions(宣告式 API,對齊 uiSize.spec.md「Inline Action」)。
+     * Host 自動用 `<ItemInlineAction>` 渲染,consumer 只宣告 intent。
+     * Icon 模式下自動隱藏。
+     */
+    inlineActions?: InlineActionConfig[]
+    /**
+     * Inline actions 的顯示模式:
+     * - `false`(預設):永遠顯示
+     * - `"hover"`:row hover 時才淡入(TreeView 模式)
+     */
+    actionsReveal?: false | "hover"
+  } & VariantProps<typeof sidebarMenuButtonVariants>
+>(
+  (
+    {
+      asChild = false,
+      id,
+      isActive: isActiveProp,
+      size: sizeProp,
+      variant = "default",
+      startIcon: StartIcon,
+      tooltip,
+      inlineActions,
+      actionsReveal = false,
+      className,
+      children,
+      onClick,
+      ...props
+    },
+    ref
+  ) => {
+    const Comp = asChild ? Slot : "button"
+    // 沒傳 size 就從 SidebarProvider context 繼承(預設 md)
+    const { isMobile, state, size: contextSize, activeId, setActiveId } = useSidebar()
+    const size = sizeProp ?? contextSize
+
+    // Meta variant 永不參與 single-selection,即使誤傳 id / isActive
+    const isMeta = variant === "meta"
+
+    // Active 狀態:明確傳的 isActive 優先;否則 `activeId === id` 自動算
+    // Meta variant 永遠 false
+    const isActive = isMeta ? false : (isActiveProp ?? (id !== undefined && activeId === id))
+
+    // Click handler:id 存在且非 meta 才 setActiveId(single-selection 自動建立),
+    // 同時呼叫 consumer 傳入的 onClick
+    const handleClick = React.useCallback(
+      (e: React.MouseEvent<HTMLButtonElement>) => {
+        if (!isMeta && id !== undefined) setActiveId(id)
+        onClick?.(e)
+      },
+      [isMeta, id, setActiveId, onClick]
+    )
+
+    // asChild 時,我們不能額外 wrap span / icon——Slot 要求單一 child。
+    // 所以 asChild 的 consumer 自行放 icon + label(記得 prefix 要包在 h-[1lh] 容器,
+    // label span 要有 data-sidebar="menu-label" attribute 才能參與 icon 模式自動隱藏)。
+    //
+    // Label span 在 icon 模式下透過 cva base 的 `[&_[data-sidebar=menu-label]]:hidden` display:none,
+    // 這樣 flex 只剩 icon 一個 child,justify-center 可以真正置中。
+    // Sidebar 寬度 transition 200ms 是唯一持續動畫,使用者視線跟著寬度走,不會察覺 label 的瞬切。
+    // 用 `<ItemIcon>` / `<ItemLabel>` helper,**不直接寫 ItemPrefix wrap StartIcon**——
+    // ItemIcon 內部會自動加 `data-prefix-type="icon"`,讓 SidebarProvider 的全域
+    // `:has()` prefix-mix 偵測能命中。直接用 ItemPrefix 就會錯過這個 tag,
+    // 全域對齊功能對 SidebarMenuButton 路徑失效(曾經發生過的 bug)。
+    const content = asChild ? (
+      children
+    ) : (
+      <>
+        {StartIcon && <ItemIcon icon={StartIcon} />}
+        <ItemLabel>{children}</ItemLabel>
+      </>
+    )
+
+    const hasActions = !!inlineActions && inlineActions.length > 0
+
+    // 計算 suffix 所佔寬度:N×icon + (N-1)×gap-2(8px),再加 gap-2 跟 label 之間的間隔
+    const iconSz = ICON_SIZE[size ?? "md"]
+    const n = inlineActions?.length ?? 0
+    const suffixContentWidth = n > 0 ? n * iconSz + (n - 1) * 8 : 0
+    // Button 的 paddingRight = loose + suffix 寬度 + gap-2
+    // 用 CSS calc 表達 loose token,不硬寫 px(loose 會隨 density 變)
+    const buttonPaddingRight = hasActions
+      ? `calc(var(--layout-space-loose) + ${suffixContentWidth}px + 0.5rem)`
+      : undefined
+
+    const button = (
+      <Comp
+        ref={ref}
+        data-sidebar="menu-button"
+        data-active={isActive}
+        className={cn(sidebarMenuButtonVariants({ size, variant }), className)}
+        style={hasActions ? { paddingRight: buttonPaddingRight } : undefined}
+        onClick={handleClick}
+        {...props}
+      >
+        {content}
+      </Comp>
+    )
+
+    // Suffix inline actions——絕對定位在 menu-item 右邊,
+    // 跟 button 同層(不是 button 的 child,避免巢狀 button)。
+    const suffixNode = hasActions ? (
+      <span
+        data-sidebar="menu-inline-actions"
+        className={cn(
+          "absolute top-1/2 -translate-y-1/2 flex items-center gap-2",
+          "right-[var(--layout-space-loose)]",
+          // Icon 模式隱藏(跟 SidebarMenuBadge / SidebarMenuAction 一致)
+          "group-data-[collapsible=icon]:hidden",
+          // hover-reveal:滑鼠 hover 或鍵盤 focus(但不是 mouse click 的 focus)時顯示。
+          // 用 `:has(:focus-visible)` 而非 `:focus-within`——focus-within 會被
+          // mouse click 觸發,導致 click 之後 actions 永久顯示直到焦點移走;
+          // focus-visible 只在鍵盤 tab 時啟動,mouse click 不會觸發,符合使用者直覺。
+          actionsReveal === "hover" &&
+            "opacity-0 group-hover/menu-item:opacity-100 group-has-[:focus-visible]/menu-item:opacity-100 transition-opacity duration-150"
+        )}
+      >
+        {inlineActions!.map((action, i) => (
+          <ItemInlineAction key={action.label + i} action={action} />
+        ))}
+      </span>
+    ) : null
+
+    const buttonWithTooltip = tooltip ? (
+      (() => {
+        const tooltipProps =
+          typeof tooltip === "string" ? { children: tooltip } : tooltip
+        return (
+          <Tooltip>
+            <TooltipTrigger asChild>{button}</TooltipTrigger>
+            <TooltipContent
+              side="right"
+              align="center"
+              hidden={state !== "collapsed" || isMobile}
+              {...tooltipProps}
+            />
+          </Tooltip>
+        )
+      })()
+    ) : (
+      button
+    )
+
+    if (!suffixNode) return buttonWithTooltip
+    return (
+      <>
+        {buttonWithTooltip}
+        {suffixNode}
+      </>
+    )
+  }
+)
+SidebarMenuButton.displayName = "SidebarMenuButton"
+
+const SidebarMenuAction = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentProps<"button"> & {
+    asChild?: boolean
+    showOnHover?: boolean
+  }
+>(({ className, asChild = false, showOnHover = false, ...props }, ref) => {
+  const Comp = asChild ? Slot : "button"
+
+  return (
+    <Comp
+      ref={ref}
+      data-sidebar="menu-action"
+      className={cn(
+        "absolute right-[var(--layout-space-loose)] top-1/2 -translate-y-1/2 flex aspect-square w-5 items-center justify-center rounded-md p-0 text-fg-muted outline-none ring-ring transition-colors hover:bg-neutral-hover hover:text-foreground focus-visible:ring-2 [&>svg]:size-4 [&>svg]:shrink-0",
+        "after:absolute after:-inset-2 after:md:hidden",
+        "group-data-[collapsible=icon]:hidden",
+        showOnHover &&
+          "group-focus-within/menu-item:opacity-100 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100 peer-data-[active=true]/menu-button:text-foreground md:opacity-0",
+        className
+      )}
+      {...props}
+    />
+  )
+})
+SidebarMenuAction.displayName = "SidebarMenuAction"
+
+// SidebarMenuBadge — 重用專案的 Badge 元件,絕對定位在 menu item 右側
+// Consumer 傳入 Badge 的所有 props(count / variant / max 等)
+const SidebarMenuBadge = React.forwardRef<
+  React.ElementRef<typeof Badge>,
+  React.ComponentProps<typeof Badge>
+>(({ className, ...props }, ref) => (
+  <Badge
+    ref={ref}
+    data-sidebar="menu-badge"
+    className={cn(
+      "pointer-events-none absolute right-[var(--layout-space-loose)] top-1/2 -translate-y-1/2",
+      "group-data-[collapsible=icon]:hidden",
+      className
+    )}
+    {...props}
+  />
+))
+SidebarMenuBadge.displayName = "SidebarMenuBadge"
+
+// SidebarMenuSkeleton — 對齊 SidebarMenuButton 的 item-layout 公式,支援 sm/md/lg
+// 沒傳 size 就從 context 繼承,確保 loading 狀態跟實際 item 同高不跳動
+const sidebarMenuSkeletonVariants = cva(
+  [
+    "flex items-start gap-2",
+    "px-[var(--layout-space-loose)]",
+  ],
+  {
+    variants: {
+      size: {
+        sm: "py-[calc((var(--field-height-sm)-1lh)/2)] [&>[data-sidebar=menu-skeleton-icon]]:size-4",
+        md: "py-[calc((var(--field-height-md)-1lh)/2)] [&>[data-sidebar=menu-skeleton-icon]]:size-4",
+        lg: "py-[calc((var(--field-height-lg)-1lh)/2)] [&>[data-sidebar=menu-skeleton-icon]]:size-5",
+      },
+    },
+    defaultVariants: { size: "md" },
+  }
+)
+
+const SidebarMenuSkeleton = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<"div"> & {
+    showIcon?: boolean
+  } & VariantProps<typeof sidebarMenuSkeletonVariants>
+>(({ className, showIcon = false, size: sizeProp, ...props }, ref) => {
+  const { size: contextSize } = useSidebar()
+  const size = sizeProp ?? contextSize
+  const width = React.useMemo(() => {
+    return `${Math.floor(Math.random() * 40) + 50}%`
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      data-sidebar="menu-skeleton"
+      className={cn(sidebarMenuSkeletonVariants({ size }), className)}
+      {...props}
+    >
+      {showIcon && (
+        <Skeleton
+          className="rounded-md shrink-0"
+          data-sidebar="menu-skeleton-icon"
+        />
+      )}
+      <Skeleton
+        className="h-4 max-w-[var(--skeleton-width)] flex-1"
+        data-sidebar="menu-skeleton-text"
+        style={
+          {
+            "--skeleton-width": width,
+          } as React.CSSProperties
+        }
+      />
+    </div>
+  )
+})
+SidebarMenuSkeleton.displayName = "SidebarMenuSkeleton"
 
 export {
-  SidebarProvider,
   Sidebar,
-  SidebarHeader,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupAction,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInput,
+  SidebarMenu,
+  SidebarMenuAction,
+  SidebarMenuBadge,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarMenuSkeleton,
+  SidebarProvider,
+  SidebarSeparator,
   SidebarTrigger,
   useSidebar,
 }

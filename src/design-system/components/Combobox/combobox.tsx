@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 import type { FieldMode } from '@/design-system/components/fields/field-types'
 import { fieldWrapperStyles, EMPTY_DISPLAY } from '@/design-system/components/fields/field-wrapper'
 import { Tag } from '@/design-system/components/Tag/tag'
-import { Tooltip, TooltipTrigger, TooltipContent } from '@/design-system/components/Tooltip/tooltip'
+import { ItemInlineAction } from '@/design-system/patterns/item-layout/item-layout'
 import { OverflowIndicator } from '@/design-system/components/OverflowIndicator/overflow-indicator'
 import { Popover, PopoverContent, PopoverTrigger } from '@/design-system/components/Popover/popover'
 import { Command, CommandList, CommandEmpty, CommandGroup, CommandItem } from '@/design-system/components/Command/command'
@@ -232,15 +232,12 @@ function NativeCombobox({
       <div className={cn('flex items-center gap-2 shrink-0 relative z-10 pointer-events-none', wrap && 'self-start')}
         style={wrap ? { height: tagHeight } : undefined}>
         {showClear && (
-          <Tooltip><TooltipTrigger asChild>
-            <button type="button" onClick={() => onChange?.([])}
-              className="group/action relative grid place-content-center shrink-0 text-fg-muted hover:text-foreground active:text-foreground transition-colors pointer-events-auto"
-              style={{ width: iconSize, height: iconSize }} aria-label="清除全部">
-              <span className={cn('absolute rounded-sm pointer-events-none bg-transparent group-hover/action:bg-neutral-hover group-active/action:bg-neutral-active transition-colors', size === 'lg' && 'rounded-md')}
-                style={{ width: iconSize + 2, height: iconSize + 2, top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} aria-hidden />
-              <X size={iconSize} className="relative" aria-hidden />
-            </button>
-          </TooltipTrigger><TooltipContent>清除全部</TooltipContent></Tooltip>
+          <span className="pointer-events-auto">
+            <ItemInlineAction
+              size={size ?? 'md'}
+              action={{ icon: X, label: '清除全部', onClick: () => onChange?.([]) }}
+            />
+          </span>
         )}
         <ChevronDown size={iconSize} className="shrink-0 text-fg-muted cursor-pointer pointer-events-auto"
           onClick={() => { selectRef.current?.showPicker?.(); selectRef.current?.focus() }} aria-hidden />
@@ -324,15 +321,16 @@ function CustomCombobox({
           <div className={cn('flex items-center gap-2 shrink-0 relative z-10 pointer-events-none', wrap && 'self-start')}
             style={wrap ? { height: tagHeight } : undefined}>
             {showClear && (
-              <Tooltip><TooltipTrigger asChild>
-                <button type="button" onClick={(e) => { e.stopPropagation(); onChange?.([]) }}
-                  className="group/action relative grid place-content-center shrink-0 text-fg-muted hover:text-foreground active:text-foreground transition-colors pointer-events-auto"
-                  style={{ width: iconSize, height: iconSize }} aria-label="清除全部">
-                  <span className={cn('absolute rounded-sm pointer-events-none bg-transparent group-hover/action:bg-neutral-hover group-active/action:bg-neutral-active transition-colors', size === 'lg' && 'rounded-md')}
-                    style={{ width: iconSize + 2, height: iconSize + 2, top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} aria-hidden />
-                  <X size={iconSize} className="relative" aria-hidden />
-                </button>
-              </TooltipTrigger><TooltipContent>清除全部</TooltipContent></Tooltip>
+              <span className="pointer-events-auto">
+                <ItemInlineAction
+                  size={size ?? 'md'}
+                  action={{
+                    icon: X,
+                    label: '清除全部',
+                    onClick: (e) => { e?.stopPropagation(); onChange?.([]) },
+                  }}
+                />
+              </span>
             )}
             {chevronEl}
           </div>

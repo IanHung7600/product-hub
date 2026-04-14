@@ -16,6 +16,14 @@ import { ChevronRight } from 'lucide-react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+// Row primitive 共用常數——單一 source of truth
+import {
+  ICON_SIZE,
+  RowSizeProvider,
+  ItemIcon,
+  ItemInlineAction,
+  type InlineActionConfig,
+} from '@/design-system/patterns/item-layout/item-layout'
 
 /**
  * TreeView — 階層結構的遞迴元件
@@ -71,8 +79,8 @@ export interface TreeDragEndEvent {
 // Constants
 // ═══════════════════════════════════════════════════════════════════════════
 
-// Icon / chevron 尺寸——跟 item-layout 的 icon tier 一致
-const ICON_PX: Record<SizeKey, number> = { sm: 16, md: 16, lg: 20 }
+// Icon / chevron 尺寸——從 item-layout pattern module 引入(在檔頂 import),
+// 這裡本地不再宣告。所有 row primitives 共用同一個常數。
 
 // indentStep = chevronSize + gap-2(8px)
 // 結構對齊:子 chevron 對齊父 icon,子 icon 對齊父 label
@@ -570,7 +578,12 @@ const TreeView = React.forwardRef<HTMLDivElement, TreeViewProps>(
         role="tree"
         aria-multiselectable={selectionMode === 'multiple' || undefined}
         className={cn(
-          'flex flex-col py-2',
+          // TreeView root 不加任何 py——呼吸空間由外層容器負責:
+          //   - 在 SidebarGroup 內: SidebarGroup py-2 提供
+          //   - 在 DropdownMenuContent 內: content py-2 提供
+          //   - 獨立使用(story demo): consumer 自己加 py-2
+          // 這樣才能跟 DropdownMenu / SelectMenuGroup 的結構一致(group 是容器,row 是內容)。
+          'flex flex-col',
           className,
         )}
         style={{
@@ -588,6 +601,10 @@ const TreeView = React.forwardRef<HTMLDivElement, TreeViewProps>(
 
     return (
       <TreeViewContext.Provider value={contextValue}>
+        {/* RowSizeProvider:讓 TreeView 子樹內任何 <ItemIcon> / <ItemAvatar> /
+            <ItemInlineAction> 自動讀到對的 size,跟 SidebarProvider 同一條規則。
+            未來 TreeView 接 inlineActions API 後也吃這個 context。 */}
+        <RowSizeProvider value={size}>
         {/* 永遠包 DndContext(hooks 不能 conditional call)。不 draggable 時無 sensors = 不可拖 */}
         <DndContext
           sensors={draggable ? sensors : undefined}
@@ -608,7 +625,7 @@ const TreeView = React.forwardRef<HTMLDivElement, TreeViewProps>(
                     'opacity-90 shadow-[0_4px_12px_rgba(0,0,0,0.12)]',
                     size === 'lg' ? 'text-body-lg leading-compact px-4 py-2' : 'text-body leading-compact px-3 py-1.5',
                   )}>
-                    {IconComp && <IconComp size={ICON_PX[size]} className="shrink-0" aria-hidden />}
+                    {IconComp && <IconComp size={ICON_SIZE[size]} className="shrink-0" aria-hidden />}
                     <span className="text-foreground truncate max-w-[200px]">{info?.label ?? draggingId}</span>
                   </div>
                 )
@@ -616,6 +633,7 @@ const TreeView = React.forwardRef<HTMLDivElement, TreeViewProps>(
             </DragOverlay>
           )}
         </DndContext>
+        </RowSizeProvider>
       </TreeViewContext.Provider>
     )
   }
@@ -633,6 +651,8 @@ const treeItemVariants = cva(
     'cursor-pointer select-none',
     'transition-colors duration-150',
     'outline-none',
+    // Label 字重 500(跟 SidebarMenuButton 一致)
+    'font-medium',
   ],
   {
     variants: {
@@ -666,16 +686,42 @@ export interface TreeItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>
    */
   checkbox?: React.ReactNode
   /**
-   * 右側 inline action(hover 該列時才出現)。
-   * 用途:⋯ 選單、＋ 新增子頁、刪除等操作。
-   * 元件自動處理 hover 顯隱(opacity 0→1),consumer 只需傳 ReactNode。
+   * 右側 inline actions(suffix slot,宣告式 API)。對齊 `uiSize.spec.md`「Inline Action」
+   * 與 `SidebarMenuButton.inlineActions` 的同一條規格——TreeItem / SidebarMenuButton /
+   * 未來的 row primitive 全部用同一個 declarative API。
+   *
+   * Consumer 只宣告 intent,TreeItem 用 `<ItemInlineAction>` 自動渲染:
+   * - Icon 尺寸 = `ICON_SIZE[treeViewSize]`(自動)
+   * - Hover bg、tooltip、aria-label、cursor-pointer 自動處理
+   * - **不可以**手刻 button JSX(canonical 實作在 `item-layout.tsx`)
+   *
+   * ```tsx
+   * <TreeItem
+   *   id="inbox"
+   *   icon={Inbox}
+   *   label="Inbox"
+   *   inlineActions={[
+   *     { icon: MoreHorizontal, label: '更多', onClick: handleMore },
+   *     { icon: Plus,           label: '新增', onClick: handleAdd },
+   *   ]}
+   *   actionsReveal="hover"
+   * />
+   * ```
    *
    * 若需要永遠可見的 suffix(如 badge 計數),放在 `label` 內:
    * ```tsx
    * <TreeItem label={<>Inbox <Badge count={3} /></>} />
    * ```
    */
-  actions?: React.ReactNode
+  inlineActions?: InlineActionConfig[]
+  /**
+   * Inline actions 的顯示模式:
+   * - `"hover"`(預設):row hover 或鍵盤 focus(focus-visible)時才淡入
+   * - `false`:常駐顯示
+   *
+   * 對齊 `SidebarMenuButton.actionsReveal`,同一套規則。
+   */
+  actionsReveal?: false | "hover"
   /**
    * 取代 chevron 的位置。用於 stepper 的 status indicator(●/○/✓)。
    * 設定後 chevron 不渲染,改渲染 indicator。
@@ -688,7 +734,7 @@ export interface TreeItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>
 }
 
 const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
-  ({ id, label, icon: Icon, checkbox, actions, indicator, disabled, children, className, ...props }, ref) => {
+  ({ id, label, icon: Icon, checkbox, inlineActions, actionsReveal = 'hover', indicator, disabled, children, className, ...props }, ref) => {
     const ctx = useTreeView()
     const depth = React.useContext(DepthContext)
     const {
@@ -718,7 +764,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
     const isDragging = draggingId === id
     const isDropTarget = dropTarget?.id === id
 
-    const iconPx = ICON_PX[size]
+    const iconPx = ICON_SIZE[size]
     const indentPx = depth * INDENT_STEP[size]
 
     // ── Drag hooks ──
@@ -838,9 +884,13 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
             className={cn(
               'group/tree-item',
               treeItemVariants({ size }),
+              // 預設文字色 neutral-8 (fg-secondary),選中後變 neutral-9 (foreground)
+              // icon 透過 currentColor 繼承,不需要另外設
+              !disabled && !isSelected && 'text-fg-secondary',
+              !disabled && isSelected && 'text-foreground',
               // inside: 資料夾背景高亮(Figma 風格),不用 ring/border
               isDropTarget && dropTarget?.position === 'inside' && 'bg-primary-subtle',
-              !disabled && 'hover:bg-neutral-hover',
+              !disabled && 'hover:bg-neutral-hover hover:text-foreground',
               !disabled && isSelected && selectionMode === 'single' && 'bg-neutral-selected',
               showRing && 'ring-2 ring-ring ring-inset',
               disabled && 'pointer-events-none text-fg-disabled cursor-default',
@@ -865,29 +915,35 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
               </span>
             )}
 
-            {/* indicator 取代 icon 的位置;h-[1lh] 對齊第一行 */}
+            {/* indicator 取代 icon 的位置;h-[1lh] 對齊第一行
+                indicator 是 escape hatch(stepper status dot 等客製內容),用裸 ItemPrefix 模式;
+                Icon 走 canonical `<ItemIcon>` helper——自動標 data-prefix-type="icon",
+                讓 SidebarProvider 的全域 :has() prefix-mix 偵測能命中。 */}
             {indicator ? (
               <span className="h-[1lh] shrink-0 flex items-center justify-center" style={{ width: iconPx }}>
                 {indicator}
               </span>
             ) : Icon ? (
-              <span className="h-[1lh] shrink-0 flex items-center">
-                <Icon
-                  size={iconPx}
-                  className={cn(disabled ? 'text-fg-disabled' : '')}
-                  aria-hidden
-                />
-              </span>
+              <ItemIcon icon={Icon} className={disabled ? 'text-fg-disabled' : undefined} />
             ) : null}
 
             <span className={cn('flex-1 min-w-0 truncate', disabled && 'text-fg-disabled')}>
               {label}
             </span>
 
-            {/* Hover-only inline actions(opacity 0→1 on row hover） */}
-            {actions && (
-              <span className="h-[1lh] shrink-0 ml-auto flex items-center gap-2 opacity-0 group-hover/tree-item:opacity-100 transition-opacity duration-150">
-                {actions}
+            {/* Suffix inline actions——宣告式 API,用 `<ItemInlineAction>` 渲染。
+                actionsReveal="hover"(預設):row hover 或 keyboard focus-visible 才顯示。
+                actionsReveal=false:常駐顯示。
+                跟 SidebarMenuButton 共用同一條規則,行為一致。 */}
+            {inlineActions && inlineActions.length > 0 && (
+              <span className={cn(
+                "h-[1lh] shrink-0 ml-auto flex items-center gap-2",
+                actionsReveal === 'hover' &&
+                  "opacity-0 group-hover/tree-item:opacity-100 group-has-[:focus-visible]/tree-item:opacity-100 transition-opacity duration-150"
+              )}>
+                {inlineActions.map((action, i) => (
+                  <ItemInlineAction key={action.label + i} action={action} />
+                ))}
               </span>
             )}
           </div>

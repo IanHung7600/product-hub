@@ -22,6 +22,54 @@
 若缺少上述檔案，請先建立再進行其他修改。
 
 
+# 規則分層（寫新規則前先決定位置）
+
+設計系統的規則分四層，**寫任何新規則前先決定它屬於哪一層**，不要全部塞進 CLAUDE.md。
+
+**Level 1 — `CLAUDE.md`（專案層，跨元件）**
+- 技術棧、檔案結構
+- 跨元件架構原則（shadcn 框架、Props 命名、Token 命名）
+- 影響任何元件的技術陷阱（Tailwind v4 `var()` 語法、tailwind-merge 註冊、陰影用 elevation、Provider 放置）
+- 品質閘門、Story 結構規範
+- 指向詳細 spec 的指標
+- 「如何寫 spec / story / code」的 meta 規則
+
+不適合：單一元件的設計細節、超過 5 行的技術細節（那是 spec 的工作）。
+
+**Level 2 — 元件 `spec.md`（單一元件）**
+- 元件定位一句話
+- variant / size / state 的「何時用 / 不用」與理由
+- 元件特有的設計決策
+- do / don't 原則（由 stories 視覺化）
+- 對 cross-cutting 規則的**例外**
+- 指向 CLAUDE.md 或 pattern spec 的反向引用
+
+不適合：適用多個元件的規則（應升級到 pattern spec 或 CLAUDE.md）。
+
+**Level 3 — Pattern `spec.md`（跨元件共享的佈局 / 互動公式，如 `item-layout.spec.md`）**
+- 多個元件必須遵守的基礎設計規則
+- pattern 的 rationale（為什麼是這個公式 / 結構）
+- 公式與 token 結構
+- **列出哪些元件是該 pattern 的消費者**
+- 元件在 pattern 內的互動規則
+
+**Level 4 — Code（`.tsx`）**
+- 被強制執行的 variant type（cva）
+- TypeScript 型別約束、required props
+- 不需人類判斷的實作細節
+- 說明微妙實作決策的行內註解（**不是**設計理由——設計理由去 spec）
+
+### 判斷法（寫規則前問自己）
+
+1. **影響幾個元件？** 1 個 → 元件 spec；2+ 但屬同一 pattern → pattern spec；全系統 → CLAUDE.md
+2. **能直接變成 code 嗎？** 能 → 寫進 tsx，spec 指向 tsx；不能 → spec
+3. **是「為什麼 / 何時」還是「是什麼 / 多少」？** 前者 → spec；後者 → code
+
+### 搬動規則的雙向處理
+
+把規則從 CLAUDE.md 搬到 spec 時，**CLAUDE.md 必須留下一行指標**（「詳見 `xxx.spec.md`」）；反之亦然。**規則有家、也有路標**，不可只搬走不留索引。
+
+
 # 技術架構概覽
 
 ```
@@ -191,6 +239,97 @@ element.style.backgroundColor = 'var(--primary)'
 
 **如果確實需要新值**,先提出理由讓使用者確認,不要自己決定後寫進去。
 
+## 陰影一律用 `--elevation-*` token
+
+專案**沒有定義** Tailwind `shadow-*` utility。陰影只有兩個 token:`--elevation-100`(Card)/`--elevation-200`(浮層,必須搭 `bg-surface-raised`),用 `style={{ boxShadow: 'var(--elevation-200)' }}` 套。
+
+**禁止** `shadow-sm/md/lg/xl/2xl`、硬寫 `box-shadow`。**允許** `shadow-none`。詳見 `src/design-system/tokens/elevation/elevation.spec.md`。
+
+## Row primitives 共用 item-layout 公式
+
+所有 row 類元件(SidebarMenuButton / TreeItem / SelectMenuItem / DropdownMenuItem)共用同一套 padding / height / hover / active / color 規則。**寫任何新 row 元件前,讀 `src/design-system/patterns/item-layout/item-layout.spec.md` 的「適用對象」和「垂直 padding 歸屬」兩節**。不自己發明新規格。
+
+Canonical 實作:`SelectMenuItem` 的 `menuItemVariants` cva。
+
+### Prefix / label / suffix / inline action:一律走 helper 元件
+
+Row primitive 的 prefix、label、suffix inline action **全部有 canonical helper**,consumer 永遠不要手刻。這是結構性強制——helper 把 size 查表、RowSizeContext 讀取、alignment wrapper、hover bg、Tooltip 全部封裝,consumer 硬寫沒意義且必定漂移。
+
+| 你想寫 | 必須改用 |
+|---|---|
+| `<Avatar size={24} />` 在 row 內 | `<ItemAvatar>` — 自動 AVATAR_SIZE 查表 + 自動加 `data-prefix-type="avatar"` |
+| `<Icon size={16} />` 在 row prefix | `<ItemIcon icon={X} />` — 自動 ICON_SIZE 查表 + 自動加 `data-prefix-type="icon"` |
+| `<ItemPrefix><Icon /></ItemPrefix>`(裸 wrapper + raw icon)| `<ItemIcon icon={X} />` — 裸 ItemPrefix 不會自動加 `data-prefix-type` tag,**全域 prefix-mix 偵測會靜默失效** |
+| `<span className="h-[1lh] shrink-0 flex items-center">` 自己刻 prefix wrapper | `<ItemPrefix>`(escape hatch)或更好:`<ItemIcon>` / `<ItemAvatar>` |
+| `<span className="truncate">` 當 label | `<ItemLabel>` |
+| Row 內任何 **clickable icon**(包括 chevron toggle、dismiss X、more ⋯、add +、collapsible trigger) | `<ItemInlineAction>`(含 Tooltip)或 `<ItemInlineActionButton>`(root 是 button,可塞 Radix `asChild`) |
+
+### `ItemPrefix` 是 escape hatch,不是預設選項
+
+`<ItemPrefix>` 是底層 wrapper(只負責 `h-[1lh]` 對齊,沒帶任何 `data-prefix-type` tag)。**直接用它包 raw icon / avatar 是 bug 溫床**——曾經發生過:
+
+> SidebarMenuButton 內部用 `<ItemPrefix><StartIcon /></ItemPrefix>` 渲染 icon prefix,**沒有 `data-prefix-type="icon"` tag**。後來加全域 `:has()` prefix-mix 偵測時,detection 永遠看不到 icon,即使 sidebar 裡明明有 icon + avatar 混用,自動對齊功能對 SidebarMenuButton 整條路徑失效。視覺上 8px ghost spacing 很容易被誤認為對齊,**bug 隱藏到使用者主動截圖質疑才被發現**。
+
+**規則**:
+
+- **預設用 `<ItemIcon>` / `<ItemAvatar>` / `<ItemCheckbox>` 等 typed helper**——它們自動帶 `data-prefix-type`,參與全域 prefix-mix 偵測
+- **只有「prefix 不是已知類型」(stepper status indicator、客製 decorative element)**才直接用 `<ItemPrefix>`。這時要清楚知道:這個 prefix **不會**參與 prefix-mix 偵測
+- Code review / grep 檢查:`<ItemPrefix>\s*<[A-Z]` pattern 應該幾乎不存在,出現就要審視「為什麼不用 ItemIcon/ItemAvatar」
+
+### Audit 指令(grep guard)
+
+任何時候不確定 row primitive 內部是否漂移,跑這幾條 grep:
+
+```bash
+# 找出可疑的 raw ItemPrefix wrap 用法(應該幾乎沒有)
+rg '<ItemPrefix>\s*<[A-Z]' src/design-system
+
+# 找出硬寫 size 的 Avatar / Icon(在 row primitive 內應該為零)
+rg '<Avatar[^>]*size=\{[0-9]+\}' src/design-system/components/{Sidebar,TreeView,SelectMenu,DropdownMenu}
+rg 'size=\{16\}|size=\{20\}|size=\{24\}' src/design-system/components/{Sidebar,TreeView}
+
+# 找出沒走 ItemInlineAction 的 inline action button
+rg "group/action.*relative grid place-content-center" src/design-system
+```
+
+任何一條結果非空就是 drift,要修。
+
+### 清 unused imports 後**必須**跑 storybook 驗證
+
+`tsc --noEmit` clean ≠ runtime clean。曾發生過:
+
+> 清 SidebarMenuButton 的 unused imports 時,順手把 `ItemInlineAction` 從 import 砍掉,但這個 identifier 還在 JSX 渲染裡用(`{inlineActions.map(...<ItemInlineAction>...)}`)。tsc 因為 JSX 內 identifier resolution 的特定規則沒抓到(JSX `<X>` 在某些 transformer 下不會被當成嚴格 reference),storybook runtime 才爆 `ItemInlineAction is not defined`。
+
+**規則**:任何「import 清理」/「rename」/「刪 export」之後,必須:
+
+1. `npx tsc --noEmit` 通過(必要但不充分)
+2. **`npm run dev` 或 `npm run storybook` 跑起來,實際載入動到的 story** ——這才是 runtime truth
+3. 對動到的元件至少切一次互動(點 button、開 collapsible)確保動態 path 也通過
+
+第 2、3 步不能省。
+
+### Predicate:什麼算 inline action
+
+**命名無關**。下列三個條件同時成立 → **就是 inline action**,不准繞過 helper:
+
+1. 在 row primitive 內(或其 suffix / label / prefix slot)
+2. 是 icon(或主要視覺是 icon)
+3. 可點擊(有 onClick / 是 Radix Trigger / 是 collapsible toggle)
+
+**真實例子**(曾犯過的錯):
+
+- ✅ SelectField 的 clear X
+- ✅ Tag 的 dismiss X
+- ✅ TreeView 的 hover-reveal 「⋯」/「＋」
+- ✅ **SidebarGroup collapsible 的 chevron toggle**——曾經誤寫成裸 icon + rotate className,**它是可點擊的 icon 就是 inline action**,跟叫不叫 chevron 無關
+- ✅ Popover / Dropdown trigger 如果主視覺是 icon
+
+### Sidebar item 必須支援 single selection
+
+**所有 `SidebarMenuButton` 必須**參與整個 sidebar 的 single-selection state——同時只有一個 active,不論在 MainNav / TreeView / Favorites 哪個 group。**不存在「啞 item」**:寫 `<SidebarMenuButton>` 就代表它會被選中,consumer 必須傳 `id` 讓 `SidebarProvider` 知道它是誰。
+
+結構性保證:`SidebarProvider` 接 `activeId` + `onActiveChange` prop,`SidebarMenuButton` 的 `id` prop 搭配 context 自動算 `isActive`。consumer **無法**寫出忘記接 selection 的 item——沒傳 id 就沒有 active 態、沒有 onClick,TS 會少 type 不警告但視覺上 item 永遠看起來 dead,一眼看得出來。
+
 
 # Tailwind 使用規則
 
@@ -201,6 +340,22 @@ element.style.backgroundColor = 'var(--primary)'
 <div className="p-[var(--layout-space-loose)]" />
 <div className="h-[var(--ui-height-36)]" />
 ```
+
+## Tailwind v4 任意值：CSS variable 必須用 `var()` 包覆
+
+**必須寫 `w-[var(--foo)]`，不能寫 `w-[--foo]`**。Tailwind v4 對任意值裡的 CSS variable 處理改了——舊的 `[--foo]` shorthand **不會自動包 `var()`**，會被當成 custom property declaration，整個 class **靜默失效**（不報錯，但完全沒效果）。
+
+**曾經發生的 bug**：Sidebar 從 shadcn 複製的 `w-[--sidebar-width]` 在 8 個位置寬度全失效，sidebar 寬度變成 content fallback 導致主內容被蓋住。
+
+```tsx
+// ❌ 錯(v4 失效)
+<div className="w-[--sidebar-width] min-w-[--sidebar-width-min]" />
+
+// ✅ 對
+<div className="w-[var(--sidebar-width)] min-w-[var(--sidebar-width-min)]" />
+```
+
+**自我檢查**：若 CSS var 相關寬高看起來怪怪的，先 `grep '\[--[a-z]'` 在 src 裡找有沒有漏網的 shorthand 語法。
 
 **圓角**：
 
@@ -409,6 +564,21 @@ import { Button } from '@/design-system/components/Button/button'
 import { cn } from '@/lib/utils'
 // 不再有 tokens.ts — 顏色與字體直接用 CSS 變數或 Tailwind class
 ```
+
+## 元件不得自包 Provider
+
+**Tooltip / Theme / Toast / Portal 等 Provider 一律由應用層**（`main.tsx`、Storybook `preview.tsx`）**統一設定**。元件本體**禁止自包 `TooltipProvider` / `ThemeProvider` / `ToastProvider` 等 Provider**。
+
+**曾經發生的 bug**：shadcn 原版 `SidebarProvider` 內部預設包 `TooltipProvider delayDuration={0}`,會強制覆寫 app-level 的 delay 設定，讓整個 sidebar 的 tooltip 立即彈出、破壞全站 hover 節奏。從 shadcn 複製元件時**務必檢查並移除**這類內建 Provider。
+
+### 為什麼
+
+Provider 是**應用層配置**（delay、theme、portal target、toast position），元件包 Provider 等於劫持這些配置。元件只消費 context，不建立 context——除非 context 是該元件「擁有」的狀態（如 `SidebarProvider` 的 `open`、`DropdownMenu` 的 `size`）。
+
+### 判斷法
+
+- Context 是**行為狀態**（open / close / size / current item） → **可包**（這是元件的狀態管理）
+- Context 是**全域外觀配置**（delay / theme / portal / variant defaults） → **禁止包**（屬於應用層）
 
 
 # Pattern 規則

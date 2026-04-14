@@ -3,7 +3,7 @@ import { type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import type { FieldMode, InlineActionConfig } from '@/design-system/components/fields/field-types'
 import { fieldWrapperStyles, bareInputStyles, EMPTY_DISPLAY } from '@/design-system/components/fields/field-wrapper'
-import { Tooltip, TooltipTrigger, TooltipContent } from '@/design-system/components/Tooltip/tooltip'
+import { ItemInlineAction } from '@/design-system/patterns/item-layout/item-layout'
 
 // ── Format ──────────────────────────────────────────────────────────────────
 
@@ -146,39 +146,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
           {...props}
         />
         {endAction && (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                onClick={endAction.onClick}
-                className={cn(
-                  'group/action relative grid place-content-center shrink-0 cursor-pointer',
-                  'text-fg-muted hover:text-foreground active:text-foreground transition-colors',
-                )}
-                style={{ width: iconSize, height: iconSize }}
-                aria-label={endAction.label}
-              >
-                <span
-                  className={cn(
-                    'absolute rounded-sm pointer-events-none',
-                    'bg-transparent group-hover/action:bg-neutral-hover group-active/action:bg-neutral-active',
-                    'transition-colors',
-                    size === 'lg' && 'rounded-md',
-                  )}
-                  style={{
-                    width: actionHoverSize,
-                    height: actionHoverSize,
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                  }}
-                  aria-hidden
-                />
-                <endAction.icon size={iconSize} className="relative" aria-hidden />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>{endAction.label}</TooltipContent>
-          </Tooltip>
+          <ItemInlineAction action={endAction} size={size ?? 'md'} />
         )}
       </div>
     )

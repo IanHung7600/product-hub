@@ -3,6 +3,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Avatar, type AvatarData } from '@/design-system/components/Avatar/avatar'
+import { ICON_SIZE, AVATAR_SIZE } from '@/design-system/patterns/item-layout/item-layout'
 
 // ── Selection Item Styles ───────────────────────────────────────────────────
 // Checkbox 和 RadioGroup 共用的 item 佈局。
@@ -35,21 +36,13 @@ export const selectionItemStyles = cva(
 
 type SizeKey = 'sm' | 'md' | 'lg'
 
-// ── Avatar 尺寸 ──
-// ── Avatar 尺寸 ──
-// 跟 SelectMenuItem 共用 convention:
-//   - inline(≤24px):無 desc 或 icon → 對齊 label 第一行
-//   - block(>24px):有 desc → 對齊 text block center
+// Avatar 尺寸 + Icon 尺寸從 item-layout module 共用,不在此 re-declare(避免漂移)
+// AVATAR_SIZE / ICON_SIZE 都是 item-layout 的 canonical 常數。
 //
-// 跟 SelectMenuItem 的差異:SelectionItem 有 control(checkbox/radio)。
+// SelectionItem 跟 SelectMenuItem 的差異:SelectionItem 有 control(checkbox/radio)。
 // block 模式時 **control 跟 prefix 一起走 block 高度**——兩者都在 text block center,
 // 維持「selection + identity」是一組的視覺語意,不會歪斜。
-const AVATAR_PX = {
-  inline: { sm: 20, md: 24, lg: 24 },
-  block:  { sm: 32, md: 32, lg: 40 },
-} as const
-
-const ICON_SIZE: Record<SizeKey, number> = { sm: 16, md: 16, lg: 20 }
+const AVATAR_PX = AVATAR_SIZE
 
 // ── Block 對齊容器 ──
 // reading mode: desc 永遠 14px (var(--font-body-size) * 1.5)

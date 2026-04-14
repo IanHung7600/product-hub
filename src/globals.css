@@ -8,6 +8,8 @@
 @import "./design-system/tokens/opacity/opacity.css";
 @import "./design-system/components/DataTable/data-table.css";
 
+@custom-variant dark (&:is(.dark *));
+
 /* ── Icon stroke width（全域 lucide 預設）── */
 .lucide { stroke-width: 1.75; }
 
@@ -15,6 +17,34 @@
 @theme inline {
   /* white — 明確納入 token 系統，供 text-white / bg-white 使用 */
   --color-white: oklch(1 0 0);
+}
+
+/* Sidebar layout tokens — 唯一保留的 sidebar-* 變數
+   顏色一律用既有 semantic token（bg-surface / text-foreground / border-divider），
+   不引入 shadcn 的 slate palette --sidebar-* 顏色家族 */
+:root {
+  /* 預設寬度 17rem (272px)——CJK 內容在 16rem 常擠壓,17rem 較舒適。
+     最小寬度 240px 是絕對下限,任何情境下不可小於此值(使用者若自訂寬度也受限)。 */
+  --sidebar-width: 17rem;
+  --sidebar-width-min: 240px;
+  --sidebar-width-mobile: 18rem;
+
+  /* Chrome header / footer 共享高度——sidebar header / footer、page header 都用這個 token,
+     確保跨元件同高對齊。density-responsive:md=48 / lg=56,跟內部 button(field-height)
+     同步放大,維持 padding 比例一致。
+     ── 為什麼是 48 / 56(hardcode,非公式) ──
+     世界級 app 的 header 高度集中在 40–64px,甜蜜點 48–56(Linear / Atlassian / Material small)。
+     兩個值都 snap 到 8px grid。anchor 是 field-height-md(容納 md Button + 上下呼吸空間)。
+     不寫成 calc() 公式因為 lg 無法完美遵守(54 → 56 為了 8px grid 取整),hardcode 比假公式誠實。*/
+  --chrome-header-height: 3rem;  /* 48px */
+
+  /* Icon rail 寬度永遠等於 chrome header 高度——讓 icon 模式下的 SidebarHeader 是正方形
+     (寬=高),Avatar 置中 padding 上下左右對稱。也自動跟著 density 變,不用單獨維護 */
+  --sidebar-width-icon: var(--chrome-header-height);
+}
+
+[data-density="lg"] {
+  --chrome-header-height: 3.5rem;  /* 56px */
 }
 
 /* ── Base reset ── */
@@ -53,3 +83,4 @@
 @utility animate-collapsible-up {
   animation: collapsible-up 150ms ease-out;
 }
+

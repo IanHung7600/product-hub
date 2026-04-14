@@ -100,6 +100,14 @@ const SOLID_DISMISS_HOVER: Record<string, { hover: string; active: string }> = {
 
 // ── Dismiss（internal）────────────────────────────────────────────────────
 // Inline action：16px icon，18px hover 背景，由 Tag 內部渲染。
+//
+// **為什麼不用 `ItemInlineAction` 共用元件**:
+// Tag 的 solid variant(blue/green/red 等)需要 hover bg 跟 tag 色相一致(用 SOLID_DISMISS_HOVER
+// 查表的 chromatic hover token),不是中性的 neutral-hover。`ItemInlineAction` 預設用 neutral
+// hover bg,改成支援色相 override 會增加 helper 的 API 複雜度。Tag dismiss 的 chromatic
+// 約束是 component-specific,屬於合理的特例,不該為單一 case 拖累 helper。
+//
+// 未來 option:`ItemInlineActionButton` 加 `hoverBgClassName` override prop,讓 Tag 也能用。
 
 function TagDismiss({ onDismiss, label, solid, variant }: { onDismiss: () => void; label: string; solid?: boolean; variant?: string }) {
   // dismiss icon 繼承 Tag 文字色（跟 label 同色）

@@ -8,6 +8,7 @@ import { Command, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandS
 import { Command as CommandPrimitive } from 'cmdk'
 import { SelectMenuItem, SelectMenuGroup, SelectMenuFooter } from './select-menu-item'
 import { Checkbox } from '@/design-system/components/Checkbox/checkbox'
+import { RowSizeProvider } from '@/design-system/patterns/item-layout/item-layout'
 
 /**
  * SelectMenu — Popover + Command 組成的完整下拉選單
@@ -198,9 +199,14 @@ export function SelectMenu({
     if (!open) setSearch('')
   }, [open])
 
+  // RowSizeProvider 讓 PopoverContent 子樹內任何 <ItemIcon> / <ItemAvatar> /
+  // <ItemInlineAction> 都自動讀到對的 size,跟 SidebarProvider / TreeView 同一條規則。
+  // (注:Popover 透過 Portal 渲染,context 仍然會跨 portal 傳遞——React context 是 tree-based
+  // 不是 DOM-based,Portal 不影響 context propagation)
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
+      <RowSizeProvider value={size}>
       <PopoverContent
         className={cn(
           'p-0 rounded-lg border border-border bg-surface-raised overflow-hidden',
@@ -321,6 +327,7 @@ export function SelectMenu({
           )}
         </Command>
       </PopoverContent>
+      </RowSizeProvider>
     </Popover>
   )
 }
