@@ -15,7 +15,7 @@ Field 和 Input 家族（Input / NumberInput / DatePicker / Select / Combobox / 
 - **Field**（本元件）：只管佈局 + 狀態 context
 - **Input 家族 / Checkbox / Switch / RadioGroup**：管自己的資料型別 + edit/readonly/disabled 三態 + 格式化（XxxDisplay 供 DataTable 共用）
 
-這麼拆的理由：**Checkbox 在 table cell、form field、settings row 應該是同一個 primitive**，不該為了進到 form 就被包一層 CheckboxField；form 的高度對齊由 Field 的 control area 負責，不由 primitive 本身負責。Input 家族的詳細共用規則見 `components/fields/input-family.spec.md`。
+這麼拆的理由：**Checkbox 在 table cell、form field、settings row 應該是同一個 primitive**，不該為了進到 form 就被包一層 CheckboxField；form 的高度對齊由 Field 的 control area 負責，不由 primitive 本身負責。Input 家族的詳細共用規則見 `components/fields/field.spec.md`。
 
 ---
 
