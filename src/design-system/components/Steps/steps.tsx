@@ -560,7 +560,7 @@ function HorizontalLayout({
       <div className="relative min-w-0">
         {label}
         {description && (
-          <div className="absolute top-full left-0 whitespace-nowrap mt-0.5">
+          <div className="absolute top-full left-0 max-w-48 truncate">
             {description}
           </div>
         )}
