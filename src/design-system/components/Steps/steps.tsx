@@ -147,13 +147,11 @@ function computeReachableValues(
 
 // ── Steps root ────────────────────────────────────────────────────────────
 
-// Vertical 用 flex-col,horizontal 用 CSS Grid(inline style,因為 grid-template-columns
-// 需要動態 count 無法 static class)。
 const stepsRootVariants = cva('list-none p-0 m-0', {
   variants: {
     orientation: {
       vertical: 'flex flex-col',
-      horizontal: '', // grid via inline style in render
+      horizontal: 'flex flex-row items-start gap-3',
     },
   },
   defaultVariants: { orientation: 'vertical' },
@@ -257,8 +255,6 @@ const Steps = React.forwardRef<HTMLOListElement, StepsProps>(
 
     // Interleave horizontal connectors between items
     const count = React.Children.count(children)
-    const completedSet = new Set(completedValues)
-    const isHorizontal = orientation === 'horizontal'
     const itemsWithIndex: React.ReactNode[] = []
 
     React.Children.forEach(children, (child, index) => {
@@ -276,31 +272,9 @@ const Steps = React.forwardRef<HTMLOListElement, StepsProps>(
           {cloned}
         </StepIndexContext.Provider>,
       )
-      if (isHorizontal && !isLast) {
-        const itemValue = (child.props as { value?: string }).value
-        const isPrevCompleted = typeof itemValue === 'string' && completedSet.has(itemValue)
-        const connGridCol = (index + 1) * 2 // connectors 在偶數 columns: 2, 4, 6...
-        itemsWithIndex.push(
-          <HorizontalRootConnector key={`conn-${index}`} isBlue={isPrevCompleted} size={size} gridCol={connGridCol} />,
-        )
-      }
+      // Horizontal connectors are now INSIDE each StepItem (Ant Design pattern),
+      // not between items. No interleaving needed.
     })
-
-    // Horizontal 用 CSS Grid:
-    //   columns: repeat(N-1, auto 1fr) auto → items auto(label 寬), connectors 1fr(均分)
-    //   rows: auto auto → row-1 header, row-2 description
-    //   column-gap: 12px → label↔connector 和 connector↔circle 等距
-    //   description 跨 item+connector 兩欄 → 最長到連結線尾段
-    const horizontalGridStyle: React.CSSProperties | undefined = isHorizontal
-      ? {
-          display: 'grid',
-          // items auto(label 決定寬度)+ connectors 1fr(均分剩餘)
-          // column-gap 12px → label↔connector 和 connector↔circle **等距**
-          gridTemplateColumns: count > 1 ? `repeat(${count - 1}, auto 1fr) auto` : 'auto',
-          gridTemplateRows: 'auto auto',
-          columnGap: 12,
-        }
-      : undefined
 
     return (
       <StepsContext.Provider value={ctxValue}>
@@ -309,7 +283,6 @@ const Steps = React.forwardRef<HTMLOListElement, StepsProps>(
           data-orientation={orientation}
           data-size={size}
           className={cn(stepsRootVariants({ orientation }), className)}
-          style={{ ...horizontalGridStyle, ...props.style }}
           {...props}
         >
           {itemsWithIndex}
@@ -339,9 +312,9 @@ const stepItemVariants = cva('group/step-item outline-none', {
     orientation: {
       // pb-6 on li provides spacing for next item; connector is absolute within li
       vertical: 'relative flex flex-col',
-      // CSS Grid 模式:li 用 display:contents 讓子元素直接成為 grid children。
-      // Header(indicator+label)放 row-1,description 放 row-2 跨 item+connector 兩欄。
-      horizontal: 'contents',
+      // Ant Design pattern:flex-1 等寬(最後一步用 last: 覆蓋成自然寬度)。
+      // Connector 在 item 內部(不是 items 之間的獨立元素)。
+      horizontal: 'flex-1 min-w-0 last:flex-none last:shrink-0',
     },
     size: {
       sm: 'text-body',
@@ -552,22 +525,21 @@ function VerticalConnectorLine() {
   )
 }
 
-// ── Horizontal layout (CSS Grid) ────────────────────────────────────────
+// ── Horizontal layout (Ant Design pattern) ──────────────────────────────
 //
-// ── 架構 ──
-// Root ol 用 CSS Grid:columns = repeat(N-1, auto 1fr) auto
-//   - auto columns → item header(indicator + label),寬度由 label 決定
-//   - 1fr columns → connector(均分剩餘空間)
-//   - column-gap 12px → label↔connector 和 connector↔circle **等距**
+// Connector 在 **item 內部**(不是 items 之間的獨立元素):
+//   Step (flex-1): [indicator][gap][label][gap][──connector──]
+//   Last step:     [indicator][gap][label]  (無 connector)
 //
-// li 用 display:contents → 子元素直接成為 grid children。
-// Header(row 1)放 grid column = item position。
-// Description(row 2)跨 item + connector 兩欄 → 最長到連結線尾段。
+// Root: flex-row gap-3 → gap 只在 step items 之間
+// Step items: flex-1 等寬(最後一步 flex-none 自然寬度)
 //
-// 結構跟垂直版鏡射:indicator + gap + text col(只是 description 跨欄不跨行)。
-
-// Indicator center Y (px) — 固定值,不依賴 lh CSS 單位
-const INDICATOR_CENTER_Y: Record<StepsSize, number> = { sm: 10.5, md: 10.5, lg: 12 }
+// 等距保證:
+//   label→connector gap = item 內 flex gap-3 = 12px
+//   connector→next circle = root gap-3 = 12px
+//   兩邊都是 12px ✓
+//
+// Description 在 step item 內(connector 下方),wrap 到 item 寬度 = 最長到連結線尾段 ✓
 
 function HorizontalLayout({
   label,
@@ -576,59 +548,33 @@ function HorizontalLayout({
   label: React.ReactNode
   description: React.ReactNode
 }) {
-  const displayIndex = React.useContext(StepIndexContext) // 1-based
   const item = useStepItemContext()
   const steps = useStepsContext()
-  const gridCol = (displayIndex - 1) * 2 + 1 // items 在奇數 columns: 1, 3, 5...
-  // Description 跨 item + connector 兩欄;最後一步只跨自己(沒有 trailing connector)
-  const descSpanEnd = item.isLast ? gridCol + 1 : gridCol + 2
+  const isBlue = item.state === 'completed'
+  const indicatorBox = INDICATOR_BOX_WIDTH[steps.size]
 
   return (
     <>
-      {/* Grid row 1: header(indicator + label)→ 決定 auto column 寬度 */}
-      <StepItemHeader
-        className={cn('flex items-start gap-3', steps.size === 'lg' ? 'text-body-lg' : 'text-body')}
-        style={{ gridColumn: gridCol, gridRow: 1 }}
-      >
+      {/* Row 1: indicator + label + connector(在同一個 flex row) */}
+      <StepItemHeader className="flex items-start gap-3">
         <div className="h-[1lh] flex items-center shrink-0">
           <StepIndicator />
         </div>
-        <div className="min-w-0">{label}</div>
+        <div className="shrink-0 min-w-0">{label}</div>
+        {/* Connector 在 item 內部,flex-1 填滿剩餘寬度 */}
+        {!item.isLast && (
+          <div className="h-[1lh] flex-1 flex items-center min-w-4" aria-hidden>
+            <div className={cn('h-px w-full', isBlue ? 'bg-primary' : 'bg-border')} />
+          </div>
+        )}
       </StepItemHeader>
-      {/* Grid row 2: description — 跨 item + connector 欄,最長到連結線尾段 */}
+      {/* Row 2: description — 在 item 寬度內 wrap(含 connector 佔的空間) */}
       {description && (
-        <div
-          className={cn('min-w-0 self-start', steps.size === 'lg' ? 'text-body-lg' : 'text-body')}
-          style={{ gridColumn: `${gridCol} / ${descSpanEnd}`, gridRow: 2, paddingLeft: INDICATOR_BOX_WIDTH[steps.size] + 12 }}
-        >
+        <div className="min-w-0" style={{ paddingLeft: indicatorBox + 12 }}>
           {description}
         </div>
       )}
     </>
-  )
-}
-
-function HorizontalRootConnector({
-  isBlue,
-  size,
-  gridCol,
-}: {
-  isBlue: boolean
-  size: StepsSize
-  gridCol: number
-}) {
-  return (
-    <li
-      role="presentation"
-      aria-hidden
-      className="relative"
-      style={{ gridColumn: gridCol, gridRow: 1, alignSelf: 'stretch' }}
-    >
-      <div
-        className={cn('absolute left-0 right-0 h-px', isBlue ? 'bg-primary' : 'bg-border')}
-        style={{ top: INDICATOR_CENTER_Y[size] }}
-      />
-    </li>
   )
 }
 
