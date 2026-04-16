@@ -344,10 +344,10 @@ const StepItem = React.forwardRef<HTMLLIElement, StepItemProps>(
 
     const activate = React.useCallback(() => {
       if (!clickable) return
+      // 永遠更新 focus(value),multiple 模式額外 toggle 展開
+      steps.setValue(value)
       if (steps.expansion === 'multiple') {
         steps.toggleExpanded(value)
-      } else {
-        steps.setValue(value)
       }
     }, [clickable, steps, value])
 
