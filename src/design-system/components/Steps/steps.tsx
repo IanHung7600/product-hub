@@ -549,17 +549,24 @@ function HorizontalLayout({
   )
 }
 
+// Indicator center Y (px) — fixed values, not relying on `lh` CSS unit
+// text-body:    font-size 14 × line-height 1.5 = 21px line → center at 10.5
+// text-body-lg: font-size 16 × line-height 1.5 = 24px line → center at 12
+const INDICATOR_CENTER_Y: Record<StepsSize, number> = { sm: 10.5, md: 10.5, lg: 12 }
+
 function HorizontalRootConnector({ isBlue, size }: { isBlue: boolean; size: StepsSize }) {
   return (
     <li
       role="presentation"
       aria-hidden
-      className={cn(
-        'flex-1 min-w-6 h-[1lh] flex items-center',
-        size === 'lg' ? 'text-body-lg' : 'text-body',
-      )}
+      // self-stretch: 填滿行高(跟 items 等高),讓 absolute line 有正確定位空間
+      className="flex-1 min-w-6 relative self-stretch"
     >
-      <div className={cn('h-px w-full', isBlue ? 'bg-primary' : 'bg-border')} />
+      {/* 絕對定位到 indicator 中心 Y,不依賴 `lh` CSS 單位 */}
+      <div
+        className={cn('absolute left-0 right-0 h-px', isBlue ? 'bg-primary' : 'bg-border')}
+        style={{ top: INDICATOR_CENTER_Y[size] }}
+      />
     </li>
   )
 }
