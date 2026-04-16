@@ -361,7 +361,7 @@ function CustomCombobox({
             </div>
           )}
           <CommandList>
-            <CommandEmpty className="py-4 flex items-center justify-center">
+            <CommandEmpty>
               <Empty description="沒有符合的選項" className="py-6" />
             </CommandEmpty>
             <CommandGroup className="p-0 py-2">
