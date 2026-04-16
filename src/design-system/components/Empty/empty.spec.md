@@ -1,0 +1,103 @@
+# Empty
+
+**空狀態視覺元件**——容器內沒有內容時的居中提示。Table、SelectMenu、Combobox、Page section 等所有需要空狀態的元件統一消費。
+
+## 定位
+
+一個 **layout pattern**(不是 field-level 元件)。它排列 icon / title / description / action 成居中垂直堆疊,間距走 layout-space token(density-aware)。
+
+預設只有 description——icon / title / action 全部可選。
+
+## 結構
+
+```
+         [Avatar 48px neutral + icon]     ← 可選
+          gap = --layout-space-tight
+        [Title 16px font-medium centered]  ← 可選
+                 mt-0.5 (2px)
+      [Description 14px fg-secondary centered]
+               w-full (no max-width)
+          gap = --layout-space-loose
+              [Action Button]              ← 可選
+```
+
+## Slots
+
+| Slot | Prop | 預設 | 說明 |
+|---|---|---|---|
+| Icon | `icon?: LucideIcon \| ReactElement` | 無 | LucideIcon → 自動包 `<Avatar size={48} color="neutral" />`(icon 28px);ReactElement → 原樣渲染 |
+| Title | `title?: string` | 無 | `text-body-lg font-medium text-foreground text-center` |
+| Description | `description?: string` | 無 | `text-body text-fg-secondary text-center` |
+| Action | `action?: ReactNode` | 無 | Button 或任何 CTA,居中 |
+
+## 間距
+
+| Gap | Token / 值 | md | lg | 語意 |
+|---|---|---|---|---|
+| Icon → Title/Desc | `--layout-space-tight` | 12px | 16px | 視覺→文字過渡 |
+| Title → Description | `mt-0.5`(2px 固定) | 2px | 2px | Item-layout canonical(同資訊塊) |
+| Description → Action | `--layout-space-loose` | 16px | 24px | 資訊→行動暫停 |
+
+Outer padding 由 **consumer 容器** 決定:
+- Table 空狀態:`py-12`
+- SelectMenu dropdown:`py-6`
+- Page-level:`py-16`
+
+## Typography
+
+| 元素 | Class | 大小 | 色彩 |
+|---|---|---|---|
+| Title | `text-body-lg font-medium` | 16px | `text-foreground` |
+| Description | `text-body` | 14px | `text-fg-secondary` |
+
+固定不隨 density 變——展示性文字,不需要跟 field-height tier 連動。
+
+## 文字不限寬
+
+Description **不加 max-width**。文字撐滿容器,由容器 padding 控制行寬。文案設計者自己規劃換行(文案長度 = 設計的一部分),Empty 不該強制截斷。
+
+## 消費範例
+
+```tsx
+// Table 空狀態(最簡)
+<Empty description="沒有資料" />
+
+// SelectMenu 無結果
+<Empty icon={SearchX} description="找不到符合的結果" />
+
+// Page 首次引導(完整 slots)
+<Empty
+  icon={FolderOpen}
+  title="還沒有專案"
+  description="建立第一個專案來開始使用"
+  action={<Button>建立專案</Button>}
+/>
+
+// 自訂色彩(success result)
+<Empty
+  icon={<Avatar icon={CheckCircle} size={48} color="green" />}
+  title="已成功送出"
+  description="我們會盡快處理"
+/>
+
+// 自訂圖片
+<Empty
+  icon={<img src="/empty-illustration.svg" className="w-12 h-12" alt="" />}
+  description="尚無內容"
+/>
+```
+
+## 現有消費者改寫
+
+| 元件 | 現況 | 改為 |
+|---|---|---|
+| DataTable | inline `<div>` 硬寫 className | `<Empty description={emptyState} className="py-12" />` |
+| SelectMenu | — | `<Empty description="無選項" className="py-6" />` |
+| Combobox | — | `<Empty description="找不到結果" className="py-6" />` |
+
+## 反向引用
+
+- Avatar 渲染 icon → `components/Avatar/avatar.tsx`
+- Typography tier → `tokens/typography/typography.spec.md`
+- Layout-space token → `tokens/layoutSpace/layoutSpace.spec.md`
+- Item-layout label→desc gap(mt-0.5) → `patterns/item-layout/item-layout.spec.md`

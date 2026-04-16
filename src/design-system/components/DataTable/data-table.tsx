@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { Empty } from '@/design-system/components/Empty/empty'
 import {
   useReactTable,
   getCoreRowModel,
@@ -282,7 +283,8 @@ function DataTableInner<TData>(
   // ── Render body rows for a region ──
   const renderBodyRows = (cols: Column<TData, unknown>[], isCenter: boolean, isRight: boolean, regionWidth?: number) => {
     if (isEmpty && isCenter) {
-      return <div className="flex items-center justify-center text-fg-muted text-body py-12">{emptyState ?? '沒有資料'}</div>
+      if (emptyState && typeof emptyState !== 'string') return <div className="py-12">{emptyState}</div>
+      return <Empty description={typeof emptyState === 'string' ? emptyState : '沒有資料'} className="py-12" />
     }
     if (isEmpty) return null
 
