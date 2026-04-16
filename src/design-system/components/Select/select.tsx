@@ -299,8 +299,8 @@ const CustomSelect = React.forwardRef<HTMLDivElement, SelectProps>(
         >
           <Command shouldFilter={false}>
             <CommandList>
-              <CommandEmpty>
-                <Empty description="沒有符合的選項" className="py-6" />
+              <CommandEmpty className="absolute inset-0 flex items-center justify-center">
+                <Empty description="沒有符合的選項" />
               </CommandEmpty>
               <CommandGroup className="p-0 py-2">
                 {filteredOptions.map((opt) => {

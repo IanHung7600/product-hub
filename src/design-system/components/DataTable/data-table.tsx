@@ -283,8 +283,9 @@ function DataTableInner<TData>(
   // ── Render body rows for a region ──
   const renderBodyRows = (cols: Column<TData, unknown>[], isCenter: boolean, isRight: boolean, regionWidth?: number) => {
     if (isEmpty && isCenter) {
-      if (emptyState && typeof emptyState !== 'string') return <div className="py-12">{emptyState}</div>
-      return <Empty description={typeof emptyState === 'string' ? emptyState : '沒有資料'} className="py-12" />
+      // 有框容器 → 垂直置中(design principle)
+      if (emptyState && typeof emptyState !== 'string') return <div className="flex-1 flex items-center justify-center py-12">{emptyState}</div>
+      return <div className="flex-1 flex items-center justify-center py-12"><Empty description={typeof emptyState === 'string' ? emptyState : '沒有資料'} /></div>
     }
     if (isEmpty) return null
 
