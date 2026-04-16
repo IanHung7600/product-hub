@@ -153,7 +153,7 @@ export const Overview = {
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <H3>結構（Anatomy）</H3>
-          <Desc>Trigger 觸發浮層 Content，Content 內含各類 Item。浮層由 SizeContext 統一控制所有子項目尺寸。所有 Item 類型內部使用 SelectMenuItem 進行視覺渲染，Radix primitive 只處理行為。</Desc>
+          <Desc>Trigger 觸發浮層 Content，Content 內含各類 Item。浮層由 SizeContext 統一控制所有子項目尺寸。所有 Item 類型內部使用 MenuItem 進行視覺渲染，Radix primitive 只處理行為。</Desc>
         </div>
         <div className="flex gap-8 items-start">
           {/* Trigger -> Content flow */}
@@ -186,7 +186,7 @@ export const Overview = {
           </div>
           {/* Item layout */}
           <div className="flex flex-col gap-3">
-            <span className="text-[11px] text-fg-muted font-medium">Item 佈局（via SelectMenuItem）</span>
+            <span className="text-[11px] text-fg-muted font-medium">Item 佈局（via MenuItem）</span>
             <div className="border-2 border-dashed border-primary/30 rounded-md px-3 py-2 flex items-center gap-2">
               {[
                 { name: 'prefix', color: 'info' },

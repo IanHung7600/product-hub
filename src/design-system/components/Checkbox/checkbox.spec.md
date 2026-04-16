@@ -66,7 +66,7 @@ Checkbox / Radio 在 form 內承載的常常是:
 - **隱私聲明**(「允許 Cookie 用於...」)
 - **複雜條件描述**(「啟用此功能會...」)
 
-**任何截斷都是違法或誤導**——使用者必須完整看到他正在同意什麼。SelectMenuItem 的「掃視優先」不適用,SelectionItem 的核心訴求是「**完整閱讀後同意**」。
+**任何截斷都是違法或誤導**——使用者必須完整看到他正在同意什麼。MenuItem 的「掃視優先」不適用,SelectionItem 的核心訴求是「**完整閱讀後同意**」。
 
 ### Per-instance override
 
@@ -78,9 +78,9 @@ Checkbox / Radio 在 form 內承載的常常是:
 
 **注意:不能傳 `undefined` 表達「不截」**——React 的 destructure default 會把 undefined 當「沒傳」、fallback 到預設值。要明確表達「不截」傳 `'none'`(雖然語意等同預設,但更明確)。
 
-### 為什麼不像 SelectMenuItem 強制截斷?
+### 為什麼不像 MenuItem 強制截斷?
 
-| | SelectMenuItem | SelectionItem |
+| | MenuItem | SelectionItem |
 |---|---|---|
 | 使用情境 | 浮層選單,挑一個 | Form 內,**同意**或**選擇**內容本身 |
 | 內容性質 | 選項名稱(短) | 條款 / 聲明 / 條件描述(可長) |

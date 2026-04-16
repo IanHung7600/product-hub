@@ -1,57 +1,8 @@
-# SelectMenu 設計原則
+# MenuItem 設計原則
 
 ## 定位
 
-SelectMenu 是下拉選單的浮層元件。由 Select / Combobox 內部觸發，不單獨使用。
-
----
-
-## 搜尋行為（searchIn）
-
-搜尋位置由選擇模式決定，開發者可覆寫：
-
-| 模式 | `searchIn` 預設 | 選了之後 | 原因 |
-|---|---|---|---|
-| **單選** | `"trigger"`（唯一值，不可覆寫） | 關閉浮層 | 選完就結束，不需保留關鍵字 |
-| **多選** | `"menu"` | 關鍵字保留，繼續勾選 | 最常見：搜一個關鍵字，勾選多個相關項目 |
-| **多選 + `searchIn="trigger"`** | — | 關鍵字清除，打新的 | 一個一個挑不同類型的項目 |
-
-- 單選搜尋在觸發點：field 變 input，打字即篩選，選完關閉
-- 多選搜尋在浮層：浮層頂部搜尋框，勾選不關閉，關鍵字保留
-- 多選搜尋在觸發點：tags 旁邊 inline input，選了一個 tag 後關鍵字清除
-
----
-
-## 浮層規格
-
-| 屬性 | Token | 說明 |
-|---|---|---|
-| 背景 | `bg-surface-raised` | 不透明 |
-| 陰影 | `--elevation-200` | 與 Modal / Popover 一致 |
-| 圓角 | `rounded-lg` | 8px |
-| 邊框 | `border border-border` | 1px |
-| 間距 | `sideOffset={8}` | 與所有浮層統一 |
-| 寬度 | 跟隨觸發元件寬度 | 可設 `minWidth` |
-
----
-
-## 鍵盤操作
-
-由 cmdk 提供，所有模式統一：
-
-| 按鍵 | 行為 |
-|---|---|
-| `↑` `↓` | 移動焦點 |
-| `Enter` | 選中目前焦點的選項 |
-| `Escape` | 關閉浮層 |
-| 任意字元（searchable 時） | 開始搜尋 |
-| `Tab` | 關閉浮層，焦點移到下一個元素 |
-
----
-
-## SelectMenuItem
-
-SelectMenuItem 是 SelectMenu 的選項元件——處理 prefix 對齊、尺寸、狀態。
+MenuItem 是所有 menu 類元件的**共用視覺佈局層**——處理 prefix 對齊、尺寸、狀態。SelectMenu、DropdownMenu、未來的 ContextMenu 等都消費它。它只負責 layout（padding、gap、prefix alignment、typography），互動行為由各 menu 的 Radix primitive 外層控制。
 
 ---
 
@@ -130,15 +81,15 @@ description 降一級：sm/md 的 label 14px → description 12px；lg 的 label
 
 ## Suffix 對齊(實作限制)
 
-依 `item-layout.spec.md` 的對齊規則,suffix 應該套用 24px 閾值公式(跟 prefix 同公式但獨立判斷)。但 **SelectMenuItem 的實作把 suffix 寫死成 `h-[1lh]` inline 對齊**——只支援 ≤24px 的小 suffix(Tag、ChevronRight、Badge、計數)。
+依 `item-layout.spec.md` 的對齊規則,suffix 應該套用 24px 閾值公式(跟 prefix 同公式但獨立判斷)。但 **MenuItem 的實作把 suffix 寫死成 `h-[1lh]` inline 對齊**——只支援 ≤24px 的小 suffix(Tag、ChevronRight、Badge、計數)。
 
 ### 為什麼 hardcode
 
-選單選項的 suffix 99% 是小元素,不會超過 24px。為了避免每個 consumer 都要思考 suffix 對齊規則,SelectMenuItem 直接套用最常見的 inline 對齊。
+選單選項的 suffix 99% 是小元素,不會超過 24px。為了避免每個 consumer 都要思考 suffix 對齊規則,MenuItem 直接套用最常見的 inline 對齊。
 
 ### 限制
 
-如果你要塞大塊 suffix(thumbnail 40px、stacked badge、multi-line text),**SelectMenuItem 會把它對齊到 label 第一行而不是文字塊中心**,視覺上會跟它修飾的對象失聯。
+如果你要塞大塊 suffix(thumbnail 40px、stacked badge、multi-line text),**MenuItem 會把它對齊到 label 第一行而不是文字塊中心**,視覺上會跟它修飾的對象失聯。
 
 ### 解法
 
@@ -159,15 +110,15 @@ description 降一級：sm/md 的 label 14px → description 12px；lg 的 label
 
 **為什麼 description 也預設 1 行?**
 
-SelectMenu 的設計目的是「**快速掃視多個選項挑一個**」。垂直空間是寶貴的——選單通常要塞 5–20 個選項。如果 description 沒有 clamp,一個過長的 description 會把 item 撐高,破壞 row rhythm,使用者眼睛要重新校準。
+Menu 的設計目的是「**快速掃視多個選項挑一個**」。垂直空間是寶貴的——選單通常要塞 5–20 個選項。如果 description 沒有 clamp,一個過長的 description 會把 item 撐高,破壞 row rhythm,使用者眼睛要重新校準。
 
-整個 SelectMenu 應該只有「**兩種 row 高度**」:
+整個選單應該只有「**兩種 row 高度**」:
 - 無 description → `field-height`(單行 label)
 - 有 description → `field-height` + 2px + 一行 desc 高度
 
-不能讓 row 高度變成「label 1 行 + desc 1~N 行」這種不可預測的範圍。**「若有就完整顯示」是錯的設計**——既然知道 description 不該長,就應該強制截斷,而不是允許 consumer 塞長 description 然後破壞 layout。
+不能讓 row 高度變成「label 1 行 + desc 1~N 行」這種不可預測的範圍。
 
-**Per-instance override**:consumer 若有合理理由(例如 settings 選單想顯示 2 行說明),可以顯式 `<SelectMenuItem descMaxLines={2} ...>` 覆寫。要顯示完整不截,傳 `descMaxLines="none"`(不能傳 `undefined`,React props 的 destructure default 在 undefined 時會接管,fallback 到預設 `1`)。
+**Per-instance override**:consumer 若有合理理由(例如 settings 選單想顯示 2 行說明),可以顯式 `<MenuItem descMaxLines={2} ...>` 覆寫。要顯示完整不截,傳 `descMaxLines="none"`(不能傳 `undefined`,React props 的 destructure default 在 undefined 時會接管,fallback 到預設 `1`)。
 
 ---
 
@@ -211,7 +162,7 @@ Menu item 的 prefix icon 跟 label 同色（foreground），不是 fg-muted。P
 
 ## Group
 
-群組由 `SelectMenuGroup` 包裹，`py-2`（8px）上下內距。群組緊鄰群組，無額外間距。
+群組由 `MenuGroup` 包裹，`py-2`（8px）上下內距。群組緊鄰群組，無額外間距。
 
 ### Group Header
 
@@ -225,24 +176,9 @@ Menu item 的 prefix icon 跟 label 同色（foreground），不是 fg-muted。P
 
 ## Footer（多選）
 
-`SelectMenuFooter` 提供固定底部區域（`border-t` + `py-2`）。
+`MenuFooter` 提供固定底部區域（`border-t` + `py-2`）。
 
 典型用途：「全選」checkbox item，使用 `checked="indeterminate"` 在部分選中時顯示 minus 圖示。
-
----
-
-## 空狀態
-
-搜尋無結果或選項為空時的視覺:
-
-| 屬性 | 值 | 理由 |
-|---|---|---|
-| 最小高度 | `min-height = minRows × field-height + 16px`（`minRows` 預設 3） | 至少顯示 N 行選項的等效高度,避免浮層塌陷造成視覺跳動。consumer 可透過 `minRows` prop 調整 |
-| 文字定位 | 垂直水平居中(`absolute inset-0`,flex center) | 空狀態文字在整個可用區域的正中心,不靠頂 |
-| 字體 | `text-body`(sm/md)/ `text-body-lg`(lg)+ `leading-compact` | 跟對應 size 的 item label 一致 |
-| 顏色 | `text-fg-muted` | 灰色,不搶焦點 |
-
-**Footer(「全部」checkbox)在空狀態時不顯示** — 沒有選項就沒有「全選」的意義。已程式化在 SelectMenu 內(`selectableOptions.length > 0`)。
 
 ---
 
@@ -254,3 +190,19 @@ Menu item 的 prefix icon 跟 label 同色（foreground），不是 fg-muted。P
 - ❌ disabled item 內的所有子元件（icon、checkbox、文字）都必須呈現 disabled 狀態——fg-disabled 統一，checkbox 用 disabled 樣式
 - ❌ header item 不可被選中
 - ❌ 不在 item 內放獨立互動元素（如 Button）——item 本身就是互動單位
+
+---
+
+## 消費者
+
+- `SelectMenu/select-menu.tsx` — 下拉選單浮層
+- `DropdownMenu/dropdown-menu.tsx` — 操作選單
+- 未來：ContextMenu、CommandPalette
+
+---
+
+## 反向引用
+
+- item-layout pattern → `patterns/item-layout/item-layout.spec.md`
+- Avatar 尺寸 → `components/Avatar/avatar.spec.md`
+- Checkbox → `components/Checkbox/checkbox.spec.md`

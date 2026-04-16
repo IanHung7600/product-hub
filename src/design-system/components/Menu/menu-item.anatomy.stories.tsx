@@ -1,12 +1,13 @@
 import type { Meta } from '@storybook/react'
 import { useState, useEffect } from 'react'
 import { Mail, Bell, Settings, FileText, Folder, Plus } from 'lucide-react'
-import { SelectMenuItem, SelectMenuGroup, SelectMenuFooter } from './select-menu-item'
+import { MenuItem, MenuGroup, MenuFooter } from './menu-item'
 import { Tag } from '@/design-system/components/Tag/tag'
-// Avatar is now passed as AvatarData (data object), rendered internally by SelectMenuItem
+// Avatar is now passed as AvatarData (data object), rendered internally by MenuItem
 
 const meta: Meta = {
-  title: 'Design System/Components/SelectMenu/設計規格',
+  title: 'Design System/Internal/Menu/設計規格',
+  tags: ['!dev'],
   parameters: { layout: 'padded' },
 }
 export default meta
@@ -390,8 +391,8 @@ const InspectorInner = () => {
         <div className="flex flex-col gap-5 min-w-[360px]">
           <div className="px-4 py-6 rounded-lg bg-canvas border border-divider flex items-center justify-center">
             <MenuContainer width={340}>
-              <SelectMenuGroup>
-                <SelectMenuItem
+              <MenuGroup>
+                <MenuItem
                   size={size}
                   startIcon={hasIcon ? Mail : undefined}
                   avatar={hasAvatar ? { alt: "Alice", color: "indigo" as const } : undefined}
@@ -403,8 +404,8 @@ const InspectorInner = () => {
                   tag={hasTag ? <Tag size={size} variant="neutral">標籤</Tag> : undefined}
                 >
                   電子郵件通知
-                </SelectMenuItem>
-              </SelectMenuGroup>
+                </MenuItem>
+              </MenuGroup>
             </MenuContainer>
           </div>
 
@@ -567,8 +568,8 @@ export const ColorMatrix = {
                   <Td mono>{st}</Td>
                   <td className="p-3 border-b border-divider align-top min-w-[280px]">
                     <MenuContainer width={260}>
-                      <SelectMenuGroup>
-                        <SelectMenuItem
+                      <MenuGroup>
+                        <MenuItem
                           size="md"
                           startIcon={Mail}
                           selected={st === 'selected'}
@@ -576,8 +577,8 @@ export const ColorMatrix = {
                           description="摘要通知"
                         >
                           電子郵件
-                        </SelectMenuItem>
-                      </SelectMenuGroup>
+                        </MenuItem>
+                      </MenuGroup>
                     </MenuContainer>
                   </td>
                   <td className="p-3 border-b border-divider align-top min-w-[200px]">
@@ -602,8 +603,8 @@ export const ColorMatrix = {
                   <Td mono>{st}</Td>
                   <td className="p-3 border-b border-divider align-top min-w-[280px]">
                     <MenuContainer width={260}>
-                      <SelectMenuGroup>
-                        <SelectMenuItem
+                      <MenuGroup>
+                        <MenuItem
                           size="md"
                           startIcon={Mail}
                           checkbox
@@ -612,8 +613,8 @@ export const ColorMatrix = {
                           description="摘要通知"
                         >
                           電子郵件
-                        </SelectMenuItem>
-                      </SelectMenuGroup>
+                        </MenuItem>
+                      </MenuGroup>
                     </MenuContainer>
                   </td>
                   <td className="p-3 border-b border-divider align-top min-w-[200px]">
@@ -631,10 +632,10 @@ export const ColorMatrix = {
         <span className="text-caption font-medium text-fg-secondary">Header（群組標題）</span>
         <div className="flex items-start gap-4">
           <MenuContainer width={260}>
-            <SelectMenuGroup>
-              <SelectMenuItem size="md" header>群組標題</SelectMenuItem>
-              <SelectMenuItem size="md" startIcon={FileText}>一般選項</SelectMenuItem>
-            </SelectMenuGroup>
+            <MenuGroup>
+              <MenuItem size="md" header>群組標題</MenuItem>
+              <MenuItem size="md" startIcon={FileText}>一般選項</MenuItem>
+            </MenuGroup>
           </MenuContainer>
           <div className="flex flex-col gap-0.5">
             <span className="inline-flex items-center gap-1 text-[10px]">
@@ -742,23 +743,23 @@ export const SizeMatrix = {
             <div key={sz} className="flex flex-col gap-1">
               <span className="text-caption text-fg-muted font-mono">{sz}{sz === 'md' ? '（預設）' : ''}</span>
               <MenuContainer width={380}>
-                <SelectMenuGroup>
-                  <SelectMenuItem size={sz} startIcon={Mail} description="每日摘要信件">
+                <MenuGroup>
+                  <MenuItem size={sz} startIcon={Mail} description="每日摘要信件">
                     電子郵件通知
-                  </SelectMenuItem>
-                  <SelectMenuItem size={sz} avatar={{ alt: "Alice", color: "indigo" as const }}>
+                  </MenuItem>
+                  <MenuItem size={sz} avatar={{ alt: "Alice", color: "indigo" as const }}>
                     Alice Chen
-                  </SelectMenuItem>
-                  <SelectMenuItem size={sz} avatar={{ alt: "Bob", color: "magenta" as const }} description="工程部門">
+                  </MenuItem>
+                  <MenuItem size={sz} avatar={{ alt: "Bob", color: "magenta" as const }} description="工程部門">
                     Bob Wang
-                  </SelectMenuItem>
-                  <SelectMenuItem size={sz} checkbox checked={true} startIcon={Bell}>
+                  </MenuItem>
+                  <MenuItem size={sz} checkbox checked={true} startIcon={Bell}>
                     推播通知
-                  </SelectMenuItem>
-                  <SelectMenuItem size={sz} tag={<Tag size={sz} variant="neutral">Admin</Tag>}>
+                  </MenuItem>
+                  <MenuItem size={sz} tag={<Tag size={sz} variant="neutral">Admin</Tag>}>
                     權限標記
-                  </SelectMenuItem>
-                </SelectMenuGroup>
+                  </MenuItem>
+                </MenuGroup>
               </MenuContainer>
             </div>
           ))}

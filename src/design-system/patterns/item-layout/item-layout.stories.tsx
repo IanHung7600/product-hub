@@ -4,7 +4,7 @@ import {
   Mail, Bell, Settings, Star, ChevronRight, Globe, Lock,
   Trash2, ExternalLink,
 } from 'lucide-react'
-import { SelectMenuItem } from '@/design-system/components/SelectMenu/select-menu-item'
+import { MenuItem } from '@/design-system/components/Menu/menu-item'
 import { SelectionItem } from '@/design-system/components/SelectionControl/selection-item'
 import { Checkbox } from '@/design-system/components/Checkbox/checkbox'
 import { Tag } from '@/design-system/components/Tag/tag'
@@ -22,7 +22,7 @@ export default meta
    ═══════════════════════════════════════════════════════════════════════════ */
 
 type SizeKey = 'sm' | 'md' | 'lg'
-type ConsumerKey = 'SelectMenuItem' | 'SelectionItem' | 'ListItem'
+type ConsumerKey = 'MenuItem' | 'SelectionItem' | 'ListItem'
 type PrefixType = 'icon' | 'avatar'
 
 const SIZES: SizeKey[] = ['sm', 'md', 'lg']
@@ -55,14 +55,14 @@ interface ConsumerPreset {
 
 /** Consumer tab 顯示名(情境導向,不用元件名) */
 const CONSUMER_DISPLAY: Record<ConsumerKey, { tab: string; sub: string }> = {
-  SelectMenuItem: { tab: '選單', sub: 'SelectMenuItem · 浮層內快速掃視' },
+  MenuItem: { tab: '選單', sub: 'MenuItem · 浮層內快速掃視' },
   SelectionItem:  { tab: '表單選項', sub: 'SelectionItem · Checkbox / Radio' },
   ListItem:       { tab: '列表', sub: 'ListItem · 頁面內瀏覽' },
 }
 
 const CONSUMERS: Record<ConsumerKey, ConsumerPreset> = {
-  SelectMenuItem: {
-    label: 'SelectMenuItem',
+  MenuItem: {
+    label: 'MenuItem',
     desc: '浮層選單（DropdownMenu / ComboBox）',
     mode: 'scanning',
     py: '(field-height − 一行文字高度) / 2',
@@ -73,7 +73,7 @@ const CONSUMERS: Record<ConsumerKey, ConsumerPreset> = {
     gapDesc: 'prefix-content 間距',
     suffixGap: 'gap-1 (4px)',
     suffixGapDesc: 'value + ChevronRight 更緊湊',
-    // Source: select-menu-item.tsx — label / description 都截到 1 行,維持掃視節奏
+    // Source: menu-item.tsx — label / description 都截到 1 行,維持掃視節奏
     labelMaxLines: 1,
     descMaxLines: 1,
     labelMinLines: 0,
@@ -332,7 +332,7 @@ function resolveClamp(override: ClampOverride, presetVal: number | undefined): n
  * 解析 clamp override → 傳給元件 prop 的值(永遠是 `number | 'none'`,絕不傳 undefined)。
  *
  * 為什麼不能傳 undefined?React props 的 destructure default 在 undefined 時會接管,
- * 例如 `<SelectMenuItem labelMaxLines={undefined}>` 等同沒傳,fallback 到元件預設。
+ * 例如 `<MenuItem labelMaxLines={undefined}>` 等同沒傳,fallback 到元件預設。
  * 要明確覆寫成「不截斷」,必須傳 `'none'` 這個非 undefined 的 sentinel。
  */
 function resolveClampProp(override: ClampOverride, presetVal: number | undefined): number | 'none' {
@@ -342,7 +342,7 @@ function resolveClampProp(override: ClampOverride, presetVal: number | undefined
 }
 
 const InspectorInner = () => {
-  const [consumer, setConsumer] = useState<ConsumerKey>('SelectMenuItem')
+  const [consumer, setConsumer] = useState<ConsumerKey>('MenuItem')
   const [size, setSize] = useState<SizeKey>('md')
   const [hasPrefix, setHasPrefix] = useState(true)
   const [prefixType, setPrefixType] = useState<PrefixType>('icon')
@@ -504,9 +504,9 @@ const InspectorInner = () => {
         <div className="flex flex-col gap-6 min-w-[440px]">
           {/* Live preview */}
           <div className="px-8 py-8 rounded-lg bg-canvas border border-divider flex items-center justify-center">
-            {consumer === 'SelectMenuItem' && (
+            {consumer === 'MenuItem' && (
               <MenuFrame width={360}>
-                <SelectMenuItem
+                <MenuItem
                   size={size}
                   startIcon={effectiveHasPrefix && effectivePrefixType === 'icon' ? Mail : undefined}
                   avatar={effectiveHasPrefix && effectivePrefixType === 'avatar' ? { alt: "Alice", color: "indigo" as const } : undefined}
@@ -516,7 +516,7 @@ const InspectorInner = () => {
                   descMaxLines={propDescClamp}
                 >
                   {labelText}
-                </SelectMenuItem>
+                </MenuItem>
               </MenuFrame>
             )}
             {consumer === 'SelectionItem' && (
@@ -951,12 +951,12 @@ export const AlignmentThreshold = {
 
           {/* Live example */}
           <MenuFrame width={360}>
-            <SelectMenuItem size="md" startIcon={Mail} description="每日寄送摘要信件" tag={<Tag size="md" variant="blue">Pro</Tag>}>
+            <MenuItem size="md" startIcon={Mail} description="每日寄送摘要信件" tag={<Tag size="md" variant="blue">Pro</Tag>}>
               電子郵件通知
-            </SelectMenuItem>
-            <SelectMenuItem size="md" startIcon={Bell} description="瀏覽器推送即時通知" tag={<Tag size="md" variant="green">Free</Tag>}>
+            </MenuItem>
+            <MenuItem size="md" startIcon={Bell} description="瀏覽器推送即時通知" tag={<Tag size="md" variant="green">Free</Tag>}>
               推送通知
-            </SelectMenuItem>
+            </MenuItem>
           </MenuFrame>
         </div>
 
@@ -1005,12 +1005,12 @@ export const AlignmentThreshold = {
 
           {/* Live example */}
           <MenuFrame width={360}>
-            <SelectMenuItem size="md" avatar={{ alt: "Alice", color: "indigo" as const }} description="Design team lead">
+            <MenuItem size="md" avatar={{ alt: "Alice", color: "indigo" as const }} description="Design team lead">
               Alice Chen
-            </SelectMenuItem>
-            <SelectMenuItem size="md" avatar={{ alt: "Bob", color: "yellow" as const }} description="Backend engineer">
+            </MenuItem>
+            <MenuItem size="md" avatar={{ alt: "Bob", color: "yellow" as const }} description="Backend engineer">
               Bob Wang
-            </SelectMenuItem>
+            </MenuItem>
           </MenuFrame>
         </div>
       </div>
@@ -1082,15 +1082,15 @@ export const ReadingModes = {
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
             <span className="text-caption font-semibold text-foreground">掃描模式（Scanning）</span>
-            <span className="text-[11px] text-fg-muted">浮層 / overlay — SelectMenuItem, ComboboxItem</span>
+            <span className="text-[11px] text-fg-muted">浮層 / overlay — MenuItem, ComboboxItem</span>
           </div>
           {SIZES.map((sz) => (
             <div key={sz} className="flex items-start gap-3">
               <span className="text-[12px] text-fg-muted w-6 shrink-0 pt-2 font-mono font-semibold">{sz}</span>
               <MenuFrame width={300}>
-                <SelectMenuItem size={sz} startIcon={Mail} description="每日寄送摘要信件">
+                <MenuItem size={sz} startIcon={Mail} description="每日寄送摘要信件">
                   電子郵件通知
-                </SelectMenuItem>
+                </MenuItem>
               </MenuFrame>
             </div>
           ))}
@@ -1252,9 +1252,9 @@ export const IconColorsAndPresets = {
           <div className="flex flex-col gap-2">
             <span className="text-[11px] text-fg-muted font-medium">Prefix icon = foreground（代表內容）</span>
             <MenuFrame width={260}>
-              <SelectMenuItem size="md" startIcon={Mail}>電子郵件</SelectMenuItem>
-              <SelectMenuItem size="md" startIcon={Settings}>設定</SelectMenuItem>
-              <SelectMenuItem size="md" startIcon={Star}>收藏</SelectMenuItem>
+              <MenuItem size="md" startIcon={Mail}>電子郵件</MenuItem>
+              <MenuItem size="md" startIcon={Settings}>設定</MenuItem>
+              <MenuItem size="md" startIcon={Star}>收藏</MenuItem>
             </MenuFrame>
           </div>
 
@@ -1262,7 +1262,7 @@ export const IconColorsAndPresets = {
           <div className="flex flex-col gap-2">
             <span className="text-[11px] text-fg-muted font-medium">Suffix indicator = fg-muted（指示方向）</span>
             <MenuFrame width={280}>
-              <SelectMenuItem
+              <MenuItem
                 size="md"
                 startIcon={Globe}
                 endContent={
@@ -1273,8 +1273,8 @@ export const IconColorsAndPresets = {
                 }
               >
                 語言
-              </SelectMenuItem>
-              <SelectMenuItem
+              </MenuItem>
+              <MenuItem
                 size="md"
                 startIcon={Lock}
                 endContent={
@@ -1284,7 +1284,7 @@ export const IconColorsAndPresets = {
                 }
               >
                 隱私設定
-              </SelectMenuItem>
+              </MenuItem>
             </MenuFrame>
           </div>
 
@@ -1292,9 +1292,9 @@ export const IconColorsAndPresets = {
           <div className="flex flex-col gap-2">
             <span className="text-[11px] text-fg-muted font-medium">危險操作 = 與 label 同色（text-error）</span>
             <MenuFrame width={260}>
-              <SelectMenuItem size="md" startIcon={Trash2} className="text-error">
+              <MenuItem size="md" startIcon={Trash2} className="text-error">
                 刪除專案
-              </SelectMenuItem>
+              </MenuItem>
             </MenuFrame>
           </div>
         </div>
@@ -1312,7 +1312,7 @@ export const IconColorsAndPresets = {
             <thead>
               <tr>
                 <Th>屬性</Th>
-                <Th>SelectMenuItem</Th>
+                <Th>MenuItem</Th>
                 <Th>SelectionItem</Th>
                 <Th>ListItem</Th>
               </tr>
@@ -1328,7 +1328,7 @@ export const IconColorsAndPresets = {
               ].map(({ label, k }) => (
                 <tr key={label}>
                   <Td>{label}</Td>
-                  <Td mono>{CONSUMERS.SelectMenuItem[k]}</Td>
+                  <Td mono>{CONSUMERS.MenuItem[k]}</Td>
                   <Td mono>{CONSUMERS.SelectionItem[k]}</Td>
                   <Td mono>{CONSUMERS.ListItem[k]}</Td>
                 </tr>
@@ -1343,14 +1343,14 @@ export const IconColorsAndPresets = {
         <span className="text-caption font-medium text-fg-secondary">消費元件即時範例（md size）</span>
         <div className="flex gap-8 items-start">
           <div className="flex flex-col gap-2">
-            <span className="text-[11px] text-fg-muted font-medium">SelectMenuItem</span>
+            <span className="text-[11px] text-fg-muted font-medium">MenuItem</span>
             <MenuFrame width={280}>
-              <SelectMenuItem size="md" startIcon={Mail} description="每日寄送摘要信件">
+              <MenuItem size="md" startIcon={Mail} description="每日寄送摘要信件">
                 電子郵件通知
-              </SelectMenuItem>
-              <SelectMenuItem size="md" startIcon={Bell}>
+              </MenuItem>
+              <MenuItem size="md" startIcon={Bell}>
                 推送通知
-              </SelectMenuItem>
+              </MenuItem>
             </MenuFrame>
           </div>
 

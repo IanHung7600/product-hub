@@ -119,11 +119,19 @@ src/
 │   │   ├── Popover/                   ← shadcn Popover（浮動容器）
 │   │   ├── Dialog/                    ← shadcn Dialog
 │   │   ├── ScrollArea/                ← shadcn ScrollArea
-│   │   ├── SelectMenu/                ← 下拉選單浮層（由 SelectField 消費）
-│   │   │   ├── select-menu.tsx        ← SelectMenu（Popover + Command 組合）
-│   │   │   ├── select-menu-item.tsx   ← MenuItem + Group + Footer
-│   │   │   └── select-menu-item.spec.md ← 設計原則（含 searchIn 規則）
-│   │   ├── DropdownMenu/              ← 操作選單（由 Button 觸發）
+│   │   ├── Menu/                      ← ⚙ internal primitive：menu item 共用佈局層（SelectMenu / DropdownMenu 消費，不直接使用）
+│   │   │   ├── menu-item.tsx          ← MenuItem / MenuGroup / MenuFooter
+│   │   │   └── menu-item.spec.md      ← 設計原則
+│   │   ├── Notice/                    ← ⚙ internal primitive：通知共用佈局層（Toast / Alert 消費，不直接使用）
+│   │   │   ├── notice.tsx             ← Notice（layout + icon + dismiss）
+│   │   │   └── notice.spec.md         ← 設計原則
+│   │   ├── Toast/                     ← 非阻斷式浮動通知（消費 Notice + Sonner）
+│   │   │   └── toast.tsx              ← Toaster provider + toast() API
+│   │   ├── Alert/                     ← inline / fixed 通知（消費 Notice，subtle + solid）
+│   │   │   └── alert.tsx              ← Alert 元件（subtle/solid × inline/fixed）
+│   │   ├── SelectMenu/                ← ⚙ internal primitive：下拉選單浮層（Select / Combobox 消費，不直接使用）
+│   │   │   └── select-menu.tsx        ← SelectMenu（Popover + Command 組合，消費 MenuItem）
+│   │   ├── DropdownMenu/              ← 操作選單（由 Button 觸發，消費 MenuItem）
 │   │   │   ├── dropdown-menu.tsx      ← Radix DropdownMenu + 設計系統 token
 │   │   │   └── dropdown-menu.spec.md
 │   │   ├── TreeView/                  ← 階層結構遞迴元件（expand/collapse + drag + keyboard）
@@ -234,14 +242,14 @@ element.style.backgroundColor = 'var(--primary)'
 **寫任何 gap、padding、font-size、line-height、icon size、border-radius 等數值之前,必須先 grep 系統內同類型的值,確認是否有既有 pattern 可以直接套用。不要憑直覺發明新值。**
 
 檢查清單：
-- `gap` → 查 `fieldWrapperStyles`（gap-2）、SelectMenuItem cva、SelectionItem cva
+- `gap` → 查 `fieldWrapperStyles`（gap-2）、MenuItem cva、SelectionItem cva
 - `padding` → 查 `--layout-space-loose/tight`、fieldWrapperStyles `px-3`
 - `font-size` → 查 `typography.css` utilities + `item-layout.spec.md` reading/scanning 模式規則
 - `line-height` → 查 `typography.css`（scanning = leading-compact 1.3,reading = default 1.5）
 - `icon size` → 查 `ICON_SIZE` 常數（sm/md=16, lg=20）
 - `inline action` → 查 `uiSize.spec.md`（icon size、hover bg size=icon+2、gap-2 between actions、fg-muted → hover foreground）
 
-**舉一反三**：如果 Select 的 inline action gap 是 gap-2,那所有元件的 inline action gap 都是 gap-2——不需要每個元件都被糾正一次。同理,如果 SelectMenuItem 的 description 是 reading mode min 14px,那所有 reading mode consumer 的 description 都是 min 14px。
+**舉一反三**：如果 Select 的 inline action gap 是 gap-2,那所有元件的 inline action gap 都是 gap-2——不需要每個元件都被糾正一次。同理,如果 MenuItem 的 description 是 reading mode min 14px,那所有 reading mode consumer 的 description 都是 min 14px。
 
 **如果確實需要新值**,先提出理由讓使用者確認,不要自己決定後寫進去。
 
@@ -253,9 +261,9 @@ element.style.backgroundColor = 'var(--primary)'
 
 ## Row primitives 共用 item-layout 公式
 
-所有 row 類元件(SidebarMenuButton / TreeItem / SelectMenuItem / DropdownMenuItem)共用同一套 padding / height / hover / active / color 規則。**寫任何新 row 元件前,讀 `src/design-system/patterns/item-layout/item-layout.spec.md` 的「適用對象」和「垂直 padding 歸屬」兩節**。不自己發明新規格。
+所有 row 類元件(SidebarMenuButton / TreeItem / MenuItem / DropdownMenuItem)共用同一套 padding / height / hover / active / color 規則。**寫任何新 row 元件前,讀 `src/design-system/patterns/item-layout/item-layout.spec.md` 的「適用對象」和「垂直 padding 歸屬」兩節**。不自己發明新規格。
 
-Canonical 實作:`SelectMenuItem` 的 `menuItemVariants` cva。
+Canonical 實作:`MenuItem` 的 `menuItemVariants` cva。
 
 ### Prefix / label / suffix / inline action:一律走 helper 元件
 

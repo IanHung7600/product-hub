@@ -6,7 +6,7 @@ import type { AvatarData } from '@/design-system/components/Avatar/avatar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/design-system/components/Popover/popover'
 import { Command, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandSeparator } from '@/design-system/components/Command/command'
 import { Command as CommandPrimitive } from 'cmdk'
-import { SelectMenuItem, SelectMenuFooter } from './select-menu-item'
+import { MenuItem, MenuFooter } from '@/design-system/components/Menu/menu-item'
 import { Empty } from '@/design-system/components/Empty/empty'
 import { getMenuListMinHeight } from '@/design-system/components/Field/field-types'
 import { RowSizeProvider } from '@/design-system/patterns/item-layout/item-layout'
@@ -23,7 +23,7 @@ import { RowSizeProvider } from '@/design-system/patterns/item-layout/item-layou
  *     └── Command（cmdk，搜尋 + 鍵盤導覽）
  *           ├── CommandInput（搜尋框）
  *           ├── CommandList（選項列表）
- *           │     └── CommandGroup → SelectMenuItem
+ *           │     └── CommandGroup → MenuItem
  *           └── Footer（多選全選）
  */
 
@@ -260,7 +260,7 @@ export function SelectMenu({
                 {gi > 0 && <CommandSeparator />}
                 <CommandGroup className="p-0 py-2">
                   {group.label && (
-                    <SelectMenuItem size={size} header>{group.label}</SelectMenuItem>
+                    <MenuItem size={size} header>{group.label}</MenuItem>
                   )}
                   {group.options.map((opt) => (
                     <CommandItem
@@ -271,7 +271,7 @@ export function SelectMenu({
                       onSelect={() => handleSelect(opt.value)}
                       className="p-0 rounded-none data-[selected=true]:bg-transparent"
                     >
-                      <SelectMenuItem
+                      <MenuItem
                         size={size}
                         startIcon={opt.icon}
                         avatar={opt.avatar}
@@ -282,7 +282,7 @@ export function SelectMenu({
                         disabled={opt.disabled}
                       >
                         {renderLabel ? renderLabel(opt) : opt.label}
-                      </SelectMenuItem>
+                      </MenuItem>
                     </CommandItem>
                   ))}
                 </CommandGroup>
@@ -302,9 +302,9 @@ export function SelectMenu({
                     }}
                     className="p-0 rounded-none data-[selected=true]:bg-transparent"
                   >
-                    <SelectMenuItem size={size} startIcon={Plus}>
+                    <MenuItem size={size} startIcon={Plus}>
                       {createLabel(search.trim())}
-                    </SelectMenuItem>
+                    </MenuItem>
                   </CommandItem>
                 </CommandGroup>
               </>
@@ -315,16 +315,16 @@ export function SelectMenu({
               - 沒有選項時不顯示(selectableOptions.length === 0)
               - 搜尋有文字時不顯示(search 非空 = 使用者在找特定項目,「全選」沒意義) */}
           {multiple && selectableOptions.length > 0 && !search && (
-            <SelectMenuFooter>
-              <SelectMenuItem
+            <MenuFooter>
+              <MenuItem
                 size={size}
                 checkbox
                 checked={allState}
                 onClick={handleSelectAll}
               >
                 全部
-              </SelectMenuItem>
-            </SelectMenuFooter>
+              </MenuItem>
+            </MenuFooter>
           )}
         </Command>
       </PopoverContent>

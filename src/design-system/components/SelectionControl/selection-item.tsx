@@ -39,7 +39,7 @@ type SizeKey = 'sm' | 'md' | 'lg'
 // Avatar 尺寸 + Icon 尺寸從 item-layout module 共用,不在此 re-declare(避免漂移)
 // AVATAR_SIZE / ICON_SIZE 都是 item-layout 的 canonical 常數。
 //
-// SelectionItem 跟 SelectMenuItem 的差異:SelectionItem 有 control(checkbox/radio)。
+// SelectionItem 跟 MenuItem 的差異:SelectionItem 有 control(checkbox/radio)。
 // block 模式時 **control 跟 prefix 一起走 block 高度**——兩者都在 text block center,
 // 維持「selection + identity」是一組的視覺語意,不會歪斜。
 const AVATAR_PX = AVATAR_SIZE
@@ -72,7 +72,7 @@ export interface SelectionItemProps extends React.HTMLAttributes<HTMLDivElement>
   icon?: LucideIcon
   /**
    * 可選的左側 avatar(在 control 之後、label 之前)。`AvatarData` 資料型別,元件內部渲染 Avatar。
-   * 尺寸由 `description` 自動決定(跟 SelectMenuItem 同 convention):
+   * 尺寸由 `description` 自動決定(跟 MenuItem 同 convention):
    * - 無 desc → inline(20/24/24px),跟 control 同步在 label 第一行
    * - 有 desc → block(32/32/40px),跟 control 同步在 text block center
    *

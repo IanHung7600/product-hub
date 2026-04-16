@@ -13,7 +13,7 @@ import type { InlineActionConfig } from "@/design-system/components/Field/field-
  * Item Layout — 共用工具與常數
  *
  * 這個檔案不是元件,是 `item-layout.spec.md` 的 code-level 實作。
- * 所有 row primitives(`SelectMenuItem` / `TreeItem` / `SidebarMenuButton` /
+ * 所有 row primitives(`MenuItem` / `TreeItem` / `SidebarMenuButton` /
  * `SelectionItem`)**必須 import 本 module 的 ICON_SIZE 和 helpers**,
  * 不要各自複製常數或 wrapper className——單一 source of truth,避免不一致。
  *
@@ -69,7 +69,7 @@ export const ICON_SIZE: Record<RowSize, number> = {
  * <Avatar size={AVATAR_SIZE.inline[size]} />
  * ```
  *
- * Canonical 實作:`SelectMenuItem` 的內部 `AVATAR_SIZE` 查表(即將 re-export 自此)。
+ * Canonical 實作:`MenuItem` 的內部 `AVATAR_SIZE` 查表(即將 re-export 自此)。
  */
 export const AVATAR_SIZE = {
   inline: { sm: 20, md: 24, lg: 24 },

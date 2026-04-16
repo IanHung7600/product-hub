@@ -66,7 +66,7 @@ Breadcrumb 顯示「當前頁面在資訊階層中的位置」，同時提供快
 
 ## 對齊既有設計語言
 
-- **色彩三階層**（fg-secondary → foreground / primary-hover → fg-muted）跟 SelectMenuItem / Tabs trigger / SegmentedControl 的三階層結構一致：**次要 → 主要（或 hover 強調） → 弱化**
+- **色彩三階層**（fg-secondary → foreground / primary-hover → fg-muted）跟 MenuItem / Tabs trigger / SegmentedControl 的三階層結構一致：**次要 → 主要（或 hover 強調） → 弱化**
 - **`primary-hover` 在 Breadcrumb 的用法是「互動時文字變藍」**，跟 Tabs underline / Chip border / SegmentedControl border 用 `primary-hover` 的 canonical 選中規則屬於同一個色彩語言（`primary-hover` = 互動高亮）
 - **分隔 icon 用 `ChevronRight`**（不用 `/` 字元）對齊 Button `endIcon` 的「方向指示」icon 選擇
 

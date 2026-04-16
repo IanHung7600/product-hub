@@ -214,7 +214,7 @@ export const Overview: Story = {
               <Td mono>SidebarGroupLabel</Td>
               <Td>Row (header)</Td>
               <Td mono>sm / md / lg</Td>
-              <Td>群組標題,對齊 SelectMenuItem header</Td>
+              <Td>群組標題,對齊 MenuItem header</Td>
             </tr>
             <tr>
               <Td mono>SidebarMenuButton</Td>
@@ -258,7 +258,7 @@ export const Sizes: Story = {
       <div className="flex flex-col gap-2">
         <H3>Row size 變體</H3>
         <Desc>
-          SidebarMenuButton 和 SidebarGroupLabel 共用 item-layout 公式,sm/md/lg 三種尺寸跟 TreeView / SelectMenuItem 完全對齊。
+          SidebarMenuButton 和 SidebarGroupLabel 共用 item-layout 公式,sm/md/lg 三種尺寸跟 TreeView / MenuItem 完全對齊。
           `SidebarProvider` 的 size prop 會自動 propagate 到所有 row 元件,不用每個 button 各自傳。
         </Desc>
       </div>
@@ -341,7 +341,7 @@ export const Colors: Story = {
       <div className="flex flex-col gap-2">
         <H3>SidebarMenuButton 狀態</H3>
         <Desc>
-          跟 TreeItem / SelectMenuItem 共用同一組 semantic token。Default → hover → active → selected 的色彩都一致。
+          跟 TreeItem / MenuItem 共用同一組 semantic token。Default → hover → active → selected 的色彩都一致。
         </Desc>
         <table className="min-w-full text-left border-collapse">
           <thead>

@@ -1,7 +1,7 @@
 import type { Meta } from '@storybook/react'
 import { User, Building2, Folder, Briefcase, Shield, Zap, Heart } from 'lucide-react'
 import { Avatar } from './avatar'
-import { SelectMenuItem } from '@/design-system/components/SelectMenu/select-menu-item'
+import { MenuItem } from '@/design-system/components/Menu/menu-item'
 
 const meta: Meta = {
   title: 'Design System/Components/Avatar/展示',
@@ -218,7 +218,7 @@ export const Fallback = {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   6. In Context — SelectMenuItem
+   6. In Context — MenuItem
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const InContext = {
@@ -226,47 +226,47 @@ export const InContext = {
   render: () => (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h3 className="text-h6 font-semibold text-foreground">In Context — SelectMenuItem</h3>
+        <h3 className="text-h6 font-semibold text-foreground">In Context — MenuItem</h3>
         <p className="text-caption text-fg-muted max-w-[720px]">
-          Avatar 作為 SelectMenuItem 的 avatar slot，尺寸由 item-layout 系統決定。
+          Avatar 作為 MenuItem 的 avatar slot，尺寸由 item-layout 系統決定。
         </p>
       </div>
       <div className="flex gap-8">
         <div className="flex flex-col gap-2">
           <span className="text-caption font-medium text-fg-secondary">無 description（inline）</span>
           <div className="w-[280px] border border-divider rounded-lg py-1 bg-surface">
-            <SelectMenuItem avatar={{ src: "https://i.pravatar.cc/48?u=a1", alt: "Alice" }}>
+            <MenuItem avatar={{ src: "https://i.pravatar.cc/48?u=a1", alt: "Alice" }}>
               Alice Chen
-            </SelectMenuItem>
-            <SelectMenuItem avatar={{ alt: "Bob", color: "blue" }}>
+            </MenuItem>
+            <MenuItem avatar={{ alt: "Bob", color: "blue" }}>
               Bob Wang
-            </SelectMenuItem>
-            <SelectMenuItem avatar={{ alt: "Carol", color: "purple" }}>
+            </MenuItem>
+            <MenuItem avatar={{ alt: "Carol", color: "purple" }}>
               Carol Lee
-            </SelectMenuItem>
+            </MenuItem>
           </div>
         </div>
         <div className="flex flex-col gap-2">
           <span className="text-caption font-medium text-fg-secondary">有 description（block）</span>
           <div className="w-[320px] border border-divider rounded-lg py-1 bg-surface">
-            <SelectMenuItem
+            <MenuItem
               avatar={{ src: "https://i.pravatar.cc/64?u=a2", alt: "Alice" }}
               description="前端工程師"
             >
               Alice Chen
-            </SelectMenuItem>
-            <SelectMenuItem
+            </MenuItem>
+            <MenuItem
               avatar={{ alt: "Carol", color: "magenta" }}
               description="產品設計師"
             >
               Carol Lee
-            </SelectMenuItem>
-            <SelectMenuItem
+            </MenuItem>
+            <MenuItem
               avatar={{ alt: "Dave", color: "turquoise" }}
               description="跨部門協作專案"
             >
               Dave Lin
-            </SelectMenuItem>
+            </MenuItem>
           </div>
         </div>
       </div>

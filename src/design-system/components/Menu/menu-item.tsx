@@ -8,7 +8,11 @@ import { Avatar, type AvatarData } from '@/design-system/components/Avatar/avata
 import { ICON_SIZE, AVATAR_SIZE } from '@/design-system/patterns/item-layout/item-layout'
 
 /**
- * SelectMenuItem — Select Menu 的選項元件
+ * MenuItem — 所有 menu 類元件的共用視覺佈局層
+ *
+ * SelectMenu、DropdownMenu、未來的 ContextMenu 等都消費這個元件。
+ * 它只負責 layout（padding、gap、prefix alignment、typography），
+ * 互動行為由各 menu 的 Radix primitive 外層控制。
  *
  * ── 結構 ──
  *   [checkbox?]  [startIcon? | avatar?]  [label + description?]
@@ -71,7 +75,7 @@ const prefixAlignVariants = cva(
 
 // ── Component ──
 
-export interface SelectMenuItemProps
+export interface MenuItemProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>,
     VariantProps<typeof menuItemVariants> {
   /** Label 文字 */
@@ -104,7 +108,7 @@ export interface SelectMenuItemProps
    * - `'none'` → **明確**不截斷,自然 wrap 任意行數
    *
    * 為什麼用 `'none'` 而不是 `undefined` 表達不截斷?React props 的 destructure default
-   * 在 `undefined` 時會接管,所以 `<SelectMenuItem labelMaxLines={undefined}>` 等同沒傳,
+   * 在 `undefined` 時會接管,所以 `<MenuItem labelMaxLines={undefined}>` 等同沒傳,
    * 會 fallback 到預設 `1`。要明確覆寫成「不截斷」,必須用一個非 undefined 的 sentinel。
    */
   labelMaxLines?: number | 'none'
@@ -115,7 +119,7 @@ export interface SelectMenuItemProps
    * - 數字 → 截斷到該行數
    * - `'none'` → 明確不截斷
    *
-   * 為什麼預設 1?SelectMenu 的設計目的是「快速掃視多個選項挑一個」,垂直空間是
+   * 為什麼預設 1?Menu 的設計目的是「快速掃視多個選項挑一個」,垂直空間是
    * 寶貴的——一個過高的 item 會破壞 row rhythm,讓使用者眼睛重新校準。description
    * 跟 label 對稱地截到 1 行,確保所有 item 高度一致(無 desc / 有 desc 兩種高度)。
    * Consumer 若有合理理由要 2 行 description,可顯式 override。
@@ -135,7 +139,7 @@ function lineClampClass(maxLines: number | 'none'): string {
   return ''
 }
 
-const SelectMenuItem = React.forwardRef<HTMLDivElement, SelectMenuItemProps>(
+const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
   (
     {
       children,
@@ -246,7 +250,6 @@ const SelectMenuItem = React.forwardRef<HTMLDivElement, SelectMenuItemProps>(
         {/* Content */}
         <div className="flex flex-col min-w-0 flex-1">
           <span className={cn(
-            // 預設 line-clamp-1(原本是 truncate);consumer 可透過 labelMaxLines 改為多行或不截
             labelClampClass || 'break-words',
             disabled && 'text-fg-disabled',
           )}>
@@ -259,11 +262,6 @@ const SelectMenuItem = React.forwardRef<HTMLDivElement, SelectMenuItemProps>(
                 descClampClass || 'break-words',
                 disabled ? 'text-fg-disabled' : 'text-fg-secondary',
               )}
-              // ── 為什麼用 inline style 而非 text-body / text-caption utility ──
-              // tailwind-merge 會把 text-body(font-size)和 text-fg-secondary(color)
-              // 在 cn() chain 裡誤判成同組衝突,strip 掉 text-body,導致 description 失去
-              // 自己的 font-size、從父層 text-body-lg 繼承 16px。改用 CSS variable inline
-              // style 從根本繞過 utility class 衝突——值仍然是 design token,沒有硬寫 px。
               style={{
                 fontSize: sizeKey === 'lg' ? 'var(--font-body-size)' : 'var(--font-caption-size)',
               }}
@@ -273,17 +271,6 @@ const SelectMenuItem = React.forwardRef<HTMLDivElement, SelectMenuItemProps>(
           )}
         </div>
 
-        {/*
-          Suffix:tag / endContent,靠右對齊。
-
-          ── 對齊規則(item-layout.spec.md「Suffix:永遠對齊第一行 label」) ──
-          Suffix **永遠**用 `h-[1lh]`,**跟 prefix 解耦**。即使 prefix 是 block-aligned 的
-          大 avatar,suffix 仍然對齊 label 第一行——因為 suffix 是 label 的 metadata
-          (Tag / Chevron / Time / Badge),不是整個 item 的。
-
-          業界 convention 全部如此:Apple Mail / Gmail / iOS Settings / Material / Polaris
-          的 trailing 元素都對齊 label 第一行,沒有任何一個對齊到 avatar 中心或文字塊中心。
-        */}
         {(tag || endContent) && (
           <div className={cn(
             'flex items-center gap-2 shrink-0 h-[1lh] ml-auto',
@@ -297,15 +284,15 @@ const SelectMenuItem = React.forwardRef<HTMLDivElement, SelectMenuItemProps>(
     )
   }
 )
-SelectMenuItem.displayName = 'SelectMenuItem'
+MenuItem.displayName = 'MenuItem'
 
 // ── Group ──
 
-export interface SelectMenuGroupProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface MenuGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode
 }
 
-const SelectMenuGroup = React.forwardRef<HTMLDivElement, SelectMenuGroupProps>(
+const MenuGroup = React.forwardRef<HTMLDivElement, MenuGroupProps>(
   ({ children, className, ...props }, ref) => (
     <div
       ref={ref}
@@ -317,15 +304,15 @@ const SelectMenuGroup = React.forwardRef<HTMLDivElement, SelectMenuGroupProps>(
     </div>
   )
 )
-SelectMenuGroup.displayName = 'SelectMenuGroup'
+MenuGroup.displayName = 'MenuGroup'
 
 // ── Footer ──
 
-export interface SelectMenuFooterProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface MenuFooterProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode
 }
 
-const SelectMenuFooter = React.forwardRef<HTMLDivElement, SelectMenuFooterProps>(
+const MenuFooter = React.forwardRef<HTMLDivElement, MenuFooterProps>(
   ({ children, className, ...props }, ref) => (
     <div
       ref={ref}
@@ -336,6 +323,6 @@ const SelectMenuFooter = React.forwardRef<HTMLDivElement, SelectMenuFooterProps>
     </div>
   )
 )
-SelectMenuFooter.displayName = 'SelectMenuFooter'
+MenuFooter.displayName = 'MenuFooter'
 
-export { SelectMenuItem, SelectMenuGroup, SelectMenuFooter, menuItemVariants }
+export { MenuItem, MenuGroup, MenuFooter, menuItemVariants }

@@ -4,7 +4,7 @@ import { ChevronRight, type LucideIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import type { AvatarData } from "@/design-system/components/Avatar/avatar"
-import { SelectMenuItem } from "@/design-system/components/SelectMenu/select-menu-item"
+import { MenuItem } from "@/design-system/components/Menu/menu-item"
 import {
   RowSizeProvider,
   useRowSize,
@@ -13,14 +13,14 @@ import {
 } from "@/design-system/patterns/item-layout/item-layout"
 
 /**
- * DropdownMenu — Radix DropdownMenu + SelectMenuItem visual layer
+ * DropdownMenu — Radix DropdownMenu + MenuItem visual layer
  *
  * 架構分工：
  * - Radix primitives：behavior（keyboard nav, focus management, aria roles）
- * - SelectMenuItem：visual（layout, padding, icon alignment, typography）
+ * - MenuItem：visual（layout, padding, icon alignment, typography）
  *
  * Radix primitive 是外層容器，控制 focus:bg-neutral-hover。
- * SelectMenuItem 內層只負責佈局，不加互動樣式。
+ * MenuItem 內層只負責佈局，不加互動樣式。
  */
 
 // ── Floating layer 共用樣式 ──
@@ -182,7 +182,7 @@ const DropdownMenuItem = React.forwardRef<
       )}
       {...props}
     >
-      <SelectMenuItem
+      <MenuItem
         size={size}
         startIcon={startIcon}
         avatar={avatar}
@@ -195,7 +195,7 @@ const DropdownMenuItem = React.forwardRef<
         className="!bg-transparent hover:!bg-transparent pointer-events-none"
       >
         {children}
-      </SelectMenuItem>
+      </MenuItem>
     </DropdownMenuPrimitive.Item>
   )
 })
@@ -239,7 +239,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
       )}
       {...props}
     >
-      <SelectMenuItem
+      <MenuItem
         size={size}
         startIcon={startIcon}
         endContent={endContent}
@@ -247,7 +247,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
         className="!bg-transparent hover:!bg-transparent pointer-events-none"
       >
         {children}
-      </SelectMenuItem>
+      </MenuItem>
     </DropdownMenuPrimitive.SubTrigger>
   )
 })
@@ -278,7 +278,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
       className={cn(radixItemClass, className)}
       {...props}
     >
-      <SelectMenuItem
+      <MenuItem
         size={size}
         checkbox
         checked={!!checked}
@@ -289,7 +289,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
         className="!bg-transparent hover:!bg-transparent pointer-events-none"
       >
         {children}
-      </SelectMenuItem>
+      </MenuItem>
     </DropdownMenuPrimitive.CheckboxItem>
   )
 })
@@ -307,14 +307,14 @@ const DropdownMenuLabel = React.forwardRef<
       className={cn('outline-none', className)}
       {...props}
     >
-      <SelectMenuItem
+      <MenuItem
         size={size}
         header
         role="presentation"
         className="pointer-events-none"
       >
         {children}
-      </SelectMenuItem>
+      </MenuItem>
     </DropdownMenuPrimitive.Label>
   )
 })

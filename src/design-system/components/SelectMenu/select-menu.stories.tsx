@@ -6,7 +6,8 @@ import { Combobox } from '@/design-system/components/Combobox/combobox'
 import { Button } from '@/design-system/components/Button/button'
 
 const meta: Meta = {
-  title: 'Design System/Components/SelectMenu/展示',
+  title: 'Design System/Internal/SelectMenu/展示',
+  tags: ['!dev'],
   parameters: { layout: 'padded' },
 }
 export default meta

@@ -40,7 +40,7 @@ import {
 /**
  * Sidebar
  * ─────────────────────────────────────────────────────────────
- * 本元件的 item / label 視覺規格刻意對齊 SelectMenuItem(menuItemVariants)
+ * 本元件的 item / label 視覺規格刻意對齊 MenuItem(menuItemVariants)
  * ——sidebar、dropdown-menu、select-menu 共用同一條 item-layout 公式:
  *
  *   px = var(--layout-space-loose)   (sidebar 脈絡;md=16 / lg=24)
@@ -484,7 +484,7 @@ const SidebarContent = React.forwardRef<
       ref={ref}
       data-sidebar="content"
       // SidebarContent 只負責 scroll 與 flex-1——呼吸空間和分隔線由 SidebarGroup 自己處理
-      // (對齊 SelectMenuGroup 的 py-2 + [&+&]:border-t 模式)
+      // (對齊 MenuGroup 的 py-2 + [&+&]:border-t 模式)
       className={cn(
         "flex min-h-0 flex-1 flex-col overflow-auto group-data-[collapsible=icon]:overflow-hidden",
         className
@@ -603,7 +603,7 @@ const SidebarGroupContent = React.forwardRef<
 })
 SidebarGroupContent.displayName = "SidebarGroupContent"
 
-// SidebarGroupLabel — 完全對齊 SelectMenuItem header 的視覺 + TreeView 的 sm/md/lg 尺寸:
+// SidebarGroupLabel — 完全對齊 MenuItem header 的視覺 + TreeView 的 sm/md/lg 尺寸:
 //   - 跟 SidebarMenuButton 共用 item-layout 公式(同 py 公式、同 text size、同 icon size)
 //   - 唯一差異:font-medium + text-fg-muted + pointer-events-none(header 語意)
 // 這樣 label 和 items 的 row height 在任何 size 下都完全對齊。
@@ -611,7 +611,7 @@ SidebarGroupContent.displayName = "SidebarGroupContent"
 // Icon 模式:整列 display:none(不是 -mt + opacity 0,避免脆弱的 margin 計算)
 const sidebarGroupLabelVariants = cva(
   [
-    // items-start 對齊 item-layout 規則(跟 SidebarMenuButton / TreeItem / SelectMenuItem 一致)
+    // items-start 對齊 item-layout 規則(跟 SidebarMenuButton / TreeItem / MenuItem 一致)
     "flex w-full items-start gap-2",
     "px-[var(--layout-space-loose)]",
     "font-medium text-fg-muted",
@@ -758,7 +758,7 @@ SidebarMenuItem.displayName = "SidebarMenuItem"
 /**
  * SidebarMenuButton
  *
- * 對齊 SelectMenuItem / TreeItem 的 item-layout,支援 sm/md/lg 三種尺寸:
+ * 對齊 MenuItem / TreeItem 的 item-layout,支援 sm/md/lg 三種尺寸:
  *   - horizontal: px = var(--layout-space-loose)
  *   - vertical:   py = calc((--field-height-{size} - 1lh) / 2)
  *   - typography: text-body leading-compact(sm/md)/ text-body-lg(lg)+ font-medium
@@ -772,7 +772,7 @@ SidebarMenuItem.displayName = "SidebarMenuItem"
 const sidebarMenuButtonVariants = cva(
   [
     "peer/menu-button group/menu-button",
-    // items-start(跟 TreeItem / SelectMenuItem 一致的 item-layout 規則):
+    // items-start(跟 TreeItem / MenuItem 一致的 item-layout 規則):
     // 多行 label 時 prefix 留在第一行不飄移。
     // 單行 label 時(我們的預設情境,truncate = line-clamp-1),效果跟 items-center 完全相同,
     // 因為 prefix 被包在 `h-[1lh] flex items-center` 容器,強制對齊第一行文字中線。

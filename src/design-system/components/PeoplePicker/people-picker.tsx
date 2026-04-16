@@ -18,8 +18,8 @@ function personToMenuOption(person: PersonValue): SelectMenuOption {
     value: p.name,
     label: p.name,
     description: (person as { description?: string }).description,
-    // avatar 傳資料，SelectMenuItem 內部用 Avatar 元件渲染。
-    // SelectMenuItem 根據 description 有無自動決定 inline(24) / block(32/40) 尺寸。
+    // avatar 傳資料，MenuItem 內部用 Avatar 元件渲染。
+    // MenuItem 根據 description 有無自動決定 inline(24) / block(32/40) 尺寸。
     avatar: { src: p.avatarUrl, alt: p.name },
   }
 }

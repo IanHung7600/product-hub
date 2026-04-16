@@ -51,7 +51,7 @@ type SelectionMode = 'single' | 'multiple' | 'none'
 /**
  * TreeView 的使用脈絡,決定 item 的水平 padding:
  * - `'sidebar'`:頁面側邊欄,用 `--layout-space-loose` token(md=16px / lg=24px,跟 density 連動)
- * - `'menu'`:浮層選單 / dropdown,px-3(12px),對齊 SelectMenuItem / DropdownMenu
+ * - `'menu'`:浮層選單 / dropdown,px-3(12px),對齊 MenuItem / DropdownMenu
  */
 type TreeContext = 'sidebar' | 'menu'
 
@@ -59,7 +59,7 @@ type TreeContext = 'sidebar' | 'menu'
 // TreeItem 用 calc(var(--tree-px) + indent) 算出最終 paddingLeft。
 const CONTEXT_PX_VAR: Record<TreeContext, string> = {
   sidebar: 'var(--layout-space-loose)',  // md=16px, lg=24px(density 連動)
-  menu: '12px',                          // px-3,對齊 SelectMenuItem / DropdownMenu
+  menu: '12px',                          // px-3,對齊 MenuItem / DropdownMenu
 }
 
 /** Drag drop position — 拖放目標的三種位置 */
@@ -165,7 +165,7 @@ export interface TreeViewProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * 使用脈絡,決定 item 的水平 padding:
    * - `'sidebar'`(預設):頁面側邊欄,px-2(8px)
-   * - `'menu'`:浮層選單 / dropdown,px-3(12px),對齊 SelectMenuItem
+   * - `'menu'`:浮層選單 / dropdown,px-3(12px),對齊 MenuItem
    */
   context?: TreeContext
   /** 選取模式。預設 'single'(sidebar nav / stepper) */
@@ -582,7 +582,7 @@ const TreeView = React.forwardRef<HTMLDivElement, TreeViewProps>(
           //   - 在 SidebarGroup 內: SidebarGroup py-2 提供
           //   - 在 DropdownMenuContent 內: content py-2 提供
           //   - 獨立使用(story demo): consumer 自己加 py-2
-          // 這樣才能跟 DropdownMenu / SelectMenuGroup 的結構一致(group 是容器,row 是內容)。
+          // 這樣才能跟 DropdownMenu / MenuGroup 的結構一致(group 是容器,row 是內容)。
           'flex flex-col',
           className,
         )}

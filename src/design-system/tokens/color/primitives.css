@@ -56,8 +56,10 @@
 }
 
 
-/* ── Layer 1 — Primitive Colors · Light Mode ── */
-:root {
+/* ── Layer 1 — Primitive Colors · Light Mode ──
+   :root, [data-theme] 讓 nested theme boundary（如 Toast/Alert 的 data-theme="light"）
+   也能取得 light primitives，不依賴繼承。跟 semantic.css 的 ② 同模式。 */
+:root, [data-theme] {
 
   /* Neutral — 共用 alpha 步階（transparent + opaque 共享，改一次兩邊都動） */
   --_na1: 2%;  --_na2: 4%;  --_na3: 6%;  --_na4: 9%;
