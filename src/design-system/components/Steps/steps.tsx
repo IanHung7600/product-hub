@@ -147,11 +147,13 @@ function computeReachableValues(
 
 // ── Steps root ────────────────────────────────────────────────────────────
 
+// Vertical 用 flex-col,horizontal 用 CSS Grid(inline style,因為 grid-template-columns
+// 需要動態 count 無法 static class)。
 const stepsRootVariants = cva('list-none p-0 m-0', {
   variants: {
     orientation: {
       vertical: 'flex flex-col',
-      horizontal: 'flex flex-row items-start gap-3',
+      horizontal: '', // grid via inline style in render
     },
   },
   defaultVariants: { orientation: 'vertical' },
@@ -277,11 +279,27 @@ const Steps = React.forwardRef<HTMLOListElement, StepsProps>(
       if (isHorizontal && !isLast) {
         const itemValue = (child.props as { value?: string }).value
         const isPrevCompleted = typeof itemValue === 'string' && completedSet.has(itemValue)
+        const connGridCol = (index + 1) * 2 // connectors 在偶數 columns: 2, 4, 6...
         itemsWithIndex.push(
-          <HorizontalRootConnector key={`conn-${index}`} isBlue={isPrevCompleted} size={size} />,
+          <HorizontalRootConnector key={`conn-${index}`} isBlue={isPrevCompleted} size={size} gridCol={connGridCol} />,
         )
       }
     })
+
+    // Horizontal 用 CSS Grid:
+    //   columns: repeat(N-1, auto 1fr) auto → items auto(label 寬), connectors 1fr(均分)
+    //   rows: auto auto → row-1 header, row-2 description
+    //   column-gap: 12px → label↔connector 和 connector↔circle 等距
+    //   description 跨 item+connector 兩欄 → 最長到連結線尾段
+    const horizontalGridStyle: React.CSSProperties | undefined = isHorizontal
+      ? {
+          display: 'grid',
+          // items 3fr 等寬 + connectors 1fr 等寬(3:1 比例,對齊 Material / Ant 世界級節奏)
+          gridTemplateColumns: count > 1 ? `repeat(${count - 1}, 3fr 1fr) 3fr` : '1fr',
+          gridTemplateRows: 'auto auto',
+          columnGap: 12,
+        }
+      : undefined
 
     return (
       <StepsContext.Provider value={ctxValue}>
@@ -290,6 +308,7 @@ const Steps = React.forwardRef<HTMLOListElement, StepsProps>(
           data-orientation={orientation}
           data-size={size}
           className={cn(stepsRootVariants({ orientation }), className)}
+          style={{ ...horizontalGridStyle, ...props.style }}
           {...props}
         >
           {itemsWithIndex}
@@ -319,11 +338,9 @@ const stepItemVariants = cva('group/step-item outline-none', {
     orientation: {
       // pb-6 on li provides spacing for next item; connector is absolute within li
       vertical: 'relative flex flex-col',
-      // flex-[3]:比例分配(items 3:connector 1)。Description 在 flow 裡自然
-      // wrap 到 item 的分配寬度內,永遠不超過 item 右邊界(= connector 之前)。
-      // 跟垂直版完全鏡射:label + description 在同一個 text col flex-col 裡,
-      // 結構與 item-layout 原則一致。
-      horizontal: 'flex-[3] min-w-0',
+      // CSS Grid 模式:li 用 display:contents 讓子元素直接成為 grid children。
+      // Header(indicator+label)放 row-1,description 放 row-2 跨 item+connector 兩欄。
+      horizontal: 'contents',
     },
     size: {
       sm: 'text-body',
@@ -424,7 +441,7 @@ function StepItemLayout({ children }: { children: React.ReactNode }) {
 
 // ── Clickable header ─────────────────────────────────────────────────────
 
-function StepItemHeader({ children, className }: { children: React.ReactNode; className?: string }) {
+function StepItemHeader({ children, className, style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
   const item = useStepItemContext()
   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (!item.clickable) return
@@ -444,9 +461,10 @@ function StepItemHeader({ children, className }: { children: React.ReactNode; cl
         'outline-none',
         item.clickable
           ? 'cursor-pointer rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring'
-          : 'cursor-not-allowed',  // upcoming (locked) = disabled-like → 禁止 cursor
+          : 'cursor-not-allowed',
         className,
       )}
+      style={style}
     >
       {children}
     </div>
@@ -533,7 +551,22 @@ function VerticalConnectorLine() {
   )
 }
 
-// ── Horizontal layout ────────────────────────────────────────────────────
+// ── Horizontal layout (CSS Grid) ────────────────────────────────────────
+//
+// ── 架構 ──
+// Root ol 用 CSS Grid:columns = repeat(N-1, auto 1fr) auto
+//   - auto columns → item header(indicator + label),寬度由 label 決定
+//   - 1fr columns → connector(均分剩餘空間)
+//   - column-gap 12px → label↔connector 和 connector↔circle **等距**
+//
+// li 用 display:contents → 子元素直接成為 grid children。
+// Header(row 1)放 grid column = item position。
+// Description(row 2)跨 item + connector 兩欄 → 最長到連結線尾段。
+//
+// 結構跟垂直版鏡射:indicator + gap + text col(只是 description 跨欄不跨行)。
+
+// Indicator center Y (px) — 固定值,不依賴 lh CSS 單位
+const INDICATOR_CENTER_Y: Record<StepsSize, number> = { sm: 10.5, md: 10.5, lg: 12 }
 
 function HorizontalLayout({
   label,
@@ -542,47 +575,54 @@ function HorizontalLayout({
   label: React.ReactNode
   description: React.ReactNode
 }) {
-  // ── Label 決定 item 寬度,description absolute 不影響 ──
-  //
-  // 佈局:StepItemHeader 包 indicator + label → 決定 item 自然寬度(shrink-0)。
-  // Description 用 `absolute top-full left-0 right-0`:脫離 flow,不影響 item
-  // 寬度,在 label 下方 wrap 到 item 寬度。Root ol 用 `pb-10` 預留空間。
-  //
-  // 效果:connector flex-1 均分剩餘空間,長度只取決於 label 末端到下個 circle
-  // 的距離,跟 description 長度無關。
-  // ── 跟垂直版完全鏡射的 item 結構 ──
-  // indicator + gap-3 + text col(label + description flex-col)。
-  // 垂直版的 text col 是 `flex-1 min-w-0`,水平版也一樣——差別只在 item 的
-  // 寬度來源(垂直版由容器寬度決定,水平版由 flex-[3] 比例分配決定)。
-  // Description 在 text col 裡自然 wrap,不用 absolute hack。
+  const displayIndex = React.useContext(StepIndexContext) // 1-based
+  const item = useStepItemContext()
+  const steps = useStepsContext()
+  const gridCol = (displayIndex - 1) * 2 + 1 // items 在奇數 columns: 1, 3, 5...
+  // Description 跨 item + connector 兩欄;最後一步只跨自己(沒有 trailing connector)
+  const descSpanEnd = item.isLast ? gridCol + 1 : gridCol + 2
+
   return (
-    <StepItemHeader className="flex items-start gap-3 w-full">
-      <div className="h-[1lh] flex items-center shrink-0">
-        <StepIndicator />
-      </div>
-      <div className="flex-1 min-w-0 flex flex-col">
-        {label}
-        {description}
-      </div>
-    </StepItemHeader>
+    <>
+      {/* Grid row 1: header(indicator + label)→ 決定 auto column 寬度 */}
+      <StepItemHeader
+        className={cn('flex items-start gap-3', steps.size === 'lg' ? 'text-body-lg' : 'text-body')}
+        style={{ gridColumn: gridCol, gridRow: 1 }}
+      >
+        <div className="h-[1lh] flex items-center shrink-0">
+          <StepIndicator />
+        </div>
+        <div className="min-w-0">{label}</div>
+      </StepItemHeader>
+      {/* Grid row 2: description — 跨 item + connector 欄,最長到連結線尾段 */}
+      {description && (
+        <div
+          className={cn('min-w-0 self-start', steps.size === 'lg' ? 'text-body-lg' : 'text-body')}
+          style={{ gridColumn: `${gridCol} / ${descSpanEnd}`, gridRow: 2, paddingLeft: INDICATOR_BOX_WIDTH[steps.size] + 12 }}
+        >
+          {description}
+        </div>
+      )}
+    </>
   )
 }
 
-// Indicator center Y (px) — fixed values, not relying on `lh` CSS unit
-// text-body:    font-size 14 × line-height 1.5 = 21px line → center at 10.5
-// text-body-lg: font-size 16 × line-height 1.5 = 24px line → center at 12
-const INDICATOR_CENTER_Y: Record<StepsSize, number> = { sm: 10.5, md: 10.5, lg: 12 }
-
-function HorizontalRootConnector({ isBlue, size }: { isBlue: boolean; size: StepsSize }) {
+function HorizontalRootConnector({
+  isBlue,
+  size,
+  gridCol,
+}: {
+  isBlue: boolean
+  size: StepsSize
+  gridCol: number
+}) {
   return (
     <li
       role="presentation"
       aria-hidden
-      // flex-1:均分剩餘空間 → 所有 connector 等長(跟 item label 寬度無關)。
-      // self-stretch:填滿行高(跟 items 等高),讓 absolute line 有正確定位空間。
-      className="flex-1 min-w-4 relative self-stretch"
+      className="relative"
+      style={{ gridColumn: gridCol, gridRow: 1, alignSelf: 'stretch' }}
     >
-      {/* 絕對定位到 indicator 中心 Y,不依賴 `lh` CSS 單位 */}
       <div
         className={cn('absolute left-0 right-0 h-px', isBlue ? 'bg-primary' : 'bg-border')}
         style={{ top: INDICATOR_CENTER_Y[size] }}

@@ -289,7 +289,7 @@ function DataTableInner<TData>(
     const rowEl = (row: typeof rows[number], idx: number, opts?: { virtual?: boolean; start?: number; isLast?: boolean }) => {
       const showBorder = bordered !== false ? !opts?.isLast : true
       return (
-        <div key={row.id} ref={isCenter && opts?.virtual ? virtualizer.measureElement : undefined} data-index={isCenter && opts?.virtual ? idx : undefined} data-row-index={idx} role="row" aria-rowindex={idx + 2} className={cn('flex items-center', !autoRowHeight && rowHeight, opts?.virtual && 'absolute w-full', showBorder && 'border-b border-divider', 'transition-colors data-[hovered]:bg-neutral-hover')} style={opts?.virtual ? { transform: `translateY(${opts.start}px)` } : undefined} {...hoverProps(idx)}>
+        <div key={row.id} ref={isCenter && opts?.virtual ? virtualizer.measureElement : undefined} data-index={isCenter && opts?.virtual ? idx : undefined} data-row-index={idx} role="row" aria-rowindex={idx + 2} className={cn('flex', autoRowHeight ? 'items-start' : 'items-center', !autoRowHeight && rowHeight, opts?.virtual && 'absolute w-full', showBorder && 'border-b border-divider', 'transition-colors data-[hovered]:bg-neutral-hover')} style={opts?.virtual ? { transform: `translateY(${opts.start}px)` } : undefined} {...hoverProps(idx)}>
           {getRegionCells(row, cols).map((cell, ci, arr) => cellEl(cell, ci === arr.length - 1 && !(isRight && hasRowActions)))}
           {isRight && hasRowActions && (
             <div role="cell" className="flex items-center justify-end shrink-0 gap-2 flex-1" style={cellPadding}>
