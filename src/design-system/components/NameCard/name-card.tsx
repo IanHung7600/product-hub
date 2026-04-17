@@ -105,9 +105,9 @@ const NameCard = React.forwardRef<HTMLDivElement, NameCardProps>(
         {hasStatus && (
           <div className="border-t border-divider px-4 py-3 flex flex-col gap-3">
             {/* Status badge */}
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-secondary rounded-md">
+            <div className="flex items-center gap-2 px-3 py-2 bg-muted rounded-md">
               <span className={cn('w-2.5 h-2.5 rounded-full shrink-0', STATUS_DOT_COLOR[status!])} />
-              <span className="text-body font-medium">{STATUS_LABEL[status!]}</span>
+              <span className="text-body">{STATUS_LABEL[status!]}</span>
             </div>
             {/* Status message */}
             {statusMessage && (

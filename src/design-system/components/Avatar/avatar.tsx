@@ -2,6 +2,7 @@ import * as React from 'react'
 import { User } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/design-system/components/HoverCard/hover-card'
 
 /**
  * Avatar — 頭像元件
@@ -82,10 +83,15 @@ export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   solid?: boolean
   /** 在線狀態指示器，顯示在 avatar 右下角 */
   status?: 'available' | 'away' | 'busy' | 'offline'
+  /**
+   * 傳入 HoverCard 內容（如 NameCard），hover avatar 時自動顯示。
+   * 只有人員 avatar 需要傳；實體 avatar（專案、組織）不傳。
+   */
+  hoverCard?: React.ReactNode
 }
 
 const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
-  ({ size = 32, shape = 'circle', src, alt, icon: Icon, color = 'neutral', solid = false, status, className, style, ...props }, ref) => {
+  ({ size = 32, shape = 'circle', src, alt, icon: Icon, color = 'neutral', solid = false, status, hoverCard, className, style, ...props }, ref) => {
     const [imgError, setImgError] = React.useState(false)
     const isFill = size === 'fill'
     // Fill 模式下 icon 用 60% 寬高、text 用 50cqi（container query inline-size）；
@@ -156,26 +162,37 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
       </div>
     )
 
-    if (!status) {
-      return <div ref={ref} className={cn('inline-flex shrink-0', className)} style={style} {...props}>{avatarEl}</div>
-    }
+    const baseEl = !status
+      ? <div ref={ref} className={cn('inline-flex shrink-0', className)} style={style} {...props}>{avatarEl}</div>
+      : (
+        <div ref={ref} className={cn('relative inline-flex shrink-0', className)} style={style} {...props}>
+          {avatarEl}
+          <span
+            className="absolute block rounded-full"
+            style={{
+              width: dotSize,
+              height: dotSize,
+              bottom: 0,
+              right: 0,
+              backgroundColor: STATUS_DOT_COLOR[status],
+              boxShadow: `0 0 0 ${dotBorder}px var(--surface-raised, var(--canvas))`,
+            }}
+            aria-label={status}
+          />
+        </div>
+      )
+
+    if (!hoverCard) return baseEl
 
     return (
-      <div ref={ref} className={cn('relative inline-flex shrink-0', className)} style={style} {...props}>
-        {avatarEl}
-        <span
-          className="absolute block rounded-full"
-          style={{
-            width: dotSize,
-            height: dotSize,
-            bottom: 0,
-            right: 0,
-            backgroundColor: STATUS_DOT_COLOR[status],
-            boxShadow: `0 0 0 ${dotBorder}px var(--surface-raised, var(--canvas))`,
-          }}
-          aria-label={status}
-        />
-      </div>
+      <HoverCard openDelay={300} closeDelay={200}>
+        <HoverCardTrigger asChild>
+          {baseEl}
+        </HoverCardTrigger>
+        <HoverCardContent className="bg-surface-raised rounded-lg border border-border" style={{ boxShadow: 'var(--elevation-200)' }}>
+          {hoverCard}
+        </HoverCardContent>
+      </HoverCard>
     )
   }
 )

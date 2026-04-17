@@ -72,10 +72,8 @@ const Slider = React.forwardRef<
       {...props}
     >
       {/*
-        Track — 凹槽底線,rest / disabled **都用 `bg-muted`**(shadcn Badge /
-        skeleton 同家族的 subtle bg 語意)。顏色不隨 state 變動——track 的語意
-        是「告訴使用者這條線是 slider 可滑動範圍」,這個語意 enabled / disabled
-        都成立,所以色也不該變。
+        Track — rest 用 bg-secondary(n-3,「微淡可辨」),disabled 用 bg-muted(n-2,退化)。
+        跟 Tag neutral / Badge low 同家族。
       */}
       <SliderPrimitive.Track className={cn(
         'relative grow overflow-hidden rounded-full h-1',

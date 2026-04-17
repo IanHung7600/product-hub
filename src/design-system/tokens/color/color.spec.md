@@ -631,7 +631,7 @@ Dark mode 覆寫：hover/active 方向反轉（hover → step-7，active → ste
 
 | Utility | Token | 用途 |
 |---------|-------|------|
-| `bg-muted` | neutral-2 | 靜態裝飾性低調背景（Tag neutral、table header、skeleton） |
+| `bg-muted` | neutral-2 | 靜態不可互動背景（table header、skeleton、status indicator） |
 | `bg-secondary` | neutral-3 | 比 muted 深一階的弱化背景（Badge low） |
 
 `bg-muted`（neutral-2）適用於 table header、tab 容器、code block、skeleton loading 等需要與主內容區做出微弱層級區分但不具備互動意義的區域。
