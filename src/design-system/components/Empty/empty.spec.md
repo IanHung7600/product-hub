@@ -32,11 +32,13 @@
 
 ## 間距
 
-| Gap | Token / 值 | md | lg | 語意 |
-|---|---|---|---|---|
-| Icon → Title/Desc | `--layout-space-tight` | 12px | 16px | 視覺→文字過渡 |
-| Title → Description | `mt-0.5`(2px 固定) | 2px | 2px | Item-layout canonical(同資訊塊) |
-| Description → Action | `--layout-space-loose` | 16px | 24px | 資訊→行動暫停 |
+固定值，不隨 density 變（Empty 是展示性元件，不是工作區域元件）：
+
+| Gap | 值 | 語意 |
+|---|---|---|
+| Icon → Title/Desc | `mb-4`（16px） | 視覺→文字過渡，48px icon 需要充足呼吸空間 |
+| Title → Description | `mt-0.5`（2px） | Item-layout canonical（同資訊塊） |
+| Description → Action | `mt-6`（24px） | 資訊→行動的視覺暫停，引導使用者注意 CTA |
 
 Outer padding 由 **consumer 容器** 決定:
 - Table 空狀態:`py-12`

@@ -58,7 +58,7 @@ Field 和 Input 家族（Input / NumberInput / DatePicker / Select / Combobox / 
 | Horizontal 模式 label 與 control 的 gap | `gap-x-3`（12px） |
 | Control area（任何 size） | `min-h-field-{size}` + `flex items-center` |
 
-**lg size 的字體**：`FieldLabel` / `FieldDescription` / `FieldError` 會自動切換為 `text-body-lg`，對齊 Input 的 lg 字體。
+**Label / Description / Error 字體固定 `text-body`（14px），不隨 field size 變。** Field size 只影響 input 高度，不影響表單佈局元素的 typography。世界級系統（Material、Ant Design、Atlassian、Carbon、Polaris）都是固定 label/helper text size。
 
 ---
 

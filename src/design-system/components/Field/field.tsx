@@ -1,5 +1,7 @@
 import * as React from 'react'
+import { Info as InfoIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/design-system/components/Tooltip/tooltip'
 
 /**
  * Field — 表單欄位佈局容器（shadcn Field 風格）
@@ -65,11 +67,9 @@ const FIELD_HEIGHT_VAR: Record<FieldSize, string> = {
   lg: 'var(--field-height-lg)',
 }
 
-const FIELD_TEXT_CLASS: Record<FieldSize, string> = {
-  sm: 'text-body',
-  md: 'text-body',
-  lg: 'text-body-lg',
-}
+// Label / Description / Error 的字體固定 text-body (14px)，不隨 field size 變。
+// 世界級共識：field size 只影響 input 高度，不影響表單佈局元素的 typography。
+const FIELD_TEXT_CLASS = 'text-body'
 
 type SlotKind = 'label' | 'description' | 'error' | 'control'
 
@@ -287,10 +287,18 @@ export interface FieldLabelProps extends React.LabelHTMLAttributes<HTMLLabelElem
    * 若未設定，預設讀 context。
    */
   required?: boolean
+  /**
+   * 在 label 文字後方顯示 info icon (ℹ)，hover 出現 tooltip 說明。
+   * 傳 string → tooltip 內容。
+   *
+   * Info icon 用 inline action pattern（補充工具，視覺退後），
+   * 因為 label 的 primary interaction 是 input，info 是補充說明。
+   */
+  info?: string
 }
 
 const FieldLabel = React.forwardRef<HTMLLabelElement, FieldLabelProps>(
-  ({ className, required: requiredProp, htmlFor: htmlForProp, style, children, ...props }, ref) => {
+  ({ className, required: requiredProp, info, htmlFor: htmlForProp, style, children, ...props }, ref) => {
     const ctx = useFieldContext()
     const required = requiredProp ?? ctx?.required ?? false
     const disabled = ctx?.disabled ?? false
@@ -338,7 +346,7 @@ const FieldLabel = React.forwardRef<HTMLLabelElement, FieldLabelProps>(
         ref={ref}
         htmlFor={htmlFor}
         className={cn(
-          FIELD_TEXT_CLASS[size],
+          FIELD_TEXT_CLASS,
           'font-normal select-none',
           disabled ? 'text-fg-disabled' : 'text-foreground',
           horizontalInlineClass,
@@ -349,16 +357,33 @@ const FieldLabel = React.forwardRef<HTMLLabelElement, FieldLabelProps>(
         data-field-disabled={disabled ? '' : undefined}
         {...props}
       >
-        <span>
-          {required && (
-            <span
-              aria-hidden="true"
-              className={disabled ? 'text-fg-disabled' : 'text-fg-muted'}
-            >
-              *
-            </span>
+        <span className="inline-flex items-center gap-1">
+          <span>
+            {required && (
+              <span
+                aria-hidden="true"
+                className={disabled ? 'text-fg-disabled' : 'text-fg-muted'}
+              >
+                *
+              </span>
+            )}
+            {children}
+          </span>
+          {info && !disabled && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span
+                  role="img"
+                  aria-label={info}
+                  tabIndex={0}
+                  className="inline-flex items-center text-fg-muted hover:text-fg-secondary"
+                >
+                  <InfoIcon size={16} aria-hidden />
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>{info}</TooltipContent>
+            </Tooltip>
           )}
-          {children}
         </span>
       </label>
     )
@@ -381,7 +406,7 @@ const FieldDescription = React.forwardRef<
       ref={ref}
       id={idProp ?? ctx?.descriptionId}
       className={cn(
-        FIELD_TEXT_CLASS[size],
+        FIELD_TEXT_CLASS,
         disabled ? 'text-fg-disabled' : 'text-fg-secondary',
         className
       )}
@@ -410,7 +435,7 @@ const FieldError = React.forwardRef<
     <p
       ref={ref}
       id={idProp ?? ctx?.errorId}
-      className={cn(FIELD_TEXT_CLASS[size], 'text-error-text', className)}
+      className={cn(FIELD_TEXT_CLASS, 'text-error-text', className)}
       data-field-slot="error"
       role="alert"
       {...props}

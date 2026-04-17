@@ -139,6 +139,7 @@ src/
 │   │   ├── Tabs/                      ← 切 view 的頁籤（Radix Tabs + underline + primary-hover + overflow scroll/menu）
 │   │   ├── SegmentedControl/          ← 切 value 的互斥選擇器（Radix ToggleGroup type="single"）
 │   │   ├── Chip/                      ← Material Filter Chip（Radix ToggleGroup + wrap/scroll/menu overflow）
+│   │   ├── FileItem/                  ← 檔案上傳列表項目（uploading / completed / error，lg=avatar / sm=icon）
 │   │   ├── Sidebar/                   ← 佈局外殼（Provider + Header + Content + Footer + Trigger）
 │   │   ├── Field/                     ← shadcn Field（Label + Control + Description + Message）
 │   │   │   ├── field.tsx
@@ -247,11 +248,51 @@ element.style.backgroundColor = 'var(--primary)'
 - `font-size` → 查 `typography.css` utilities + `item-layout.spec.md` reading/scanning 模式規則
 - `line-height` → 查 `typography.css`（scanning = leading-compact 1.3,reading = default 1.5）
 - `icon size` → 查 `ICON_SIZE` 常數（sm/md=16, lg=20）
-- `inline action` → 查 `uiSize.spec.md`（icon size、hover bg size=icon+2、gap-2 between actions、fg-muted → hover foreground）
+- `inline action` → 查 `item-layout.spec.md`「Inline Action 設計規格」節（icon size、hover bg size=icon+2、gap-2 between actions、fg-muted → hover foreground）
 
 **舉一反三**：如果 Select 的 inline action gap 是 gap-2,那所有元件的 inline action gap 都是 gap-2——不需要每個元件都被糾正一次。同理,如果 MenuItem 的 description 是 reading mode min 14px,那所有 reading mode consumer 的 description 都是 min 14px。
 
 **如果確實需要新值**,先提出理由讓使用者確認,不要自己決定後寫進去。
+
+## 互動元素：被動資訊 / Inline Action / Button
+
+加互動元素前按順序判斷：
+
+**第一步：這是資訊還是動作？**
+- 資訊（hover 顯示說明，不改變狀態）→ **被動資訊**（靜態 icon + Tooltip，fg-muted → hover fg-secondary）
+- 動作 → 進第二步
+
+**第二步：有文字嗎？**
+- 有 → **Button**（Inline Action 不支援文字）
+- 純 icon → 進第三步
+
+**第三步：符合以下任一條件嗎？**
+- **條件 A**：元件行高**由 field-height token 推導**（CSS 引用 `var(--field-height-*)`）
+- **條件 B**：Button xs（24px）佔可用垂直空間 **> 75%**
+- **條件 C**：**dismiss / close 操作**（×）——通用符號，不需要 button chrome 傳達可點擊性
+符合任一 → **Inline Action**。都不符合 → **Button iconOnly**。
+
+**元件設計時決定一次，不隨 size variant 切換。** Button 用 size prop 縮放，Inline Action 用 RowSizeContext 縮放。
+
+| | Inline Action | Button iconOnly |
+|---|---|---|
+| Layout 佔位 | icon 尺寸（16/20px） | field-height-xs（24px）起 |
+| 休息狀態 | 無 chrome，fg-muted | 有 chrome（依 variant） |
+| Hover | icon+2 圓形 bg 溢出 | 整個按鈕變色 |
+| 尺寸來源 | RowSizeContext 自動（sm/md=16, lg=20px） | 固定（xs=24, sm=28…） |
+
+| 場景 | 觸發條件 | 選擇 |
+|---|---|---|
+| MenuItem / TreeView / Sidebar | 條件 A（field-height 推導） | Inline Action |
+| Input / Select endAction | 條件 A（在 field-height 容器內） | Inline Action |
+| Tag dismiss | 條件 A（Tag 高度 = field-height-xs/sm） | Inline Action |
+| FieldLabel pin | 條件 B（24/21px = 114%） | Inline Action |
+| Toast/Alert dismiss X | 條件 C（dismiss 通用符號） | Inline Action |
+| Dialog close X | 條件 C（dismiss 通用符號） | Inline Action |
+| Table row action | 都不符合（自訂行高，24/32px = 75%） | Button |
+| FileItem action | 都不符合（固定 padding） | Button |
+| Toast/Alert CTA | 有文字 | Button |
+| Toolbar icons | 都不符合（空間充裕） | Button iconOnly |
 
 ## 陰影一律用 `--elevation-*` token
 
@@ -261,34 +302,9 @@ element.style.backgroundColor = 'var(--primary)'
 
 ## Row primitives 共用 item-layout 公式
 
-所有 row 類元件(SidebarMenuButton / TreeItem / MenuItem / DropdownMenuItem)共用同一套 padding / height / hover / active / color 規則。**寫任何新 row 元件前,讀 `src/design-system/patterns/item-layout/item-layout.spec.md` 的「適用對象」和「垂直 padding 歸屬」兩節**。不自己發明新規格。
+所有 row 類元件(SidebarMenuButton / TreeItem / MenuItem / DropdownMenuItem)共用同一套 padding / height / hover / active / color 規則。**寫任何新 row 元件前,讀 `src/design-system/patterns/item-layout/item-layout.spec.md`**。不自己發明新規格。
 
-Canonical 實作:`MenuItem` 的 `menuItemVariants` cva。
-
-### Prefix / label / suffix / inline action:一律走 helper 元件
-
-Row primitive 的 prefix、label、suffix inline action **全部有 canonical helper**,consumer 永遠不要手刻。這是結構性強制——helper 把 size 查表、RowSizeContext 讀取、alignment wrapper、hover bg、Tooltip 全部封裝,consumer 硬寫沒意義且必定漂移。
-
-| 你想寫 | 必須改用 |
-|---|---|
-| `<Avatar size={24} />` 在 row 內 | `<ItemAvatar>` — 自動 AVATAR_SIZE 查表 + 自動加 `data-prefix-type="avatar"` |
-| `<Icon size={16} />` 在 row prefix | `<ItemIcon icon={X} />` — 自動 ICON_SIZE 查表 + 自動加 `data-prefix-type="icon"` |
-| `<ItemPrefix><Icon /></ItemPrefix>`(裸 wrapper + raw icon)| `<ItemIcon icon={X} />` — 裸 ItemPrefix 不會自動加 `data-prefix-type` tag,**全域 prefix-mix 偵測會靜默失效** |
-| `<span className="h-[1lh] shrink-0 flex items-center">` 自己刻 prefix wrapper | `<ItemPrefix>`(escape hatch)或更好:`<ItemIcon>` / `<ItemAvatar>` |
-| `<span className="truncate">` 當 label | `<ItemLabel>` |
-| Row 內任何 **clickable icon**(包括 chevron toggle、dismiss X、more ⋯、add +、collapsible trigger) | `<ItemInlineAction>`(含 Tooltip)或 `<ItemInlineActionButton>`(root 是 button,可塞 Radix `asChild`) |
-
-### `ItemPrefix` 是 escape hatch,不是預設選項
-
-`<ItemPrefix>` 是底層 wrapper(只負責 `h-[1lh]` 對齊,沒帶任何 `data-prefix-type` tag)。**直接用它包 raw icon / avatar 是 bug 溫床**——曾經發生過:
-
-> SidebarMenuButton 內部用 `<ItemPrefix><StartIcon /></ItemPrefix>` 渲染 icon prefix,**沒有 `data-prefix-type="icon"` tag**。後來加全域 `:has()` prefix-mix 偵測時,detection 永遠看不到 icon,即使 sidebar 裡明明有 icon + avatar 混用,自動對齊功能對 SidebarMenuButton 整條路徑失效。視覺上 8px ghost spacing 很容易被誤認為對齊,**bug 隱藏到使用者主動截圖質疑才被發現**。
-
-**規則**:
-
-- **預設用 `<ItemIcon>` / `<ItemAvatar>` / `<ItemCheckbox>` 等 typed helper**——它們自動帶 `data-prefix-type`,參與全域 prefix-mix 偵測
-- **只有「prefix 不是已知類型」(stepper status indicator、客製 decorative element)**才直接用 `<ItemPrefix>`。這時要清楚知道:這個 prefix **不會**參與 prefix-mix 偵測
-- Code review / grep 檢查:`<ItemPrefix>\s*<[A-Z]` pattern 應該幾乎不存在,出現就要審視「為什麼不用 ItemIcon/ItemAvatar」
+Canonical 實作:`MenuItem` 的 `menuItemVariants` cva。Helper 元件、prefix 規則、inline action predicate、asChild 責任等詳見 `src/design-system/patterns/item-layout/item-layout.spec.md`。
 
 ### Audit 指令(grep guard)
 
@@ -325,27 +341,9 @@ rg "group/action.*relative grid place-content-center" src/design-system
 
 第 2、3、4 步不能省。特別是第 2 步,tsc 的 `--noEmit` 在某些配置下不會警告 "export 一個不存在的 symbol",必須人眼檢查。
 
-### Predicate:什麼算 inline action
-
-**命名無關**。下列三個條件同時成立 → **就是 inline action**,不准繞過 helper:
-
-1. 在 row primitive 內(或其 suffix / label / prefix slot)
-2. 是 icon(或主要視覺是 icon)
-3. 可點擊(有 onClick / 是 Radix Trigger / 是 collapsible toggle)
-
-**真實例子**(曾犯過的錯):
-
-- ✅ SelectField 的 clear X
-- ✅ Tag 的 dismiss X
-- ✅ TreeView 的 hover-reveal 「⋯」/「＋」
-- ✅ **SidebarGroup collapsible 的 chevron toggle**——曾經誤寫成裸 icon + rotate className,**它是可點擊的 icon 就是 inline action**,跟叫不叫 chevron 無關
-- ✅ Popover / Dropdown trigger 如果主視覺是 icon
-
 ### Sidebar item 必須支援 single selection
 
-**所有 `SidebarMenuButton` 必須**參與整個 sidebar 的 single-selection state——同時只有一個 active,不論在 MainNav / TreeView / Favorites 哪個 group。**不存在「啞 item」**:寫 `<SidebarMenuButton>` 就代表它會被選中,consumer 必須傳 `id` 讓 `SidebarProvider` 知道它是誰。
-
-結構性保證:`SidebarProvider` 接 `activeId` + `onActiveChange` prop,`SidebarMenuButton` 的 `id` prop 搭配 context 自動算 `isActive`。consumer **無法**寫出忘記接 selection 的 item——沒傳 id 就沒有 active 態、沒有 onClick,TS 會少 type 不警告但視覺上 item 永遠看起來 dead,一眼看得出來。
+詳見 `components/Sidebar/sidebar.spec.md`。
 
 
 # Tailwind 使用規則
@@ -530,68 +528,7 @@ Token 命名 = `--{namespace}-{role}-{variant?}`
 
 # 選擇 / 狀態視覺必須對齊既有 canonical
 
-這一節是我曾經連續犯錯的類別,兩條互補規則。
-
-## 規則 A: 用元件既有的 state prop,不要用 className 發明樣式
-
-**任何元件既有的狀態 prop(`selected` / `checked` / `disabled` / `pressed` / `active` / `invalid` / `loading` 等),消費端必須用 prop,禁止用 `className` 疊加自創樣式表達同一個狀態**。
-
-理由:
-- 既有 prop 背後綁定 **canonical token**(`bg-neutral-selected` / `border-primary-hover` 等),一改全系統同步
-- `className` 自創樣式繞過 canonical,導致「同一狀態在不同元件看起來不同」的視覺漂移
-- 既有 prop 通常也綁 ARIA attributes(`aria-selected` / `aria-checked` 等),自創樣式會丟失 a11y 語意
-
-### 真實犯錯紀錄
-
-> **Case**: Tabs overflow menu 的 active 項目。`DropdownMenuItem` 本來就有 `selected` prop 對應 `bg-neutral-selected`(跟 SelectMenu 單選 canonical 視覺完全一致),但我繞過 prop 直接寫 `className={cn(isActive && 'font-medium text-primary-hover')}` 發明一套「粗體藍字」樣式。結果跟 SelectMenu 同類別的單選視覺完全不一致,使用者一眼看出「為什麼這個 dropdown 跟那個 dropdown 不一樣」。
-
-### 正確做法
-
-```tsx
-// ✅ 對: 用 DropdownMenuItem 的 selected prop(canonical bg-neutral-selected)
-<DropdownMenuItem selected={isActive} onSelect={...}>{label}</DropdownMenuItem>
-
-// ❌ 錯: 用 className 自創樣式
-<DropdownMenuItem className={cn(isActive && 'font-medium text-primary-hover')}>{label}</DropdownMenuItem>
-
-// ❌ 錯: 用錯 semantic 的 prop
-<DropdownMenuCheckboxItem checked={isActive}>{label}</DropdownMenuCheckboxItem>
-```
-
-### 檢查法(寫任何 selection / state 樣式前必做)
-
-1. **grep 元件 props interface**,看它有沒有相關的 state prop(`selected`、`checked`、`disabled`、`active`、`pressed`、`invalid`...)
-2. 有 → **一定用那個 prop**,不用 className
-3. 沒有 → 先暫停,問「是不是該補這個 prop 到元件本身」,不要直接在 consumer 用 className 繞過
-4. 確認沒必要補 prop 才用 className
-
-## 規則 B: 選擇語意必須對應指示器視覺
-
-Selection control(Dropdown / Menu / List / SegmentedControl / Chip)的 item 視覺指示器,必須對應該 control 的 selection model。使用者看一眼就應該能判斷「我可以選多個 vs 我只能選一個」。
-
-| Selection Model | Canonical 視覺 | 禁止 |
-|---|---|---|
-| **多選**(checkbox semantic) | `DropdownMenuCheckboxItem`(方塊勾)、SelectionItem checkbox | radio 圓圈、bg 高亮(無方塊會誤以為單選) |
-| **單選 in dropdown / menu** | `DropdownMenuItem` 的 `selected` prop → `bg-neutral-selected` 持續選中背景(跟 SelectMenu 單選同一套) | **checkbox 方塊**(暗示多選)、**radio 圓圈**(dropdown 不用 radio 指示器,RadioGroup 才用) |
-| **單選 as always-visible form control** | `RadioGroup` + `RadioGroupItem`(圓圈) | — |
-
-### 為什麼 dropdown 單選不用 radio 圓圈
-
-本系統(跟 macOS / Chrome / VS Code 一致)在「隱藏在 dropdown 內的單選」統一用**持續高亮背景**(`bg-neutral-selected`),不用 radio 圓圈指示器。radio 圓圈只用在**永遠可見的 form RadioGroup**。
-兩者視覺完全不同但都是單選,差異來自「使用場景」:
-- **Dropdown 單選(隱藏)**: 打開時視覺極簡,只高亮 current,點了就關、切換 context → SelectMenu / DropdownMenu 單選
-- **Form RadioGroup(常駐)**: 永遠展開,使用者在填表時掃視所有選項 → radio 圓圈讓「這是一組互斥選項」一眼可辨
-
-### 新元件檢查法
-
-設計或審查 selection control 時:
-1. **單選 or 多選?** → 選對 primitive
-2. **隱藏型(dropdown)or 常駐型(form control)?** → 選對視覺語言
-3. **看 consumer 要用什麼 state prop,不要繞過 prop 用 className**(跟上面規則 A 合用)
-
----
-
-**這兩條規則是我曾經連續犯錯的原因**。違反規則 A 會造成「同狀態不同視覺」,違反規則 B 會造成「視覺誤導 mental model」。寫新元件或審查現有元件時兩條都檢查。
+選擇與狀態的視覺表達必須使用元件既有的 state prop,且指示器視覺必須對應 selection model。詳見 `src/design-system/patterns/item-layout/item-layout.spec.md`「選擇 / 狀態視覺規則」節。
 
 
 # shadcn 元件規範

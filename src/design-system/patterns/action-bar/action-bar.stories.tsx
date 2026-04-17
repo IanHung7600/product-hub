@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/design-system/components/Button/button'
 import { ButtonGroup, ButtonDivider } from '@/design-system/components/Button/button-group'
+import { ItemInlineAction, type InlineActionConfig } from '@/design-system/patterns/item-layout/item-layout'
 
 const meta: Meta = {
   title: 'Design System/Patterns/操作列',
@@ -218,7 +219,7 @@ export const Dividers: Story = {
             <Button variant="text" size="sm" iconOnly startIcon={Edit} aria-label="編輯" />
             <Button variant="text" size="sm" iconOnly startIcon={Share2} aria-label="分享" />
             <ButtonDivider />
-            <Button variant="text" size="sm" iconOnly startIcon={X} aria-label="關閉" />
+            <ItemInlineAction action={{ icon: X, label: '關閉', onClick: () => {} }} size="sm" />
           </ButtonGroup>
         </ToolbarFrame>
         <Label>關閉排最末，左側必加分隔線</Label>
@@ -351,7 +352,7 @@ export const Dividers: Story = {
               <Button variant="text" size="sm" iconOnly startIcon={ArrowUpDown} aria-label="排序" />
               <Button variant="text" size="sm" iconOnly startIcon={MoreVertical} aria-label="全部操作" />
               <ButtonDivider />
-              <Button variant="text" size="sm" iconOnly startIcon={X} aria-label="關閉" />
+              <ItemInlineAction action={{ icon: X, label: '關閉', onClick: () => {} }} size="sm" />
             </ButtonGroup>
           </ToolbarFrame>
           <Label>無固定工具 → ··· 是業務層末端；✕ 的關閉保護是唯一一條分隔線</Label>
@@ -368,7 +369,7 @@ export const Dividers: Story = {
               <ButtonDivider />
               <Button variant="text" size="sm" iconOnly startIcon={MoreVertical} aria-label="更多操作" />
               <ButtonDivider />
-              <Button variant="text" size="sm" iconOnly startIcon={X} aria-label="關閉" />
+              <ItemInlineAction action={{ icon: X, label: '關閉', onClick: () => {} }} size="sm" />
             </ButtonGroup>
           </ToolbarFrame>
           <Label warn>❌ ··· 左側的分隔線沒有語意（沒有工具層），移除它</Label>
@@ -378,7 +379,7 @@ export const Dividers: Story = {
               <Button variant="text" size="sm" iconOnly startIcon={ArrowUpDown} aria-label="排序" />
               <Button variant="text" size="sm" iconOnly startIcon={MoreVertical} aria-label="更多操作" />
               <ButtonDivider />
-              <Button variant="text" size="sm" iconOnly startIcon={X} aria-label="關閉" />
+              <ItemInlineAction action={{ icon: X, label: '關閉', onClick: () => {} }} size="sm" />
             </ButtonGroup>
           </ToolbarFrame>
           <Label>✅ ··· 是業務層末端，只有關閉保護這一條分隔線</Label>

@@ -10,10 +10,10 @@ import { useRowSize } from '@/design-system/patterns/item-layout/item-layout'
  * 居中垂直堆疊:icon(Avatar) → title → description → action。
  * 所有 slot 皆可選,預設只需 description。
  *
- * 間距走 layout-space token(density-aware):
- *   icon → text = --layout-space-tight
- *   desc → action = --layout-space-loose
- *   title → desc = mt-0.5(item-layout canonical,固定 2px）
+ * 間距固定,不隨 density 變（Empty 是展示性元件,不是工作區域元件）:
+ *   icon → text = mb-4（16px）
+ *   desc → action = mt-6（24px）
+ *   title → desc = mt-0.5（2px,item-layout canonical）
  *
  * Outer padding 由 consumer 容器決定(py-12 / py-6 / py-16 等）。
  */
@@ -54,7 +54,7 @@ const Empty = React.forwardRef<HTMLDivElement, EmptyProps>(
         {...props}
       >
         {iconElement && (
-          <div className="mb-[var(--layout-space-tight)]">{iconElement}</div>
+          <div className="mb-4">{iconElement}</div>
         )}
         {title && (
           <span className="text-body-lg font-medium text-foreground">
@@ -75,7 +75,7 @@ const Empty = React.forwardRef<HTMLDivElement, EmptyProps>(
           </span>
         )}
         {action && (
-          <div className="mt-[var(--layout-space-loose)]">{action}</div>
+          <div className="mt-6">{action}</div>
         )}
       </div>
     )

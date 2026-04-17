@@ -334,6 +334,17 @@ export const States: Story = {
           <Input placeholder="with error" />
           <FieldError>格式不正確，請重新輸入</FieldError>
         </Field>
+
+        <Field>
+          <FieldLabel info="使用者的全名，將顯示在個人資料頁面">姓名</FieldLabel>
+          <Input placeholder="請輸入姓名" />
+          <FieldDescription>將顯示在你的個人頁面上</FieldDescription>
+        </Field>
+
+        <Field required>
+          <FieldLabel info="用於登入和接收通知，格式為 name@example.com">Email</FieldLabel>
+          <Input placeholder="required + info" />
+        </Field>
       </FieldGroup>
     </div>
   ),
