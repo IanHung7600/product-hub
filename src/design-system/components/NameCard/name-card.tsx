@@ -2,7 +2,6 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 import { Avatar, type AvatarData } from '@/design-system/components/Avatar/avatar'
 import { Button } from '@/design-system/components/Button/button'
-import { Alert } from '@/design-system/components/Alert/alert'
 import { DescriptionList, DescriptionItem } from '@/design-system/components/DescriptionList/description-list'
 
 /**
@@ -25,6 +24,13 @@ import { DescriptionList, DescriptionItem } from '@/design-system/components/Des
 const AVATAR_SIZE = 64
 
 type StatusType = 'available' | 'away' | 'busy' | 'offline'
+
+const STATUS_DOT_COLOR: Record<StatusType, string> = {
+  available: 'bg-success',
+  away: 'bg-warning',
+  busy: 'bg-error',
+  offline: 'bg-fg-muted',
+}
 
 const STATUS_LABEL: Record<StatusType, string> = {
   available: 'Available',
@@ -95,16 +101,20 @@ const NameCard = React.forwardRef<HTMLDivElement, NameCardProps>(
           </div>
         )}
 
-        {/* ── Status: neutral Alert (無 dismiss) ── */}
+        {/* ── Status badge + message ── */}
         {hasStatus && (
-          <div className="border-t border-divider px-4 py-3">
-            <Alert
-              variant="neutral"
-              appearance="subtle"
-              dismissible={false}
-              title={STATUS_LABEL[status!]}
-              description={statusMessage ? String(statusMessage) : undefined}
-            />
+          <div className="border-t border-divider px-4 py-3 flex flex-col gap-3">
+            {/* Status badge */}
+            <div className="flex items-center gap-2 px-3 py-2 bg-muted rounded-md border border-border w-fit">
+              <span className={cn('w-2.5 h-2.5 rounded-full shrink-0', STATUS_DOT_COLOR[status!])} />
+              <span className="text-body font-medium">{STATUS_LABEL[status!]}</span>
+            </div>
+            {/* Status message */}
+            {statusMessage && (
+              <DescriptionItem label="Status message">
+                <span className="line-clamp-2">{statusMessage}</span>
+              </DescriptionItem>
+            )}
           </div>
         )}
 
