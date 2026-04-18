@@ -8,6 +8,24 @@ Tag 是 inline label，用於分類標籤、狀態標記、多選已選值。不
 
 ---
 
+## 何時用
+
+- **分類標籤**：產品類別（Electronics / Food / Furniture）、文章 tag（React / Design / Tutorial）
+- **狀態標記**：訂單狀態（In stock / Shipped / Delivered）——用 variant 色彩加速掃視
+- **多選已選值**：Combobox / searchable 選擇後顯示的 tag 陣列
+- **user-generated label**：使用者自己建立的標籤（如 Notion labels）
+
+## 何時不用
+
+| 場景 | 改用 | 原因 |
+|------|------|------|
+| 通知計數 / 狀態紅點 | `Badge` | Badge 較小、適合 overlay、主要傳達數量或「有新東西」 |
+| 互動式 filter（可點擊切換）| `Chip` | Tag 是純顯示，Chip 是可點擊控件 |
+| Person 顯示（name + avatar）| `NameCard` / `Avatar + Text` | Tag 是單行 inline label，不承載人員資訊 |
+| 可搜尋的多選入口 | `Combobox`（內部會渲染 Tag 陣列）| Combobox 才是選擇器，Tag 是選擇後的結果 |
+
+---
+
 ## Variant
 
 以色名命名，語義由消費端決定。建議用法與色彩系統的語義定義對齊。
@@ -161,3 +179,12 @@ Icon 色彩遵循 Inline Action 統一規則：預設 `fg-muted`，hover 時 `fo
 - ❌ 不用 Tag 做 overlay 通知圓點——那是不同元件（Badge）
 - ❌ 不用 variant 名稱傳達語義（例：不靠 `red` = 錯誤）——variant 是顏色，語義由消費端的內容和上下文決定
 - ❌ 不用 prefix/suffix 傳入 dismiss 按鈕——用 `onDismiss` callback，Tag 內部控制渲染
+
+---
+
+## 相關
+
+- `../Badge/badge.spec.md` — 通知計數 / 狀態紅點（overlay 場景）
+- `../Chip/chip.spec.md` — 可互動 filter（Tag 的互動版本）
+- `../Combobox/combobox.spec.md` — 多選場景會渲染 Tag 陣列
+- `../NameCard/name-card.spec.md` — 人員資訊顯示
