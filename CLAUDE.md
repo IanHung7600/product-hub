@@ -176,6 +176,8 @@ element.style.backgroundColor = 'var(--primary)'
 
 - **回答任何設計問題前，必須先讀取所有相關的 spec.md**，以實際內容為基礎，不憑記憶回答
 - **每次回答必須有邏輯、有架構、符合世界級設計水準**——不提出未經深思的建議，不為了回答而回答
+- **對標世界級 DS（mindset 層）**：編輯任何 spec 或建立新元件時，必須對照 **Polaris / Material / Ant Design / Atlassian / Carbon / Apple HIG**，檢查本專案是否缺少下列判斷維度——**「何時用 / 何時不用」、「與近親元件的分界」、「常見誤解」、「相關元件 links」、「空值呈現」、「驗證時機」、「Loading / 無障礙預設」**。有缺口主動提出討論，**不要假設「沒寫 = 不需要」**。SegmentedControl spec 是本專案的 template（完整實踐此 pattern）
+- **Spec 結構對齊 SSOT**：跨元件比較（如「Tabs vs SegmentedControl」）必須由**一個元件 spec 擁有**完整對照表，其他元件 point back。不可兩邊都寫完整版（會漂移）；不可建立孤立的 `xxx-selection.spec.md` 單獨承載比較（世界級 DS 都把比較放在元件 spec 自己身上）
 - **編輯 spec.md 時，必須交叉比對所有相關的 spec.md 與 Storybook 範例**，確認無矛盾、無術語不一致、無重複定義
 - **若結論與既有 spec.md 有邏輯衝突或概念混淆，必須主動提出討論**，不默默修改、不迴避矛盾
 - **所有元件必須遵循 shadcn 框架**，確保保留 shadcn 的結構優勢（forwardRef、Slot、data-* attributes、cva 等），不從零重寫
