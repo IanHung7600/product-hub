@@ -27,8 +27,8 @@
 
    ┌─ 命名原則 ────────────────────────────────────────────────────────────┐
    │  短名稱（無 --color- 前綴），對應到 Layer 1 原始色票                │
-   │  shadcn 慣例名稱（background / primary / destructive…）             │
-   │  保留為 compat aliases，避免破壞 shadcn 元件                        │
+   │  以語義 purpose 命名（primary / error / info / success / warning…） │
+   │  shadcn compat aliases 已於 2026-04-18 全數移除                      │
    └─────────────────────────────────────────────────────────────────────┘
 
    ┌─ Surface 分層（非常重要）────────────────────────────────────────────┐
@@ -262,11 +262,10 @@
   --notification:         var(--color-deep-orange-6);
 
   /* Border / Divider */
-  --border:               var(--color-neutral-5);  /* shadcn 元件邊框 */
+  --border:               var(--color-neutral-5);  /* 元件標準邊框 */
   --border-hover:         var(--color-neutral-6);  /* input、checkbox、radio hover 邊框 */
   --divider:              var(--color-neutral-4);  /* 分隔線，比 border 更淡 */
-  --input:                var(--border);           /* shadcn input 邊框 */
-  --ring:                 var(--primary);           /* shadcn focus ring */
+  --ring:                 var(--primary);           /* focus ring */
 
   /* Neutral Interactive — Default state family
      用於 non-selected element 的互動回饋 */
@@ -295,22 +294,9 @@
   --neutral-selected-hover:   var(--color-neutral-1);
   --neutral-selected-active:  var(--color-neutral-3);
 
-  /* Static Subtle — 靜態弱化背景
-     muted / secondary 原為 shadcn 定義的 token，本系統沿用並賦予明確用途 */
-  --muted:                var(--color-neutral-2);  /* shadcn Badge/skeleton 底色 */
-  --muted-foreground:     var(--fg-muted);         /* shadcn muted 文字色 */
-  --secondary:            var(--color-neutral-3);  /* shadcn Button secondary 底色 */
-  --secondary-foreground: var(--fg-muted);         /* shadcn secondary 文字色 */
-
-  /* shadcn Compat — 僅供 shadcn 元件內部使用，自己寫的元件用語義 token
-     標註 shadcn 原始用途 → 本系統對應 */
-  --background:           var(--canvas);           /* shadcn 頁面背景 */
-  --card:                 var(--surface);           /* shadcn Card 底色 */
-  --card-foreground:      var(--foreground);        /* shadcn Card 文字 */
-  --popover:              var(--surface-raised);    /* shadcn Popover/DropdownMenu 底色 */
-  --popover-foreground:   var(--foreground);        /* shadcn Popover 文字 */
-  --accent:               var(--neutral-hover);     /* shadcn Menu/Select item hover 底色 */
-  --accent-foreground:    var(--foreground);        /* shadcn Menu/Select item hover 文字 */
+  /* Static Subtle — 靜態弱化背景 */
+  --muted:                var(--color-neutral-2);  /* Badge/skeleton 底色 */
+  --secondary:            var(--color-neutral-3);  /* Badge low 底色 */
 }
 
 
@@ -373,29 +359,15 @@
   --color-surface:               var(--surface);
   --color-surface-raised:        var(--surface-raised);
 
-  /* shadcn compat */
-  --color-background:            var(--background);
+  /* Foreground */
   --color-foreground:            var(--foreground);
-  --color-card:                  var(--card);
-  --color-card-foreground:       var(--card-foreground);
-  --color-popover:               var(--popover);
-  --color-popover-foreground:    var(--popover-foreground);
 
   /* Primary */
   --color-primary:               var(--primary);
-  --color-primary-foreground:    oklch(1 0 0);
 
-  /* Secondary / Muted / Accent */
+  /* Secondary / Muted */
   --color-secondary:             var(--secondary);
-  --color-secondary-foreground:  var(--secondary-foreground);
   --color-muted:                 var(--muted);
-  --color-muted-foreground:      var(--muted-foreground);
-  --color-accent:                var(--accent);
-  --color-accent-foreground:     var(--accent-foreground);
-
-  /* Destructive（= error） */
-  --color-destructive:           var(--error);
-  --color-destructive-foreground: oklch(1 0 0);
 
   /* Status */
   --color-info:                  var(--info);
@@ -455,10 +427,9 @@
   --color-fg-muted:              var(--fg-muted);
   --color-fg-disabled:           var(--fg-disabled);
 
-  /* Border / Ring / Input */
+  /* Border / Ring */
   --color-border:                var(--border);
   --color-border-hover:          var(--border-hover);
-  --color-input:                 var(--input);
   --color-ring:                  var(--ring);
 
   /* Branding */
