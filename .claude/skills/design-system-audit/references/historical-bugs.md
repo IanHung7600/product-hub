@@ -92,13 +92,46 @@ Curated from the `# 失敗記憶索引` in CLAUDE.md plus audit runs. Each entry
 
 ---
 
-## Chart of audit → bug class
+## Chart of audit → bug class（對齊 current 18-audit numbering in audit-prompts.md）
 
+### Group A — Correctness (P0)
 | Audit | Primary bug class | Secondary |
 |-------|-------------------|-----------|
-| 1. cva drift | Three-way default drift | Family classification |
-| 2. Rule A | Spec text pollution | Visual description leaks |
-| 3. Rule B | Missing boundary coverage | Scope misapplication |
-| 4. Story language | Placeholder / abstract labels | Extreme unrealistic |
-| 5. Anatomy | Missing sections / dev-lang | Density dual / no swatches |
-| 6. SSOT | Dead link pointers | Heading drift |
+| 1. cva defaultVariants 三方漂移 | Three-way default drift | Family classification |
+| 2. SSOT dead link | Dead link pointers | Heading drift |
+| 3. SSOT reciprocal | Missing reverse pointer | Cross-spec inconsistency |
+| 4. Tailwind v4 / tailwind-merge grep | `[--foo]` silent fail | Unregistered utility strip |
+| 5. Token 消費紀律 | Hardcoded hex / rgba | Raw pixel values |
+
+### Group B — Spec hygiene (P1)
+| Audit | Primary bug class | Secondary |
+|-------|-------------------|-----------|
+| 6. Spec Rule A 文字品質 | Spec text pollution | Visual description leaks |
+| 7. Spec Rule B 邊界案例 | Missing boundary coverage | Scope misapplication |
+| 8. 7-維度 對標覆蓋 | Missing DS dimension | Thin spec |
+
+### Group C — Code conformance (P1)
+| Audit | Primary bug class | Secondary |
+|-------|-------------------|-----------|
+| 9. shadcn passthrough 完整度 | Missing forwardRef / displayName | Missing ...props / cva export |
+| 10. a11y 基本覆蓋 | Missing aria-label | Non-button onClick |
+
+### Group D — Story layer (P1)
+| Audit | Primary bug class | Secondary |
+|-------|-------------------|-----------|
+| 11. Story 三層齊全 | Missing stories layer | Internal vs Components 誤分 |
+| 12. Story 人話範例 | Placeholder / abstract labels | Extreme unrealistic |
+| 13. Anatomy Figma-inspect 完整度 | Missing sections / dev-lang | Density dual / no swatches |
+
+### Group E — System-level (P1)
+| Audit | Primary bug class | Secondary |
+|-------|-------------------|-----------|
+| 14. 命名一致性 | Folder/file case mismatch | H1 heading drift |
+| 15. CLAUDE.md 自身一致性 | Internal contradictions | Dead internal references |
+
+### Group F — Architecture compliance (P1, session-learned)
+| Audit | Primary bug class | Secondary |
+|-------|-------------------|-----------|
+| 16. Layout Family 宣告 | 元件缺 Family declaration | 系統遊離 |
+| 17. Prop value 跨元件認知衝突 | 同 literal 不同語義 | 違反命名三重 test #3 |
+| 18. shadcn compat alias 回流 | `npx shadcn add` 遺留 alias | 硬寫 Tailwind shadow |

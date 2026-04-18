@@ -87,7 +87,7 @@ Grouped by theme. Each runs as an independent subagent; many can parallelize.
 
 ### Phase 1 — Parallel audit execution
 
-Launch all 15 audits as background subagents (single message, multiple `Agent` tool calls with `run_in_background: true`). Use prompts in [references/audit-prompts.md](references/audit-prompts.md).
+Launch all 18 audits as background subagents (single message, multiple `Agent` tool calls with `run_in_background: true`). Use prompts in [references/audit-prompts.md](references/audit-prompts.md).
 
 Each audit reports:
 - Violations only (skip confirmations)
@@ -152,9 +152,21 @@ Audits may find:
 
 STOP and present options with rationale — don't decide unilaterally.
 
+### ⚠️ Checkpoint 4 — Cross-cutting refactor（影響 > 10 檔）
+
+When a fix touches 10+ files (e.g., helper extraction across 41 anatomy files, token rename across 71 utility usages), STOP and present execution-strategy options (one commit / N commits / defer). Full template in [references/checkpoints.md](references/checkpoints.md).
+
+### ⚠️ Checkpoint 5 — 環境 / 建置問題
+
+If audit encounters env / build issue (node_modules broken, storybook module-not-found), DO NOT attempt to fix env within audit scope. Report separately. Full template in [references/checkpoints.md](references/checkpoints.md).
+
+### ⚠️ Checkpoint 6 — 發現 spec 與 code 衝突
+
+When audit finds spec.md describes behavior different from tsx actual, STOP — don't silently pick one. Present options + git log context. Full template in [references/checkpoints.md](references/checkpoints.md).
+
 ### ⚠️ Checkpoint 7 — HANDLE「先不管」correctly（user directive semantic）
 
-Per CLAUDE.md `# User 追蹤語意區分`:
+**本 checkpoint 是 Skill 自身 SSOT**（CLAUDE.md 規則分層決定:對話 protocol 屬 skill 層,非設計規則層）:
 
 | User phrasing | Meaning | Action |
 |---------------|---------|--------|
@@ -178,7 +190,7 @@ Per CLAUDE.md `## 命名必過三重 test`, when proposing ANY new naming (varia
 
 After all commits:
 - Update `memory/project_audit_progress.md`:
-  - Date + audit coverage (which of the 15)
+  - Date + audit coverage (which of the 18)
   - Findings + resolved counts
   - Known remaining gaps (deferred P2)
 - Short final report:
@@ -207,6 +219,6 @@ After all commits:
 
 ## References
 
-- [references/audit-prompts.md](references/audit-prompts.md) — Exact subagent prompts for all 15 audits
+- [references/audit-prompts.md](references/audit-prompts.md) — Exact subagent prompts for all 18 audits
 - [references/historical-bugs.md](references/historical-bugs.md) — Bug classes indexed by audit
 - [references/checkpoints.md](references/checkpoints.md) — Detailed examples of each MUST-ASK scenario

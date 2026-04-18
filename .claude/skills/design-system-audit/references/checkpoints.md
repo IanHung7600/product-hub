@@ -198,3 +198,43 @@ Code 實際: [行為 + line M]
 **絕對不可**：
 - ❌ 默默選一個修
 - ❌ 改 code 前未讀 git log 看是否刻意改動
+
+---
+
+## Checkpoint 7 — 「先不管」vs tech debt 語意區分（user directive）
+
+User 不同用語表達「現在不做」,語意差別明顯,處理方式不同。**本 checkpoint 是 Skill 層 SSOT**(對話 protocol 屬 skill,非 CLAUDE.md 層):
+
+### 語意對照表
+
+| User phrasing | 語意 | 處理 |
+|--------------|-----|------|
+| 「先不管」/「這個先跳過」/「不要追蹤」/「算了」 | **完全忽略,不進任何 tracking** | 不寫進 memory、不加進 失敗索引、不在下次 audit 提及。就當沒這件事。 |
+| 「之後再處理」/「先記下來」/「下次做」 | **Park 為 tech debt** | 寫進 `memory/project_audit_progress.md` 「仍待未來處理」區,下次 audit 會 surface |
+| 「做完」/「繼續」/「執行」/「馬不停蹄」 | **立刻處理** | 進 TaskList,執行完 mark completed |
+
+### 判斷法
+
+看 user 語氣傾向:
+- **明確否決這件事不重要** → 完全移除 tracking
+- **表達現在沒時間但該做** → tech debt
+- **表達立刻做** → execute
+
+### 禁止混用
+
+將 user 的「先不管」當作 tech debt 記下來,下次 audit 又提 —— 違反 user 意圖,製造雜訊。
+
+### 範本
+
+當 user 在 Checkpoint 1 triage 或討論 P2 時表達「先不管」:
+
+```
+✓ 了解,先不管「{item}」。
+   完全不寫進 memory tech debt / 失敗索引 / 下次 audit。
+   當沒這件事。
+```
+
+### 歷史
+
+2026-04-18 session:user 對 icon micro tier(Tag dismiss X ratio)+ checkbox checkmark
+ 自繪說「先不管」。AI 最初差點寫進 memory tech debt,經 user 再次提醒「先不管就是完全不用理他」才移除。

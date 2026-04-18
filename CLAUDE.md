@@ -63,7 +63,7 @@
 
 設計系統的知識分 8 個 home。**寫任何新規則、新文件、新協議前,先跑下方「放哪裡 decision flowchart」——不要全部塞進 CLAUDE.md**。
 
-## 7 個 home + 各自的 scope
+## 8 個 home + 各自的 scope
 
 ### 設計規則層（DS 設計知識，按影響範圍分層）
 
@@ -388,11 +388,10 @@ src/
 │   │   ├── SelectionControl/          ← Checkbox/Radio 共用的 SelectionItem 佈局
 │   │   ├── HoverCard/                 ← hover 觸發可互動浮層（行為 primitive）
 │   │   ├── OverflowIndicator/         ← 溢出指示器
+│   │   ├── Command/                   ← cmdk 搜尋 primitive（→ SelectMenu，2026-04-18 從 Components/ 移至 Internal/）
 │   │   │
 │   │   │  shadcn passthrough（薄包裝，遵循 shadcn 原始結構）
-│   │   ├── Command/                   ← cmdk 搜尋 + 鍵盤導覽
 │   │   ├── Popover/                   ← 浮動容器
-│   │   ├── ScrollArea/                ← 自訂捲軸
 │   │   ├── Separator/                 ← 分隔線
 │   │   ├── Sheet/                     ← 側邊抽屜
 │   │   ├── Skeleton/                  ← 載入佔位
@@ -882,7 +881,7 @@ Provider 是**應用層配置**（delay、theme、portal target、toast position
 |---------|------|---------|
 | **單一固定 size** | Chip (`h-field-sm`) / Notice/Alert/Toast（通知語意） | 世界級共識（Material 3 filter chips / Material Banner）:此類元件不需要密度選擇 |
 | **Alias** | Tag lg=md=24px | 子元件補齊原則（discrete tier）:消費端傳 size 時不 break,但視覺上等同 |
-| **Mode 取代 Size** | FileItem (`detail` / `compact`) | **結構變體**非密度變體——不同 mode 是不同 layout 不是不同高度,用 size 會誤導 |
+| **Mode 取代 Size** | FileItem (`compact` / `rich`) | **結構變體**非密度變體——不同 mode 是不同 layout 不是不同高度,用 size 會誤導 |
 | **額外 xs**（Family 3 only） | Button / SegmentedControl xs | icon-only toolbar utility（24px 固定 不配對 Field） |
 
 **違反但無理由 = 設計 bug**,必須改 code 或補 spec 理由。

@@ -1,4 +1,4 @@
-# Audit Subagent Prompts (15 audits)
+# Audit Subagent Prompts (18 audits)
 
 Each prompt is self-contained — designed to paste into an `Agent` call with `run_in_background: true` and `subagent_type: general-purpose`.
 
@@ -349,9 +349,9 @@ End: `Total issues found: M. Categories: [breakdown]`. Under 500 words. Don't fi
 
 ---
 
-## Running all 15 in parallel
+## Running all 18 in parallel
 
-Single message with 15 `Agent` tool calls, each with `run_in_background: true`. Expected wall time: 3-5 minutes for all to complete (they process in parallel server-side).
+Single message with 18 `Agent` tool calls, each with `run_in_background: true`. Expected wall time: 3-5 minutes for all to complete (they process in parallel server-side).
 
 After all return:
 - Consolidate findings per file with line numbers
