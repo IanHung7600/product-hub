@@ -5,16 +5,24 @@
 Chip 是 **Material Design Filter Chip** 的實作——用於從多個選項裡**選取任意數量（多選）或單一選項（單選）**，視覺上是一排獨立的 pill。
 基於 Radix ToggleGroup，橋接設計系統 token。
 
-**何時用**：
-- Filter panel 的 tag 選取（語言、狀態、類別、標籤）
-- Toolbar 上的多選過濾（常見於列表頁、搜尋結果頁）
-- 標籤選取（選適合內容的 tags）
+---
 
-**何時不用**：
-- 2–5 個互斥單選且視覺要 compact 連體 → `SegmentedControl`
-- 單一按鈕 on/off → `Button pressed`
-- 純顯示不可互動 → `Tag`
-- 代表使用者已輸入的 token（信箱收件人、active filter summary + 可刪除 X）→ Input chip 系列（`LinkInput` / `PeoplePicker`）
+## 何時用
+
+- **Filter panel 的 tag 選取**：語言、狀態、類別、標籤
+- **Toolbar 上的多選過濾**：列表頁、搜尋結果頁
+- **標籤選取**：為內容選擇適合的 tags
+
+## 何時不用
+
+| 場景 | 改用 | 原因 |
+|------|------|------|
+| 2–5 個互斥單選且視覺要 compact 連體 | `SegmentedControl` | Chip 各自獨立，SegmentedControl 連體表達互斥更強 |
+| 單一按鈕 on/off | `Button pressed` | 單個 toggle 不需要 Chip 的 group 語意 |
+| 純顯示不可互動 | `Tag` | Chip 是 control，Tag 是 label |
+| 使用者已輸入的 token（收件人、filter summary）| Input chip 系列（`LinkInput` / `PeoplePicker`）| 那些是 input 內的 token，不是獨立選擇器 |
+
+---
 
 ## 與 SegmentedControl 的差異
 

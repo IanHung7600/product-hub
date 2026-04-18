@@ -5,17 +5,23 @@
 Breadcrumb 顯示「當前頁面在資訊階層中的位置」，同時提供快速回到上層的路徑導覽。
 基於 shadcn/ui Breadcrumb 結構（純 HTML + Tailwind，無 Radix primitive），橋接設計系統 token。
 
-**何時用**：
-- 頁面深度 ≥ 3 層的資訊階層導覽（專案 / 子專案 / 任務、組織 / 團隊 / 成員 / 設定）
-- 檔案管理器類 UI（folder 路徑）
-- 電商多層分類（Home / Electronics / Phones / iPhone 15）
+**Breadcrumb 是「你在哪裡」的指示器，不是「你可以去哪裡」的選單**——反映當前路徑，不是全部可能路徑。
 
-**何時不用**：
-- 頁面結構只有 1–2 層 → 用 page header + back button 就夠
-- 切換**平行** view → 用 `Tabs`
-- 主導覽 → 用 `Sidebar` / top nav
+---
 
-**Breadcrumb 是「你在哪裡」的指示器，不是「你可以去哪裡」的選單**。它反映當前路徑，不是全部可能路徑。
+## 何時用
+
+- **頁面深度 ≥ 3 層**的資訊階層導覽（專案 / 子專案 / 任務，組織 / 團隊 / 成員 / 設定）
+- **檔案管理器類 UI**（folder 路徑）
+- **電商多層分類**（Home / Electronics / Phones / iPhone 15）
+
+## 何時不用
+
+| 場景 | 改用 | 原因 |
+|------|------|------|
+| 頁面結構只有 1–2 層 | page header + back button | 兩層不值得 Breadcrumb 的視覺投資 |
+| 切換**平行** view（非階層）| `Tabs` | Breadcrumb 表達的是 parent-child 關係 |
+| 主導覽 | `Sidebar` / top nav | Breadcrumb 反映當前位置，不是全局導覽 |
 
 ---
 

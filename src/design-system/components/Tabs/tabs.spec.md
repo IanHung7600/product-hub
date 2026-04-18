@@ -5,11 +5,22 @@
 Tabs 用於在**同一個上下文底下切換平行的視圖**——每個 tab 對應一塊獨立內容區，同時只顯示一塊。
 基於 shadcn/ui Tabs（Radix Tabs），橋接設計系統 token。
 
-**何時用**：頁面內切換「總覽 / 成員 / 設定」、Dialog 內切換「一般 / 進階」、Sidebar 面板內切換次分類。
-**何時不用**：
-- 切換的是**整個頁面**（路由層級）→ 用 navigation / breadcrumb
-- 只有兩個狀態的開關 → 用 `Switch` 或 `Button pressed`
-- 規模較小的局部內容變體切換 → 用 `SegmentedControl`（見下）
+---
+
+## 何時用
+
+- **頁面內切換** 同上下文的平行視圖：專案的「總覽 / 成員 / 設定」
+- **Dialog 內切換** 複雜設定：「一般 / 進階 / 整合」
+- **Sidebar 面板內切換** 次分類：團隊、頻道、標籤
+- 每塊 content 可以有自己的 header / toolbar / layout（container 規模的切換）
+
+## 何時不用
+
+| 場景 | 改用 | 原因 |
+|------|------|------|
+| 切換的是**整個頁面**（路由層級）| navigation / breadcrumb | Tabs 是同上下文，路由是跨頁 |
+| 只有兩個狀態的開關 | `Switch` / `Button pressed` | 兩態用 toggle 直接，不需要 tab 視覺 |
+| 規模較小的局部內容變體切換 | `SegmentedControl` | compact control 更適合，見下「Tabs 與 SegmentedControl 的分界」 |
 
 ---
 
