@@ -60,7 +60,24 @@ const DropdownMenuTrigger = React.forwardRef<
   />
 ))
 DropdownMenuTrigger.displayName = DropdownMenuPrimitive.Trigger.displayName
-const DropdownMenuGroup = DropdownMenuPrimitive.Group
+// DropdownMenuGroup — 對齊 MenuGroup 的 auto-separation CSS pattern
+// ([&+&]:border-t [&+&]:border-divider),讓相鄰 DropdownMenuGroup 自動分隔
+// consumer 用 Group 組織 items 時無需手動加 Separator。
+//
+// 注意:不套 `py-2`(MenuGroup 有)——因為 DropdownMenuContent 已有 `py-2`,
+// 再套會 double padding。MenuGroup 在 Command.List 下不會有這個問題所以有 py-2。
+const DropdownMenuGroup = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.Group>,
+  React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Group>
+>(({ className, ...props }, ref) => (
+  <DropdownMenuPrimitive.Group
+    ref={ref}
+    className={cn('[&+&]:border-t [&+&]:border-divider [&+&]:mt-1 [&+&]:pt-1', className)}
+    {...props}
+  />
+))
+DropdownMenuGroup.displayName = 'DropdownMenuGroup'
+
 const DropdownMenuPortal = DropdownMenuPrimitive.Portal
 const DropdownMenuSub = DropdownMenuPrimitive.Sub
 const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup

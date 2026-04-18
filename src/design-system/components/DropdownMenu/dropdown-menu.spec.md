@@ -34,17 +34,32 @@ DropdownMenu 是按鈕觸發的**動作選單**——使用者從中選擇一個
 DropdownMenu                    ← Radix Root，管理開關狀態
   DropdownMenuTrigger           ← 觸發按鈕（通常是 Button）
   DropdownMenuContent           ← 浮層容器，提供 size context
-    DropdownMenuItem            ← 基本動作項目
-    DropdownMenuCheckboxItem    ← 可勾選的切換項目（如顯示/隱藏欄位）
+    DropdownMenuGroup           ← 邏輯群組容器（自動分隔相鄰 Group，見下）
+      DropdownMenuItem          ← 基本動作項目
+      DropdownMenuCheckboxItem  ← 可勾選的切換項目（如顯示/隱藏欄位）
     DropdownMenuRadioGroup      ← 單選群組容器
       DropdownMenuRadioItem     ← 單選項目（如排序方式）
     DropdownMenuSub             ← 子選單容器
       DropdownMenuSubTrigger    ← 子選單觸發項目（自動附加 ChevronRight）
       DropdownMenuSubContent    ← 子選單浮層
     DropdownMenuLabel           ← 群組標題（不可互動）
-    DropdownMenuSeparator       ← 分隔線
+    DropdownMenuSeparator       ← 明確分隔線（consumer 手動放置）
     DropdownMenuShortcut        ← 鍵盤快捷鍵提示（ml-auto 靠右）
 ```
+
+### DropdownMenuGroup 的自動分隔
+
+`DropdownMenuGroup` 對齊 `MenuGroup` 的 auto-separation 理念——相鄰的 Group 自動透過 `border-divider` 分隔，**consumer 不需要自己加 `DropdownMenuSeparator`**。
+
+**實作差異（與 MenuGroup 對照）**：
+- **MenuGroup**（`menu-item.tsx`）：`py-2 [&+&]:border-t [&+&]:border-divider`——每個 Group 都有 8px 上下 padding
+- **DropdownMenuGroup**：`[&+&]:border-t [&+&]:border-divider [&+&]:mt-1 [&+&]:pt-1`——不套 `py-2`（會跟 `DropdownMenuContent` 既有 `py-2` 產生 double padding），改用 `mt-1 pt-1` 只在第二個 Group 起加上下間距
+
+視覺結果類似——相鄰 Group 間都有 border-divider 分隔線，不同只是具體間距公式。
+
+兩種分隔機制的選擇：
+- **用 `DropdownMenuGroup` 包裝同類 items** → 自動分隔（零手動，跟 MenuGroup 理念一致）
+- **用 `DropdownMenuSeparator` 明確插入** → 明確控制分隔位置（如群組內部的子分組、破壞性動作前的強調分隔）
 
 ---
 
