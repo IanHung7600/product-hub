@@ -397,7 +397,15 @@ element.style.backgroundColor = 'var(--primary)'
 - **spec.md 與 .tsx 的職責分離**：spec 只記錄設計原則（「為什麼」和「何時用」），讓 AI 能舉一反三推導邊緣情況；可程式化的規則（具體 token class name、pixel 值、條件邏輯）寫進元件 .tsx，不寫在 spec 裡。判斷標準：「這條規則能直接變成 code 嗎？」能 → .tsx；不能、需要人類判斷 → spec
 - **可推導的值用 `calc()` 或公式表達，不硬寫結果**——讓依賴關係留在 code 裡，上游值變動時下游自動跟著算。例：divider 內縮 = `(行高 - 文字行高) / 2`，改行高時 divider 自動調整，不需要有人記得去改
 - **Spec 文字品質**：不描述視覺形狀或實作細節（「窄長形」「會變寬」「zero layout shift」這類視覺字眼屬於 story 視覺化的工作，不進 spec）；同一概念不混用兩個名稱（術語一致）；「禁止事項（❌）」章節必須列出所有常見誤用
-- **Spec 邊界案例覆蓋**：適用時必須有明確說明——disabled / loading / empty、dark mode / density 行為、icon-only 使用規則。不適用則明文標注「本元件無 X 狀態」，不沉默省略
+- **Spec 邊界案例覆蓋**：適用的狀態必須有明確說明——disabled / loading / empty、dark mode / density 行為、icon-only 使用規則。不適用則明文標注「本元件無 X 狀態」，不沉默省略。
+  
+  **Scope 預設（減少重複）**：
+  - **Field 家族元件**（Input / NumberInput / DatePicker / Select / Combobox / LinkInput / Textarea / Switch / Slider / SegmentedControl / Checkbox / RadioGroup）→ 可直接寫「Mode / disabled / readonly 詳見 `field-controls.spec.md`」，不必逐條重寫
+  - **Dark mode 行為**：若元件單純透過 semantic token 切換（無自訂 palette），可直接寫「Dark mode 由 semantic token 自動處理（見 `color.spec.md`）」
+  - **Density 行為**：若元件使用 `--field-height-*` 或 `--layout-space-*` token，可直接寫「Density 由 token 自動切換」
+  - **純 wrapper 元件**（無自己的互動狀態，如 Separator / Skeleton / Spinner）→ 「本元件無互動狀態」一行帶過
+  
+  元件特有（non-inherit）的狀態表現必須展開寫；繼承自 family / token 的行為點 pointer 即可
 
 
 # 建立 UI 前必讀

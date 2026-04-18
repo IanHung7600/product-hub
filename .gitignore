@@ -22,7 +22,7 @@ Icon?
 # Editor
 .vscode/
 .idea/
-.claude/
+.claude/settings.local.json
 
 # Figma plugin (local dev only)
 figma-plugin/
