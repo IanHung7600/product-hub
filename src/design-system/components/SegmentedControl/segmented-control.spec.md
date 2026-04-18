@@ -6,19 +6,27 @@ SegmentedControl 是**互斥多選一的 compact control**——從 2–5 個選
 
 **SegmentedControl 的選值可以驅動下方內容變化**——這是正當用法，不要誤以為它只能當表單輸入（「切 value 不能切 view」是錯的二分法）。
 
-**何時用**：
-- 表單內的互斥選項（對齊：左 / 中 / 右；檢視模式：清單 / 看板 / 行事曆）
-- Filter / toolbar 的分段切換（全部 / 進行中 / 已完成、日 / 週 / 月）
-- Chart 的資料維度切換（本週 / 本月 / 本季）
-- 付款方式 / 配送方式這類「選了之後下方欄位跟著變」的 form section
+---
 
-**何時不用**：
-- 選項 > 5 個 → `Select` / `RadioGroup`
-- 只有 1 個 → `Button pressed`
-- 切換的是 container 結構（整塊 view 有自己的 header / toolbar / filters）→ `Tabs`
-- 選項需要描述文字 / 複雜排版 → `RadioGroup`
+## 何時用
 
-## 與 Tabs 的分界（詳見 `tabs.spec.md`）
+- **表單內的互斥選項**：對齊（左 / 中 / 右）、檢視模式（清單 / 看板 / 行事曆）
+- **Filter / toolbar 的分段切換**：全部 / 進行中 / 已完成、日 / 週 / 月
+- **Chart 的資料維度切換**：本週 / 本月 / 本季
+- **「選了之後下方欄位跟著變」的 form section**：付款方式、配送方式
+
+## 何時不用
+
+| 場景 | 改用 | 原因 |
+|------|------|------|
+| 選項 > 5 個 | `Select` / `RadioGroup` | 視覺會過窄、label 被截斷 |
+| 只有 1 個 | `Button pressed` | 沒有選擇語意 |
+| 切換的是 container 結構（整塊 view 有自己的 header / toolbar / filters）| `Tabs` | 見下「與 Tabs 的分界」 |
+| 選項需要描述文字 / 複雜排版 | `RadioGroup` | compact control 不支援多行內容 |
+
+---
+
+## 與 Tabs 的分界（詳見 `../Tabs/tabs.spec.md`）
 
 兩者都能「切換下方顯示的內容」，分界不是「切 view vs 切 value」，而是三個角度：
 
