@@ -1,9 +1,9 @@
 ---
 name: design-system-audit
-description: Systematic audit of this design system for world-class quality. Runs 15 audits covering spec hygiene / code correctness / a11y / naming / tokens / patterns / CLAUDE.md consistency, and surfaces actionable fix lists. Has explicit checkpoints where the skill MUST stop and ask user. Invoke via /design-system-audit when asked to audit, re-audit, check quality, or verify design system health.
+description: Systematic audit of this design system for world-class quality. Runs 18 audits covering spec hygiene / code correctness / a11y / naming / tokens / patterns / CLAUDE.md consistency / Layout Family compliance / prop value collisions / shadcn alias leakage, and surfaces actionable fix lists. Has explicit checkpoints where the skill MUST stop and ask user. Invoke via /design-system-audit when asked to audit, re-audit, check quality, or verify design system health.
 ---
 
-# Design System Audit (15 dimensions, world-class)
+# Design System Audit (18 dimensions, world-class)
 
 Purpose: catch every bug class this project has shipped historically PLUS structural gaps relative to Polaris / Material / Atlassian / Ant / Carbon / Apple HIG. Each audit has a clear rubric tied to CLAUDE.md rules. The skill reports findings and **explicitly stops at checkpoints** for user decisions before large-scope fixes.
 
@@ -23,7 +23,7 @@ Purpose: catch every bug class this project has shipped historically PLUS struct
 
 ---
 
-## The 15 audits
+## The 18 audits
 
 Grouped by theme. Each runs as an independent subagent; many can parallelize.
 
@@ -66,6 +66,14 @@ Grouped by theme. Each runs as an independent subagent; many can parallelize.
 |---|-------|-----------------|
 | 14 | **命名一致性** | PascalCase folder / kebab-case file / hook naming / spec chapter 中文 / identifier 英文 / single-file 語言統一 |
 | 15 | **CLAUDE.md 自身一致性** | Internal contradictions / duplicated rules / dead internal references / section-heading drift |
+
+### Group F — Architecture compliance (P1 priority, session-learned)
+
+| # | Audit | What it catches |
+|---|-------|-----------------|
+| 16 | **Layout Family 宣告** | 每個 component spec 第一段必須宣告「Layout Family: 1/2/3/4」或明示「非 family（self-contained / composite）」; 缺漏代表元件遊離於系統 |
+| 17 | **Prop value 跨元件認知衝突** | 同字 literal 在不同元件作 prop value 但語義衝突(`text` 是 Button `variant="text"` 文字樣式,若 FileItem `mode="text"` 變成「文字為主呈現」= 雙語義,consumer 混淆)——本 session 命名三 test 第 3 條強制檢查 |
+| 18 | **shadcn compat alias 回流檢查** | grep `bg-popover / text-popover-foreground / text-muted-foreground / bg-accent / text-accent-foreground / bg-destructive / bg-background` 等在我們的元件 code——這些是 shadcn copy-paste 安全網,我們元件應用 direct token。每次 audit 重新 grep 防 `npx shadcn add X` 新生成的 code 留下 alias |
 
 ---
 
@@ -143,6 +151,28 @@ Audits may find:
 - Token that could be primitive vs semantic
 
 STOP and present options with rationale — don't decide unilaterally.
+
+### ⚠️ Checkpoint 7 — HANDLE「先不管」correctly（user directive semantic）
+
+Per CLAUDE.md `# User 追蹤語意區分`:
+
+| User phrasing | Meaning | Action |
+|---------------|---------|--------|
+| 「先不管」/「這個先跳過」 | **Completely ignore** — not a tech debt | Do NOT add to memory, failure index, or next-audit surface. Act as if topic never existed. |
+| 「之後再處理」/「先記下來」 | Park as tech debt | Add to `memory/project_audit_progress.md` 「仍待未來處理」 |
+| 「全部做完」/「馬不停蹄」| Execute now | Proceed |
+
+**Never conflate the two**: adding a 「先不管」 item to tech debt violates user's explicit directive (it re-surfaces on next audit, creating noise).
+
+### ⚠️ Naming proposal — RUN 3-test BEFORE Checkpoint 2 approval
+
+Per CLAUDE.md `## 命名必過三重 test`, when proposing ANY new naming (variant / mode / prop value / token):
+
+1. **Existing design language test**: aligned with project's existing naming patterns?
+2. **World-class idiom test**: at least 2 world-class DS use this term?
+3. **Cross-component cognitive collision test**: does the string literal collide semantically with any existing prop value elsewhere?
+
+**If any test fails → iterate naming, don't propose**. Historical: `text/picture` (Ant Design idiom ✓) failed test 3 (collides with Button `variant="text"`), changed to `compact/rich`.
 
 ### Phase 4 — Final report + memory update
 

@@ -358,3 +358,84 @@ After all return:
 - Build priority matrix (P0 / P1 / P2)
 - Present Checkpoint 1 triage to user
 - DO NOT auto-fix P2 without approval
+
+---
+
+# Group F — Architecture compliance (session-learned)
+
+## 16. Layout Family 宣告
+
+```
+Your job: verify every component spec.md under src/design-system/components/ has a「Layout Family」declaration in its first section (after 定位/實作基礎, before 何時用).
+
+The 4-Family Model (CLAUDE.md `# 系統內部 Layout — 4-Family Model`):
+- Family 1: Menu item layout
+- Family 2: List item layout
+- Family 3: Pill layout
+- Family 4: Field control layout
+
+Acceptable declarations:
+- "Layout Family: CLAUDE.md 4-Family Model **Family N（...）**消費者"
+- 「本元件不屬於 4-Family Model」+ reason (self-contained primitive / composite)
+
+Report components missing the declaration:
+- `ComponentName: no Layout Family declaration` (should be added)
+
+Don't flag:
+- Pattern specs (item-layout is the SSOT itself, not a consumer)
+- Internal primitives with documented reason for no Family
+
+End: `N component specs checked, M missing Family declaration, top 5: [list]`. Under 300 words. Don't fix.
+```
+
+## 17. Prop value 跨元件認知衝突
+
+```
+Your job: find cross-component prop value collisions that create cognitive dissonance (CLAUDE.md `## 命名必過三重 test` test #3).
+
+Grep approach:
+1. Extract all cva variant values + type prop values from every component .tsx
+2. Group by literal string (e.g., all components using value `'text'`)
+3. For each duplicate, compare semantic meaning
+
+Flag collisions where same string has materially different semantics:
+- Example: `Button variant="text"` (text-style button, no chrome) vs hypothetical `FileItem mode="text"` (text-based presentation) — same `'text'`, different concept
+- Non-collisions: `size="sm" / "md" / "lg"` across elements is NOT collision (same semantic scale)
+- Non-collisions: same `'error'` for Alert variant and Badge variant IS OK (same semantic)
+
+Report: `ComponentA.prop="value" = 語義A | ComponentB.prop="value" = 語義B — 建議改其中一個`
+
+End: `N cva/prop definitions scanned, M genuine collisions found. Historical: text/rich/picture naming iteration (fixed)`. Under 500 words. Don't fix.
+```
+
+## 18. shadcn compat alias 回流檢查
+
+```
+Your job: grep component .tsx files for shadcn compat aliases that should have been migrated to our direct tokens. This is a **recurring check** — future `npx shadcn add X` may introduce these and we must catch them early.
+
+Per CLAUDE.md「shadcn compat aliases — 不給我們元件用」:
+
+Forbidden in our code (these SHOULD be migrated to direct tokens):
+- `bg-popover` → `bg-surface-raised`
+- `text-popover-foreground` → `text-foreground`
+- `text-muted-foreground` → `text-fg-muted`
+- `bg-accent` → `bg-neutral-hover`
+- `text-accent-foreground` → `text-foreground`
+- `bg-destructive` → `bg-error`
+- `bg-background` → `bg-canvas`
+- `bg-card` / `text-card-foreground` → `bg-surface` / `text-foreground`
+- `text-primary-foreground` → `text-white`
+- `border-input` → `border-border`
+- `shadow-md / shadow-sm / shadow-lg / shadow-xl / shadow-2xl` → `shadow-[var(--elevation-*)]`
+
+OK (these are OUR approved tokens, not shadcn aliases):
+- `bg-muted` (semantic.css keeps --muted as real token)
+- `bg-secondary` (promoted to real token)
+- `ring-ring` (our focus color)
+
+Grep `src/design-system/components/**/*.tsx` (exclude .stories/.anatomy/.principles which may legit show token references in demos).
+
+Report: `file:line — shadcn alias found — migrate to: [direct token]`
+
+End: `N tsx files checked, M alias leakage, typically 0 in clean state`. Under 400 words. Don't fix.
+```
