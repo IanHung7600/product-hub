@@ -2,19 +2,19 @@ import * as React from "react"
 import * as PopoverPrimitive from "@radix-ui/react-popover"
 
 import { cn } from "@/lib/utils"
+import { SurfaceHeader, SurfaceBody, SurfaceFooter } from "@/design-system/patterns/overlay-surface/overlay-surface"
 
 /**
  * Popover — Radix Popover + 設計系統 token
  *
  * ── 視覺 ──
  * 與 Dialog 對齊：bg-surface-raised / rounded-lg / border-border / elevation-200。
- * density 永遠鎖 md（Popover 是輕量浮層，不隨頁面 density 變大）。
+ * density 永遠鎖 md（non-modal 輕量浮層不隨頁面 density 放大）。
  *
  * ── 結構 ──
  * PopoverContent：外殼（bg / border / radius / shadow / density），無內距。
- * PopoverHeader / PopoverBody / PopoverFooter：可選結構化 sub-components，
- * 採用 Dialog 同一套 padding token（px=loose / py=tight）。
- * 若僅放單一 body，consumer 包 PopoverBody 即可。
+ * PopoverHeader / PopoverBody / PopoverFooter：消費 overlay-surface pattern
+ * 共用的 SurfaceHeader / SurfaceBody / SurfaceFooter primitives(padding SSOT)。
  */
 
 const Popover = PopoverPrimitive.Root
@@ -43,52 +43,9 @@ const PopoverContent = React.forwardRef<
 ))
 PopoverContent.displayName = PopoverPrimitive.Content.displayName
 
-const PopoverHeader = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "flex items-center gap-2 shrink-0 border-b border-divider",
-      "px-[var(--layout-space-loose)] py-[var(--layout-space-tight)]",
-      className,
-    )}
-    {...props}
-  />
-))
-PopoverHeader.displayName = "PopoverHeader"
-
-const PopoverBody = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "px-[var(--layout-space-loose)] py-[var(--layout-space-tight)]",
-      className,
-    )}
-    {...props}
-  />
-))
-PopoverBody.displayName = "PopoverBody"
-
-const PopoverFooter = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "flex items-center justify-end gap-2 shrink-0 border-t border-divider",
-      "px-[var(--layout-space-loose)] py-[var(--layout-space-tight)]",
-      className,
-    )}
-    {...props}
-  />
-))
-PopoverFooter.displayName = "PopoverFooter"
+const PopoverHeader = SurfaceHeader
+const PopoverBody = SurfaceBody
+const PopoverFooter = SurfaceFooter
 
 const PopoverTitle = React.forwardRef<
   HTMLHeadingElement,

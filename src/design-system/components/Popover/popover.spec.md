@@ -82,3 +82,4 @@ Consumer 無需額外處理 a11y，保留 Radix `data-state` 屬性即可。
 - `../DropdownMenu/dropdown-menu.spec.md` — 有 menu 語意的操作選單
 - `../SelectMenu/select-menu.spec.md` — SelectMenu 消費 Popover 作為浮層容器
 - Radix Popover primitive — `@radix-ui/react-popover`
+- `../../patterns/overlay-surface/overlay-surface.spec.md` — Header / Body / Footer padding SSOT（Dialog + Popover 共用）

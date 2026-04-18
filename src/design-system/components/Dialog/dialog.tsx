@@ -4,6 +4,7 @@ import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { ItemInlineActionButton } from "@/design-system/patterns/item-layout/item-layout"
+import { SurfaceHeader, SurfaceBody, SurfaceFooter } from "@/design-system/patterns/overlay-surface/overlay-surface"
 
 /**
  * Dialog (Modal) — Radix Dialog + 設計系統 token
@@ -99,36 +100,36 @@ const DialogContent = React.forwardRef<
 })
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
+// DialogHeader: SurfaceHeader + Close 按鈕(Dialog 特有)
+// justify-between 讓 children 與 Close 分左右;Close 用 Radix DialogPrimitive.Close 包裝。
 const DialogHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, children, ...props }, ref) => (
-  <div
+  <SurfaceHeader
     ref={ref}
-    className={cn(
-      "flex items-center justify-between gap-2 shrink-0 border-b border-divider",
-      "px-[var(--layout-space-loose)] py-[var(--layout-space-tight)]",
-      className,
-    )}
+    className={cn("justify-between", className)}
     {...props}
   >
     <div className="flex-1 min-w-0">{children}</div>
     <DialogPrimitive.Close asChild>
       <ItemInlineActionButton icon={X} aria-label="關閉" size="md" />
     </DialogPrimitive.Close>
-  </div>
+  </SurfaceHeader>
 ))
 DialogHeader.displayName = "DialogHeader"
 
+// DialogBody: SurfaceBody + viewport-fill 行為(Dialog 特有)
+// flex-1 + overflow-y-auto 撐滿 viewport 高度;pb-bottom 覆寫 SurfaceBody 預設對稱 padding,
+// 讓 Dialog body 底部多一拍呼吸(符合 Dialog 「大容器」語感)。
 const DialogBody = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div
+  <SurfaceBody
     ref={ref}
     className={cn(
-      "flex-1 overflow-y-auto",
-      "px-[var(--layout-space-loose)] pt-[var(--layout-space-tight)] pb-[var(--layout-space-bottom)]",
+      "flex-1 overflow-y-auto pb-[var(--layout-space-bottom)]",
       className,
     )}
     {...props}
@@ -136,21 +137,8 @@ const DialogBody = React.forwardRef<
 ))
 DialogBody.displayName = "DialogBody"
 
-const DialogFooter = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "flex items-center justify-end gap-2 shrink-0 border-t border-divider",
-      "px-[var(--layout-space-loose)] py-[var(--layout-space-tight)]",
-      className,
-    )}
-    {...props}
-  />
-))
-DialogFooter.displayName = "DialogFooter"
+// DialogFooter: SurfaceFooter 直接 re-export alias(無 Dialog 特有行為)
+const DialogFooter = SurfaceFooter
 
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
