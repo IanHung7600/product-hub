@@ -725,6 +725,30 @@ Design System/Internal/{ComponentName}/設計規格
 - 子頁面用中文（展示 / 設計規格 / 設計原則）
 - 不在子頁面前加元件名（❌ `MenuItem 展示` → ✅ `展示`）
 
+### Internal vs Components 判斷 test
+
+決定元件用 `Internal/` 還是 `Components/` 時,問三題:
+
+1. **元件本身有預設視覺嗎?**（bg / border / shadow / padding / rounded）
+   - 有 → Components/ 候選
+   - 沒有(consumer 必須自己加)→ **Internal/**
+
+2. **直接 `<X>` 放頁面會有視覺嗎?**
+   - 有 → Components/ 候選
+   - 不會(必須包 visual wrapper 才看得見）→ **Internal/**
+
+3. **所有消費者都包成自己的元件嗎?**
+   - 否(有場景直接用)→ Components/ 候選
+   - 是(都包成 NameCard / OverflowIndicator / DropdownMenu 這類 wrapper)→ **Internal/**
+
+三題都傾向 Internal → 放 `Internal/`；任一題明確傾向 Components → `Components/`。
+
+**現有案例**:
+- **Components/**:Button, Input, Select, Dialog, Popover, Sheet, Command(有預設視覺、可直接用)
+- **Internal/**:Menu, SelectMenu, Notice, SelectionControl, OverflowIndicator, HoverCard(行為 primitive,無預設視覺,必被包裝)
+
+**常見誤判點**:`HoverCard` 名字像 public 元件,但它是純行為 primitive(沒視覺),應該 Internal/。判斷看**行為不看名字**。
+
 
 # Story 三層定位
 
