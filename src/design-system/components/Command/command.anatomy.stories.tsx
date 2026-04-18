@@ -1,0 +1,100 @@
+import React from 'react'
+import type { Meta, StoryObj } from '@storybook/react'
+import { Settings, User, LogOut, FileText } from 'lucide-react'
+import {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandSeparator,
+} from './command'
+
+const meta: Meta = {
+  title: 'Design System/Components/Command/設計規格',
+  parameters: { layout: 'padded' },
+}
+export default meta
+type Story = StoryObj
+
+const H3 = ({ children }: { children: React.ReactNode }) => (
+  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
+)
+const Desc = ({ children }: { children: React.ReactNode }) => (
+  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
+)
+const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
+  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
+)
+const Th = ({ children }: { children: React.ReactNode }) => (
+  <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
+)
+
+export const Overview: Story = {
+  name: '元件總覽',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>Anatomy</H3>
+        <Desc>Command 是 shadcn passthrough(基於 cmdk library)——搜尋 + 鍵盤導覽的指令清單。結構:CommandInput(搜尋框)+ CommandList(捲動區)+ CommandGroup(分組)+ CommandItem(項目)+ CommandEmpty(空狀態)。本 DS 橋接 DS token + 消費 MenuItem / Empty primitive。</Desc>
+        <div className="rounded-lg border border-border max-w-md overflow-hidden">
+          <Command>
+            <CommandInput placeholder="輸入指令或搜尋..." />
+            <CommandList>
+              <CommandEmpty>找不到結果</CommandEmpty>
+              <CommandGroup heading="常用">
+                <CommandItem>
+                  <FileText className="mr-2 h-4 w-4" />
+                  建立新文件
+                </CommandItem>
+                <CommandItem>
+                  <Settings className="mr-2 h-4 w-4" />
+                  前往設定
+                </CommandItem>
+              </CommandGroup>
+              <CommandSeparator />
+              <CommandGroup heading="帳號">
+                <CommandItem>
+                  <User className="mr-2 h-4 w-4" />
+                  個人資料
+                </CommandItem>
+                <CommandItem>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  登出
+                </CommandItem>
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </div>
+      </div>
+
+      <div>
+        <H3>結構元件</H3>
+        <div className="overflow-x-auto">
+          <table className="text-caption border-collapse">
+            <thead><tr><Th>元件</Th><Th>作用</Th></tr></thead>
+            <tbody>
+              <tr><Td mono>Command</Td><Td>根容器(cmdk.Root)</Td></tr>
+              <tr><Td mono>CommandInput</Td><Td>搜尋框(自動過濾 items)</Td></tr>
+              <tr><Td mono>CommandList</Td><Td>捲動區,包含 items</Td></tr>
+              <tr><Td mono>CommandEmpty</Td><Td>搜尋無結果時顯示(本 DS 消費 Empty primitive)</Td></tr>
+              <tr><Td mono>CommandGroup</Td><Td>分組容器(可選 heading)</Td></tr>
+              <tr><Td mono>CommandItem</Td><Td>選項(本 DS 消費 MenuItem layout)</Td></tr>
+              <tr><Td mono>CommandSeparator</Td><Td>分組間分隔線</Td></tr>
+              <tr><Td mono>CommandShortcut</Td><Td>右側 shortcut 提示(⌘K 等)</Td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <H3>消費場景</H3>
+        <Desc>Command 本身不單獨使用,透過 SelectMenu 外層元件消費:
+          <br />• <code className="font-mono text-footnote">SelectMenu</code> — Select / Combobox / PeoplePicker 的 searchable 浮層
+          <br />• <code className="font-mono text-footnote">Command Palette</code>(Cmd+K)— 全局跨頁搜尋入口(consumer 自組,本 DS 尚無包裝元件)
+        </Desc>
+      </div>
+    </div>
+  ),
+}
