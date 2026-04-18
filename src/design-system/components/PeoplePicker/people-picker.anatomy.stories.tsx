@@ -1,6 +1,7 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { PeoplePicker } from './people-picker'
+import { H3, Desc, Td, Th } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/PeoplePicker/設計規格',
@@ -8,19 +9,6 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
-
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
-)
-const Desc = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
-)
-const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
-  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
-)
-const Th = ({ children }: { children: React.ReactNode }) => (
-  <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
-)
 
 const SAMPLE_PEOPLE = [
   { name: '陳麒仁', avatarUrl: 'https://i.pravatar.cc/80?img=1' },
@@ -115,6 +103,232 @@ export const ModeMatrix: Story = {
       <div>
         <H3>readonly(empty)</H3>
         <PeoplePicker mode="readonly" people={SAMPLE_PEOPLE} value={null} />
+      </div>
+    </div>
+  ),
+}
+
+const PpSwatch = ({ token, display }: { token: string; display?: string }) => (
+  <span className="inline-flex items-center gap-1.5">
+    <span className="w-3 h-3 rounded-md shrink-0 border border-black/10 inline-block align-middle"
+      style={{ backgroundColor: token === '—' ? 'transparent' : `var(${token})` }} />
+    <span className="font-mono">{display ?? token}</span>
+  </span>
+)
+
+export const SizeMatrix: Story = {
+  name: 'Size 對照(sm / md / lg)',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>三種 Size — 對齊 field-height tier</H3>
+        <Desc>
+          PeoplePicker 作為 Field Control,高度對齊 `--field-height-*` tier(sm=28/32、md=32/36、lg=36/40
+          density-aware)。Avatar 尺寸跟 icon 尺寸依 tier 變化,保持視覺重量均衡。
+        </Desc>
+        <div className="overflow-x-auto mb-4">
+          <table className="text-caption border-collapse">
+            <thead>
+              <tr>
+                <Th>Size</Th>
+                <Th>Field 高度</Th>
+                <Th>內部 Avatar</Th>
+                <Th>Icon(Chevron)</Th>
+                <Th>字體</Th>
+                <Th>使用場景</Th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><Td mono>sm</Td><Td mono>h-field-sm</Td><Td mono>20px</Td><Td mono>16px</Td><Td mono>text-body</Td><Td>Dense filter bar、DataTable cell edit</Td></tr>
+              <tr><Td mono>md ★default</Td><Td mono>h-field-md</Td><Td mono>24px</Td><Td mono>16px</Td><Td mono>text-body</Td><Td>一般表單、assignee picker</Td></tr>
+              <tr><Td mono>lg</Td><Td mono>h-field-lg</Td><Td mono>28px</Td><Td mono>20px</Td><Td mono>text-body-lg</Td><Td>主要 CTA form、onboarding</Td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div className="flex flex-col gap-6 max-w-md">
+          {(['sm', 'md', 'lg'] as const).map(size => (
+            <div key={size}>
+              <div className="text-caption text-fg-muted mb-2 font-mono">size="{size}" — assignee picker</div>
+              <PeoplePicker
+                size={size}
+                people={SAMPLE_PEOPLE}
+                value={SAMPLE_PEOPLE[0]}
+                onChange={() => {}}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  ),
+}
+
+export const ColorMatrix: Story = {
+  name: '色彩對照(field border / avatar / dropdown 狀態)',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>Field Control 色彩(對齊 Input / Select 同一套)</H3>
+        <Desc>
+          PeoplePicker 的 field 外觀跟 Select / Combobox 完全一致——共用 `fieldWrapperStyles`。差別只在
+          prefix 多出 Avatar 視覺。所有 field-level 色彩對齊 `field-controls.spec.md`。
+        </Desc>
+        <div className="overflow-x-auto mb-4">
+          <table className="text-caption border-collapse">
+            <thead>
+              <tr>
+                <Th>狀態</Th>
+                <Th>Field bg</Th>
+                <Th>Field border</Th>
+                <Th>Text</Th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <Td mono>edit default</Td>
+                <Td><PpSwatch token="--surface" /></Td>
+                <Td><PpSwatch token="--border" /></Td>
+                <Td><PpSwatch token="--foreground" /></Td>
+              </tr>
+              <tr>
+                <Td mono>edit hover</Td>
+                <Td><PpSwatch token="--surface" /></Td>
+                <Td><PpSwatch token="--border-hover" display="border-hover" /></Td>
+                <Td><PpSwatch token="--foreground" /></Td>
+              </tr>
+              <tr>
+                <Td mono>edit focus(open)</Td>
+                <Td><PpSwatch token="--surface" /></Td>
+                <Td><PpSwatch token="--ring" display="ring" /></Td>
+                <Td><PpSwatch token="--foreground" /></Td>
+              </tr>
+              <tr>
+                <Td mono>readonly</Td>
+                <Td><PpSwatch token="--muted" display="muted(緊湊底)" /></Td>
+                <Td>—(no border)</Td>
+                <Td><PpSwatch token="--foreground" /></Td>
+              </tr>
+              <tr>
+                <Td mono>disabled</Td>
+                <Td><PpSwatch token="--bg-disabled" display="bg-disabled" /></Td>
+                <Td><PpSwatch token="--border" /></Td>
+                <Td><PpSwatch token="--fg-disabled" display="fg-disabled" /></Td>
+              </tr>
+              <tr>
+                <Td mono>invalid</Td>
+                <Td><PpSwatch token="--surface" /></Td>
+                <Td><PpSwatch token="--error" display="error" /></Td>
+                <Td><PpSwatch token="--foreground" /></Td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <H3>Dropdown 內 MenuItem 色彩(消費 MenuItem pattern)</H3>
+        <Desc>
+          Dropdown 的 row 色彩走 item-layout canonical——跟 Select / Combobox / DropdownMenu 同一套
+          (hover = neutral-hover / selected 加 Check icon)。不使用自訂 token。
+        </Desc>
+        <div className="overflow-x-auto mb-4">
+          <table className="text-caption border-collapse">
+            <thead>
+              <tr>
+                <Th>MenuItem 狀態</Th>
+                <Th>Bg</Th>
+                <Th>Avatar prefix</Th>
+                <Th>Text</Th>
+                <Th>Selected icon</Th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><Td mono>default</Td><Td>—</Td><Td>Avatar 24/32(由 description 有無決定)</Td><Td><PpSwatch token="--foreground" /></Td><Td>—</Td></tr>
+              <tr><Td mono>hover</Td><Td><PpSwatch token="--neutral-hover" display="neutral-hover" /></Td><Td>—</Td><Td><PpSwatch token="--foreground" /></Td><Td>—</Td></tr>
+              <tr><Td mono>selected</Td><Td>—</Td><Td>—</Td><Td><PpSwatch token="--foreground" display="foreground(medium)" /></Td><Td>Check 16px fg-muted</Td></tr>
+              <tr><Td mono>selected + hover</Td><Td><PpSwatch token="--neutral-hover" display="neutral-hover" /></Td><Td>—</Td><Td><PpSwatch token="--foreground" display="foreground(medium)" /></Td><Td>Check 16px foreground</Td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="text-footnote text-fg-muted mt-3">
+          Dropdown row 高度用 MenuItem block tier(avatar 24/32 時,row 高度拉高到 40/56)——閱讀模式,
+          讓 avatar + name + description 兩行舒適呈現。
+        </p>
+      </div>
+    </div>
+  ),
+}
+
+export const StateMatrix: Story = {
+  name: '狀態行為(open / search / selected / empty)',
+  render: () => (
+    <div className="flex flex-col gap-10 max-w-md">
+      <div>
+        <H3>真實場景:Assignee picker(單選)</H3>
+        <Desc>
+          Jira / Linear 的 task assignee 場景——單選、有搜尋、選擇後 field 顯示 Avatar + Name。
+          點開 dropdown,打字搜尋,按 Enter 或點擊選取。
+        </Desc>
+        <PeoplePicker
+          people={SAMPLE_PEOPLE}
+          value={SAMPLE_PEOPLE[0]}
+          onChange={() => {}}
+          searchPlaceholder="搜尋指派對象…"
+        />
+      </div>
+
+      <div>
+        <H3>真實場景:Reviewers(多選)</H3>
+        <Desc>
+          GitHub PR reviewers 場景——多選、field 顯示 Avatar 陣列(限定顯示前幾個 + overflow count),
+          點開 dropdown 可勾多個 reviewer。
+        </Desc>
+        <PeoplePicker
+          people={SAMPLE_PEOPLE}
+          value={[SAMPLE_PEOPLE[0], SAMPLE_PEOPLE[1], SAMPLE_PEOPLE[2]]}
+          onChange={() => {}}
+          searchPlaceholder="加入 reviewers…"
+        />
+      </div>
+
+      <div>
+        <H3>空狀態 — no match found</H3>
+        <Desc>
+          搜尋無結果時 dropdown 顯示 `emptyText`,走共用 `Empty` primitive。Consumer 可自訂提示語。
+        </Desc>
+        <PeoplePicker
+          people={SAMPLE_PEOPLE}
+          value={null}
+          onChange={() => {}}
+          searchPlaceholder="試試搜尋 xyz"
+          emptyText="找不到符合的組員 — 試試輸入 email 邀請外部"
+        />
+      </div>
+
+      <div>
+        <H3>空 value(尚未指派)</H3>
+        <Desc>
+          value = null 時 field 顯示 placeholder(「指派對象」)而非 Avatar——暗示可點擊新增。
+        </Desc>
+        <PeoplePicker
+          people={SAMPLE_PEOPLE}
+          value={null}
+          onChange={() => {}}
+          searchPlaceholder="指派對象…"
+        />
+      </div>
+
+      <div>
+        <H3>Readonly — DataTable cell 或 detail panel 顯示</H3>
+        <Desc>
+          Readonly 呈現:緊湊底(muted)+ Avatar + Name,無 dropdown trigger。適合 DataTable cell、
+          detail panel 的 assignee 顯示,不需要 edit 時用。
+        </Desc>
+        <PeoplePicker
+          mode="readonly"
+          people={SAMPLE_PEOPLE}
+          value={SAMPLE_PEOPLE[0]}
+        />
       </div>
     </div>
   ),

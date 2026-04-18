@@ -13,6 +13,7 @@ import {
 import { Button } from '@/design-system/components/Button/button'
 import { Input } from '@/design-system/components/Input/input'
 import { Field, FieldLabel, FieldGroup } from '@/design-system/components/Field/field'
+import { H3, Desc, Td, Th } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/Dialog/設計規格',
@@ -20,19 +21,6 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
-
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
-)
-const Desc = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
-)
-const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
-  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
-)
-const Th = ({ children }: { children: React.ReactNode }) => (
-  <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
-)
 
 export const Overview: Story = {
   name: '元件總覽',
@@ -187,6 +175,164 @@ export const DestructiveMatrix: Story = {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+      </div>
+    </div>
+  ),
+}
+
+export const SizeMatrix: Story = {
+  name: 'maxWidth 對照(400 / 480 / 560 / 720)',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>四種常見 maxWidth tier</H3>
+        <Desc>
+          Dialog 沒有 `size` prop(跟 Button / Input 的 sm/md/lg 不同)——由 `maxWidth`(px number)
+          直接控制。選擇 tier 依內容量:confirmation → 400;form → 480;complex form → 560;rich form /
+          dashboard → 720。Viewport 小於 maxWidth 時自動收到 inset 內(48px 四邊留白)。
+        </Desc>
+        <div className="overflow-x-auto mb-4">
+          <table className="text-caption border-collapse">
+            <thead>
+              <tr>
+                <Th>maxWidth</Th>
+                <Th>使用場景</Th>
+                <Th>content 範例</Th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><Td mono>400</Td><Td>Confirmation / alert</Td><Td>「確定要刪除?」/「儲存變更?」</Td></tr>
+              <tr><Td mono>480</Td><Td>Simple form</Td><Td>建立專案、改密碼、邀請成員(1-3 fields)</Td></tr>
+              <tr><Td mono>512 ★ default</Td><Td>Medium form</Td><Td>通用表單 4-6 fields</Td></tr>
+              <tr><Td mono>560</Td><Td>Detailed form</Td><Td>建立完整 issue、商品資訊</Td></tr>
+              <tr><Td mono>720</Td><Td>Rich form / dashboard preview</Td><Td>多欄位表單、嵌入 data preview</Td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {[400, 480, 560, 720].map(w => (
+            <Dialog key={w}>
+              <DialogTrigger asChild>
+                <Button variant="tertiary" size="sm">maxWidth={w}</Button>
+              </DialogTrigger>
+              <DialogContent autoHeight maxWidth={w}>
+                <DialogHeader>
+                  <DialogTitle>示範 Dialog({w}px)</DialogTitle>
+                </DialogHeader>
+                <DialogBody>
+                  <p className="text-body">這是 maxWidth = {w}px 的 Dialog。實際渲染寬度 = min(viewport - 96px, {w}px)。</p>
+                </DialogBody>
+                <DialogFooter>
+                  <Button variant="tertiary">取消</Button>
+                  <Button variant="primary">確定</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          ))}
+        </div>
+        <p className="text-footnote text-fg-muted mt-3">
+          Dialog 在 viewport 小於 `maxWidth + 96px` 時自動縮到 inset 內——48px 四邊 viewport padding
+          是硬上限(token: `--layout-space-bottom`)。
+        </p>
+      </div>
+    </div>
+  ),
+}
+
+export const StateBehavior: Story = {
+  name: '狀態行為(open / close / ESC / overlay-click)',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>開關方式對照</H3>
+        <Desc>
+          Dialog 基於 Radix Dialog,提供五種觸發方式。destructive 場景應該 disable
+          overlay-click 和 ESC(強迫使用者按 Cancel / 確認按鈕),避免誤觸。
+        </Desc>
+        <div className="overflow-x-auto">
+          <table className="text-caption border-collapse">
+            <thead>
+              <tr>
+                <Th>關閉方式</Th>
+                <Th>預設</Th>
+                <Th>禁用 prop</Th>
+                <Th>建議場景</Th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><Td>Click trigger(外部)</Td><Td>✓</Td><Td>—</Td><Td>Radix 管理 open state</Td></tr>
+              <tr><Td>Click X close button(DialogHeader 右上)</Td><Td>✓</Td><Td>—</Td><Td>永遠可用</Td></tr>
+              <tr><Td>ESC key</Td><Td>✓</Td><Td mono>onEscapeKeyDown={'{(e) => e.preventDefault()}'}</Td><Td>destructive 動作應禁用</Td></tr>
+              <tr><Td>Click overlay(外圍)</Td><Td>✓</Td><Td mono>onPointerDownOutside={'{(e) => e.preventDefault()}'}</Td><Td>destructive / form 未儲存應禁用</Td></tr>
+              <tr><Td>Programmatic close</Td><Td>✓</Td><Td>—</Td><Td mono>setOpen(false)</Td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <H3>預設行為(open / close / ESC / overlay-click 都可關)</H3>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="tertiary">預設 Dialog(試 ESC / 點 overlay)</Button>
+          </DialogTrigger>
+          <DialogContent autoHeight maxWidth={440}>
+            <DialogHeader>
+              <DialogTitle>一般表單 Dialog</DialogTitle>
+            </DialogHeader>
+            <DialogBody>
+              <p className="text-body">可以按 ESC、點 overlay、或點右上 X 關閉。</p>
+            </DialogBody>
+            <DialogFooter>
+              <Button variant="tertiary">取消</Button>
+              <Button variant="primary">儲存</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <div>
+        <H3>禁用 ESC + overlay-click(destructive 場景)</H3>
+        <Desc>
+          destructive 動作(刪除、破壞性資料變更)應該強迫使用者明確按「取消」或「永久刪除」,
+          不能藉由 ESC / overlay 誤觸。禁用這兩個 affordance。
+        </Desc>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="tertiary" startIcon={Trash2}>Force-decide Dialog(禁 ESC / overlay)</Button>
+          </DialogTrigger>
+          <DialogContent
+            autoHeight
+            maxWidth={440}
+            onEscapeKeyDown={(e) => e.preventDefault()}
+            onPointerDownOutside={(e) => e.preventDefault()}
+          >
+            <DialogHeader>
+              <DialogTitle>確定要永久刪除 42 筆訂單?</DialogTitle>
+            </DialogHeader>
+            <DialogBody>
+              <p className="text-body">此動作無法復原,所有關聯交易紀錄將一併刪除。ESC 與點擊外部均已禁用,必須明確選擇。</p>
+            </DialogBody>
+            <DialogFooter>
+              <Button variant="tertiary">取消</Button>
+              <Button variant="primary" danger startIcon={Trash2}>永久刪除</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <div>
+        <H3>Focus management(Radix 預設)</H3>
+        <div className="overflow-x-auto">
+          <table className="text-caption border-collapse">
+            <thead><tr><Th>階段</Th><Th>行為</Th></tr></thead>
+            <tbody>
+              <tr><Td>Open</Td><Td>focus 自動落到 Dialog 內第一個 focusable element(通常 Cancel button)</Td></tr>
+              <tr><Td>Tab cycle</Td><Td>focus trap——Tab 在 Dialog 內循環,不跳到背景頁</Td></tr>
+              <tr><Td>Close</Td><Td>focus 自動回到觸發 Dialog 的原 trigger element</Td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   ),

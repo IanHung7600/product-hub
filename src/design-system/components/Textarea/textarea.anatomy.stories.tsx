@@ -1,6 +1,7 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Textarea } from './textarea'
+import { H3, Desc, Td, Th } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/Textarea/設計規格',
@@ -8,19 +9,6 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
-
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
-)
-const Desc = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
-)
-const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
-  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
-)
-const Th = ({ children }: { children: React.ReactNode }) => (
-  <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
-)
 
 export const Overview: Story = {
   name: '元件總覽',
@@ -128,6 +116,103 @@ export const ModeMatrix: Story = {
           rows={3}
           defaultValue="留言內容不能為空"
         />
+      </div>
+    </div>
+  ),
+}
+
+const TaSwatch = ({ token, display }: { token: string; display?: string }) => (
+  <span className="inline-flex items-center gap-1.5">
+    <span className="w-3 h-3 rounded-md shrink-0 border border-black/10 inline-block align-middle"
+      style={{ backgroundColor: token === '—' || token === 'transparent' ? 'transparent' : `var(${token})` }} />
+    <span className="font-mono">{display ?? token}</span>
+  </span>
+)
+
+export const ColorMatrix: Story = {
+  name: '色彩對照(mode × error 狀態)',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>四種 mode / state × 色彩 Token</H3>
+        <Desc>
+          Textarea 作為 Field Control,mode 規則對齊 Input 但 readonly 呈現不同
+          (Textarea readonly 保留邊框 padding,Input readonly 是緊湊底色)。Error border 跟其他
+          Field Controls 共用 `--error` 語意色。
+        </Desc>
+        <div className="overflow-x-auto mb-4">
+          <table className="text-caption border-collapse">
+            <thead>
+              <tr>
+                <Th>狀態</Th>
+                <Th>Background</Th>
+                <Th>Border</Th>
+                <Th>Text</Th>
+                <Th>Placeholder</Th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <Td mono>edit default</Td>
+                <Td><TaSwatch token="--surface" display="surface" /></Td>
+                <Td><TaSwatch token="--border" display="border" /></Td>
+                <Td><TaSwatch token="--foreground" display="foreground" /></Td>
+                <Td><TaSwatch token="--fg-muted" display="fg-muted" /></Td>
+              </tr>
+              <tr>
+                <Td mono>edit focus</Td>
+                <Td><TaSwatch token="--surface" display="surface" /></Td>
+                <Td><TaSwatch token="--ring" display="ring(2px ring)" /></Td>
+                <Td><TaSwatch token="--foreground" display="foreground" /></Td>
+                <Td><TaSwatch token="--fg-muted" display="fg-muted" /></Td>
+              </tr>
+              <tr>
+                <Td mono>readonly</Td>
+                <Td><TaSwatch token="--surface" display="surface(保留邊框)" /></Td>
+                <Td><TaSwatch token="--divider" display="divider(比 edit 淡)" /></Td>
+                <Td><TaSwatch token="--foreground" display="foreground" /></Td>
+                <Td>—</Td>
+              </tr>
+              <tr>
+                <Td mono>disabled</Td>
+                <Td><TaSwatch token="--bg-disabled" display="bg-disabled" /></Td>
+                <Td><TaSwatch token="--border" display="border" /></Td>
+                <Td><TaSwatch token="--fg-disabled" display="fg-disabled" /></Td>
+                <Td><TaSwatch token="--fg-disabled" display="fg-disabled" /></Td>
+              </tr>
+              <tr>
+                <Td mono>error(invalid)</Td>
+                <Td><TaSwatch token="--surface" display="surface" /></Td>
+                <Td><TaSwatch token="--error" display="error" /></Td>
+                <Td><TaSwatch token="--foreground" display="foreground" /></Td>
+                <Td><TaSwatch token="--fg-muted" display="fg-muted" /></Td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <H3>所有色彩狀態並排</H3>
+        <Desc>直接對照五種 state 的視覺差異。</Desc>
+        <div className="grid grid-cols-1 gap-4 max-w-md">
+          <div>
+            <div className="text-caption text-fg-muted mb-1 font-mono">edit default</div>
+            <Textarea rows={2} placeholder="開始輸入..." />
+          </div>
+          <div>
+            <div className="text-caption text-fg-muted mb-1 font-mono">readonly(保留邊框)</div>
+            <Textarea mode="readonly" rows={2} defaultValue="已送出的意見 — 謝謝您的回饋" />
+          </div>
+          <div>
+            <div className="text-caption text-fg-muted mb-1 font-mono">disabled</div>
+            <Textarea mode="disabled" rows={2} defaultValue="尚未開放編輯" />
+          </div>
+          <div>
+            <div className="text-caption text-fg-muted mb-1 font-mono">error(invalid)</div>
+            <Textarea error rows={2} defaultValue="評論內容違反社群規範" />
+          </div>
+        </div>
       </div>
     </div>
   ),

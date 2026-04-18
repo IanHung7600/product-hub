@@ -10,6 +10,7 @@ import {
   CommandItem,
   CommandSeparator,
 } from './command'
+import { H3, Desc, Td, Th } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Internal/Command/設計規格',
@@ -17,19 +18,6 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
-
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
-)
-const Desc = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
-)
-const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
-  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
-)
-const Th = ({ children }: { children: React.ReactNode }) => (
-  <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
-)
 
 export const Overview: Story = {
   name: '元件總覽',

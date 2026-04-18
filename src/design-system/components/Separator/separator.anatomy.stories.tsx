@@ -1,6 +1,16 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Separator } from './separator'
+import { H3, Desc, Td, Th } from '@/design-system/components/_anatomy/anatomy-utils'
+
+/**
+ * Separator 是最薄的語意 primitive——Radix Separator 的 shadcn passthrough。
+ * 只有 `orientation` 與 `decorative` 兩個 prop,**沒有 size / color / variant**。
+ * 色彩固定用 `--divider` token(content 分隔 canonical)。因此本 spec 只有
+ * Overview + Token Matrix 兩個 story——沒有 SizeMatrix(單一 1px)、沒有獨立
+ * ColorMatrix(永遠 divider)、沒有 StateMatrix(非互動)。完整設計規則見
+ * `separator.spec.md`。
+ */
 
 const meta: Meta = {
   title: 'Design System/Components/Separator/設計規格',
@@ -8,19 +18,6 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
-
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
-)
-const Desc = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
-)
-const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
-  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
-)
-const Th = ({ children }: { children: React.ReactNode }) => (
-  <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
-)
 
 export const Overview: Story = {
   name: '元件總覽',

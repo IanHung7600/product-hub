@@ -1,8 +1,11 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
+import { MessageCircle, UserPlus } from 'lucide-react'
 import { NameCard } from './name-card'
 import { Avatar } from '@/design-system/components/Avatar/avatar'
+import { Button } from '@/design-system/components/Button/button'
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/design-system/components/HoverCard/hover-card'
+import { H3, Desc, Td, Th, TokenCell } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/NameCard/設計規格',
@@ -11,18 +14,9 @@ const meta: Meta = {
 export default meta
 type Story = StoryObj
 
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
-)
-const Desc = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
-)
-const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
-  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
-)
-const Th = ({ children }: { children: React.ReactNode }) => (
-  <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
-)
+/* ═══════════════════════════════════════════════════════════════════════════
+   1. Overview — anatomy + structure + props + layout tokens
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 export const Overview: Story = {
   name: '元件總覽',
@@ -30,45 +24,51 @@ export const Overview: Story = {
     <div className="flex flex-col gap-10">
       <div>
         <H3>Anatomy</H3>
-        <Desc>NameCard 是人員 HoverCard 的**內容元件**——提供統一的人員資訊展示格式。本身不含觸發或定位邏輯(那是 HoverCard 的職責),只是 HoverCard content 的標準人員模板。固定寬度 320px。</Desc>
+        <Desc>
+          NameCard 是人員 HoverCard 的**內容元件**——提供統一的人員資訊展示格式。本身不含觸發或定位邏輯
+          (那是 HoverCard 的職責),只是 HoverCard content 的標準人員模板。固定寬度 320px。
+        </Desc>
         <div className="border border-border rounded-lg p-4">
-          <HoverCard defaultOpen>
-            <HoverCardTrigger asChild>
-              <Avatar name="陳麒仁" size={40} />
-            </HoverCardTrigger>
-            <HoverCardContent align="start" className="p-0" sideOffset={8}>
-              <NameCard
-                name="陳麒仁"
-                subtitle="Design Engineer"
-                avatar={<Avatar name="陳麒仁" size={56} />}
-                status="在線"
-                infoFields={[
-                  { label: 'Email', value: 'user@example.com' },
-                  { label: '團隊', value: 'Engineering' },
-                  { label: '時區', value: 'UTC+8(台北)' },
-                ]}
-                onViewMore={() => {}}
-              />
-            </HoverCardContent>
-          </HoverCard>
+          <NameCard
+            name="陳麒仁"
+            subtitle="Design Engineer · Engineering"
+            status="available"
+            statusMessage="目前 Sprint 23 衝刺中,訊息可能稍慢回覆"
+            actions={
+              <>
+                <Button variant="primary" size="sm" startIcon={MessageCircle}>傳訊</Button>
+                <Button variant="tertiary" size="sm" startIcon={UserPlus}>追蹤</Button>
+              </>
+            }
+            fields={[
+              { label: 'Email', value: 'user@example.com' },
+              { label: '團隊', value: 'Engineering' },
+              { label: '時區', value: 'UTC+8' },
+              { label: '員工編號', value: '#E-2048' },
+            ]}
+            onViewMore={() => {}}
+          />
         </div>
       </div>
 
       <div>
-        <H3>結構</H3>
+        <H3>5 個 Section 結構</H3>
         <div className="overflow-x-auto">
           <table className="text-caption border-collapse">
-            <thead><tr><Th>Section</Th><Th>內容</Th><Th>可選</Th></tr></thead>
+            <thead><tr><Th>Section</Th><Th>內容</Th><Th>觸發條件</Th><Th>分隔</Th></tr></thead>
             <tbody>
-              <tr><Td>Profile Header</Td><Td>Avatar 56px + Name + Subtitle</Td><Td>必有</Td></tr>
-              <tr><Td>Action Buttons</Td><Td>CTA(Message / Follow / Invite)</Td><Td>選填</Td></tr>
-              <tr><Td>Status 區</Td><Td>在線狀態 / 忙碌時間等</Td><Td>選填</Td></tr>
-              <tr><Td>Info Fields</Td><Td>DescriptionList(Email / Team / 時區等)</Td><Td>選填</Td></tr>
-              <tr><Td>View More</Td><Td>「查看完整 profile」按鈕</Td><Td>選填(有 onViewMore 時顯示)</Td></tr>
+              <tr><Td>Profile header</Td><Td>Avatar 64px + Name + Subtitle</Td><Td>永遠顯示</Td><Td>—</Td></tr>
+              <tr><Td>Action buttons</Td><Td>CTA(Message / Follow / Invite)</Td><Td mono>actions 有值</Td><Td>無(貼在 profile 下)</Td></tr>
+              <tr><Td>Status 區</Td><Td>狀態標籤 + 可選 statusMessage</Td><Td mono>status 有值</Td><Td mono>border-t border-divider</Td></tr>
+              <tr><Td>Info fields</Td><Td>DescriptionList cols=2</Td><Td mono>fields.length {'>'} 0</Td><Td mono>border-t border-divider</Td></tr>
+              <tr><Td>View more</Td><Td>Button variant=link, 填滿寬度</Td><Td mono>onViewMore 有值</Td><Td mono>border-t border-divider</Td></tr>
             </tbody>
           </table>
         </div>
-        <p className="text-footnote text-fg-muted mt-3">Section 之間用 `border-t border-divider` 分隔——清晰的資訊分區,每個 section 獨立存在或不存在</p>
+        <p className="text-footnote text-fg-muted mt-3">
+          Section 之間用 `border-t border-divider` 分隔(元件固定結構,consumer 不決定是否分隔,見
+          `separator.spec.md`「元件固定結構 → CSS border-t/b」)。
+        </p>
       </div>
 
       <div>
@@ -78,16 +78,37 @@ export const Overview: Story = {
             <thead><tr><Th>Prop</Th><Th>Type</Th><Th>Default</Th><Th>說明</Th></tr></thead>
             <tbody>
               {[
-                ['name', 'string', '必填', '姓名'],
+                ['name', 'string', '必填', '姓名(profile header)'],
                 ['subtitle', 'string', '—', '職稱 / 位置 / 描述'],
-                ['avatar', 'ReactNode', '—', 'Profile header 的 Avatar(通常 56px)'],
-                ['actions', 'ReactNode', '—', 'CTA buttons(Message / Follow)'],
-                ['status', 'string', '—', '在線狀態文字'],
-                ['infoFields', 'Array<{ label; value }>', '[]', '資訊欄位(走 DescriptionList)'],
-                ['onViewMore', '() => void', '—', '查看完整 profile callback'],
+                ['avatar', 'AvatarData', '—', '{ src?, alt?, color? };size/status 由 NameCard 覆寫'],
+                ['status', "'available' | 'away' | 'busy' | 'offline'", '—', '觸發 Status section + Avatar 狀態點'],
+                ['statusMessage', 'ReactNode', '—', 'Status message(line-clamp 2)'],
+                ['actions', 'ReactNode', '—', 'CTA buttons(通常 2 個 sm Button)'],
+                ['fields', '{ label: string; value: string }[]', '—', 'Info fields,走 DescriptionList cols=2'],
+                ['onViewMore', '() => void', '—', 'View more callback(有值才顯示該 section)'],
+                ['viewMoreLabel', 'string', "'View more'", 'View more button 文字'],
               ].map(([p, t, d, desc]) => (
                 <tr key={p}><Td mono>{p}</Td><Td mono>{t}</Td><Td mono>{d}</Td><Td>{desc}</Td></tr>
               ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <H3>Layout Token</H3>
+        <div className="overflow-x-auto">
+          <table className="text-caption border-collapse">
+            <thead><tr><Th>位置</Th><Th>Token / Value</Th></tr></thead>
+            <tbody>
+              <tr><Td>Card 寬度</Td><Td mono>w-[320px](元件級常數,不抽 token)</Td></tr>
+              <tr><Td>Profile header padding</Td><Td mono>px-4 py-3</Td></tr>
+              <tr><Td>Profile avatar / text gap</Td><Td mono>gap-3</Td></tr>
+              <tr><Td>Avatar 大小</Td><Td mono>64px(對齊 Avatar.block tier)</Td></tr>
+              <tr><Td>Actions padding</Td><Td mono>px-4 pb-3 + gap-2</Td></tr>
+              <tr><Td>Status / Info padding</Td><Td mono>px-4 py-3</Td></tr>
+              <tr><Td>View more padding</Td><Td mono>px-4 py-2</Td></tr>
+              <tr><Td>Section 分隔</Td><Td mono>border-t border-divider</Td></tr>
             </tbody>
           </table>
         </div>
@@ -96,23 +117,294 @@ export const Overview: Story = {
   ),
 }
 
-export const DesignDecisions: Story = {
-  name: '設計決策',
+/* ═══════════════════════════════════════════════════════════════════════════
+   2. SectionMatrix — show 5 sections in combinations (minimal → full)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+export const SectionMatrix: Story = {
+  name: 'Section 組合(minimal → full)',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>Minimal — 只有 profile header</H3>
+        <Desc>最小形式:avatar + name + subtitle。適合僅需要確認「這是誰」的 @mention hover 場景。</Desc>
+        <div className="border border-dashed border-divider rounded-md p-4 inline-block">
+          <NameCard name="Alice Wang" subtitle="Frontend Engineer" />
+        </div>
+      </div>
+
+      <div>
+        <H3>+ Status 區</H3>
+        <Desc>加上即時狀態——Slack / Teams 類即時溝通場景必要,讓使用者知道現在是否方便聯絡。</Desc>
+        <div className="border border-dashed border-divider rounded-md p-4 inline-block">
+          <NameCard
+            name="Bob Chen"
+            subtitle="PM, Growth"
+            status="busy"
+            statusMessage="開會中,下午 3 點後回覆"
+          />
+        </div>
+      </div>
+
+      <div>
+        <H3>+ Actions</H3>
+        <Desc>加上快速動作——留言區 hover 顯示「傳訊」/「追蹤」,減少跳轉 profile 頁的摩擦。</Desc>
+        <div className="border border-dashed border-divider rounded-md p-4 inline-block">
+          <NameCard
+            name="Diana Lin"
+            subtitle="Engineering Manager"
+            status="available"
+            actions={
+              <>
+                <Button variant="primary" size="sm" startIcon={MessageCircle}>傳訊</Button>
+                <Button variant="tertiary" size="sm" startIcon={UserPlus}>追蹤</Button>
+              </>
+            }
+          />
+        </div>
+      </div>
+
+      <div>
+        <H3>+ Info fields</H3>
+        <Desc>加上結構化資訊——組織頁成員列表 hover 看到聯絡方式,不用跳去 profile。</Desc>
+        <div className="border border-dashed border-divider rounded-md p-4 inline-block">
+          <NameCard
+            name="陳麒仁"
+            subtitle="Design Engineer"
+            status="available"
+            fields={[
+              { label: 'Email', value: 'user@example.com' },
+              { label: '團隊', value: 'Engineering' },
+              { label: '時區', value: 'UTC+8' },
+              { label: '員工編號', value: '#E-2048' },
+            ]}
+          />
+        </div>
+      </div>
+
+      <div>
+        <H3>Full — 所有 section 都有</H3>
+        <Desc>完整資訊卡(profile + actions + status + fields + view more)。適合公司內部組織工具的成員 hover,一次看到所有重要資訊。</Desc>
+        <div className="border border-dashed border-divider rounded-md p-4 inline-block">
+          <NameCard
+            name="陳麒仁"
+            subtitle="Design Engineer · Engineering"
+            status="available"
+            statusMessage="目前專案 Sprint 23 衝刺中"
+            actions={
+              <>
+                <Button variant="primary" size="sm" startIcon={MessageCircle}>傳訊</Button>
+                <Button variant="tertiary" size="sm" startIcon={UserPlus}>追蹤</Button>
+              </>
+            }
+            fields={[
+              { label: 'Email', value: 'user@example.com' },
+              { label: '團隊', value: 'Engineering' },
+              { label: '時區', value: 'UTC+8' },
+              { label: '員工編號', value: '#E-2048' },
+            ]}
+            onViewMore={() => {}}
+          />
+        </div>
+      </div>
+    </div>
+  ),
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. StatusColorMatrix — 4 status × avatar dot + bg color mapping
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+export const StatusColorMatrix: Story = {
+  name: 'Status 色彩對照',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
-        <H3>固定寬度 320px,不 min/max</H3>
-        <Desc>HoverCard 內容量可預期(人員資訊結構固定),固定寬度避免不同人員 card 寬度跳動。使用者每次 hover 看到的 card 尺寸一致。</Desc>
+        <H3>四種狀態對應色彩(Avatar 狀態點 + Status 區)</H3>
+        <Desc>
+          狀態點顏色語意對齊 Slack / Teams / Linear 業界共識。Status 區的標籤底色一律 `bg-muted` 保持中性
+          (狀態是**展示資訊**,不可點擊,避免暗示互動性)。
+        </Desc>
+        <div className="overflow-x-auto">
+          <table className="text-caption border-collapse">
+            <thead><tr><Th>status</Th><Th>顯示文字</Th><Th>Avatar dot 色</Th><Th>Status 區 bg</Th><Th>語意</Th></tr></thead>
+            <tbody>
+              <tr><Td mono>available</Td><Td mono>Available</Td><Td><TokenCell token="--success" /></Td><Td><TokenCell token="--muted" /></Td><Td>正常可聯絡</Td></tr>
+              <tr><Td mono>away</Td><Td mono>Away</Td><Td><TokenCell token="--warning" /></Td><Td><TokenCell token="--muted" /></Td><Td>暫時離開</Td></tr>
+              <tr><Td mono>busy</Td><Td mono>Busy</Td><Td><TokenCell token="--error" /></Td><Td><TokenCell token="--muted" /></Td><Td>勿打擾</Td></tr>
+              <tr><Td mono>offline</Td><Td mono>Offline</Td><Td><TokenCell token="--fg-muted" /></Td><Td><TokenCell token="--muted" /></Td><Td>離線</Td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div>
-        <H3>Section 用 border-t 分隔,不用 Separator</H3>
-        <Desc>NameCard 的 section 邊界屬於**元件固定結構**(見 separator.spec.md 的「元件固定結構 → CSS border-t/b」),consumer 不決定是否分隔。用 `border-t border-divider` 直接寫,不套 `&lt;Separator /&gt;` 元件。</Desc>
+        <H3>四種狀態實際渲染</H3>
+        <div className="grid grid-cols-2 gap-4">
+          {(['available', 'away', 'busy', 'offline'] as const).map(s => (
+            <div key={s} className="border border-dashed border-divider rounded-md p-3">
+              <div className="text-caption text-fg-muted mb-2 font-mono">status="{s}"</div>
+              <NameCard name="陳麒仁" subtitle="Design Engineer" status={s} />
+            </div>
+          ))}
+        </div>
       </div>
 
       <div>
-        <H3>Status badge 用 muted 而非 interactive 色</H3>
-        <Desc>狀態是**展示資訊**,不可點擊。用 muted 色避免暗示互動性(「在線」不該長得像按鈕)。</Desc>
+        <H3>Typography Token</H3>
+        <div className="overflow-x-auto">
+          <table className="text-caption border-collapse">
+            <thead><tr><Th>區域</Th><Th>Token / Class</Th><Th>色彩</Th></tr></thead>
+            <tbody>
+              <tr><Td>Name</Td><Td mono>text-body-lg font-medium</Td><Td><TokenCell token="--foreground" /></Td></tr>
+              <tr><Td>Subtitle</Td><Td mono>text-body</Td><Td><TokenCell token="--fg-secondary" /></Td></tr>
+              <tr><Td>Status 文字</Td><Td mono>text-body</Td><Td><TokenCell token="--foreground" /></Td></tr>
+              <tr><Td>Info label</Td><Td mono>text-body(via DescriptionList)</Td><Td><TokenCell token="--fg-secondary" /></Td></tr>
+              <tr><Td>Info value</Td><Td mono>text-body(via DescriptionList)</Td><Td><TokenCell token="--foreground" /></Td></tr>
+              <tr><Td>View more</Td><Td mono>Button variant=link size=sm</Td><Td><TokenCell token="--primary" /></Td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  ),
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   4. HoverCardIntegration — canonical usage pattern
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+export const HoverCardIntegration: Story = {
+  name: 'HoverCard 整合(觸發行為)',
+  render: () => (
+    <div className="flex flex-col gap-8">
+      <div>
+        <H3>Avatar hover → NameCard 展開</H3>
+        <Desc>
+          NameCard 的 canonical 消費方式:放進 HoverCardContent 內。HoverCard 負責觸發 / 定位 / 進退場,
+          NameCard 只專注內容。align="start" 讓 card 左邊對齊 avatar 左邊(視覺動線穩定)。
+        </Desc>
+        <div className="border border-border rounded-lg p-6 flex items-center gap-8">
+          {[
+            { name: '陳麒仁', subtitle: 'Design Engineer', status: 'available' as const },
+            { name: 'Alice Wang', subtitle: 'Frontend Engineer', status: 'busy' as const },
+            { name: 'Bob Chen', subtitle: 'PM, Growth', status: 'away' as const },
+          ].map(p => (
+            <HoverCard key={p.name}>
+              <HoverCardTrigger asChild>
+                <span className="inline-block cursor-pointer">
+                  <Avatar alt={p.name} size={40} status={p.status} />
+                </span>
+              </HoverCardTrigger>
+              <HoverCardContent align="start" className="p-0" sideOffset={8}>
+                <NameCard
+                  name={p.name}
+                  subtitle={p.subtitle}
+                  status={p.status}
+                  fields={[
+                    { label: 'Email', value: `${p.name.split(' ')[0].toLowerCase()}@example.com` },
+                    { label: '團隊', value: 'Engineering' },
+                  ]}
+                  onViewMore={() => {}}
+                />
+              </HoverCardContent>
+            </HoverCard>
+          ))}
+        </div>
+        <p className="text-footnote text-fg-muted mt-3">
+          Hover 任一 avatar → NameCard 從左上展開,含狀態點 + 資訊 + View more。
+        </p>
+      </div>
+
+      <div>
+        <H3>互動分工</H3>
+        <div className="overflow-x-auto">
+          <table className="text-caption border-collapse">
+            <thead><tr><Th>行為</Th><Th>負責元件</Th></tr></thead>
+            <tbody>
+              <tr><Td>Hover 觸發 / 關閉延遲</Td><Td mono>HoverCard(openDelay / closeDelay)</Td></tr>
+              <tr><Td>浮層定位(align / side / sideOffset)</Td><Td mono>HoverCardContent</Td></tr>
+              <tr><Td>進退場動畫(fade + zoom)</Td><Td mono>HoverCardContent</Td></tr>
+              <tr><Td>內容佈局(5 sections)</Td><Td mono>NameCard</Td></tr>
+              <tr><Td>固定 320px 寬</Td><Td mono>NameCard</Td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="text-footnote text-fg-muted mt-3">
+          NameCard 和 HoverCard 嚴格分工:NameCard 不管浮層行為,HoverCard 不管人員內容。
+        </p>
+      </div>
+    </div>
+  ),
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   5. StateBehavior — edge cases (empty, overflow, multiline)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+export const StateBehavior: Story = {
+  name: '邊界狀態(空值 / 過長文字 / 多行 name)',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>長 name 自動換行,avatar 不變形</H3>
+        <Desc>
+          Profile header 的 text column `minHeight = avatar size`:短文字垂直置中於 avatar,
+          多行 name 自然撐高(不截斷,name 是識別主體)。Avatar `shrink-0` 永遠 64px square。
+        </Desc>
+        <div className="border border-dashed border-divider rounded-md p-4 inline-block">
+          <NameCard
+            name="Alexander Benjamin Christopher Davidson-Williams III"
+            subtitle="Senior Staff Principal Engineer"
+          />
+        </div>
+      </div>
+
+      <div>
+        <H3>Status message 超過兩行 → line-clamp 2</H3>
+        <Desc>
+          statusMessage 強制 `line-clamp-2`,避免單個 status message 撐開整張 card。
+          超過兩行內容靠 View more 進入 profile 頁查看完整。
+        </Desc>
+        <div className="border border-dashed border-divider rounded-md p-4 inline-block">
+          <NameCard
+            name="陳麒仁"
+            subtitle="Design Engineer"
+            status="busy"
+            statusMessage="目前正在衝刺 Sprint 23 的 design system audit,預計 4/25 完成,期間除 P0 issue 外不處理新功能需求,緊急事項請聯絡 @alice 或 @bob 代理"
+          />
+        </div>
+      </div>
+
+      <div>
+        <H3>無 status、只有 actions(profile header + actions)</H3>
+        <Desc>
+          actions 可獨立存在不需 status——例如目錄類場景只想讓使用者「快速傳訊」/「加入團隊」,
+          不關心即時狀態。
+        </Desc>
+        <div className="border border-dashed border-divider rounded-md p-4 inline-block">
+          <NameCard
+            name="Diana Lin"
+            subtitle="External Partner"
+            actions={
+              <>
+                <Button variant="primary" size="sm" startIcon={MessageCircle}>傳訊</Button>
+                <Button variant="tertiary" size="sm" startIcon={UserPlus}>加入團隊</Button>
+              </>
+            }
+          />
+        </div>
+      </div>
+
+      <div>
+        <H3>空 fields array → 不渲染 Info section</H3>
+        <Desc>
+          `fields=[]` 或未傳 → 整個 Info fields section 不渲染(包括 border-t),
+          避免「有分隔但內容空」的視覺 bug。
+        </Desc>
+        <div className="border border-dashed border-divider rounded-md p-4 inline-block">
+          <NameCard name="Bob Chen" subtitle="Guest User" status="offline" fields={[]} />
+        </div>
       </div>
     </div>
   ),

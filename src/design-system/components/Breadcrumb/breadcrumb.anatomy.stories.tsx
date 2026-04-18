@@ -9,6 +9,7 @@ import {
   BreadcrumbSeparator,
   BreadcrumbEllipsis,
 } from './breadcrumb'
+import { H3, Desc, Td, Th, TokenCell } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/Breadcrumb/設計規格',
@@ -16,19 +17,6 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
-
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
-)
-const Desc = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
-)
-const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
-  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
-)
-const Th = ({ children }: { children: React.ReactNode }) => (
-  <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
-)
 
 export const Overview: Story = {
   name: '元件總覽',
@@ -102,6 +90,119 @@ export const CollapseMatrix: Story = {
           </BreadcrumbList>
         </Breadcrumb>
         <p className="text-footnote text-fg-muted mt-3">Ellipsis 可以 hover 展開中間層(consumer 自行實作互動,本元件只渲染 `...` icon)</p>
+      </div>
+    </div>
+  ),
+}
+
+export const SizeMatrix: Story = {
+  name: 'Size 對照(sm / md / lg)',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>三種 Size — 配對 page title 字級</H3>
+        <Desc>Breadcrumb size 依據與之配對的 page title 選擇,維持階層視覺平衡。</Desc>
+        <div className="overflow-x-auto mb-4">
+          <table className="text-caption border-collapse">
+            <thead><tr><Th>Size</Th><Th>字體 Token</Th><Th>Separator icon</Th><Th>配對 title</Th><Th>使用場景</Th></tr></thead>
+            <tbody>
+              <tr><Td mono>sm</Td><Td mono>text-body(14px)</Td><Td mono>14px</Td><Td mono>text-h4(20px)</Td><Td>Dialog / panel / drawer header</Td></tr>
+              <tr><Td mono>md ★default</Td><Td mono>text-body(14px)</Td><Td mono>14px</Td><Td mono>text-h3(24px)</Td><Td>一般頁面 header</Td></tr>
+              <tr><Td mono>lg</Td><Td mono>text-body-lg(16px)</Td><Td mono>16px</Td><Td mono>text-h2(32px)</Td><Td>Detail page hero / landing</Td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div className="flex flex-col gap-6">
+          {(['sm', 'md', 'lg'] as const).map(size => (
+            <div key={size} className="border border-dashed border-divider rounded-md p-4">
+              <div className="text-caption text-fg-muted mb-2 font-mono">size="{size}"</div>
+              <Breadcrumb>
+                <BreadcrumbList size={size}>
+                  <BreadcrumbItem><BreadcrumbLink href="#">專案</BreadcrumbLink></BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem><BreadcrumbLink href="#">Q1 行銷活動</BreadcrumbLink></BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem><BreadcrumbPage>電子報設計</BreadcrumbPage></BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  ),
+}
+
+export const StateMatrix: Story = {
+  name: '狀態與色彩(Link / Page / Hover)',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>三種節點狀態對照</H3>
+        <Desc>
+          上層 / 中層 link 用 fg-secondary(中性,不搶視覺),當前 Page 用 foreground 但不加粗
+          ——加粗會讓 breadcrumb 最右端視覺過重,破壞「你從哪來 → 你在這」的流動感。
+        </Desc>
+        <div className="overflow-x-auto mb-4">
+          <table className="text-caption border-collapse">
+            <thead><tr><Th>節點</Th><Th>Default 色</Th><Th>Hover 色</Th><Th>Weight</Th><Th>可互動</Th></tr></thead>
+            <tbody>
+              <tr>
+                <Td mono>BreadcrumbLink</Td>
+                <Td><TokenCell token="--fg-secondary" /></Td>
+                <Td><TokenCell token="--primary-hover" display="primary-hover" /></Td>
+                <Td>regular</Td>
+                <Td>✓</Td>
+              </tr>
+              <tr>
+                <Td mono>BreadcrumbPage</Td>
+                <Td><TokenCell token="--foreground" /></Td>
+                <Td>—(disabled)</Td>
+                <Td>regular</Td>
+                <Td>❌(aria-current="page")</Td>
+              </tr>
+              <tr>
+                <Td mono>BreadcrumbSeparator</Td>
+                <Td><TokenCell token="--fg-muted" /></Td>
+                <Td>—</Td>
+                <Td>—</Td>
+                <Td>❌(role="presentation")</Td>
+              </tr>
+              <tr>
+                <Td mono>BreadcrumbEllipsis</Td>
+                <Td><TokenCell token="--fg-muted" /></Td>
+                <Td><TokenCell token="--primary-hover" display="primary-hover" /></Td>
+                <Td>—</Td>
+                <Td>✓(button)</Td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="text-footnote text-fg-muted mt-3">
+          Hover 色採 `primary-hover`(canonical 互動高亮),跟 Tabs / Chip 未選 hover 用同一組 token
+          ——全系統互動 affordance 保持一致。
+        </p>
+      </div>
+
+      <div>
+        <H3>實際三態(hover 可在 Storybook 上試)</H3>
+        <div className="border border-dashed border-divider rounded-md p-4">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="#">Link(預設 fg-secondary)</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink href="#">Hover 我(→ primary-hover)</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>Current Page(foreground, 不可點)</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
       </div>
     </div>
   ),

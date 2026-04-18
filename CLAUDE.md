@@ -21,7 +21,7 @@
 | **修改元件 variant / size / state** | 該元件 `spec.md` → `# Story` → 連動更新規則 → `# 失敗記憶索引` |
 | **改 cva `defaultVariants`** | `# Story` → 高風險漂移點 + `# 失敗記憶索引` → 三方漂移 |
 | **新增 / 修改 token** | `# Token 系統運作方式` → `# Token 命名原則` → 對應 `tokens/xxx.spec.md` |
-| **新增 / 修改 pattern** | `# Pattern 規則` → `patterns/` 對應 `spec.md` |
+| **新增 / 修改 pattern** | `# 建立 UI 前必讀` → Pattern 規則 → `patterns/` 對應 `spec.md` |
 | **寫 principles story** | `# Story` → 範例選擇原則 → `# Story` → 自我檢查清單（逐條打勾） |
 | **寫 anatomy story** | `# Story` → 設計規格 Story 標準 + 連動更新規則 |
 | **跨元件比較 / 加 SSOT pointer** | `# Spec 規則` → SSOT 規則與 anchors 清單 |
@@ -436,6 +436,17 @@ element.style.backgroundColor = 'var(--primary)'
 | 選擇 / 狀態視覺 | `patterns/item-layout/item-layout.spec.md`「選擇 / 狀態視覺規則」節 | 任何有選中態的元件 |
 | 分隔線 vs CSS border | `components/Separator/separator.spec.md` | 任何有分隔線的元件 |
 
+## Pattern 規則（建立 UI 前檢查）
+
+`src/design-system/patterns/` 用於已定案的 UI 流程與元件組合。
+
+- 建立新 UI 前**必須**先檢查是否已有對應 pattern
+- 不得跳過 patterns 直接重新設計
+- 若 exploration 已定案，應整理後升級為 pattern
+- `patterns/` 目前保持平坦結構（一個 pattern 一個資料夾）。同一領域累積三個以上 pattern 時，再建領域子資料夾
+
+每個 pattern 可包含：`*.spec.md`、`*.stories.tsx`、`*.example.tsx`
+
 ## 檢查可用元件
 
 - `ls src/design-system/components/`（以實際目錄為準，不依賴 CLAUDE.md 列表）
@@ -719,18 +730,6 @@ Provider 是**應用層配置**（delay、theme、portal target、toast position
 - Context 是**行為狀態**（open / close / size / current item） → **可包**（這是元件的狀態管理）
   - 例如 `SidebarProvider.open` / `DropdownMenuContext.size`——這些是元件自己擁有的狀態,**不是**禁止包的 app-level 配置 Provider。
 - Context 是**全域外觀配置**（delay / theme / portal / variant defaults） → **禁止包**（屬於應用層）
-
-
-# Pattern 規則
-
-`src/design-system/patterns/` 用於已定案的 UI 流程與元件組合。
-
-- 建立新 UI 前必須先檢查是否已有對應 pattern
-- 不得跳過 patterns 直接重新設計
-- 若 exploration 已定案，應整理後升級為 pattern
-- `patterns/` 目前保持平坦結構（一個 pattern 一個資料夾）。同一領域累積三個以上 pattern 時，再建領域子資料夾
-
-每個 pattern 可包含：`*.spec.md`、`*.stories.tsx`、`*.example.tsx`
 
 
 # 系統內部 Layout — 4-Family Model

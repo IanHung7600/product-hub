@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { X, Download, RotateCw } from 'lucide-react'
 import { FileItem } from './file-item'
 import { Button } from '@/design-system/components/Button/button'
+import { H3, Desc, Td, Th } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/FileItem/設計規格',
@@ -10,19 +11,6 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
-
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
-)
-const Desc = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
-)
-const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
-  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
-)
-const Th = ({ children }: { children: React.ReactNode }) => (
-  <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
-)
 
 export const Overview: Story = {
   name: '元件總覽',
@@ -110,6 +98,72 @@ export const ModeMatrix: Story = {
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+  ),
+}
+
+export const SizeMatrix: Story = {
+  name: 'Mode × Density 對照',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>Mode 決定 density,不走 size prop</H3>
+        <Desc>
+          FileItem **沒有 size prop**——兩種 mode(compact / rich)已經覆蓋所有密度需求。對齊
+          Dropbox / Google Drive / Linear 的檔案清單慣例:compact 是系統列表預設,rich 是 media-heavy
+          場景(照片、需要縮圖的場景)。Size tier 的區別在 mode 上已足夠表達。
+        </Desc>
+        <div className="overflow-x-auto mb-4">
+          <table className="text-caption border-collapse">
+            <thead>
+              <tr>
+                <Th>Dimension</Th>
+                <Th>compact(預設)</Th>
+                <Th>rich</Th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><Td>Prefix</Td><Td mono>Paperclip 16px(foreground)</Td><Td mono>Avatar 56px square(縮圖或 fallback)</Td></tr>
+              <tr><Td>Row 高度(無 bar)</Td><Td mono>h-field-md(32/36 density)</Td><Td mono>≈ 56px + py</Td></tr>
+              <tr><Td>Typography</Td><Td mono>text-body leading-compact(掃描模式)</Td><Td mono>text-body 預設行高(閱讀模式)</Td></tr>
+              <tr><Td>Description</Td><Td>僅 error 才顯示</Td><Td>任何場景都可顯示</Td></tr>
+              <tr><Td>Progress bar</Td><Td mono>絕對定位 2px 在底</Td><Td mono>inline 4px,bar 底部對齊 avatar</Td></tr>
+              <tr><Td>Actions</Td><Td>右側 sm iconOnly</Td><Td>右側 sm iconOnly(多 action 橫排)</Td></tr>
+              <tr><Td>使用場景</Td><Td>批次上傳、log 列表、CSV/JSON</Td><Td>圖片上傳、文件附件、需預覽的檔案</Td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <H3>同一批 5 個檔案:compact vs rich</H3>
+        <Desc>同樣 5 個檔案,兩種 mode 呈現的視覺密度差異——compact 可一目 5 行掃完,rich 需滾動且視覺重量高。</Desc>
+        <div className="grid grid-cols-2 gap-6">
+          <div>
+            <div className="text-caption text-fg-muted mb-2 font-mono">mode="compact"</div>
+            <div className="flex flex-col gap-0 max-w-sm border border-border rounded-md">
+              <FileItem name="Q1-report.pdf" mode="compact" status="completed" progress={100} />
+              <FileItem name="users.csv" mode="compact" status="completed" progress={100} />
+              <FileItem name="products.xlsx" mode="compact" status="uploading" progress={62} />
+              <FileItem name="logs.txt" mode="compact" status="error" description="檔案格式不支援" />
+              <FileItem name="invoice-2026.pdf" mode="compact" status="completed" progress={100} />
+            </div>
+          </div>
+          <div>
+            <div className="text-caption text-fg-muted mb-2 font-mono">mode="rich"</div>
+            <div className="flex flex-col gap-2 max-w-sm">
+              <FileItem name="Q1-report.pdf" description="2.4 MB · 已上傳" mode="rich" />
+              <FileItem name="users.csv" description="120 KB · 已上傳" mode="rich" />
+              <FileItem name="products.xlsx" description="1.2 MB · 上傳中 62%" mode="rich" status="uploading" progress={62} />
+              <FileItem name="logs.txt" description="檔案格式不支援" mode="rich" status="error" />
+              <FileItem name="invoice-2026.pdf" description="880 KB · 已上傳" mode="rich" />
+            </div>
+          </div>
+        </div>
+        <p className="text-footnote text-fg-muted mt-3">
+          選 mode 的 test:檔案是「資料 row」→ compact;是「內容物件」(圖片 / 附件)→ rich。
+        </p>
       </div>
     </div>
   ),

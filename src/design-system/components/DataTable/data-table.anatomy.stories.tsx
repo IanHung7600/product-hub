@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { DataTable } from './data-table'
 import './column-types'
+import { H3, Desc, Td, Th } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/DataTable/設計規格',
@@ -10,19 +11,6 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
-
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
-)
-const Desc = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
-)
-const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
-  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
-)
-const Th = ({ children }: { children: React.ReactNode }) => (
-  <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
-)
 
 // ── Sample data ────────────────────────────────────────────────────────────
 
@@ -255,6 +243,149 @@ export const Features: Story = {
       </div>
     )
   },
+}
+
+const DtSwatch = ({ token, display }: { token: string; display?: string }) => (
+  <span className="inline-flex items-center gap-1.5">
+    <span className="w-3 h-3 rounded-md shrink-0 border border-black/10 inline-block align-middle"
+      style={{ backgroundColor: token === '—' ? 'transparent' : `var(${token})` }} />
+    <span className="font-mono">{display ?? token}</span>
+  </span>
+)
+
+export const ColorMatrix: Story = {
+  name: '色彩對照(header / row / cell 狀態)',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>Header 色彩</H3>
+        <Desc>
+          Header 視為「structural UI」——不搶視覺,色調與 row bg 拉開一層區隔,讓使用者一眼辨識欄位名稱
+          位置。Header text 用 fg-secondary(比 row value 淡),為 sticky 時仍清楚可見。
+        </Desc>
+        <div className="overflow-x-auto mb-4">
+          <table className="text-caption border-collapse">
+            <thead>
+              <tr>
+                <Th>區域</Th>
+                <Th>Token</Th>
+                <Th>角色</Th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <Td>Header bg</Td>
+                <Td><DtSwatch token="--muted" display="muted" /></Td>
+                <Td>比 surface 深一階,跟 row 拉開層次</Td>
+              </tr>
+              <tr>
+                <Td>Header text</Td>
+                <Td><DtSwatch token="--fg-secondary" display="fg-secondary" /></Td>
+                <Td>比 row text 淡,強調「這是標籤不是資料」</Td>
+              </tr>
+              <tr>
+                <Td>Header border-bottom</Td>
+                <Td><DtSwatch token="--border" display="border" /></Td>
+                <Td>區隔 header 與 body</Td>
+              </tr>
+              <tr>
+                <Td>Sort icon(active)</Td>
+                <Td><DtSwatch token="--foreground" display="foreground" /></Td>
+                <Td>排序中的欄位,icon 加深</Td>
+              </tr>
+              <tr>
+                <Td>Sort icon(inactive hover)</Td>
+                <Td><DtSwatch token="--fg-secondary" display="fg-secondary" /></Td>
+                <Td>Hover 可排序欄時出現的指示</Td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <H3>Row 狀態色彩</H3>
+        <Desc>
+          Row bg 由四個狀態決定:default / hover / selected / striped。Hover 用 neutral-hover
+          (全系統互動高亮一致,跟 TreeView / MenuItem 同套 token)。Selected 用 primary-subtle 淡底色,
+          提示「此 row 被挑出準備執行 bulk action」——不是「當前導航位置」(那是 neutral-selected)。
+        </Desc>
+        <div className="overflow-x-auto mb-4">
+          <table className="text-caption border-collapse">
+            <thead>
+              <tr>
+                <Th>Row 狀態</Th>
+                <Th>Background</Th>
+                <Th>Text</Th>
+                <Th>Border(底部)</Th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <Td mono>default</Td>
+                <Td><DtSwatch token="--surface" display="surface" /></Td>
+                <Td><DtSwatch token="--foreground" display="foreground" /></Td>
+                <Td><DtSwatch token="--divider" display="divider(cell border)" /></Td>
+              </tr>
+              <tr>
+                <Td mono>hover</Td>
+                <Td><DtSwatch token="--neutral-hover" display="neutral-hover" /></Td>
+                <Td><DtSwatch token="--foreground" display="foreground" /></Td>
+                <Td><DtSwatch token="--divider" display="divider" /></Td>
+              </tr>
+              <tr>
+                <Td mono>selected(checkbox 勾選)</Td>
+                <Td><DtSwatch token="--primary-subtle" display="primary-subtle" /></Td>
+                <Td><DtSwatch token="--foreground" display="foreground" /></Td>
+                <Td><DtSwatch token="--divider" display="divider" /></Td>
+              </tr>
+              <tr>
+                <Td mono>striped(zebra,可選)</Td>
+                <Td><DtSwatch token="--muted" display="muted(odd row)" /></Td>
+                <Td><DtSwatch token="--foreground" display="foreground" /></Td>
+                <Td><DtSwatch token="--divider" display="divider" /></Td>
+              </tr>
+              <tr>
+                <Td mono>disabled row</Td>
+                <Td><DtSwatch token="--bg-disabled" display="bg-disabled" /></Td>
+                <Td><DtSwatch token="--fg-disabled" display="fg-disabled" /></Td>
+                <Td><DtSwatch token="--divider" display="divider" /></Td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="text-footnote text-fg-muted mt-3">
+          selected 跟 hover 可並存(checkbox 勾選的 row,hover 仍有輕微 tint)。實際優先順序:
+          `selected + hover` → primary-subtle 加深一點;仅 hover → neutral-hover;仅 selected → primary-subtle。
+        </p>
+      </div>
+
+      <div>
+        <H3>Cell 內 Display element 色彩</H3>
+        <Desc>
+          Cell 內的資料元件(Tag / Person / Link / NumberDisplay)各自維持 Field Controls 的 display 色彩。
+          DataTable 不覆寫 cell 內的色彩 token,維持跨元件視覺統一。
+        </Desc>
+        <div className="overflow-x-auto">
+          <table className="text-caption border-collapse">
+            <thead>
+              <tr>
+                <Th>meta.type</Th>
+                <Th>Display 色彩</Th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><Td mono>text / date / number / currency</Td><Td><DtSwatch token="--foreground" /></Td></tr>
+              <tr><Td mono>select(Tag)</Td><Td>Tag 的 variant 色(green / yellow / red / blue…)</Td></tr>
+              <tr><Td mono>person</Td><Td>Avatar + foreground 文字</Td></tr>
+              <tr><Td mono>link</Td><Td><DtSwatch token="--primary" /></Td></tr>
+              <tr><Td mono>boolean</Td><Td><DtSwatch token="--fg-secondary" display="— / ✓ 均用 fg-secondary" /></Td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  ),
 }
 
 export const EmptyState: Story = {

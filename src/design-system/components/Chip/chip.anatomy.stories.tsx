@@ -1,7 +1,7 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Tag as TagIcon } from 'lucide-react'
 import { Chip, ChipGroup } from './chip'
+import { H3, Desc, Td, Th, Swatch, TokenCell } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/Chip/設計規格',
@@ -9,19 +9,6 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
-
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
-)
-const Desc = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
-)
-const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
-  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
-)
-const Th = ({ children }: { children: React.ReactNode }) => (
-  <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
-)
 
 export const Overview: Story = {
   name: '元件總覽',
@@ -93,6 +80,115 @@ export const SelectionMatrix: Story = {
           <Chip value="active">進行中</Chip>
           <Chip value="done">已完成</Chip>
         </ChipGroup>
+      </div>
+    </div>
+  ),
+}
+
+export const SizeMatrix: Story = {
+  name: 'Size(單一 size,對齊 M3 共識)',
+  render: () => (
+    <div className="flex flex-col gap-8">
+      <div>
+        <H3>單一 size = h-field-sm(28 / 32 density-aware)</H3>
+        <Desc>
+          Chip 故意**只有一種尺寸**——對齊 Material 3 / Atlassian / Polaris 的 filter chip
+          canonical 共識。Chip 是 filter 語意,filter 列的視覺重量應該固定;如果需要多 tier,那是
+          Button 或 Tabs 的領域。
+        </Desc>
+        <div className="overflow-x-auto mb-4">
+          <table className="text-caption border-collapse">
+            <thead><tr><Th>項目</Th><Th>值</Th><Th>Token / 對齊</Th></tr></thead>
+            <tbody>
+              <tr><Td>高度</Td><Td mono>h-field-sm</Td><Td>28px (md) / 32px (lg) — density-aware</Td></tr>
+              <tr><Td>水平 padding</Td><Td mono>px-3</Td><Td>12px(對齊 Button sm)</Td></tr>
+              <tr><Td>內部 gap</Td><Td mono>gap-1</Td><Td>4px(icon → label → suffix)</Td></tr>
+              <tr><Td>Label 左右留白</Td><Td mono>px-1</Td><Td>4px 貼合視覺中心</Td></tr>
+              <tr><Td>Chip 之間 gap</Td><Td mono>gap-2</Td><Td>8px(獨立 pill 間距)</Td></tr>
+              <tr><Td>Icon size</Td><Td mono>16px</Td><Td>對齊 Button sm icon</Td></tr>
+              <tr><Td>Border radius</Td><Td mono>rounded-full</Td><Td>M3 身份特徵</Td></tr>
+              <tr><Td>Typography</Td><Td mono>text-body font-medium</Td><Td>14px 500 leading-compact</Td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ChipGroup defaultValue={['all']} type="single">
+          <Chip value="all">全部</Chip>
+          <Chip value="active">進行中</Chip>
+          <Chip value="done">已完成</Chip>
+        </ChipGroup>
+      </div>
+    </div>
+  ),
+}
+
+export const StateMatrix: Story = {
+  name: '狀態對照(default / hover / selected / disabled)',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>四種狀態 × 色彩 Token</H3>
+        <Desc>
+          選中態走 pill-canonical 規則(跟 SegmentedControl 完全一致):
+          **primary-hover 同時染 border 和 text**,底色維持 bg-surface 不變——不用 primary-subtle
+          底色(那是 Button subtle 的視覺語言,跟 chip 不同)。
+        </Desc>
+        <div className="overflow-x-auto mb-4">
+          <table className="text-caption border-collapse">
+            <thead><tr><Th>狀態</Th><Th>Background</Th><Th>Border</Th><Th>Text</Th></tr></thead>
+            <tbody>
+              <tr>
+                <Td mono>default</Td>
+                <Td><TokenCell token="--surface" /></Td>
+                <Td><TokenCell token="--border" /></Td>
+                <Td><TokenCell token="--fg-secondary" /></Td>
+              </tr>
+              <tr>
+                <Td mono>hover(未選)</Td>
+                <Td><TokenCell token="--surface" /></Td>
+                <Td><TokenCell token="--border-hover" display="border-hover" /></Td>
+                <Td><TokenCell token="--foreground" /></Td>
+              </tr>
+              <tr>
+                <Td mono>selected (data-state=on)</Td>
+                <Td><TokenCell token="--surface" /></Td>
+                <Td><TokenCell token="--primary-hover" display="primary-hover" /></Td>
+                <Td><TokenCell token="--primary-hover" display="primary-hover" /></Td>
+              </tr>
+              <tr>
+                <Td mono>disabled</Td>
+                <Td><TokenCell token="--surface" /></Td>
+                <Td><TokenCell token="--border" /></Td>
+                <Td><TokenCell token="--fg-disabled" display="fg-disabled" /></Td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <div className="text-caption text-fg-muted mb-2">四種狀態並存(hover 可在 Storybook 上試)</div>
+          <ChipGroup defaultValue={['selected']} type="multiple">
+            <Chip value="default">Default(未選)</Chip>
+            <Chip value="hover">Hover 我 ↓</Chip>
+            <Chip value="selected">Selected</Chip>
+            <Chip value="disabled" disabled>Disabled</Chip>
+          </ChipGroup>
+        </div>
+      </div>
+
+      <div>
+        <H3>Selected 色彩跟 SegmentedControl 完全一致</H3>
+        <Desc>
+          兩者都是 pill 選擇語意(filter / 單選 radio),選中態視覺語言統一:
+          primary-hover 染 border + text,底色不變。只有「連體 vs 獨立」的視覺差異,選中規則是同一套。
+        </Desc>
+        <div className="border border-dashed border-divider rounded-md p-4">
+          <div className="text-caption text-fg-muted mb-2">Chip(獨立 pill)</div>
+          <ChipGroup type="single" defaultValue="active">
+            <Chip value="all">全部</Chip>
+            <Chip value="active">進行中</Chip>
+            <Chip value="done">已完成</Chip>
+          </ChipGroup>
+        </div>
       </div>
     </div>
   ),

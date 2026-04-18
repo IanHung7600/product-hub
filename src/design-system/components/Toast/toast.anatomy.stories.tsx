@@ -2,6 +2,7 @@ import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { toast } from './toast'
 import { Button } from '@/design-system/components/Button/button'
+import { H3, Desc, Td, Th, Swatch, TokenCell } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/Toast/設計規格',
@@ -9,31 +10,6 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
-
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
-)
-const Desc = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
-)
-const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
-  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
-)
-const Th = ({ children }: { children: React.ReactNode }) => (
-  <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
-)
-
-const Swatch = ({ value, size = 'sm' }: { value: string; size?: 'sm' | 'md' }) => {
-  const s = size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'
-  return <span className={`${s} rounded-md shrink-0 border border-black/10 inline-block align-middle`} style={{ backgroundColor: value === 'white' ? '#fff' : `var(${value})` }} />
-}
-
-const TokenCell = ({ token, display }: { token: string; display?: string }) => (
-  <span className="inline-flex items-center gap-1.5">
-    <Swatch value={token} size="sm" />
-    <span className="font-mono">{display ?? token}</span>
-  </span>
-)
 
 export const Overview: Story = {
   name: '元件總覽',
@@ -140,6 +116,109 @@ export const VariantThemeStrategy: Story = {
               {v}
             </Button>
           ))}
+        </div>
+      </div>
+    </div>
+  ),
+}
+
+export const StateBehavior: Story = {
+  name: '狀態行為(dismiss / stacking / pause / swipe)',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>生命週期四階段</H3>
+        <Desc>
+          Toast 的行為由 sonner 管理,具體數值來自 Provider 層 `Sonner` 設定(詳見 `main.tsx` 的
+          `<Toaster />` props)。
+        </Desc>
+        <div className="overflow-x-auto">
+          <table className="text-caption border-collapse">
+            <thead><tr><Th>階段</Th><Th>觸發</Th><Th>行為</Th><Th>Token / 數值</Th></tr></thead>
+            <tbody>
+              <tr><Td mono>進場</Td><Td mono>toast()</Td><Td>從右下滑入 + fade-in + stacking shift</Td><Td mono>duration-200</Td></tr>
+              <tr><Td mono>自動關閉</Td><Td>`duration` 到期</Td><Td>fade-out + 向右滑出</Td><Td mono>duration ?? 4000ms</Td></tr>
+              <tr><Td mono>手動 dismiss</Td><Td>X button / Swipe right</Td><Td>立即 fade-out + swipe</Td><Td mono>swipe threshold 20px</Td></tr>
+              <tr><Td mono>Pause on hover</Td><Td>Hover 任一 toast</Td><Td>倒數暫停;離開後 resume</Td><Td mono>sonner 預設開啟</Td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div>
+        <H3>Stacking — 多個 toast 堆疊</H3>
+        <Desc>
+          連續觸發多個 toast 時,sonner 自動堆疊(最新的在上,舊的往下縮到後層)。超過 `visibleToasts`
+          數量時,溢出部分隱藏但保留計數。Hover 任一 toast 時展開全部,離開後收合。
+        </Desc>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="tertiary"
+            onClick={() => {
+              toast({ variant: 'info', title: '第 1 個 toast', description: '剛剛觸發' })
+              setTimeout(() => toast({ variant: 'success', title: '第 2 個 toast', description: '1 秒後' }), 1000)
+              setTimeout(() => toast({ variant: 'warning', title: '第 3 個 toast', description: '2 秒後' }), 2000)
+              setTimeout(() => toast({ variant: 'error', title: '第 4 個 toast', description: '3 秒後' }), 3000)
+            }}
+          >
+            連續觸發 4 個 toast(觀察堆疊)
+          </Button>
+        </div>
+        <p className="text-footnote text-fg-muted mt-3">
+          觸發後在 viewport 右下角觀察:新 toast 推下舊 toast。Hover 任一 toast → 全部展開。
+        </p>
+      </div>
+
+      <div>
+        <H3>Swipe to dismiss — 觸控 / 滑鼠拖曳關閉</H3>
+        <Desc>
+          Toast 支援向右 swipe 關閉(mobile 友善)。拖曳超過 20px threshold → 鬆開觸發 dismiss;
+          未達 threshold → 彈回原位。
+        </Desc>
+        <Button
+          variant="tertiary"
+          onClick={() => toast({ variant: 'info', title: '試著向右拖我', description: '超過 20px 會被關掉' })}
+        >
+          觸發可 swipe 的 toast
+        </Button>
+      </div>
+
+      <div>
+        <H3>Action toast(Undo pattern)</H3>
+        <Desc>
+          提供 `action` prop 時 toast 含 undo CTA。點 action button 執行 callback + 關閉 toast。
+          搭配「樂觀 UI」pattern:操作立即完成,給使用者短窗口反悔,避免 modal 確認的摩擦。
+        </Desc>
+        <Button
+          variant="tertiary"
+          onClick={() => toast({
+            variant: 'success',
+            title: '已刪除 3 則訊息',
+            description: '訊息已移至「已刪除」',
+            action: {
+              label: '復原',
+              onClick: () => toast({ variant: 'info', title: '已復原' }),
+            },
+            duration: 6000,
+          })}
+        >
+          觸發含 Undo action 的 toast
+        </Button>
+        <p className="text-footnote text-fg-muted mt-3">
+          Action toast 通常 `duration` 加長至 6000ms,給使用者足夠時間反悔(預設 4000ms 較短)。
+        </p>
+      </div>
+
+      <div>
+        <H3>a11y 與 role</H3>
+        <div className="overflow-x-auto">
+          <table className="text-caption border-collapse">
+            <thead><tr><Th>Variant</Th><Th>role</Th><Th>aria-live</Th><Th>理由</Th></tr></thead>
+            <tbody>
+              <tr><Td mono>neutral / info / success</Td><Td mono>status</Td><Td mono>polite</Td><Td>不打斷使用者當前任務</Td></tr>
+              <tr><Td mono>warning / error</Td><Td mono>alert</Td><Td mono>assertive</Td><Td>需立即注意(操作失敗 / 系統警告)</Td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

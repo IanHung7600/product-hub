@@ -2,6 +2,7 @@ import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Check } from 'lucide-react'
 import { Steps, StepItem } from './steps'
+import { H3, Desc, Td, Th, TokenCell, Swatch } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/Steps/設計規格',
@@ -9,31 +10,6 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
-
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
-)
-const Desc = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
-)
-const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
-  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
-)
-const Th = ({ children }: { children: React.ReactNode }) => (
-  <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
-)
-
-const Swatch = ({ value, size = 'sm' }: { value: string; size?: 'sm' | 'md' }) => {
-  const s = size === 'sm' ? 'w-3 h-3' : 'w-4 h-4'
-  return <span className={`${s} rounded-md shrink-0 border border-black/10 inline-block align-middle`} style={{ backgroundColor: value === 'white' ? '#fff' : `var(${value})` }} />
-}
-
-const TokenCell = ({ token, display }: { token: string; display?: string }) => (
-  <span className="inline-flex items-center gap-1.5">
-    <Swatch value={token} size="sm" />
-    <span className="font-mono">{display ?? token}</span>
-  </span>
-)
 
 export const Overview: Story = {
   name: '元件總覽',
@@ -123,6 +99,87 @@ export const OrientationMatrix: Story = {
             <StepItem value="install" label="安裝套件" description="npm install @acme/cli" />
             <StepItem value="config" label="設定環境" description="修改 .env.local 加入 API key" />
             <StepItem value="deploy" label="部署上線" description="執行 acme deploy" />
+          </Steps>
+        </div>
+      </div>
+    </div>
+  ),
+}
+
+export const ColorMatrix: Story = {
+  name: '色彩對照(indicator / label / connector)',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>四種狀態 × 三個視覺區域的色彩 Token</H3>
+        <Desc>
+          Steps 的色彩由三個視覺區域組成:Indicator(圓形)、Label(文字)、Connector(連接線)。
+          每個區域的色彩隨狀態變化,傳達「已完成 / 進行中 / 尚未到達 / 出錯」的進度階段。
+        </Desc>
+        <div className="overflow-x-auto mb-4">
+          <table className="text-caption border-collapse">
+            <thead>
+              <tr>
+                <Th>狀態</Th>
+                <Th>Indicator bg</Th>
+                <Th>Indicator border</Th>
+                <Th>Indicator icon/text</Th>
+                <Th>Label</Th>
+                <Th>右側 Connector</Th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <Td mono>completed</Td>
+                <Td><TokenCell token="--primary" /></Td>
+                <Td>—(同 bg)</Td>
+                <Td><TokenCell token="white" display="白色 Check icon" /></Td>
+                <Td><TokenCell token="--foreground" /></Td>
+                <Td><TokenCell token="--primary" display="bg-primary" /></Td>
+              </tr>
+              <tr>
+                <Td mono>current(= value)</Td>
+                <Td><TokenCell token="--surface" display="hollow" /></Td>
+                <Td><TokenCell token="--primary" /></Td>
+                <Td><TokenCell token="--primary" display="primary 數字" /></Td>
+                <Td><TokenCell token="--foreground" /></Td>
+                <Td><TokenCell token="--divider" display="bg-divider" /></Td>
+              </tr>
+              <tr>
+                <Td mono>upcoming</Td>
+                <Td><TokenCell token="--surface" display="hollow" /></Td>
+                <Td><TokenCell token="--border" /></Td>
+                <Td><TokenCell token="--fg-secondary" display="fg-secondary 數字" /></Td>
+                <Td><TokenCell token="--fg-secondary" /></Td>
+                <Td><TokenCell token="--divider" display="bg-divider" /></Td>
+              </tr>
+              <tr>
+                <Td mono>error</Td>
+                <Td><TokenCell token="--error" /></Td>
+                <Td>—(同 bg)</Td>
+                <Td><TokenCell token="white" display="白色 X icon" /></Td>
+                <Td><TokenCell token="--error" /></Td>
+                <Td>—</Td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="text-footnote text-fg-muted mt-3">
+          設計 rationale:completed connector 填 primary、upcoming connector 填 divider——
+          讓「已走過的路」視覺上連續實在,「未走過的路」保持輕量。current step 的 connector 屬於「未走過」,
+          所以也用 divider。
+        </p>
+      </div>
+
+      <div>
+        <H3>完整四態實際渲染</H3>
+        <Desc>包含 error state 的結帳流程(例如付款失敗)。error 取代原本的 completed 指示。</Desc>
+        <div className="border border-border rounded-lg p-4 max-w-2xl">
+          <Steps value="shipping" completedValues={['cart']} errorValues={['payment']}>
+            <StepItem value="cart" label="購物車" />
+            <StepItem value="payment" label="付款失敗" description="信用卡驗證未通過" />
+            <StepItem value="shipping" label="配送方式" description="當前步驟" />
+            <StepItem value="review" label="確認訂單" />
           </Steps>
         </div>
       </div>

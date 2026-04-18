@@ -1,8 +1,10 @@
-# SelectionControl 設計原則
+# SelectionItem 設計原則
 
 ## 定位
 
-SelectionControl 是 **Checkbox 和 RadioGroup 共用的 item 佈局 primitive**——提供 control + optional prefix + content（label/description）+ optional suffix 的 4-slot 結構，並處理 padding 公式（`py = (field-height - 1lh) / 2`）讓單行高度對齊同 size 的 Input。
+SelectionItem 是 **Checkbox 和 RadioGroup 共用的 item 佈局 primitive**——提供 control + optional prefix + content（label/description）+ optional suffix 的 4-slot 結構，並處理 padding 公式（`py = (field-height - 1lh) / 2`）讓單行高度對齊同 size 的 Input。
+
+> **關於資料夾命名**: `SelectionControl/` 是**概念群組**名稱（對齊 `Menu/` 包 `menu-item.tsx` / `Field/` 包 `field.tsx` 的專案慣例），其內包含主要 primitive `selection-item.tsx`。未來可能增加 `selection-indicator.tsx` 等相關 primitive 到同一資料夾。spec / file 以 main primitive 為準命名(見 `menu-item.spec.md` 先例)。
 
 **實作基礎**：自建 internal primitive——純視覺佈局 + padding 公式，無 external primitive base。
 

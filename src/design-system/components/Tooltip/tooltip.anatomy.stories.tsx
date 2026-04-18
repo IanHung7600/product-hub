@@ -12,6 +12,12 @@ export default meta
 
 /* ═══════════════════════════════════════════════════════════════════════════
    Shared UI Components
+
+   NOTE: Kept local (not imported from `_anatomy/anatomy-utils`) because the
+   Button-family inspector layout diverges visually from the canonical helpers:
+   H3 `text-h6 font-semibold` (not `text-body font-bold mb-2`), Desc has no
+   bottom margin, Th/Td use `p-2 border-b border-divider` row style, and
+   Swatch defaults to `size="md"` for inline token chips.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const H3 = ({ children }: { children: React.ReactNode }) => (

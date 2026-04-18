@@ -26,6 +26,11 @@ export default meta
 type Story = StoryObj
 
 // ── Shared UI ─────────────────────────────────────────────────────────────
+// NOTE: Kept local (not imported from `_anatomy/anatomy-utils`) because the
+// Button-family inspector layout diverges visually (H3 `text-h6 font-semibold`,
+// no Desc bottom margin, Th/Td `p-2 border-b divider`) and this file's Swatch
+// signature differs (no `size` prop, includes `mr-1.5`) — used inline in
+// token-chip displays throughout this anatomy.
 
 const H3 = ({ children }: { children: React.ReactNode }) => (
   <h3 className="text-h6 font-semibold text-foreground">{children}</h3>

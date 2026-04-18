@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { Users, Settings, Bell, FileText } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs'
 import { Badge } from '@/design-system/components/Badge/badge'
+import { H3, Desc, Td, Th } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/Tabs/設計規格',
@@ -10,19 +11,6 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
-
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
-)
-const Desc = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
-)
-const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
-  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
-)
-const Th = ({ children }: { children: React.ReactNode }) => (
-  <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
-)
 
 export const Overview: Story = {
   name: '元件總覽',
@@ -130,6 +118,101 @@ export const SizeMatrix: Story = {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+    </div>
+  ),
+}
+
+const TabSwatch = ({ token, display }: { token: string; display?: string }) => (
+  <span className="inline-flex items-center gap-1.5">
+    <span className="w-3 h-3 rounded-md shrink-0 border border-black/10 inline-block align-middle"
+      style={{ backgroundColor: `var(${token})` }} />
+    <span className="font-mono">{display ?? token}</span>
+  </span>
+)
+
+export const ColorMatrix: Story = {
+  name: '色彩對照(trigger 四態色彩)',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>TabsTrigger 四態色彩</H3>
+        <Desc>
+          Tabs 未選狀態用 fg-secondary(不搶視覺),hover 走 canonical 互動高亮 primary-hover
+          (跟 Breadcrumb / Chip 一致)。Selected 用 foreground + bottom 2px primary-hover 下線
+          ——下線是「當前位置」的明確指示器,不靠底色區分。
+        </Desc>
+        <div className="overflow-x-auto mb-4">
+          <table className="text-caption border-collapse">
+            <thead>
+              <tr>
+                <Th>狀態</Th>
+                <Th>Text</Th>
+                <Th>Background</Th>
+                <Th>Underline(::after)</Th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <Td mono>default(未選)</Td>
+                <Td><TabSwatch token="--fg-secondary" display="fg-secondary" /></Td>
+                <Td>—(transparent)</Td>
+                <Td>—</Td>
+              </tr>
+              <tr>
+                <Td mono>hover(未選)</Td>
+                <Td><TabSwatch token="--primary-hover" display="primary-hover" /></Td>
+                <Td>—(transparent)</Td>
+                <Td>—</Td>
+              </tr>
+              <tr>
+                <Td mono>active(mousedown)</Td>
+                <Td><TabSwatch token="--primary-active" display="primary-active" /></Td>
+                <Td>—</Td>
+                <Td>—</Td>
+              </tr>
+              <tr>
+                <Td mono>selected</Td>
+                <Td><TabSwatch token="--foreground" display="foreground" /></Td>
+                <Td>—(transparent)</Td>
+                <Td><TabSwatch token="--primary-hover" display="2px primary-hover" /></Td>
+              </tr>
+              <tr>
+                <Td mono>disabled</Td>
+                <Td><TabSwatch token="--fg-disabled" display="fg-disabled" /></Td>
+                <Td>—</Td>
+                <Td>—</Td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="text-footnote text-fg-muted mt-3">
+          TabsList 底部有 1px gray border(`border-b border-divider`)。Selected underline 用
+          `::after bottom: -1px height: 2px` 蓋住 gray border,形成單一視覺線條
+          ——看起來像 2px primary line 停在 selected 下方,其餘 tabs 下方是 1px 淡線。
+        </p>
+      </div>
+
+      <div>
+        <H3>Badge suffix 色彩(跟隨 selected 狀態)</H3>
+        <Desc>
+          Badge 作為 suffix 時,未選狀態保持 Badge 原色(low / high variant);selected 時跟著
+          trigger 文字色變化,視覺重量統一。
+        </Desc>
+        <div className="border border-border rounded-lg p-4">
+          <Tabs defaultValue="members">
+            <TabsList>
+              <TabsTrigger value="files" startIcon={FileText}>文件</TabsTrigger>
+              <TabsTrigger value="members" startIcon={Users} suffix={<Badge count={3} variant="low" />}>
+                成員
+              </TabsTrigger>
+              <TabsTrigger value="notifications" startIcon={Bell} suffix={<Badge count={12} variant="high" />}>
+                通知
+              </TabsTrigger>
+              <TabsTrigger value="settings" startIcon={Settings}>設定</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
       </div>
     </div>

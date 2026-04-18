@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { Folder, FileText, Image, Users, User, Settings } from 'lucide-react'
 import { TreeView, TreeItem } from './tree-view'
 import { Badge } from '@/design-system/components/Badge/badge'
+import { H3, Desc, Td, Th } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/TreeView/設計規格',
@@ -10,19 +11,6 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
-
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
-)
-const Desc = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
-)
-const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
-  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
-)
-const Th = ({ children }: { children: React.ReactNode }) => (
-  <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
-)
 
 export const Overview: Story = {
   name: '元件總覽',
@@ -94,6 +82,139 @@ export const Overview: Story = {
       </div>
     </div>
   ),
+}
+
+const TreeSwatch = ({ token, display }: { token: string; display?: string }) => (
+  <span className="inline-flex items-center gap-1.5">
+    <span className="w-3 h-3 rounded-md shrink-0 border border-black/10 inline-block align-middle"
+      style={{ backgroundColor: `var(${token})` }} />
+    <span className="font-mono">{display ?? token}</span>
+  </span>
+)
+
+export const SizeMatrix: Story = {
+  name: 'Size 對照(sm / md / lg)',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>三種 Size — 對齊 item-layout row-height tier</H3>
+        <Desc>
+          TreeView 的 size 傳給每個 TreeItem,決定 row 高度 / 字體 / icon 尺寸。對齊 item-layout
+          pattern(MenuItem / SidebarMenuButton 用同一套 tier),tree indent 公式也跟著調整。
+        </Desc>
+        <div className="overflow-x-auto mb-4">
+          <table className="text-caption border-collapse">
+            <thead>
+              <tr>
+                <Th>Size</Th>
+                <Th>Row 高度</Th>
+                <Th>字體</Th>
+                <Th>Icon size</Th>
+                <Th>indentStep</Th>
+                <Th>使用場景</Th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><Td mono>sm</Td><Td mono>h-field-sm</Td><Td mono>text-body</Td><Td mono>16px</Td><Td mono>24px(chevron + gap-2)</Td><Td>Sidebar / Dialog 內 dense tree</Td></tr>
+              <tr><Td mono>md ★default</Td><Td mono>h-field-md</Td><Td mono>text-body</Td><Td mono>16px</Td><Td mono>24px</Td><Td>一般檔案瀏覽器、設定樹</Td></tr>
+              <tr><Td mono>lg</Td><Td mono>h-field-lg</Td><Td mono>text-body-lg</Td><Td mono>20px</Td><Td mono>28px(chevron + gap-2)</Td><Td>需閱讀舒適的場景(doc outline)</Td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div className="flex flex-col gap-6">
+          {(['sm', 'md', 'lg'] as const).map(size => (
+            <div key={size} className="border border-dashed border-divider rounded-md p-4 max-w-md">
+              <div className="text-caption text-fg-muted mb-2 font-mono">size="{size}"</div>
+              <TreeView size={size}>
+                <TreeItem value="docs" label="Documents" icon={Folder} defaultExpanded>
+                  <TreeItem value="resume" label="Resume.pdf" icon={FileText} />
+                  <TreeItem value="photos" label="Photos" icon={Folder} defaultExpanded>
+                    <TreeItem value="beach" label="beach.jpg" icon={Image} />
+                  </TreeItem>
+                </TreeItem>
+              </TreeView>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  ),
+}
+
+export const ColorMatrix: Story = {
+  name: '色彩對照(row 狀態色彩)',
+  render: () => {
+    const [selected, setSelected] = React.useState('beach.jpg')
+    return (
+      <div className="flex flex-col gap-10">
+        <div>
+          <H3>Row 四態色彩 Token</H3>
+          <Desc>
+            TreeItem row 色彩對齊 item-layout 的「選擇 / 狀態視覺規則」(見
+            `patterns/item-layout/item-layout.spec.md`)——tree、menu、sidebar 用同一套 state tokens。
+          </Desc>
+          <div className="overflow-x-auto mb-4">
+            <table className="text-caption border-collapse">
+              <thead>
+                <tr>
+                  <Th>狀態</Th>
+                  <Th>Row bg</Th>
+                  <Th>Text</Th>
+                  <Th>Icon / Chevron</Th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <Td mono>default</Td>
+                  <Td>—(transparent)</Td>
+                  <Td><TreeSwatch token="--foreground" display="foreground" /></Td>
+                  <Td><TreeSwatch token="--fg-muted" display="fg-muted" /></Td>
+                </tr>
+                <tr>
+                  <Td mono>hover</Td>
+                  <Td><TreeSwatch token="--neutral-hover" display="neutral-hover" /></Td>
+                  <Td><TreeSwatch token="--foreground" display="foreground" /></Td>
+                  <Td><TreeSwatch token="--foreground" display="foreground" /></Td>
+                </tr>
+                <tr>
+                  <Td mono>selected</Td>
+                  <Td><TreeSwatch token="--neutral-selected" display="neutral-selected" /></Td>
+                  <Td><TreeSwatch token="--foreground" display="foreground(medium)" /></Td>
+                  <Td><TreeSwatch token="--foreground" display="foreground" /></Td>
+                </tr>
+                <tr>
+                  <Td mono>disabled</Td>
+                  <Td>—</Td>
+                  <Td><TreeSwatch token="--fg-disabled" display="fg-disabled" /></Td>
+                  <Td><TreeSwatch token="--fg-disabled" display="fg-disabled" /></Td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p className="text-footnote text-fg-muted mt-3">
+            selected 用 `--neutral-selected`(不是 primary 色)——tree 的選取是「當前導航位置」的標記,
+            不是「重要強調項」。用 primary 會讓使用者誤以為是可互動操作。
+          </p>
+        </div>
+
+        <div>
+          <H3>Hover + Selected 並存的實際渲染</H3>
+          <Desc>以下 `Documents/Photos/beach.jpg` 為 selected row,可 hover 任一其他 row 觀察 neutral-hover。</Desc>
+          <div className="border border-border rounded-lg p-4 max-w-md">
+            <TreeView value={selected} onValueChange={setSelected}>
+              <TreeItem value="docs" label="Documents(hover 試試)" icon={Folder} defaultExpanded>
+                <TreeItem value="resume" label="Resume.pdf" icon={FileText} />
+                <TreeItem value="photos" label="Photos" icon={Folder} defaultExpanded>
+                  <TreeItem value="beach.jpg" label="beach.jpg(selected)" icon={Image} />
+                  <TreeItem value="trip.jpg" label="trip.jpg" icon={Image} />
+                </TreeItem>
+              </TreeItem>
+            </TreeView>
+          </div>
+        </div>
+      </div>
+    )
+  },
 }
 
 export const IndentMatrix: Story = {

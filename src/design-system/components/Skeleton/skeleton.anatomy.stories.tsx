@@ -1,6 +1,17 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Skeleton } from './skeleton'
+import { H3, Desc } from '@/design-system/components/_anatomy/anatomy-utils'
+
+/**
+ * Skeleton 是極簡 animation primitive——單一 div + pulse animation,
+ * **刻意沒有 size / color / variant**。形狀 / 尺寸完全由 consumer 的 className
+ * (Tailwind utilities)決定。色彩透過 `currentColor` / `bg-secondary` 從 theme 繼承。
+ *
+ * 因此本 spec 只有 Overview + 常見形狀 + 設計原則三個 story,沒有 SizeMatrix /
+ * ColorMatrix / StateMatrix——這些概念對 Skeleton 不適用。完整設計規則見
+ * `skeleton.spec.md`。
+ */
 
 const meta: Meta = {
   title: 'Design System/Components/Skeleton/設計規格',
@@ -8,13 +19,6 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
-
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
-)
-const Desc = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
-)
 
 export const Overview: Story = {
   name: '元件總覽',

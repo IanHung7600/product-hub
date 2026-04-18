@@ -1,6 +1,7 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { DescriptionList, DescriptionItem } from './description-list'
+import { H3, Desc, Td, Th } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/DescriptionList/設計規格',
@@ -8,19 +9,6 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
-
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
-)
-const Desc = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
-)
-const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
-  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
-)
-const Th = ({ children }: { children: React.ReactNode }) => (
-  <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
-)
 
 export const Overview: Story = {
   name: '元件總覽',
@@ -115,6 +103,94 @@ export const ColsMatrix: Story = {
             <DescriptionItem label="商品">Q1 行銷套組</DescriptionItem>
             <DescriptionItem label="數量">3</DescriptionItem>
             <DescriptionItem label="總金額">NT$ 2,490</DescriptionItem>
+          </DescriptionList>
+        </div>
+      </div>
+    </div>
+  ),
+}
+
+export const StateMatrix: Story = {
+  name: '資料邊界狀態(空值 / 長值 / 多行 value)',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>空值呈現 — 一律用 `—` 字元(em dash)</H3>
+        <Desc>
+          DescriptionList 是唯讀資訊展示,空值不留空白(會讓使用者以為資料沒載入完)。一律用 em dash
+          (`—`)明確表達「有查過,但這個欄位目前沒值」。對齊 Atlassian / Polaris / GitHub 的資訊卡慣例。
+        </Desc>
+        <div className="border border-dashed border-divider rounded-md p-4 max-w-md">
+          <DescriptionList cols={2}>
+            <DescriptionItem label="姓名">陳麒仁</DescriptionItem>
+            <DescriptionItem label="職稱">—</DescriptionItem>
+            <DescriptionItem label="Email">user@example.com</DescriptionItem>
+            <DescriptionItem label="電話">—</DescriptionItem>
+            <DescriptionItem label="團隊">Engineering</DescriptionItem>
+            <DescriptionItem label="直屬主管">—</DescriptionItem>
+          </DescriptionList>
+        </div>
+        <p className="text-footnote text-fg-muted mt-3">
+          空值不應該用「N/A」/「暫無」等字串——不同 consumer 會選不同字,破壞視覺一致。一律 em dash。
+        </p>
+      </div>
+
+      <div>
+        <H3>長 value — 自然換行,撐高該 grid cell</H3>
+        <Desc>
+          `value` 是自然流文字,超過欄寬自然換行(CSS grid 會讓該 row 的 cell 變高,其他 cell 保持 label
+          top-aligned)。不使用 truncate——value 是被讀的內容,截斷會讓使用者漏資訊。
+        </Desc>
+        <div className="border border-dashed border-divider rounded-md p-4 max-w-md">
+          <DescriptionList cols={2}>
+            <DescriptionItem label="姓名">陳麒仁</DescriptionItem>
+            <DescriptionItem label="職稱">Senior Staff Principal Engineer, Design Systems</DescriptionItem>
+            <DescriptionItem label="辦公地點">Taipei, Taiwan</DescriptionItem>
+            <DescriptionItem label="Email">very.long.email.address@subdomain.example.com</DescriptionItem>
+          </DescriptionList>
+        </div>
+      </div>
+
+      <div>
+        <H3>多行 value(地址 / 介紹 / 摘要)</H3>
+        <Desc>
+          Value 接受任何 ReactNode,包括多行文字。`dd` 保持 top-aligned,label 垂直靠上。
+          適合展示地址、人物介紹、商品描述等需多行的資訊。
+        </Desc>
+        <div className="border border-dashed border-divider rounded-md p-4 max-w-md">
+          <DescriptionList cols={1}>
+            <DescriptionItem label="公司地址">
+              台北市信義區忠孝東路五段 68 號 18 樓<br />
+              Taipei 110, Taiwan<br />
+              電話:02-2345-6789
+            </DescriptionItem>
+            <DescriptionItem label="產品介紹">
+              本產品採用最新 AMOLED 螢幕,支援 120Hz 高刷新率。
+              支援 IP68 防水防塵。續航力一整天,最快 45W 充電。
+            </DescriptionItem>
+          </DescriptionList>
+        </div>
+      </div>
+
+      <div>
+        <H3>結合 ReactNode value(Tag / Badge / Link)</H3>
+        <Desc>
+          `value` 可放任何 ReactNode——Tag(狀態)、Badge(計數)、Link(相關文件)。型別是寬鬆的
+          `ReactNode`,支援組合。
+        </Desc>
+        <div className="border border-dashed border-divider rounded-md p-4 max-w-md">
+          <DescriptionList cols={1}>
+            <DescriptionItem label="訂單狀態">
+              <span className="inline-flex items-center gap-1 text-success">
+                <span className="w-2 h-2 rounded-full bg-success" />
+                已出貨
+              </span>
+            </DescriptionItem>
+            <DescriptionItem label="物流追蹤">
+              <a href="#" className="text-primary hover:text-primary-hover underline">
+                FedEx #1234567890
+              </a>
+            </DescriptionItem>
           </DescriptionList>
         </div>
       </div>

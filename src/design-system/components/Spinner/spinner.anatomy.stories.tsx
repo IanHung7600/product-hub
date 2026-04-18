@@ -2,6 +2,15 @@ import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Spinner } from './spinner'
 import { Button } from '@/design-system/components/Button/button'
+import { H3, Desc, Td, Th } from '@/design-system/components/_anatomy/anatomy-utils'
+
+/**
+ * Spinner 是最薄的 animation primitive——單一 SVG + 旋轉動畫。**刻意只有
+ * `size` (number) 一個 prop**,沒有 variant、沒有 state、沒有 color(用 currentColor
+ * 從父層繼承)。因此本 spec 只有 Overview + 消費場景兩類 story——沒有 StateMatrix
+ * (spinner 本身就是單一狀態:旋轉);沒有獨立 ColorMatrix(色彩完全 inherit)。
+ * 完整設計規則見 `spinner.spec.md`。
+ */
 
 const meta: Meta = {
   title: 'Design System/Components/Spinner/設計規格',
@@ -9,19 +18,6 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
-
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
-)
-const Desc = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
-)
-const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
-  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
-)
-const Th = ({ children }: { children: React.ReactNode }) => (
-  <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
-)
 
 export const Overview: Story = {
   name: '元件總覽',

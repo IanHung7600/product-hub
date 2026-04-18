@@ -129,6 +129,15 @@ const PRESSED_TOKEN_MAP: Record<PressedVariantKey, Record<StateKey, ColorSpec>> 
 
 /* ═══════════════════════════════════════════════════════════════════════════
    Shared UI Components
+
+   NOTE: This file keeps local H3 / Desc / Th / Td / Swatch because its visual
+   style diverges from the shared canonical in `@/design-system/components/_anatomy/anatomy-utils`:
+   - H3 uses `text-h6 font-semibold` (shared: `text-body font-bold mb-2`)
+   - Desc has no bottom margin / `leading-relaxed` (shared adds both)
+   - Th/Td use `p-2 border-b border-divider` row style (shared: boxed cells)
+   - Swatch defaults to `size="md"` and is consumed without explicit size in
+     `TokenValue` below — changing default to `sm` would shrink inspector swatches
+   Group A anatomy files (Slider-style) use the shared helpers.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const H3 = ({ children }: { children: React.ReactNode }) => (

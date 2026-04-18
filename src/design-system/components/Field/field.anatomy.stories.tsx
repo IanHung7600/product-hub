@@ -8,6 +8,7 @@ import { Checkbox } from '@/design-system/components/Checkbox/checkbox'
 import { Switch } from '@/design-system/components/Switch/switch'
 import { Textarea } from '@/design-system/components/Textarea/textarea'
 import { Slider } from '@/design-system/components/Slider/slider'
+import { H3, Desc, Td, Th } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/Field/設計規格',
@@ -15,19 +16,6 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
-
-const H3 = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="text-body font-bold text-foreground mb-2">{children}</h3>
-)
-const Desc = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
-)
-const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
-  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
-)
-const Th = ({ children }: { children: React.ReactNode }) => (
-  <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
-)
 
 export const Overview: Story = {
   name: '元件總覽',
@@ -272,6 +260,122 @@ export const StateMatrix: Story = {
               <FieldError>請輸入完整網址(包含 https://)</FieldError>
             </Field>
           </FieldGroup>
+        </div>
+      </div>
+    </div>
+  ),
+}
+
+const FieldSwatch = ({ token, display }: { token: string; display?: string }) => (
+  <span className="inline-flex items-center gap-1.5">
+    <span className="w-3 h-3 rounded-md shrink-0 border border-black/10 inline-block align-middle"
+      style={{ backgroundColor: token === '—' ? 'transparent' : `var(${token})` }} />
+    <span className="font-mono">{display ?? token}</span>
+  </span>
+)
+
+export const ColorMatrix: Story = {
+  name: '色彩對照(label / required / invalid / disabled)',
+  render: () => (
+    <div className="flex flex-col gap-10">
+      <div>
+        <H3>Field 元素色彩 Token</H3>
+        <Desc>
+          Field 本身不擁有 control 邊框色(那由 Field Controls 管),但擁有 label / description /
+          error / required-star 的色彩。這裡列出 Field 容器的所有色彩 token。
+        </Desc>
+        <div className="overflow-x-auto mb-4">
+          <table className="text-caption border-collapse">
+            <thead>
+              <tr>
+                <Th>元素</Th>
+                <Th>Default 色</Th>
+                <Th>Invalid 色</Th>
+                <Th>Disabled 色</Th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <Td mono>FieldLabel</Td>
+                <Td><FieldSwatch token="--foreground" display="foreground" /></Td>
+                <Td><FieldSwatch token="--foreground" display="foreground(不變)" /></Td>
+                <Td><FieldSwatch token="--fg-disabled" display="fg-disabled" /></Td>
+              </tr>
+              <tr>
+                <Td mono>Required 星號(*)</Td>
+                <Td><FieldSwatch token="--error" display="error" /></Td>
+                <Td><FieldSwatch token="--error" display="error" /></Td>
+                <Td><FieldSwatch token="--fg-disabled" display="fg-disabled" /></Td>
+              </tr>
+              <tr>
+                <Td mono>FieldDescription</Td>
+                <Td><FieldSwatch token="--fg-secondary" display="fg-secondary" /></Td>
+                <Td>—(隱藏,被 FieldError 取代)</Td>
+                <Td><FieldSwatch token="--fg-disabled" display="fg-disabled" /></Td>
+              </tr>
+              <tr>
+                <Td mono>FieldError</Td>
+                <Td>—(不渲染)</Td>
+                <Td><FieldSwatch token="--error" display="error" /></Td>
+                <Td>—</Td>
+              </tr>
+              <tr>
+                <Td mono>Control border(傳給 Field Controls)</Td>
+                <Td><FieldSwatch token="--border" display="border" /></Td>
+                <Td><FieldSwatch token="--error" display="error(border)" /></Td>
+                <Td><FieldSwatch token="--border" display="border" /></Td>
+              </tr>
+              <tr>
+                <Td mono>Control bg(disabled)</Td>
+                <Td><FieldSwatch token="--surface" display="surface" /></Td>
+                <Td>—</Td>
+                <Td><FieldSwatch token="--bg-disabled" display="bg-disabled" /></Td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="text-footnote text-fg-muted mt-3">
+          Field 本身不畫這些色——只透過 `context`(mode / invalid / disabled / required / size)把
+          state 傳給子元件,由 FieldLabel / FieldDescription / FieldError 和 Field Controls(Input /
+          NumberInput / etc.)各自渲染對應視覺。詳見 `field-controls.spec.md`。
+        </p>
+      </div>
+
+      <div>
+        <H3>色彩實際並排對照</H3>
+        <div className="grid grid-cols-2 gap-6 max-w-4xl">
+          <div>
+            <div className="text-caption text-fg-muted mb-2 font-mono">default</div>
+            <Field>
+              <FieldLabel>電子郵件</FieldLabel>
+              <Input type="email" placeholder="name@example.com" />
+              <FieldDescription>我們不會公開您的電子郵件</FieldDescription>
+            </Field>
+          </div>
+          <div>
+            <div className="text-caption text-fg-muted mb-2 font-mono">required</div>
+            <Field required>
+              <FieldLabel>姓名</FieldLabel>
+              <Input placeholder="請輸入姓名" />
+              <FieldDescription>本欄位為必填(label 後有紅星 *)</FieldDescription>
+            </Field>
+          </div>
+          <div>
+            <div className="text-caption text-fg-muted mb-2 font-mono">invalid</div>
+            <Field invalid>
+              <FieldLabel>Email</FieldLabel>
+              <Input type="email" defaultValue="invalid@" />
+              <FieldError>請輸入有效的電子郵件地址</FieldError>
+            </Field>
+          </div>
+          <div>
+            <div className="text-caption text-fg-muted mb-2 font-mono">disabled</div>
+            <Field disabled>
+              <FieldLabel>方案</FieldLabel>
+              <Input defaultValue="Pro 方案" />
+              <FieldDescription>目前方案不可手動修改</FieldDescription>
+            </Field>
+          </div>
         </div>
       </div>
     </div>
