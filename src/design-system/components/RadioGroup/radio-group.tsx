@@ -22,7 +22,7 @@ const RadioGroup = React.forwardRef<
 RadioGroup.displayName = 'RadioGroup'
 // Field layout 宣告：RadioGroup 是 block primitive（多項堆疊），
 // 進入 <Field> 時 control area 自動切 items-start + padding-top 公式對齊。
-// Convention 詳見 components/Field/field.spec.md「Inline vs Block Control」段落。
+// Convention 詳見 components/Field/field.spec.md「Control area:Inline vs Block」段落。
 ;(RadioGroup as unknown as { fieldLayout: 'block' }).fieldLayout = 'block'
 
 // ── RadioGroupItem Variants ─────────────────────────────────────────────────

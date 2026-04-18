@@ -107,7 +107,7 @@ export const DesignDecisions: Story = {
 
       <div>
         <H3>Section 用 border-t 分隔,不用 Separator</H3>
-        <Desc>NameCard 的 section 邊界屬於**元件固定結構**(見 separator.spec.md 的「CSS border 情境」),consumer 不決定是否分隔。用 `border-t border-divider` 直接寫,不套 `&lt;Separator /&gt;` 元件。</Desc>
+        <Desc>NameCard 的 section 邊界屬於**元件固定結構**(見 separator.spec.md 的「元件固定結構 → CSS border-t/b」),consumer 不決定是否分隔。用 `border-t border-divider` 直接寫,不套 `&lt;Separator /&gt;` 元件。</Desc>
       </div>
 
       <div>

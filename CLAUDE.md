@@ -1,3 +1,39 @@
+# 每次任務前的 5 條 mindset（世界級設計系統的工作底色）
+
+這 5 條是本專案所有規則背後的**態度**。接到任務先複習一遍，再看具體規則。
+
+1. **對標世界級**——每個設計決策都要能回答「Polaris / Material / Atlassian / Ant / Carbon / Apple HIG 怎麼做？我們為什麼一樣 / 為什麼不同？」。沒對齊又說不出不同的理由 = 設計 bug。
+2. **不憑直覺發明**——新增任何值 / 名 / pattern 前先 `grep` 既有。專案已有的 gap、padding、font-size、命名慣例優先沿用；不是「看起來順」就能造新值。
+3. **改一處必看三處**——code / spec / story 三方聯動是常態，不是例外。改 cva `defaultVariants`、改 variant、改 token 前先 grep 該元件所有檔案，一次改完。
+4. **範例必須是真實業務場景**——Jira / Stripe / Notion / Figma 等可辨識的情境；禁止 `Option A/B/C`、「按鈕一」、極端不現實、ASCII art。Storybook 的受眾是任何打開它的人，不是作者。
+5. **猶豫就問，不往前推**——遇到無前例的設計決策：(a) 先 grep 既有 pattern，(b) 讀近親元件 spec，(c) 仍不確定就停下問使用者。**禁止憑直覺造新 pattern**——這是本專案最常被糾正的錯誤。
+
+每條規則展開請讀後面對應章節（`# Spec 規則`、`# UI 開發規則`、`# Story`、`# 命名與語言一致性` 等）。
+
+
+# 任務導航表（做 X → 讀 Y）
+
+接到任務後先對照這張表，找出必讀章節再動手。**章節名即 `#` heading**，可用 grep 直接跳。
+
+| 任務類型 | 必讀章節（按順序） |
+|---------|-----------------|
+| **新增元件** | `# 建立 UI 前必讀` → `# shadcn 元件規範` → `# Spec 規則` → `# Story` → `# 元件完成清單` |
+| **修改元件 variant / size / state** | 該元件 `spec.md` → `# Story` → 連動更新規則 → `# 失敗記憶索引` |
+| **改 cva `defaultVariants`** | `# Story` → 高風險漂移點 +「失敗記憶索引」三方漂移條 |
+| **新增 / 修改 token** | `# Token 系統運作方式` → `# Token 命名原則` → 對應 `tokens/xxx.spec.md` |
+| **新增 / 修改 pattern** | `# Pattern 規則` → `patterns/` 對應 `spec.md` |
+| **寫 principles story** | `# Story` → 範例選擇原則 →「自我檢查清單」逐條打勾 |
+| **寫 anatomy story** | `# Story` → 設計規格 Story 標準 + 連動更新規則 |
+| **跨元件比較 / 加 SSOT pointer** | `# Spec 規則` → SSOT 規則與 anchors 清單 |
+| **命名新檔案 / 變數 / prop** | `# 命名與語言一致性` + `# 元件 Props 命名原則` |
+| **無明確前例的設計決策** | `# 遇不確定時的協議`（先 grep → 讀近親 spec → 仍不確定就問） |
+| **Tailwind / CSS 出怪事** | `# Tailwind 使用規則` + `# 失敗記憶索引` 技術陷阱表 |
+| **spec 跟 code 結論衝突** | `# Spec 規則`（主動提出討論，不默默改） |
+
+**找不到對應的任務類型** → 進 `# 遇不確定時的協議`，不要自己決定讀什麼。
+
+---
+
 # 專案規則
 
 本專案使用：
@@ -72,6 +108,85 @@
 把規則從 CLAUDE.md 搬到 spec 時，**CLAUDE.md 必須留下一行指標**（「詳見 `xxx.spec.md`」）；反之亦然。**規則有家、也有路標**，不可只搬走不留索引。
 
 
+# 遇不確定時的協議（Ambiguity Protocol）
+
+**專案最常發生的錯誤是「AI 憑直覺造新 pattern」。** 遇到無明確前例的設計決策或實作選擇時，**強制按以下順序**處理，禁止跳步、禁止憑感覺往前：
+
+## Step 1 — `grep` 既有 pattern
+
+先假設「這個決策專案一定做過」，花 30 秒搜尋：
+- 命名類（gap / padding / 檔名 / prop） → `grep` 同類元件的既有值
+- 設計決策類（變體 / 狀態 / 互動） → `grep` 最近親元件的 spec.md
+- Token 類 → 查對應 token spec.md
+- Pattern 類 → `ls src/design-system/patterns/`
+
+**找到就沿用**，不是「看起來順」才改。找到但明顯不合理 → 進 Step 3，不自己改。
+
+## Step 2 — 讀近親元件的 spec.md
+
+若 Step 1 沒找到完全對應，找「最近親元件」（同 family、同 pattern、同職責）的 spec.md 完整讀一次，檢查：
+- 它的設計決策是否可類推到當前問題？
+- SSOT anchor 是否有談到這類情境？
+- 它的「禁止事項」是否隱含了某個規則？
+
+**可類推就直接套用**並在 spec 寫「對齊 X 的 Y 規則」建立反向引用。
+
+## Step 3 — 仍不確定就停下來問使用者
+
+Step 1 + 2 後仍無清楚方向時，**禁止自己決定**。停下來回報使用者：
+- 「找到的既有 pattern：A / B」
+- 「我傾向 A 因為 X，但 B 也合理」
+- 「你的偏好？」
+
+**禁止的行為**：
+- ❌ 跳過 grep 直接憑記憶造新值
+- ❌ 為了「做完」在兩個選項之間隨便挑一個
+- ❌ 發明新的 suffix / prefix / 命名慣例
+- ❌ 在 spec / code 裡留下「TODO 待確認」而照樣往前
+
+## 何時可以不走協議
+
+以下情境可跳過（不算「無前例」）：
+- Bug 修復（code 和設計都已定，只是執行錯）
+- 純機械勞動（import 路徑修正、typo、格式一致化）
+- 使用者已明確指示要做 X
+
+
+# 失敗記憶索引（prevention anchors）
+
+**接任務前先掃這個索引**：如果當前任務碰觸這些類別，先讀對應 anchor 的完整 context 再動手。每條 bug 只留 pointer，內容在引用位置不重複。
+
+## 技術陷阱（沉默出錯類，AI 最容易誤觸）
+
+| Bug | 怎麼錯 | 完整說明 |
+|-----|-------|---------|
+| Tailwind v4 任意值 `[--foo]` | 不被自動包 `var()`，Sidebar 從 shadcn 複製此語法 8 處全失效 | `# Tailwind 使用規則` → Tailwind v4 任意值 |
+| `tailwind-merge` 自訂 utility 未註冊 | 把不同 group class 誤判衝突 strip 掉（`text-body` + `text-fg-secondary`） | `# Tailwind 使用規則` → tailwind-merge 註冊 |
+| 元件自包 Provider | shadcn 原版 `SidebarProvider` 內建 `TooltipProvider delayDuration={0}`，劫持全站 hover 節奏 | `# shadcn 元件規範` → 元件不得自包 Provider |
+| 清 unused imports 後沒跑 runtime | tsc 不充分，JSX 內 identifier 和未宣告 export 會漏抓 | `# UI 開發規則` → 清 unused imports |
+
+## 三方漂移（code / spec / story 不一致）
+
+| Bug | 怎麼錯 | 完整說明 |
+|-----|-------|---------|
+| cva `defaultVariants.size` 不同步 spec/docblock/anatomy | SegmentedControl `md` vs spec/docblock 寫 `sm ★default` | `# Story` → 高風險漂移點 |
+
+## Pattern 執行偏移
+
+| Bug | 怎麼錯 | 完整說明 |
+|-----|-------|---------|
+| Row primitive 硬寫 `py-2` 在不同 context 產生 gap | TreeView 原本 `py-2`，進 SidebarGroup（也 `py-2`）→ label 和 first item 多 8px gap | `patterns/item-layout/item-layout.spec.md`「垂直 padding 歸屬」 |
+| asChild pattern 下 consumer 自查 avatar size 全寫 24px | 三欄 sm/md/lg 並排，sm 欄本應 20px 卻顯示 24px | `patterns/item-layout/item-layout.spec.md`「Avatar 尺寸選擇」 |
+| 誤把純行為 primitive 放 `Components/` | HoverCard 無預設視覺、所有消費者包成 wrapper，應在 `Internal/` | `# Story` → Internal vs Components 判斷 test |
+| 元件誤列 field-height family | Chip 固定 `h-field-sm`（Material 3 慣例），不適用「default md」規則 | `tokens/uiSize/uiSize.spec.md` Field-height family |
+
+## 規則
+
+- **任何新 bug 確認後**：補到本索引（一行 + pointer）+ 在根原位置（spec / CLAUDE.md 對應章節）記錄完整 context
+- **接新任務前**：先掃本索引，條目若符合當前情境 → 讀 anchor 完整 context 再動手
+- **索引條目過期**（code 已改、風險消失）→ 移除並在 commit 訊息記錄
+
+
 # 命名與語言一致性（Meta 規則）
 
 **本節是 meta 規則**——影響所有後續命名決定（檔案、資料夾、變數、spec 章節、story、API prop）。建立任何命名前先讀這節。
@@ -118,7 +233,7 @@
 
 ### 建立新類別時
 
-先在 CLAUDE.md 現有清單（「技術架構概覽」、「Story 三層定位」、本節各表）找**相似類別**的命名模式，**沿用**，不自創新 suffix / prefix。例：新 pattern → kebab-case；新元件 → PascalCase folder + kebab-case file。
+先在 CLAUDE.md 現有清單（「技術架構概覽」、`# Story` 的「三層定位」、本節各表）找**相似類別**的命名模式，**沿用**，不自創新 suffix / prefix。例：新 pattern → kebab-case；新元件 → PascalCase folder + kebab-case file。
 
 ## 語言一致性（critical）
 
@@ -281,6 +396,8 @@ element.style.backgroundColor = 'var(--primary)'
 - **每個元件 spec 的「定位」段落必須明確宣告實作基礎**——`基於 Radix X`、`基於 cmdk` / `sonner` / `@tanstack/react-table` / native HTML element、或 `自建 + 理由`。自建必須說明為什麼不用現有 primitive（通常是「選 native 保留 mobile / a11y」這類設計選擇）。本規則是為了讓任何人讀 spec 第一段就知道這個元件的 shadcn / Radix / 自建 屬性,不需要去看 code
 - **spec.md 與 .tsx 的職責分離**：spec 只記錄設計原則（「為什麼」和「何時用」），讓 AI 能舉一反三推導邊緣情況；可程式化的規則（具體 token class name、pixel 值、條件邏輯）寫進元件 .tsx，不寫在 spec 裡。判斷標準：「這條規則能直接變成 code 嗎？」能 → .tsx；不能、需要人類判斷 → spec
 - **可推導的值用 `calc()` 或公式表達，不硬寫結果**——讓依賴關係留在 code 裡，上游值變動時下游自動跟著算。例：divider 內縮 = `(行高 - 文字行高) / 2`，改行高時 divider 自動調整，不需要有人記得去改
+- **Spec 文字品質**：不描述視覺形狀或實作細節（「窄長形」「會變寬」「zero layout shift」這類視覺字眼屬於 story 視覺化的工作，不進 spec）；同一概念不混用兩個名稱（術語一致）；「禁止事項（❌）」章節必須列出所有常見誤用
+- **Spec 邊界案例覆蓋**：適用時必須有明確說明——disabled / loading / empty、dark mode / density 行為、icon-only 使用規則。不適用則明文標注「本元件無 X 狀態」，不沉默省略
 
 
 # 建立 UI 前必讀
@@ -570,107 +687,55 @@ Provider 是**應用層配置**（delay、theme、portal target、toast position
 
 每個元件在進入 design-system 前必須逐項對照。這是品質閘門，不可跳過。
 
+**本節是純 checklist**——規則定義在各自的 canonical home，此處只做 checkbox + pointer。勾每項前先讀該 pointer 指向的章節。
+
 ## Spec（`{name}.spec.md`）
+> 規則定義：`# Spec 規則`
 
-**定義**
-- 元件定位一句話說清楚（是什麼、不是什麼）
-- **定位段落明確宣告實作基礎**（`基於 Radix X`、`基於 cmdk/sonner/tanstack-table`、`native HTML element`、`自建 + 理由`）——讀 spec 第一段就知 shadcn/Radix/自建 屬性
-- 所有 props / variants 都有明確的「何時用 / 何時不用」
-- 互斥規則寫清楚（哪些 props 不能並用、哪些組合無效）
-- 每個規則都有「為什麼」，不只寫「怎麼做」
-
-**文字品質**
-- 沒有描述視覺形狀或實作細節（如「窄長形」「會變寬」「zero layout shift」）
-- 術語一致，沒有同一概念用兩種名稱
-- 禁止事項（❌）列出所有常見誤用
-
-**邊界案例**
-- 有 disabled / loading / empty 狀態的說明（如適用）
-- 有 dark mode / density 行為的說明（如適用）
-- 有 icon-only 的使用規則（如適用）
+- [ ] 元件定位一句話（是什麼 / 不是什麼）
+- [ ] 定位段落宣告實作基礎（基於 Radix X / cmdk / sonner / native / 自建 + 理由）
+- [ ] 每個 prop / variant / size / state 都有「何時用 / 何時不用」+ 理由
+- [ ] 互斥規則列出（哪些 props 不能並用）
+- [ ] 每個規則有「為什麼」（寫 rationale，不只結論）
+- [ ] 術語一致（同一概念不用兩種名稱）
+- [ ] 無視覺描述污染（「窄長形」「會變寬」等屬 story 不屬 spec）
+- [ ] 禁止事項（❌）列出常見誤用
+- [ ] 邊界案例覆蓋（disabled / loading / empty / dark mode / density / icon-only 適用時）
+- [ ] 「相關」section 指向近親元件 + SSOT pointer（reciprocal 成立）
+- [ ] 對標世界級 DS 的 7 個維度（何時用 / 分界 / 常見誤解 / 相關 / 空值 / 驗證時機 / a11y）
 
 ## Code（`{name}.tsx`）
+> 規則定義：`# UI 開發規則`、`# shadcn 元件規範`、`# Tailwind 使用規則`、`# Token 命名原則`、`# 元件 Props 命名原則`
 
-**shadcn 結構規則（優先）**
-- 以 shadcn 原始碼為基底，不從零重寫
-- `React.forwardRef` + `ref` 傳到底層 DOM 元素
-- `...props` spread 到底層元素，保留所有原生 HTML 屬性
-- `displayName` 設定
-- variants 用 `cva()` 管理，不用條件字串拼接
-- 同時 export 元件本體與 `cva` 物件（供外部組合使用）
-- 支援 `asChild`（透過 Radix `Slot`）
-- 不移除 Radix UI 的 `data-state`、`data-disabled`、`data-orientation` 等屬性
-- 樣式優先用 `data-*` attribute selector，而非自訂 class 模擬狀態
+- [ ] 以 shadcn 為基底，forwardRef / displayName / asChild / ...props spread 齊全
+- [ ] variants 用 cva()，不條件拼字串
+- [ ] 同時 export 元件本體 + cva（供外部組合）
+- [ ] 保留 Radix `data-state` / `data-disabled` / `data-orientation` 等 attribute
+- [ ] 樣式優先用 `data-*` selector，而非自訂 class 模擬狀態
+- [ ] 無硬寫顏色 / 字體 / padding / radius / 高度——全用 design token
+- [ ] `cn()` 合併 class；Tailwind v4 CSS var 必用 `var(...)` 包覆
+- [ ] 未包 Provider（Tooltip / Theme / Toast 等由應用層設定）
+- [ ] Props 命名按「是什麼」而非「在哪裡」（icon / avatar / onDismiss，不 prefix / suffix）
+- [ ] 互動元素有 ARIA 屬性；icon-only 有 `aria-label`
+- [ ] 若屬 field-height family，`defaultVariants.size = 'md'`
+- [ ] 若修改 cva `defaultVariants`，已同步 spec / docblock / anatomy（詳見 `# Story` → 連動更新規則）
 
-**Design Token 規則**
-- 不硬寫顏色、字體、padding、border-radius、高度
-- 所有尺寸使用 design token（CSS 變數或對應 Tailwind utility）
-- 使用 `cn()` 合併 class
+## Stories（展示 / 設計規格 / 設計原則）
+> 規則定義：`# Story`（檔案放哪 / 命名 / 三層定位 / 範例選擇原則 / anatomy 標準 / 連動更新）
 
-**Accessibility**
-- 所有互動元素有正確的 ARIA 屬性
-- icon-only 元素必須有 `aria-label`
-
-## Stories（`{name}.stories.tsx` + `{name}.principles.stories.tsx`）
-
-**範例選擇原則（世界級標準）**——寫任何 story 範例前先對照這條
-
-每個範例必須同時滿足**兩個 test**：
-1. **「人」test**：任何設計師 / 開發者 / PM 打開 Storybook，**不看任何 label 和說明**，只看範例的文字和情境，就能懂這個元件在做什麼。範例場景必須取自**真實產品情境**（Jira task status、Slack DM、Notion settings、電商付款流程、Figma 工具列），不是抽象佔位符
-2. **舉一反三 test**：讀者看完這幾個範例能**推出類似情境該怎麼用**——範例選擇必須涵蓋「教學性」而非「展示性」。5 個具代表性的真實場景 > 20 個重複的 placeholder
-
-### ✅ 好範例（世界級）
-- 「付款方式」（信用卡 / 銀行轉帳 / 現金，附手續費 / 處理時間 description）
-- 「儲存草稿 / 放棄變更」（真實表單按鈕配對）
-- 「Task status 即時切換」（Jira / Linear style）
-- 「全部 / 進行中 / 已完成」（真實 filter tab）
-
-### ❌ 爛範例（避免）
-- 「Option A / Option B / Option C」（完全無意義，無法舉一反三）
-- 「Lorem ipsum / Test value / foo bar」（佔位符，沒有情境）
-- 「按鈕一 / 按鈕二」（已明確禁止）
-- 內部代號（「Rule A」、「Variant X」）
-- 抽象符號表達式（`│─ 業務 ─│`、`A → B`）
-
-### 自我檢查
-寫完範例後問自己：**「新加入的設計師打開 Storybook,能不能不看我的說明文字、光看範例就懂?」** 不能就回去改——範例是公開文件,受眾是任何打開 Storybook 的人,不是只有寫這個 story 的作者。
-
----
-
-**範例正確性**
-- 每個範例的 variant / props 語意正確（不為了填版面而用錯 variant）
-- 同類型場景的 icon 維持一致順序
-- 範例中的文字 / icon 能清楚傳達使用情境，不用「按鈕一」「按鈕二」佔位
-
-**完整性**
-- 每個重要規則都有正確範例
-- 常見誤用都有錯誤範例（對比呈現）
-- Rule note 只寫規則與原因，不描述視覺細節
-- **Rule note 必須傳達原則，讓讀者能舉一反三**——寫「為什麼」而不只是「是什麼」。例如：不寫「禁止 primary」，而寫「工具層必須是視覺重量最低的一層，否則搶走業務焦點」；不寫「全程 icon-only」，而寫「這些 icon 在此脈絡下約定成俗，使用者不需 label 就能辨識」
-
-**視覺品質**
-- Toolbar 範例統一使用 `ToolbarFrame`（滿版 + 短標題），不用裸 `ButtonGroup` 漂在半空
-- `ToolbarFrame` 標題模擬真實產品（2–4 字如「文件」「專案」），說明放在下方 `Label`，不塞進標題導致文字與按鈕碰撞
-- 同一個 story 內的範例容器必須一致，不混用不同寬度
-- ❌/✅ 判斷放在 `Label`（如 `❌ 設定是工具操作...`），不放在 ToolbarFrame 標題內
-- **排版層級清晰**：主標用 `h3`（深色、正常大小），副標用 `text-caption`（灰色、限寬 720px），Label 用 `text-footnote`（最小字、範例解說）。三層必須視覺上有明顯區隔，讀者一眼能分辨標題、說明、範例註解
-
-**文案品質**
-- 所有文案必須是「任何設計師或開發者都能看懂」的語言，不用只有作者和 AI 才懂的術語
-- 避免：spec 內部代號（如 Rule A/B）、抽象符號表達式（如 `│─ 業務 ─│`）、未經解釋的概念名稱
-- Label 用口語描述現象，不用代號引用規則。例如：不寫「角色接壤」，寫「業務操作接工具操作，同為無框，邊界不可見」
-- Storybook 是公開文件，寫法標準是「新加入的設計師打開就能看懂」
-
-**Accessibility**
-- 所有 icon-only 按鈕有 `aria-label`
-- 互動範例可以用鍵盤操作
+- [ ] 範例選擇原則的自我檢查清單全部打勾（詳見 `# Story` → 範例選擇原則 → 自我檢查清單）
+- [ ] 設計規格 5 個 story 齊全（總覽 / 檢閱器 / 色彩對照 / 尺寸對照 / 狀態行為）
+- [ ] TOKEN_MAP / SIZE_SPECS 資料與 cva() 定義完全一致
+- [ ] Rule note 傳達原則（「為什麼」），不只結論（「是什麼」）
+- [ ] Storybook title 對齊命名規則；元件放對 `Components/` vs `Internal/`
+- [ ] 每個重要規則有正確範例；常見誤用有錯誤範例（對比呈現）
 
 ## 上線前
 
-- 本地 `npm run storybook` 確認所有 stories 正常渲染
-- 沒有 TypeScript 錯誤
-- import 路徑正確（`@/design-system/...`）
-- 若元件為 internal primitive 或 shadcn passthrough，確認 `CLAUDE.md` 目錄結構的分類標註正確
+- [ ] `npm run storybook` 本地確認所有 stories 正常渲染
+- [ ] `npx tsc --noEmit` 無錯誤
+- [ ] Import 路徑正確（`@/design-system/...`）
+- [ ] 若為 internal primitive 或 shadcn passthrough，CLAUDE.md 目錄結構分類標註正確
 
 
 # 正式系統與探索區的區別
@@ -699,7 +764,17 @@ src/explorations/create-project-form/
 - explorations 可隨時刪除，不視為正式產品程式碼
 
 
-# Story 規則
+# Story
+
+Story 是設計系統的展示 + 教學 + 規格文件。本節涵蓋：
+- 檔案放哪（正式 / exploration）
+- Storybook title 命名
+- 三層定位（每層做什麼）
+- 範例選擇原則（例子怎麼寫——建立與審查共用）
+- 設計規格 Story 標準（anatomy 專用）
+- 連動更新規則（改 code / spec 必須同步 story）
+
+## 檔案放哪
 
 | 類型 | 位置 |
 |------|------|
@@ -749,8 +824,7 @@ Design System/Internal/{ComponentName}/設計規格
 
 **常見誤判點**:`HoverCard` 名字像 public 元件,但它是純行為 primitive(沒視覺),應該 Internal/。判斷看**行為不看名字**。
 
-
-# Story 三層定位
+## 三層定位
 
 每個元件有三種 story，各有明確職責，互不重複：
 
@@ -762,38 +836,120 @@ Design System/Internal/{ComponentName}/設計規格
 
 **關係**：展示是設計規格的便利展示版（看結果），設計規格是精確查閱（查 token），設計原則是情境判斷（做決策）。三層從「看」到「查」到「判斷」，閱讀深度遞進。
 
+## 範例選擇原則（建立與審查共用）
 
-# 設計規格 Story 標準（`{name}.anatomy.stories.tsx`）
+**每次新增、修改、或審查 story 範例時的第一準則——適用 `.stories.tsx` / `.principles.stories.tsx` / `.anatomy.stories.tsx` 的所有範例情境。**
+
+### 最高準則：用耳熟能詳的真實業務場景，禁止極端 / 虛構 / 佔位案例
+
+Storybook 是**公開文件**，受眾是任何打開的設計師 / 開發者 / PM。範例的核心功能是**教學**，不是展示元件能跑——不是跑得起來就算，而是要讓讀者從範例**推得出自己產品該怎麼用**。
+
+#### 合法場景來源（按優先序）
+
+1. **對標世界級 SaaS 的真實功能**：Jira task status、Linear priority、Slack DM notification、Notion settings toggle、Figma toolbar、GitHub PR review、Stripe 付款、Airtable filter、Google Docs 權限設定
+2. **台灣 / 全球常見業務流程**：電商結帳（信用卡 / 轉帳 / 貨到付款）、訂閱方案（月付 / 年付 / 企業）、文件協作（編輯 / 評論 / 唯讀）、表單提交（送出 / 儲存草稿 / 放棄變更）
+3. **該元件原生生態的慣用場景**：Segmented 的「全部 / 進行中 / 已完成」、Tabs 的「總覽 / 活動 / 成員 / 設定」、RadioGroup 的付款方式、Checkbox 的同意條款
+
+#### ❌ 明確禁止
+
+| 禁止類型 | 範例 | 為什麼 |
+|---------|------|-------|
+| **佔位符** | `Option A / B / C`、`Lorem ipsum`、`foo / bar`、`Test value` | 無情境，讀者學不到任何東西 |
+| **抽象代號** | `按鈕一 / 按鈕二`、`Variant X`、`Rule A / B` | 不是產品語言，破壞「受眾是設計師」的前提 |
+| **極端不現實案例** | 單一 button「刪除全部使用者資料包含備份無法復原」、filter 有 50 個項目、dialog 嵌套 5 層 | 非日常使用情境，失去教學價值（不是「邊界測試」就該留——邊界測試屬於 `.anatomy.stories.tsx` 的 edge case section，principles 不放） |
+| **視覺符號表達式** | `│─ 業務 ─│`、`A → B → C`、ASCII art | 不是產品 UI，污染 Storybook 視覺 |
+| **spec 內部代號** | 「符合 Rule 3.2」「遵循 Convention A」 | 讀者沒讀 spec 也要看得懂 |
+
+### 兩個驗收 test（寫完 / 審時自問）
+
+#### Test 1 — 「人」test
+新加入的設計師打開 Storybook，**遮住所有 title / label / note**，只看元件裡的文字和情境，能不能 5 秒內說出「喔這是在做 X 流程」？
+- 能 → 場景有教學力
+- 不能 → 改成具體業務場景，不是補說明文字
+
+#### Test 2 — 「舉一反三」test
+讀者看完這 3-5 個範例，**推得出自己專案類似情境該怎麼用嗎**？
+- 能 → 範例涵蓋了決策維度（如 RadioGroup 的付款方式 + 訂閱方案 + 權限角色 = 教會讀者「決策節點類」的三個面向）
+- 不能 → 範例之間同質、缺維度——增加互補場景而非重複
+
+**黃金比例**：5 個具代表性的真實場景 > 20 個重複 placeholder。
+
+### 正確範例（✅）對照
+
+- **Button**：「送出表單 / 儲存草稿 / 放棄變更」（表單流程三按鈕）、「刪除專案」（destructive confirm）
+- **Badge**：「3 個新通知」、「未讀訊息 12」、「必填」、「Beta」
+- **SegmentedControl**：「總覽 / 活動 / 成員 / 設定」（workspace tab）、「日 / 週 / 月」（時間範圍）
+- **RadioGroup**：「信用卡 / 銀行轉帳 / 超商付款」（付款方式）、「月付 / 年付（省 20%）/ 企業」（訂閱）
+- **Switch**：「Bluetooth 開 / 關」、「Email 通知」、「Dark mode」
+- **Checkbox**：「我同意服務條款」、「寄送促銷 email」（訂閱偏好）
+
+### 適用範圍
+
+| Story 類型 | 適用性 | 備註 |
+|-----------|-------|------|
+| `.principles.stories.tsx` | **最嚴格** | 教學性高，範例品質 = 設計系統品質 |
+| `.stories.tsx`（展示） | 嚴格 | 範例代表元件「日常應該長這樣」，不是 test case |
+| `.anatomy.stories.tsx` | 彈性 | token 藍圖 / inspect 面板可用合成內容，但**元件渲染範例仍須真實場景** |
+| `explorations/` | 寬鬆 | 比稿可用抽象內容，但定案後轉入正式系統前須替換 |
+
+### Rule note 品質
+
+**Rule note 必須傳達原則而非結論**，讓讀者能舉一反三——寫「為什麼」而不只是「是什麼」。例如：
+- ❌「禁止 primary」 → ✅「工具層必須是視覺重量最低的一層，否則搶走業務焦點」
+- ❌「全程 icon-only」 → ✅「這些 icon 在此脈絡下約定俗成，使用者不需 label 就能辨識」
+
+### 視覺與文案品質
+
+- **Toolbar 範例**統一使用 `ToolbarFrame`（滿版 + 短標題），不用裸 `ButtonGroup` 漂在半空
+- `ToolbarFrame` 標題模擬真實產品（2–4 字如「文件」「專案」），說明放在下方 `Label`，不塞進標題導致文字與按鈕碰撞
+- 同一個 story 內的範例容器必須一致，不混用不同寬度
+- ❌/✅ 判斷放在 `Label`，不放在 ToolbarFrame 標題內
+- **排版層級清晰**：主標用 `h3`（深色、正常大小），副標用 `text-caption`（灰色、限寬 720px），Label 用 `text-footnote`（最小字、範例解說）。三層視覺上必須有明顯區隔
+- **icon-only 按鈕有 `aria-label`**；互動範例可用鍵盤操作
+
+### 自我檢查清單
+
+寫完 / 審時逐條打勾：
+
+- [ ] 所有範例文字是真實產品可能出現的句子（不是 Option A/B/C、不是「按鈕一」）
+- [ ] 每個範例可追溯到世界級 SaaS 或常見業務場景（能說出「這參考 Jira / Stripe / Notion 哪個功能」）
+- [ ] 沒有極端不現實案例（50 個 filter、5 層 dialog、單 button 寫滿 3 行）
+- [ ] 「人」test 通過（遮標題光看元件懂情境）
+- [ ] 「舉一反三」test 通過（讀者能推出自己產品該怎麼用）
+- [ ] Label / note 沒有 spec 代號（Rule A、Variant X）或抽象符號表達式
+- [ ] Rule note 傳達原則（「為什麼」），不只是結論（「是什麼」）
+
+## 設計規格 Story 標準（`{name}.anatomy.stories.tsx`）
 
 以 `Button/button.anatomy.stories.tsx` 為範本。每個元件的設計規格必須包含以下 story：
 
-## 1. 元件總覽
+### 1. 元件總覽
 - Anatomy 圖——標示所有 slot（標準版面 + iconOnly 等變體版面）
 - Variant 一覽——每個 variant 一行：渲染元件 + 一句話角色描述
 - Props 速查表——prop / type / default / 說明
 
-## 2. 元件檢閱器（取代 Figma inspect）
+### 2. 元件檢閱器（取代 Figma inspect）
 - 控制項：variant / danger / state / size / iconOnly（依元件調整）
 - 左側：即時預覽 + 尺寸藍圖
 - 右側：Inspect 面板，分區顯示 Color / Layout / Typography / Style
 - **State 使用開發術語**：default / hover / active / disabled（不用 rest）
 
-## 3. 色彩對照表
+### 3. 色彩對照表
 - Variant × State 矩陣
 - 每格：渲染元件 + bg / text / border token 標註（含即時色塊）
 - 標準 variant 與 danger variant 分開
 
-## 4. 尺寸對照表
+### 4. 尺寸對照表
 - Size token 對照表（每個 size 的所有 token 一覽）
 - 含 iconOnly 等變體模式的覆寫說明
 - 視覺預覽矩陣（Variant × Size，含變體模式）
 
-## 5. 狀態行為
+### 5. 狀態行為
 - 每個互動狀態的前後對照（如 loading spinner 替換規則）
 - 所有 variant 的 disabled 渲染（含變體模式）
 - 元件特有狀態（如 checked toggle）
 
-## 設計規格品質規則
+### 設計規格品質規則
 
 - **Token-first**：所有數值以 token name 為主（如 `h-field-sm`），resolved px 值為輔助灰字。開發者只需確認 token 正確——theme / density 的值解析由系統處理
 - **不含 density 雙值**：不顯示 `28px (md) / 32px (lg)`，只顯示 token name + 當前 resolved 值
@@ -815,6 +971,18 @@ Design System/Internal/{ComponentName}/設計規格
 | **設計規格 story**（結構調整、新增對照維度） | → 展示（確保展示仍是規格的便利瀏覽版，不脫節） |
 
 **執行方式**：修改元件 `.tsx` 或 `.spec.md` 後，必須主動檢查並更新對應的 story 檔案。不可只改程式碼而留下過時的規格文件。
+
+### 高風險漂移點：`cva()` defaultVariants
+
+**`defaultVariants` 是三方（code / spec / story）最容易漂移的位置，改之前必須意識到四方聯動：**
+
+| 改什麼 | 必須同步 |
+|--------|---------|
+| `cva()` 裡的 `defaultVariants.size`（或 variant / state） | 1. 元件 `.spec.md` 的 prop 表 / 預設標記<br>2. 元件 `.tsx` 頂端 docblock 的 `★ 預設` 標記<br>3. `{name}.anatomy.stories.tsx` 的 SIZE_SPECS 表 / default marker<br>4. 若屬 field-height family → `tokens/uiSize/uiSize.spec.md` 的 family 清單 |
+
+**曾發生的 bug**：SegmentedControl 的 cva `defaultVariants.size` 是 `md`，spec.md + docblock + anatomy 都寫 `sm ★default`——三方不一致持續存在到 audit 才發現（2026-04-18 修正）。
+
+**預防法**：改 `defaultVariants` 前，grep 該元件所有檔案（`grep "★\|預設\|default" src/design-system/components/{Name}/`），一次改完所有出現位置，不單改 code 就收工。
 
 
 # Prototype 建立流程

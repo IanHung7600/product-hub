@@ -13,6 +13,58 @@ Button、Input、Checkbox/Radio SelectionItem 等互動元件。
 | `--field-height-md` | 2rem (32px) | 2.25rem (36px) |
 | `--field-height-lg` | 2.25rem (36px) | 2.5rem (40px) |
 
+### Field-height family 清單與共享 default（SSOT）
+
+**消費 `--field-height-*` token 的元件組成「field-height family」。這個 family 必須共享同一個 default size = `md`——違反即設計 bug。**
+
+#### Family 成員
+
+| 元件 | size prop | Default | 預設 token |
+|------|-----------|---------|-----------|
+| `Button` | xs / sm / md / lg | **`md`** | `--field-height-md` |
+| `Input` | sm / md / lg | **`md`** | `--field-height-md` |
+| `NumberInput` | sm / md / lg | **`md`** | `--field-height-md` |
+| `DatePicker` | sm / md / lg | **`md`** | `--field-height-md` |
+| `Select` | sm / md / lg | **`md`** | `--field-height-md` |
+| `Combobox` | sm / md / lg | **`md`** | `--field-height-md` |
+| `LinkInput` | sm / md / lg | **`md`** | `--field-height-md` |
+| `Textarea` | sm / md / lg | **`md`** | `--field-height-md` |
+| `Switch` | sm / md / lg | **`md`** | `--field-height-md` |
+| `Slider` | sm / md / lg | **`md`** | `--field-height-md`（只控容器外高，thumb/track 不變） |
+| `SegmentedControl` | xs / sm / md / lg | **`md`** | `--field-height-md` |
+| `Checkbox` | sm / md / lg | **`md`** | `--field-height-md`（控件 16/20px 對應） |
+| `RadioGroup` | sm / md / lg | **`md`** | `--field-height-md`（控件 16/20px 對應） |
+| `Tag` | sm / md / lg | **`md`** | 自帶尺寸，透過 Field size 配對 |
+
+**單一尺寸消費者（不在 default-md 規則內）**：
+
+| 元件 | 固定 size | 理由 |
+|------|----------|------|
+| `Chip` | 固定 `h-field-sm`（28/32px） | Material 3 / Atlassian / Polaris 共識：filter chips 使用單一高度。不暴露 size prop |
+
+#### 為什麼必須共享 default
+
+Consumer 寫 Form 或 Toolbar 時並排多個 field-height 元件：
+
+```tsx
+<Button>送出</Button>
+<Input />
+<Select options={...} />
+<SegmentedControl>...</SegmentedControl>
+```
+
+**所有元件不傳 size 時就自動對齊**——這是 consumer 的核心體驗。若 SegmentedControl 預設 sm 而 Button 預設 md，consumer 放著不管就會高度不一致，每個 consumer 都要記得手動傳 size，破壞「默認對齊」的承諾。
+
+#### 硬規則
+
+- **新增 field-height 消費者** → 必須 default `md`
+- **修改既有 `defaultVariants.size`** → 必須同步更新本表 + 元件 spec.md + tsx docblock + anatomy story 的 default 標記
+- **`defaultVariants.size` 跟 spec 聲稱不一致 = 設計 bug**，優先修 code 或 spec 使其對齊本表
+
+#### 歷史錯誤
+
+本專案曾發生 SegmentedControl 的 code defaults 是 `md`、spec + docblock 寫 `sm ★default` 的三方不一致（2026-04-18 修正）。避免方式：改 cva `defaultVariants` 前先讀本表，確認新值仍符合 family 約束。
+
 ## Table Row
 
 DataTable 行高。density 切換統一 +0.5rem (+8px)。
