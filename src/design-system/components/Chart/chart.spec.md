@@ -1,0 +1,101 @@
+# Chart 設計原則
+
+## 定位
+
+Chart 是**資料視覺化**元件——把數列(時間、類別、比例)畫成折線 / 柱狀 / 圓餅 / 雷達等圖形。不是裝飾視覺效果。
+
+**實作基礎**：shadcn chart 結構 + Recharts v3 engine。本 DS 保留 shadcn 的 API 形狀(`ChartContainer` / `ChartTooltipContent` / `ChartLegendContent` / `ChartConfig`),但把 tooltip、legend、grid、axis 的視覺全改用本 DS token。
+
+**Layout Family**：非上述 family — composite / multi-section（canvas + tooltip + legend 多區塊組合，自 own layout）。
+
+---
+
+## 何時用
+
+- **趨勢**：時間序列數據（月營收、使用者增長、系統錯誤率變化）→ Line / Area chart
+- **比較**：類別間數值對比（各部門預算、產品銷量、地區表現）→ Bar chart
+- **比例**：整體的組成比例（流量來源、訂閱方案分布）→ Pie / Donut chart
+- **多維**：多變量比較（產品特性雷達、員工技能圖）→ Radar chart
+- **分布**：數據分散情況（交易金額分布、回應時間）→ Histogram / Scatter
+
+## 何時不用
+
+| 場景 | 改用 | 原因 |
+|------|------|------|
+| 單一大數字 KPI（今日營收 $12,345）| `Badge` / 純文字 | 單值不需要視覺化 |
+| 2-3 個小數字對照 | `DescriptionList` / table | 數字本身就夠清晰,chart 反而多餘 |
+| 列表式資料 | `DataTable` | 可排序篩選,chart 看不細節 |
+| 即時系統狀態指示（online/offline）| `Badge` / `Spinner` | 狀態非數據 |
+
+---
+
+## ChartConfig — 類別配色規則
+
+每個 dataKey 透過 `ChartConfig` 對應 label + color：
+
+```tsx
+const config = {
+  desktop: { label: 'Desktop', color: 'var(--chart-1)' },
+  mobile:  { label: 'Mobile',  color: 'var(--chart-2)' },
+} satisfies ChartConfig
+```
+
+`ChartContainer` 自動把每個 key 注入 scoped CSS variable `--color-{key}`,Recharts 直接消費 `fill="var(--color-desktop)"` 即可。
+
+### 類別色 token（本 DS 5 色）
+
+| Token | Light mode | Dark mode | 建議 |
+|-------|-----------|-----------|------|
+| `--chart-1` | `blue-6` | `blue-5` | 第一類別（主要） |
+| `--chart-2` | `purple-6` | `purple-5` | 第二類別 |
+| `--chart-3` | `green-6` | `green-5` | 第三類別 |
+| `--chart-4` | `yellow-7` | `yellow-5` | 第四類別（yellow-7 在 light mode 提升對 white bg 的對比） |
+| `--chart-5` | `deep-orange-6` | `deep-orange-5` | 第五類別 |
+
+**為什麼固定到 primitive 而非 semantic token**：避免未來 brand swap（primary 改色）時 chart-1 跟著漂移——data viz 的色彩意義是「類別」,不應被品牌色變動污染。
+
+**超過 5 類別時**：不應再加 `--chart-6+`,改用 grouping（「其他」分類）或切換 visualization（pie → bar / stacked）。5 色是人類短期記憶上限，超過即難區分。
+
+---
+
+## 視覺 token
+
+| 區塊 | Token |
+|------|-------|
+| Chart canvas 內文字 | `text-caption` |
+| Tooltip bg | `bg-surface-raised` |
+| Tooltip border | `border-border` |
+| Tooltip shadow | `shadow-[var(--elevation-200)]` |
+| Tooltip label（上方） | `font-medium` |
+| Tooltip 值文字 | `text-foreground font-mono font-medium tabular-nums` |
+| Tooltip 類別文字 | `text-fg-secondary` |
+| Legend 文字 | `text-fg-secondary` |
+| Cartesian grid line | `stroke-divider` |
+| Axis tick | `text-fg-muted`（填 `fill-fg-muted`） |
+| Dot fill | 依 series color |
+
+---
+
+## 禁止事項
+
+- ❌ **不硬寫色值**：`<Bar fill="#3b82f6" />` 違規,改用 `fill="var(--color-{key})"` 搭配 ChartConfig
+- ❌ **不用 shadcn chart color token**（`--chart-1`..`--chart-5` 我們有自己的定義,shadcn 預設走 HSL 會與我們 oklch palette 漂移）
+- ❌ **不自訂 Tooltip / Legend 視覺**（一律用 `ChartTooltipContent` / `ChartLegendContent`,確保跨圖表視覺一致）
+- ❌ **不超過 5 類別**（見上節;改用 grouping 或切視覺化類型）
+- ❌ **不在 chart 裡放互動元件**（Button / Input）——chart 是 passive 視覺化層,互動走 toolbar / filter（action-bar pattern）
+
+---
+
+## A11y 預設
+
+- **顏色非唯一語義**：不只靠色彩區分類別,配合 icon / label / pattern（Recharts 的 `strokeDasharray` 等）讓色盲 / 黑白列印仍可辨識
+- **Tooltip 鍵盤可存取**：Recharts 對 keyboard focus 有基本支援,`activeIndex` controlled 可手動實作 arrow key 瀏覽數據點
+- **對比度**：`--chart-*` 在 light/dark 的 step 選擇已考量對 canvas bg 的對比（light=step-6 / dark=step-5）
+
+---
+
+## 相關
+
+- `../../tokens/color/color.spec.md` — `--chart-1..5` semantic token 定義
+- Recharts v3 官方文件 — `https://recharts.org`
+- shadcn chart 原始參考 — `https://ui.shadcn.com/docs/components/chart`

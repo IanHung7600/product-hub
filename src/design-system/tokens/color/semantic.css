@@ -297,6 +297,15 @@
   /* Static Subtle — 靜態弱化背景 */
   --muted:                var(--color-neutral-2);  /* Badge/skeleton 底色 */
   --secondary:            var(--color-neutral-3);  /* Badge low 底色 */
+
+  /* Chart categorical — 5 色類別標記（Chart 元件消費）
+     挑 step-6 確保對 surface-raised 的對比足夠,5 色差異明顯便於區分。
+     chart-1..5 固定到 primitive 而非 semantic（避免未來 brand swap 時 chart 跟著改 → 誤導 data viz）。 */
+  --chart-1:              var(--color-blue-6);
+  --chart-2:              var(--color-purple-6);
+  --chart-3:              var(--color-green-6);
+  --chart-4:              var(--color-yellow-7);
+  --chart-5:              var(--color-deep-orange-6);
 }
 
 
@@ -348,6 +357,13 @@
   --inverse-fg:               oklch(0 0 0 / 0.85);
   --inverse-neutral-hover:    var(--black-a02);
   --inverse-neutral-active:   var(--black-a04);
+
+  /* Chart — dark mode 用 step-5（較淡）提升對 dark surface 的可讀度 */
+  --chart-1:                  var(--color-blue-5);
+  --chart-2:                  var(--color-purple-5);
+  --chart-3:                  var(--color-green-5);
+  --chart-4:                  var(--color-yellow-5);
+  --chart-5:                  var(--color-deep-orange-5);
 }
 
 
@@ -421,6 +437,13 @@
   --color-overlay:               var(--overlay);
   --color-tooltip:               var(--tooltip);
   --color-divider:               var(--divider);
+
+  /* Chart categorical（Chart 元件消費;data viz 用） */
+  --color-chart-1:               var(--chart-1);
+  --color-chart-2:               var(--chart-2);
+  --color-chart-3:               var(--chart-3);
+  --color-chart-4:               var(--chart-4);
+  --color-chart-5:               var(--chart-5);
 
   /* Text / Icon levels */
   --color-fg-secondary:          var(--fg-secondary);
