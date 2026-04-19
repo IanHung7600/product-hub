@@ -8,6 +8,7 @@ import {
   PopoverFooter,
 } from '@/design-system/components/Popover/popover'
 import { Button } from '@/design-system/components/Button/button'
+import { AspectRatio } from '@/design-system/components/AspectRatio/aspect-ratio'
 
 /**
  * Coachmark — 功能介紹 / onboarding tour 的浮層卡片
@@ -44,6 +45,12 @@ export interface CoachmarkProps {
   children: React.ReactNode
   /** 頂部 media 區(圖片 / illustration / video 等);不傳則無 media */
   image?: React.ReactNode
+  /**
+   * Media 區域的長寬比(ratio = 寬 / 高)。預設 `16/9`(onboarding feature tour
+   * 世界級 convention — Intercom / Pendo / Shepherd.js)。其他常用:`4/3` 產品截圖 /
+   * `1/1` 方圖 / `3/4` 直式 portrait。消費獨立的 `AspectRatio` primitive 元件。
+   */
+  mediaRatio?: number
   /** 標題(bold) */
   title?: React.ReactNode
   /** 說明文字(normal weight,多行 OK) */
@@ -73,6 +80,7 @@ const Coachmark = React.forwardRef<HTMLDivElement, CoachmarkProps>(
       onOpenChange,
       children,
       image,
+      mediaRatio = 16 / 9,
       title,
       description,
       step,
@@ -101,9 +109,9 @@ const Coachmark = React.forwardRef<HTMLDivElement, CoachmarkProps>(
           className={cn('w-80 p-0 overflow-hidden', className)}
         >
           {image && (
-            <div className="w-full overflow-hidden bg-muted aspect-video">
+            <AspectRatio ratio={mediaRatio} className="w-full overflow-hidden bg-muted">
               {image}
-            </div>
+            </AspectRatio>
           )}
 
           {(title || description) && (

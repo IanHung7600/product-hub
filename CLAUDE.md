@@ -379,7 +379,7 @@ src/
 │   │   ├── elevation/                 ← elevation.spec.md + elevation.stories.tsx
 │   │   ├── radius/                    ← radius.spec.md + radius.stories.tsx
 │   │   └── opacity/                   ← opacity.css + opacity.spec.md
-│   ├── components/                    ← 以實際目錄內容為準（目前 50 個元件資料夾）
+│   ├── components/                    ← 以實際目錄內容為準（目前 55 個元件資料夾）
 │   │   │
 │   │   │  ⚙ internal primitive（不直接使用，由其他元件消費）
 │   │   ├── Menu/                      ← menu item 共用佈局層（→ SelectMenu / DropdownMenu）
@@ -410,13 +410,14 @@ src/
 │   │   │   DatePicker 消費 Calendar 作為選日 popup,Calendar 也可 inline 在 dashboard 用）
 │   │   │  （FileUpload 是拖放上傳區塊;FileItem 是已上傳 row 顯示,兩者配對使用;
 │   │   │   FileUpload 預設 children 直接消費 <Empty> 元件,共用 icon+title+desc SSOT）
-│   │   └── ...                        ← Accordion, Alert, Avatar, Badge, Breadcrumb, Button,
-│   │                                     Calendar, Chart, Checkbox, Chip, Combobox, DataTable,
-│   │                                     DatePicker, DescriptionList, Dialog, DropdownMenu, Empty,
-│   │                                     FileItem, FileUpload, Input, LinkInput, NameCard,
-│   │                                     NumberInput, PeoplePicker, RadioGroup, SegmentedControl,
-│   │                                     Select, Sidebar, Slider, Spinner, Steps, Switch, Tabs,
-│   │                                     Tag, Textarea, Toast, Tooltip, TreeView
+│   │   └── ...                        ← Accordion, Alert, AspectRatio, Avatar, Badge, Breadcrumb,
+│   │                                     Button, Calendar, Carousel, Chart, Checkbox, Chip,
+│   │                                     Coachmark, Combobox, DataTable, DatePicker, DescriptionList,
+│   │                                     Dialog, DropdownMenu, Empty, FileItem, FileUpload, Input,
+│   │                                     LinkInput, NameCard, NumberInput, PeoplePicker, Progress,
+│   │                                     RadioGroup, Rating, ScrollArea, SegmentedControl, Select,
+│   │                                     Sidebar, Slider, Spinner, Steps, Switch, Tabs, Tag, Textarea,
+│   │                                     Toast, Tooltip, TreeView
 │   │
 │   └── patterns/                      ← 跨元件共用的佈局 / 互動公式
 │       ├── item-layout/               ← row primitive 共用規則（prefix + content 佈局）
@@ -558,6 +559,7 @@ element.style.backgroundColor = 'var(--primary)'
 | 橫向操作按鈕列（gap-2 分組）| `patterns/action-bar/` | Toolbar、page header actions、form footer buttons |
 | 水平溢出處理(捲動/收合,**隱藏捲軸+ fade-mask** UX)| `patterns/horizontal-overflow/` | Tabs / ChipGroup / 未來 Steps 的溢出(刻意隱藏 scrollbar) |
 | **跨 OS 一致 overlay 捲軸(顯示捲軸但不吃寬度)** | `components/ScrollArea/` | DataTable 水平捲動 / Sheet / Dialog body / Sidebar 長 nav 等需要使用者知道有捲軸又要跨 OS 視覺一致 |
+| **固定長寬比容器(防 CLS 坍塌,多張圖統一 ratio)** | `components/AspectRatio/` | Coachmark media / Carousel item image / Card thumbnail / Chart container(override default 16:9) |
 | Field wrapper（border + padding + startIcon + endAction 結構) | `components/Field/field-wrapper.tsx` + `field-controls.spec.md` | 所有單行可編輯欄位元件 |
 
 **自我檢查腳本**:
@@ -565,6 +567,7 @@ element.style.backgroundColor = 'var(--primary)'
 - 新元件有橫向 row 結構(prefix/content/suffix)? → 用 `item-layout`
 - 新元件是浮層 + 有 header/body/footer? → 用 `overlay-surface`
 - 新元件內容**可能溢出容器且需要使用者捲動**? → 用 `ScrollArea`(跨 OS 一致 overlay 捲軸);若是刻意隱藏捲軸 + fade-mask → 用 `horizontal-overflow` pattern
+- 新元件有**圖像 / media 容器需要鎖定長寬比**(防 CLS、統一多張圖比例)? → 用 `AspectRatio` primitive,不硬寫 `aspect-video` / `aspect-square` class
 - 以上都沒命中 → 才可自建,但 **建完要立刻回來加行**(防下一個人又重造輪子)
 
 **overflow 使用三規則(避免跨 OS 跑版)**:

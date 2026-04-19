@@ -157,6 +157,8 @@ Passive status icon(16 px)置中於 button-sized 容器,hover 時 active Button 
 
 - `../../patterns/item-layout/item-layout.spec.md` — 閱讀模式（compact / rich）
 - `../Avatar/avatar.spec.md` — Avatar shape（rich mode 的 icon 容器）
+- `../FileUpload/file-upload.spec.md` — **配對元件**:FileUpload 是拖放 / 點擊上傳區塊,FileItem 是已上傳檔案 row 顯示;兩者構成完整 file-handling 元件組
 - `../LinkInput/link-input.spec.md` — 純連結（非 upload 流程）替代
 - `../TreeView/tree-view.spec.md` — 階層 file structure 場景
+- `../Progress/progress.spec.md` — Progress bar SSOT(FileItem consumes Progress for upload bar)
 - `../../tokens/color/color.spec.md` — Track 底色（`bg-secondary` 使用原則）

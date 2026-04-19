@@ -1,0 +1,83 @@
+# AspectRatio 設計原則
+
+## 定位
+
+AspectRatio 是**固定長寬比容器** primitive——確保內部 children(通常是 image / video / illustration)永遠保持指定 ratio,避免未載入時容器坍塌或 content-fit 造成的位移。
+
+**實作基礎**:`@radix-ui/react-aspect-ratio` 薄包裝。Radix 用 SSR-safe padding-bottom 方案實作,consistent 跨瀏覽器。
+
+**Layout Family**:非上述 family — self-contained primitive(container 型 layout,無 slot 結構,只暴露 `ratio` 數值 + children)。
+
+**世界級對照**:
+- shadcn `AspectRatio`(本元件主要參考)— 同 Radix 薄包裝
+- Ant Design 無獨立元件(用 CSS aspect-ratio 或自訂 padding-bottom)
+- Material 無獨立元件(image/Card 元件內建 props)
+
+---
+
+## 何時用
+
+- **圖片容器未載入前防坍塌**:圖片 src 還沒 ready 時,容器高度若為 0 → 頁面 layout 跳動(CLS 問題)。AspectRatio 鎖死比例
+- **Coachmark / Tour media 區**:onboarding 截圖 / illustration 統一 ratio
+- **Carousel item 圖像**:輪播各張圖保持一致高度
+- **Card thumbnail**(未來):product card / blog post cover
+- **Chart / 圖表 preview**:dashboard 卡片內 chart 容器
+
+## 何時不用
+
+| 場景 | 改用 | 原因 |
+|------|------|------|
+| content 高度需隨內容變 | 不包 AspectRatio | AspectRatio 鎖死,無法 hug content |
+| 圖片已固定 width + height 屬性 | 直接 `<img>` 即可 | AspectRatio 是給 responsive(width 100%)場景 |
+| Flex/Grid 子元素高度由父層控 | 不包 | 父層已規定高度,包 AspectRatio 多餘 |
+
+---
+
+## DS 標準 ratio(慣例)
+
+| Ratio | 用途 |
+|-------|------|
+| `16/9`(寬螢幕) | onboarding / tour 截圖(Coachmark 預設)、video embed、hero banner |
+| `4/3`(傳統) | 產品照片、screenshot |
+| `1/1`(方形) | Avatar、icon preview、Instagram-style 貼文 |
+| `3/4`(直式) | 人物 portrait 照、手機截圖 |
+| `21/9`(ultrawide) | hero section banner、movie poster |
+
+**數值計算**:consumer 傳 `ratio={16/9}`(= 1.7777...),Radix 內部自動 padding-bottom `56.25%`。
+
+---
+
+## Consumer 範例
+
+```tsx
+import { AspectRatio } from '@/design-system/components/AspectRatio/aspect-ratio'
+
+<AspectRatio ratio={16 / 9} className="bg-muted rounded-lg overflow-hidden">
+  <img src={url} alt="..." className="w-full h-full object-cover" />
+</AspectRatio>
+```
+
+children 通常要 `className="w-full h-full object-cover"` 讓圖填滿容器;否則留空間。
+
+---
+
+## 禁止事項
+
+- ❌ **不用 AspectRatio 做 flex/grid layout**(它是 container 鎖比例,不是佈局)
+- ❌ **不在 AspectRatio 內放不該鎖比例的 content**(文字 / form / button — 這些應隨內容高)
+- ❌ **不重疊多層 AspectRatio**(意義不明,比例衝突)
+
+---
+
+## A11y
+
+元件本身不引入 a11y 干預,consumer 對 children(如 img)負責 `alt` / `aria-label`。
+
+---
+
+## 相關
+
+- `../Coachmark/coachmark.spec.md` — **本元件 consumer**:media 區預設 `mediaRatio=16/9`
+- `../Carousel/carousel.spec.md` — 未來 consumer(item image 統一 ratio)
+- Radix AspectRatio — `@radix-ui/react-aspect-ratio`
+- shadcn AspectRatio — 參考實作

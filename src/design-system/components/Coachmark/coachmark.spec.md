@@ -63,7 +63,7 @@ SSOT 規則:**Coachmark 不重寫 Popover 的任何視覺 token**,只加自己�
 
 ```
 ┌────────────────────────────────┐
-│ Media                          │  ← 可選,頂部 full-width,aspect-video
+│ Media                          │  ← 可選,頂部 full-width,AspectRatio {16/9} default
 │ (image / illustration / video) │     邊緣對齊 rounded-t-lg(overflow-hidden)
 ├────────────────────────────────┤
 │ Body                           │  ← SurfaceBody padding(px-loose py-tight)
@@ -143,7 +143,7 @@ Previous(可選)→ Skip(可選)→ Next / Done。對齊 Ant Tour / Intercom con
 | Title | `text-body-lg font-medium text-foreground` | 比 Popover header 輕(Coachmark 無 header 分隔線) |
 | Description | `text-body text-fg-secondary` | 主說明文字 |
 | Step 計數 | `text-caption text-fg-secondary tabular-nums` | 數字等寬,切換步驟不跳動 |
-| Body padding | `px-[--layout-space-loose] py-[--layout-space-tight]` | overlay-surface SSOT(PopoverBody) |
+| Body padding | `px-[var(--layout-space-loose)] py-[var(--layout-space-tight)]` | overlay-surface SSOT(PopoverBody) |
 | Footer padding | 同上 | overlay-surface SSOT(PopoverFooter) |
 | Width | `w-80`(320px) | 固定;consumer 可 className 覆寫 |
 

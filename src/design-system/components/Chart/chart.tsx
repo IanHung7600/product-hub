@@ -60,6 +60,8 @@ const ChartContainer = React.forwardRef<HTMLDivElement, ChartContainerProps>(
           data-chart={chartId}
           className={cn(
             // 整體視覺套用本 DS typography + token
+            // 預設 aspect-video(16:9)— Recharts ResponsiveContainer 需 parent 有高度。
+            // Consumer 若需其他比例,包 <AspectRatio ratio={n}> 覆寫(AspectRatio 的 padding-bottom 高度會蓋過此 class)。
             'flex aspect-video justify-center text-caption',
             // recharts 內部預設樣式覆寫:grid / axis / tooltip shadow 等
             "[&_.recharts-cartesian-grid_line]:stroke-divider",

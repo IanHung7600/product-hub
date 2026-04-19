@@ -9,6 +9,7 @@ import {
 } from './carousel'
 import { Button } from '@/design-system/components/Button/button'
 import { Avatar } from '@/design-system/components/Avatar/avatar'
+import { AspectRatio } from '@/design-system/components/AspectRatio/aspect-ratio'
 
 const meta: Meta = {
   title: 'Design System/Components/Carousel/展示',
@@ -111,12 +112,13 @@ export const ProductImageGallery = {
         <CarouselContent>
           {productImages.map((img) => (
             <CarouselItem key={img.label}>
-              <div
-                className="relative aspect-square rounded-lg overflow-hidden flex items-center justify-center"
+              <AspectRatio
+                ratio={1}
+                className="relative rounded-lg overflow-hidden flex items-center justify-center"
                 style={{ background: img.gradient }}
               >
                 <div className="text-foreground/40 text-body-lg font-medium">{img.label}</div>
-              </div>
+              </AspectRatio>
             </CarouselItem>
           ))}
         </CarouselContent>
