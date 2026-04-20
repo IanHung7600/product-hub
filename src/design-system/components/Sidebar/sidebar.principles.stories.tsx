@@ -5,10 +5,8 @@ import {
 } from 'lucide-react'
 import {
   SidebarProvider,
-  Sidebar,
   SidebarHeader,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
   SidebarGroupContent,
@@ -46,7 +44,7 @@ const Section = ({
 }: {
   title: string
   description?: React.ReactNode
-  children: React.ReactNode
+  children?: React.ReactNode
 }) => (
   <section className="flex flex-col gap-4 pb-10 border-b border-divider last:border-b-0">
     <div className="flex flex-col gap-1">

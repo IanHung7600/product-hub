@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
 import { zhTW } from 'date-fns/locale/zh-TW'
+import type { DateRange } from 'react-day-picker'
 import { Calendar } from './calendar'
 import { DatePicker } from '@/design-system/components/DatePicker/date-picker'
 
@@ -59,7 +60,7 @@ export const ModeRule: Story = {
         new Date(today.getFullYear(), today.getMonth(), 12),
         new Date(today.getFullYear(), today.getMonth(), 20),
       ])
-      const [range, setRange] = useState<{ from?: Date; to?: Date } | undefined>({
+      const [range, setRange] = useState<DateRange | undefined>({
         from: new Date(today.getFullYear(), today.getMonth(), 8),
         to: new Date(today.getFullYear(), today.getMonth(), 18),
       })

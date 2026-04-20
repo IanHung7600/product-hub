@@ -1,4 +1,3 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Settings, User, LogOut, FileText } from 'lucide-react'
 import {

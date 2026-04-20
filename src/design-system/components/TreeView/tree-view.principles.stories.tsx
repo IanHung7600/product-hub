@@ -35,16 +35,16 @@ export const ComponentChoiceRule: Story = {
         note="檔案資料夾、組織架構、專案 / 子專案 / 任務。每個 node 有 children 就可展開,沒有就是 leaf"
       >
         <div className="border border-border rounded-lg p-3 w-80">
-          <TreeView>
-            <TreeItem label="Documents" icon={Folder}>
-              <TreeItem label="Resume.pdf" icon={FileText} />
-              <TreeItem label="Photos" icon={Folder}>
-                <TreeItem label="beach.jpg" icon={Image} />
-                <TreeItem label="trip.jpg" icon={Image} />
+          <TreeView defaultExpandedIds={['docs', 'photos', 'downloads']}>
+            <TreeItem id="docs" label="Documents" icon={Folder}>
+              <TreeItem id="resume" label="Resume.pdf" icon={FileText} />
+              <TreeItem id="photos" label="Photos" icon={Folder}>
+                <TreeItem id="beach" label="beach.jpg" icon={Image} />
+                <TreeItem id="trip" label="trip.jpg" icon={Image} />
               </TreeItem>
             </TreeItem>
-            <TreeItem label="Downloads" icon={Folder}>
-              <TreeItem label="installer.dmg" icon={FileText} />
+            <TreeItem id="downloads" label="Downloads" icon={Folder}>
+              <TreeItem id="installer" label="installer.dmg" icon={FileText} />
             </TreeItem>
           </TreeView>
         </div>
@@ -56,10 +56,10 @@ export const ComponentChoiceRule: Story = {
       >
         <div className="border border-border rounded-lg p-3 w-80">
           <TreeView>
-            <TreeItem label="Alice" icon={User} />
-            <TreeItem label="Bob" icon={User} />
-            <TreeItem label="Charlie" icon={User} />
-            <TreeItem label="Diana" icon={User} />
+            <TreeItem id="alice" label="Alice" icon={User} />
+            <TreeItem id="bob" label="Bob" icon={User} />
+            <TreeItem id="charlie" label="Charlie" icon={User} />
+            <TreeItem id="diana" label="Diana" icon={User} />
           </TreeView>
         </div>
         <Label warn>↑ 平面的使用者清單用 TreeView → TreeView 的 chevron / indent 都用不上，用 DataTable 或 list</Label>
@@ -85,7 +85,7 @@ export const ComponentChoiceRule: Story = {
 export const ExpandSelectSeparationRule: Story = {
   name: 'Expand 與 Select 語意分離',
   render: () => {
-    const [selected, setSelected] = React.useState<string>('Resume.pdf')
+    const [selected, setSelected] = React.useState<Set<string>>(new Set(['resume']))
     return (
       <div>
         <Rule
@@ -93,11 +93,11 @@ export const ExpandSelectSeparationRule: Story = {
           note="兩個獨立的互動區——點 chevron 只展開不選,點 label 只選不展開(除非 consumer 顯式 opt-in expandOnSelect)。世界級 tree 元件的共識(VS Code、macOS Finder、Linear)"
         >
           <div className="border border-border rounded-lg p-3 w-80">
-            <TreeView value={selected} onValueChange={setSelected}>
-              <TreeItem value="docs" label="Documents" icon={Folder}>
-                <TreeItem value="Resume.pdf" label="Resume.pdf" icon={FileText} />
-                <TreeItem value="photos" label="Photos" icon={Folder}>
-                  <TreeItem value="beach.jpg" label="beach.jpg" icon={Image} />
+            <TreeView selectedIds={selected} onSelectedChange={setSelected} defaultExpandedIds={['docs', 'photos']}>
+              <TreeItem id="docs" label="Documents" icon={Folder}>
+                <TreeItem id="resume" label="Resume.pdf" icon={FileText} />
+                <TreeItem id="photos" label="Photos" icon={Folder}>
+                  <TreeItem id="beach" label="beach.jpg" icon={Image} />
                 </TreeItem>
               </TreeItem>
             </TreeView>
@@ -125,14 +125,14 @@ export const IndentRule: Story = {
         note="indentStep = chevronSize + gap-2,跟 item-layout 的 prefix-content gap 一致。讓 indent 視覺跟 item-layout 融為一體,而非獨立數字系統"
       >
         <div className="border border-border rounded-lg p-3 w-80">
-          <TreeView>
-            <TreeItem label="Engineering" icon={Users}>
-              <TreeItem label="Frontend" icon={Users}>
-                <TreeItem label="Alice" icon={User} />
-                <TreeItem label="Bob" icon={User} />
+          <TreeView defaultExpandedIds={['eng', 'frontend', 'backend']}>
+            <TreeItem id="eng" label="Engineering" icon={Users}>
+              <TreeItem id="frontend" label="Frontend" icon={Users}>
+                <TreeItem id="alice" label="Alice" icon={User} />
+                <TreeItem id="bob" label="Bob" icon={User} />
               </TreeItem>
-              <TreeItem label="Backend" icon={Users}>
-                <TreeItem label="Charlie" icon={User} />
+              <TreeItem id="backend" label="Backend" icon={Users}>
+                <TreeItem id="charlie" label="Charlie" icon={User} />
               </TreeItem>
             </TreeItem>
           </TreeView>
@@ -145,11 +145,11 @@ export const IndentRule: Story = {
         note="同層 siblings 有展開 icon、有的沒有 → label 不對齊。TreeView 自動給葉節點留 chevron 位置(透明 placeholder),consumer 不需介入"
       >
         <div className="border border-border rounded-lg p-3 w-80">
-          <TreeView>
-            <TreeItem label="資料夾 A" icon={Folder}>
-              <TreeItem label="檔案 a.txt" icon={FileText} />
-              <TreeItem label="子資料夾" icon={Folder}>
-                <TreeItem label="檔案 b.txt" icon={FileText} />
+          <TreeView defaultExpandedIds={['fa', 'sub']}>
+            <TreeItem id="fa" label="資料夾 A" icon={Folder}>
+              <TreeItem id="file-a" label="檔案 a.txt" icon={FileText} />
+              <TreeItem id="sub" label="子資料夾" icon={Folder}>
+                <TreeItem id="file-b" label="檔案 b.txt" icon={FileText} />
               </TreeItem>
             </TreeItem>
           </TreeView>

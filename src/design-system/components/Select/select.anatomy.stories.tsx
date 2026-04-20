@@ -1,8 +1,7 @@
 import type { Meta } from '@storybook/react'
 import { useState, useEffect } from 'react'
-import { ChevronDown, X, Flag, Circle, Star } from 'lucide-react'
+import { Flag } from 'lucide-react'
 import { Select } from './select'
-import { Tag } from '@/design-system/components/Tag/tag'
 
 const meta: Meta = {
   title: 'Design System/Components/Select/設計規格',

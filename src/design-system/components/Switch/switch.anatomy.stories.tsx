@@ -1,4 +1,3 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Switch } from './switch'
 import { H3, Desc, Td, Th, Swatch, TokenCell } from '@/design-system/components/_anatomy/anatomy-utils'

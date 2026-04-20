@@ -1,5 +1,5 @@
 import type { Meta } from '@storybook/react'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Search, Mail, X, Eye, EyeOff } from 'lucide-react'
 import { Input } from './input'
 

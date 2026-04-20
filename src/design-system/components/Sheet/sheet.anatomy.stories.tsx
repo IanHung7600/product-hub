@@ -1,4 +1,3 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import {
   Sheet,
@@ -10,7 +9,7 @@ import {
   SheetFooter,
 } from './sheet'
 import { Button } from '@/design-system/components/Button/button'
-import { H3, Desc, Td, Th, Swatch, TokenCell } from '@/design-system/components/_anatomy/anatomy-utils'
+import { H3, Desc, Td, Th, TokenCell } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/Sheet/設計規格',
@@ -158,7 +157,7 @@ export const SizeBehavior: Story = {
 
       <div>
         <H3>覆寫寬度 / 高度</H3>
-        <Desc>consumer 透過 className 覆寫。例：`<SheetContent className="w-full sm:max-w-lg">` 桌機用更寬。</Desc>
+        <Desc>{'consumer 透過 className 覆寫。例:`<SheetContent className="w-full sm:max-w-lg">` 桌機用更寬。'}</Desc>
       </div>
     </div>
   ),

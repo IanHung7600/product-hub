@@ -1,4 +1,3 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Alert } from './alert'
 import { H3, Desc, Td, Th } from '@/design-system/components/_anatomy/anatomy-utils'

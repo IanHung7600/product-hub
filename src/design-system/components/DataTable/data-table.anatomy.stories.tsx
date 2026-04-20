@@ -1,4 +1,3 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { DataTable } from './data-table'
@@ -236,7 +235,7 @@ export const Features: Story = {
           <H3>虛擬捲動(height 啟用)</H3>
           <Desc>傳 `height` 固定高度時自動啟用 TanStack Virtual——只渲染可見 rows。500 筆資料僅渲染 ~20 rows,效能不受資料量影響。</Desc>
           <div className="border border-border rounded-md">
-            <DataTable columns={columns} data={virtualData} height={400} />
+            <DataTable columns={columns} data={virtualData} height="400px" />
           </div>
           <p className="text-footnote text-fg-muted mt-3">height="auto" 渲染全部 rows(適合 &lt; 50 筆);數字 height 啟用虛擬(適合 &gt; 100 筆)</p>
         </div>

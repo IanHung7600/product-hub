@@ -1,4 +1,3 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Inbox, Search, FileText } from 'lucide-react'
 import { Empty } from './empty'

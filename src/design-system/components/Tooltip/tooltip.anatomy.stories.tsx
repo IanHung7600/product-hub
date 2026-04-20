@@ -1,6 +1,6 @@
 import type { Meta } from '@storybook/react'
 import { useState } from 'react'
-import { Info, Plus, Settings, Trash2 } from 'lucide-react'
+import { Info, Settings } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipTrigger } from './tooltip'
 import { Button } from '../Button/button'
 

@@ -2,8 +2,9 @@ import type { Meta } from '@storybook/react'
 import { useState } from 'react'
 import {
   Mail, Bell, Settings, Star, ChevronRight, Globe, Lock,
-  Trash2, ExternalLink,
+  Trash2,
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { MenuItem } from '@/design-system/components/Menu/menu-item'
 import { SelectionItem } from '@/design-system/components/SelectionControl/selection-item'
 import { Checkbox } from '@/design-system/components/Checkbox/checkbox'
@@ -139,8 +140,6 @@ const READING_SPECS: Record<SizeKey, TypoSpec> = {
   lg: { labelFont: 'text-body-lg', labelSize: '16px', labelLh: '1.5', descFont: 'text-body-lg', descSize: '16px', descLh: '1.5', iconPx: 20 },
 }
 
-const FIELD_HEIGHTS: Record<SizeKey, string> = { sm: '28px', md: '32px', lg: '36px' }
-
 /* ═══════════════════════════════════════════════════════════════════════════
    Shared UI Components
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -234,7 +233,7 @@ function lineClampClass(maxLines: number | 'none'): string {
 /** ListItem preview (simulated — component not yet built) */
 const ListItemPreview = ({ size, startIcon: StartIcon, avatar, label, description, suffix, labelMaxLines = 1, descMaxLines = 2 }: {
   size: SizeKey
-  startIcon?: React.ComponentType<{ size: number; className?: string }>
+  startIcon?: LucideIcon
   avatar?: AvatarData
   label: string
   description?: string

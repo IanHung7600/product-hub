@@ -4,7 +4,6 @@ import { Upload } from 'lucide-react'
 import { Field, FieldLabel, FieldDescription, FieldError, FieldGroup } from './field'
 import { Input } from '@/design-system/components/Input/input'
 import { Select } from '@/design-system/components/Select/select'
-import { Checkbox } from '@/design-system/components/Checkbox/checkbox'
 import { Button } from '@/design-system/components/Button/button'
 
 const meta: Meta = {

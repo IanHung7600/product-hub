@@ -19,7 +19,6 @@ type SizeKey = 'sm' | 'md' | 'lg'
 type ColorSpec = { bg: string; text: string; border: string; icon: string }
 
 const MODES: ModeKey[] = ['edit', 'readonly', 'disabled']
-const STATES: StateKey[] = ['default', 'hover', 'focus', 'disabled']
 const SIZES: SizeKey[] = ['sm', 'md', 'lg']
 
 const categoryOptions = [

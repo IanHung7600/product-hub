@@ -208,7 +208,7 @@ export const Overview = {
         <Desc>視覺語言完全一致，差異只有形狀、指示器、語意。</Desc>
         <div className="overflow-x-auto">
           <table className="text-caption border-collapse">
-            <thead><tr><Th></Th><Th>Checkbox</Th><Th>Radio</Th></tr></thead>
+            <thead><tr><Th>項目</Th><Th>Checkbox</Th><Th>Radio</Th></tr></thead>
             <tbody>
               {[
                 ['形狀', 'rounded-md（方）', 'rounded-full（圓）'],

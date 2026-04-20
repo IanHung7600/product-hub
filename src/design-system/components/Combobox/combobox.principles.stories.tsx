@@ -151,7 +151,7 @@ export const TagOperationRule: Story = {
   name: 'Tag 操作規則',
   render: () => {
     const [value, setValue] = React.useState(['electronics', 'food', 'lifestyle'])
-    const [ro, setRo] = React.useState(['electronics', 'food'])
+    const [ro] = React.useState(['electronics', 'food'])
     return (
       <div>
         <Rule

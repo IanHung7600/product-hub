@@ -1,8 +1,7 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Folder, FileText, Image, Users, User, Settings } from 'lucide-react'
+import { Folder, FileText, Image, Users, User } from 'lucide-react'
 import { TreeView, TreeItem } from './tree-view'
-import { Badge } from '@/design-system/components/Badge/badge'
 import { H3, Desc, Td, Th, TokenCell } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
@@ -20,16 +19,16 @@ export const Overview: Story = {
         <H3>Anatomy</H3>
         <Desc>TreeView 是**階層結構的遞迴元件**——一個 TreeItem 就是一個 node,有 children 就可展開,沒有就是 leaf。基於 Radix Collapsible 實作展開/收合,自建 tree 結構 + ARIA tree 鍵盤導覽(Radix 沒有 Tree primitive)。</Desc>
         <div className="border border-border rounded-lg p-4 max-w-md">
-          <TreeView>
-            <TreeItem label="Documents" icon={Folder} defaultExpanded>
-              <TreeItem label="Resume.pdf" icon={FileText} />
-              <TreeItem label="Photos" icon={Folder} defaultExpanded>
-                <TreeItem label="beach.jpg" icon={Image} />
-                <TreeItem label="trip.jpg" icon={Image} />
+          <TreeView defaultExpandedIds={['docs', 'photos']}>
+            <TreeItem id="docs" label="Documents" icon={Folder}>
+              <TreeItem id="resume" label="Resume.pdf" icon={FileText} />
+              <TreeItem id="photos" label="Photos" icon={Folder}>
+                <TreeItem id="beach" label="beach.jpg" icon={Image} />
+                <TreeItem id="trip" label="trip.jpg" icon={Image} />
               </TreeItem>
             </TreeItem>
-            <TreeItem label="Downloads" icon={Folder}>
-              <TreeItem label="installer.dmg" icon={FileText} />
+            <TreeItem id="downloads" label="Downloads" icon={Folder}>
+              <TreeItem id="installer" label="installer.dmg" icon={FileText} />
             </TreeItem>
           </TreeView>
         </div>
@@ -118,11 +117,11 @@ export const SizeMatrix: Story = {
           {(['sm', 'md', 'lg'] as const).map(size => (
             <div key={size} className="border border-dashed border-divider rounded-md p-4 max-w-md">
               <div className="text-caption text-fg-muted mb-2 font-mono">size="{size}"</div>
-              <TreeView size={size}>
-                <TreeItem value="docs" label="Documents" icon={Folder} defaultExpanded>
-                  <TreeItem value="resume" label="Resume.pdf" icon={FileText} />
-                  <TreeItem value="photos" label="Photos" icon={Folder} defaultExpanded>
-                    <TreeItem value="beach" label="beach.jpg" icon={Image} />
+              <TreeView size={size} defaultExpandedIds={['docs', 'photos']}>
+                <TreeItem id="docs" label="Documents" icon={Folder}>
+                  <TreeItem id="resume" label="Resume.pdf" icon={FileText} />
+                  <TreeItem id="photos" label="Photos" icon={Folder}>
+                    <TreeItem id="beach" label="beach.jpg" icon={Image} />
                   </TreeItem>
                 </TreeItem>
               </TreeView>
@@ -137,7 +136,7 @@ export const SizeMatrix: Story = {
 export const ColorMatrix: Story = {
   name: '色彩對照(row 狀態色彩)',
   render: () => {
-    const [selected, setSelected] = React.useState('beach.jpg')
+    const [selected, setSelected] = React.useState<Set<string>>(new Set(['beach']))
     return (
       <div className="flex flex-col gap-10">
         <div>
@@ -194,12 +193,12 @@ export const ColorMatrix: Story = {
           <H3>Hover + Selected 並存的實際渲染</H3>
           <Desc>以下 `Documents/Photos/beach.jpg` 為 selected row,可 hover 任一其他 row 觀察 neutral-hover。</Desc>
           <div className="border border-border rounded-lg p-4 max-w-md">
-            <TreeView value={selected} onValueChange={setSelected}>
-              <TreeItem value="docs" label="Documents(hover 試試)" icon={Folder} defaultExpanded>
-                <TreeItem value="resume" label="Resume.pdf" icon={FileText} />
-                <TreeItem value="photos" label="Photos" icon={Folder} defaultExpanded>
-                  <TreeItem value="beach.jpg" label="beach.jpg(selected)" icon={Image} />
-                  <TreeItem value="trip.jpg" label="trip.jpg" icon={Image} />
+            <TreeView selectedIds={selected} onSelectedChange={setSelected} defaultExpandedIds={['docs', 'photos']}>
+              <TreeItem id="docs" label="Documents(hover 試試)" icon={Folder}>
+                <TreeItem id="resume" label="Resume.pdf" icon={FileText} />
+                <TreeItem id="photos" label="Photos" icon={Folder}>
+                  <TreeItem id="beach" label="beach.jpg(selected)" icon={Image} />
+                  <TreeItem id="trip" label="trip.jpg" icon={Image} />
                 </TreeItem>
               </TreeItem>
             </TreeView>
@@ -218,11 +217,11 @@ export const IndentMatrix: Story = {
         <H3>indentStep = chevronSize + gap-2</H3>
         <Desc>每層 indent 剛好是 chevron(16 / 20px)+ gap-2(8px)的距離——跟 item-layout 的 prefix-content gap 一致。讓 tree indent 視覺跟 item-layout 融為一體,不是獨立數字系統。</Desc>
         <div className="border border-border rounded-lg p-4 max-w-md">
-          <TreeView>
-            <TreeItem label="L1 (depth 0)" icon={Folder} defaultExpanded>
-              <TreeItem label="L2 (depth 1)" icon={Folder} defaultExpanded>
-                <TreeItem label="L3 (depth 2)" icon={Folder} defaultExpanded>
-                  <TreeItem label="L4 (depth 3)" icon={FileText} />
+          <TreeView defaultExpandedIds={['l1', 'l2', 'l3']}>
+            <TreeItem id="l1" label="L1 (depth 0)" icon={Folder}>
+              <TreeItem id="l2" label="L2 (depth 1)" icon={Folder}>
+                <TreeItem id="l3" label="L3 (depth 2)" icon={Folder}>
+                  <TreeItem id="l4" label="L4 (depth 3)" icon={FileText} />
                 </TreeItem>
               </TreeItem>
             </TreeItem>
@@ -234,11 +233,11 @@ export const IndentMatrix: Story = {
         <H3>葉節點 chevron placeholder</H3>
         <Desc>同層有展開 icon、有的沒有 → label 不會對齊。TreeView 自動給葉節點留透明 chevron placeholder,label 永遠對齊 column。</Desc>
         <div className="border border-border rounded-lg p-4 max-w-md">
-          <TreeView>
-            <TreeItem label="Folder(可展開)" icon={Folder} defaultExpanded>
-              <TreeItem label="Leaf 1(無 children)" icon={FileText} />
-              <TreeItem label="Folder 2(可展開)" icon={Folder} />
-              <TreeItem label="Leaf 3(無 children)" icon={FileText} />
+          <TreeView defaultExpandedIds={['folder']}>
+            <TreeItem id="folder" label="Folder(可展開)" icon={Folder}>
+              <TreeItem id="leaf-1" label="Leaf 1(無 children)" icon={FileText} />
+              <TreeItem id="folder-2" label="Folder 2(可展開)" icon={Folder} />
+              <TreeItem id="leaf-3" label="Leaf 3(無 children)" icon={FileText} />
             </TreeItem>
           </TreeView>
         </div>
@@ -251,18 +250,18 @@ export const IndentMatrix: Story = {
 export const StateMatrix: Story = {
   name: '狀態(selected / expanded / hover)',
   render: () => {
-    const [selected, setSelected] = React.useState('beach.jpg')
+    const [selected, setSelected] = React.useState<Set<string>>(new Set(['resume']))
     return (
       <div className="flex flex-col gap-8">
         <div>
           <H3>Selected vs Expanded 語意分離</H3>
           <Desc>Chevron 負責展開/收合,label 負責選取——兩者獨立(除非 consumer 顯式 opt-in `expandOnSelect`)。世界級 tree 的共識(VS Code / Finder / Linear)。</Desc>
           <div className="border border-border rounded-lg p-4 max-w-md">
-            <TreeView value={selected} onValueChange={setSelected}>
-              <TreeItem value="docs" label="Documents(可點展開)" icon={Folder} defaultExpanded>
-                <TreeItem value="resume" label="Resume.pdf(選取中)" icon={FileText} />
-                <TreeItem value="photos" label="Photos(可點展開)" icon={Folder} defaultExpanded>
-                  <TreeItem value="beach.jpg" label="beach.jpg" icon={Image} />
+            <TreeView selectedIds={selected} onSelectedChange={setSelected} defaultExpandedIds={['docs', 'photos']}>
+              <TreeItem id="docs" label="Documents(可點展開)" icon={Folder}>
+                <TreeItem id="resume" label="Resume.pdf(選取中)" icon={FileText} />
+                <TreeItem id="photos" label="Photos(可點展開)" icon={Folder}>
+                  <TreeItem id="beach" label="beach.jpg" icon={Image} />
                 </TreeItem>
               </TreeItem>
             </TreeView>
@@ -272,18 +271,13 @@ export const StateMatrix: Story = {
 
         <div>
           <H3>Hover inline actions(suffix)</H3>
-          <Desc>hover node 時 suffix 顯示 inline action(重新命名、刪除等)。non-hover 時 suffix 隱藏或顯示固定 badge。</Desc>
+          <Desc>hover node 時 suffix 顯示 inline action(重新命名、刪除等)。non-hover 時 suffix 隱藏。</Desc>
           <div className="border border-border rounded-lg p-4 max-w-md">
-            <TreeView>
-              <TreeItem
-                label="Engineering"
-                icon={Users}
-                badge={<Badge count={12} variant="low" />}
-                defaultExpanded
-              >
-                <TreeItem label="Frontend" icon={Users} badge={<Badge count={5} variant="low" />}>
-                  <TreeItem label="Alice" icon={User} />
-                  <TreeItem label="Bob" icon={User} />
+            <TreeView defaultExpandedIds={['eng', 'frontend']}>
+              <TreeItem id="eng" label="Engineering" icon={Users}>
+                <TreeItem id="frontend" label="Frontend" icon={Users}>
+                  <TreeItem id="alice" label="Alice" icon={User} />
+                  <TreeItem id="bob" label="Bob" icon={User} />
                 </TreeItem>
               </TreeItem>
             </TreeView>

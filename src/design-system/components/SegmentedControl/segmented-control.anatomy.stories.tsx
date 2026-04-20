@@ -1,9 +1,8 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { AlignLeft, AlignCenter, AlignRight, List, LayoutGrid, Calendar } from 'lucide-react'
 import { SegmentedControl, SegmentedControlItem } from './segmented-control'
 import { Badge } from '@/design-system/components/Badge/badge'
-import { H3, Desc, Td, Th, Swatch, TokenCell } from '@/design-system/components/_anatomy/anatomy-utils'
+import { H3, Desc, Td, Th, TokenCell } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/SegmentedControl/設計規格',
@@ -34,8 +33,8 @@ export const Overview: Story = {
         <Desc>[startIcon?] [label span px-1] [suffix gap-1:badge?]——跟 Button size sm/md/lg 的 `gap-1` 和 `px-1` label 完全對齊,視覺肌肉記憶直接複用。</Desc>
         <div className="flex flex-col gap-3 border border-border rounded-lg p-4 max-w-md">
           <SegmentedControl defaultValue="all">
-            <SegmentedControlItem value="all" suffix={<Badge count={12} variant="low" />}>全部</SegmentedControlItem>
-            <SegmentedControlItem value="active" suffix={<Badge count={3} variant="high" />}>進行中</SegmentedControlItem>
+            <SegmentedControlItem value="all" badge={<Badge count={12} variant="low" />}>全部</SegmentedControlItem>
+            <SegmentedControlItem value="active" badge={<Badge count={3} variant="high" />}>進行中</SegmentedControlItem>
             <SegmentedControlItem value="done">已完成</SegmentedControlItem>
           </SegmentedControl>
         </div>

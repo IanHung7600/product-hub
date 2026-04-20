@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Star } from 'lucide-react'
+import { Star, type LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 /**
@@ -45,8 +45,8 @@ export interface RatingProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   readOnly?: boolean
   /** 完全停用 */
   disabled?: boolean
-  /** 自訂 icon(預設 Star);傳 LucideIcon 或 ReactElement */
-  icon?: React.ComponentType<{ size?: number; className?: string; fill?: string }>
+  /** 自訂 icon(預設 Star);傳 LucideIcon */
+  icon?: LucideIcon
   /** a11y label(readOnly 時必填,interactive 時建議填) */
   'aria-label'?: string
 }
@@ -148,7 +148,7 @@ Rating.displayName = 'Rating'
 // ── StarIcon: 單顆星 + half-precision overlay ─────────────────────────────
 
 interface StarIconProps {
-  Icon: React.ComponentType<{ size?: number; className?: string; fill?: string }>
+  Icon: LucideIcon
   sizePx: number
   fillRatio: number // 0..1
   isHalf: boolean

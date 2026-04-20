@@ -1,4 +1,3 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Checkbox } from './checkbox'
 import { SelectionItem } from '@/design-system/components/SelectionControl/selection-item'

@@ -1,8 +1,8 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import {
-  MoreVertical, Copy, Trash2, Share2, Download, Eye, EyeOff,
-  ArrowUp, ArrowDown, Filter,
+  MoreVertical, Copy, Trash2, Share2, Download,
+  ArrowUp, Filter,
 } from 'lucide-react'
 import {
   DropdownMenu,

@@ -192,7 +192,7 @@ export const ForbiddenRule: Story = {
 
       <Rule
         title="❌ 不要 inline copy Loader2"
-        note="設計系統裡任何 loading 視覺都從 Spinner import。自己寫 `<Loader2 className=\"animate-spin\" />` 會造成 icon / animation / a11y 漂移"
+        note={'設計系統裡任何 loading 視覺都從 Spinner import。自己寫 `<Loader2 className="animate-spin" />` 會造成 icon / animation / a11y 漂移'}
       >
         <Label warn>所有 loading 都走 Spinner,不要 inline Loader2</Label>
       </Rule>

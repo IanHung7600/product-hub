@@ -1,6 +1,7 @@
 import type { Meta } from '@storybook/react'
 import { useState } from 'react'
 import { zhTW } from 'date-fns/locale/zh-TW'
+import type { DateRange } from 'react-day-picker'
 import { Calendar } from './calendar'
 import { H3, Desc, Td, Th, TokenCell } from '@/design-system/components/_anatomy/anatomy-utils'
 
@@ -473,7 +474,7 @@ export const ModeBehavior = {
         new Date(today.getFullYear(), today.getMonth(), 12),
         new Date(today.getFullYear(), today.getMonth(), 20),
       ])
-      const [range, setRange] = useState<{ from?: Date; to?: Date } | undefined>({
+      const [range, setRange] = useState<DateRange | undefined>({
         from: new Date(today.getFullYear(), today.getMonth(), 8),
         to: new Date(today.getFullYear(), today.getMonth(), 18),
       })

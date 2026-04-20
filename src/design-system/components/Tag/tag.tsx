@@ -146,7 +146,7 @@ function TagInner(
   forwardedRef: React.ForwardedRef<HTMLDivElement>,
 ) {
   const solidClass = solid ? SOLID_CLASSES[variant ?? 'neutral'] : undefined
-  const ownRef = React.useRef<HTMLDivElement>(null)
+  const ownRef = React.useRef<HTMLDivElement | null>(null)
   const [isTruncated, setIsTruncated] = React.useState(false)
 
   React.useLayoutEffect(() => {

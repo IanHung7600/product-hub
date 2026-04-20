@@ -161,7 +161,7 @@ export const VirtualScrollRule: Story = {
           title="固定 height 數字 — 大量資料(> 100 筆),啟用 virtualization"
           note="傳固定高度時 TanStack Virtual 自動啟用——只渲染可見 rows。500 筆資料只渲染 ~20 rows,效能不受資料量影響"
         >
-          <DataTable columns={columns} data={bigData} height={400} />
+          <DataTable columns={columns} data={bigData} height="400px" />
           <Label>↑ 500 筆資料,固定 400px 高度 → virtualizer 只渲染畫面中的 ~20 rows</Label>
         </Rule>
 

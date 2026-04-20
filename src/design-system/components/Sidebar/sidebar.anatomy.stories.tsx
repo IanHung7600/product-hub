@@ -3,13 +3,10 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { LayoutDashboard, Inbox, Users, Settings, Bell } from 'lucide-react'
 import {
   SidebarProvider,
-  Sidebar,
   SidebarHeader,
   SidebarContent,
   SidebarFooter,
-  SidebarTrigger,
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuItem,

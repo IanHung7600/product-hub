@@ -1,4 +1,3 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Field, FieldLabel, FieldDescription, FieldError, FieldGroup } from './field'
 import { Input } from '@/design-system/components/Input/input'

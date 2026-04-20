@@ -30,7 +30,7 @@ import * as React from 'react'
 
 export interface UseScrollEdgesResult<T extends HTMLElement> {
   /** 綁在 scroll container 上的 ref */
-  scrollRef: React.RefObject<T | null>
+  scrollRef: React.RefObject<T>
   /** scroll 位置在最左側（無法再往左）*/
   atStart: boolean
   /** scroll 位置在最右側（無法再往右）*/
@@ -108,7 +108,7 @@ export interface UseOverflowIndicesOptions {
 
 export interface UseOverflowIndicesResult<C extends HTMLElement> {
   /** 綁在 items 的父容器上 */
-  containerRef: React.RefObject<C | null>
+  containerRef: React.RefObject<C>
   /** 為每個 item 註冊 ref（回傳 callback ref）*/
   registerItem: (index: number) => (el: HTMLElement | null) => void
   /** DOM 順序上溢出的 item 索引（連續區間，從某個 index 到尾端）*/

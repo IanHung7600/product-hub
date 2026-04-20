@@ -2,7 +2,6 @@ import * as React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { PeoplePicker } from '@/design-system/components/PeoplePicker/people-picker'
 import type { PersonValue } from './person-display'
-import { PersonDisplay, MultiPersonDisplay } from './person-display'
 import { Button } from '@/design-system/components/Button/button'
 
 const meta: Meta = {

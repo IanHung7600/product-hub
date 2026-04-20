@@ -1,7 +1,6 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Chip, ChipGroup } from './chip'
-import { H3, Desc, Td, Th, Swatch, TokenCell } from '@/design-system/components/_anatomy/anatomy-utils'
+import { H3, Desc, Td, Th, TokenCell } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/Chip/設計規格',
@@ -17,7 +16,7 @@ export const Overview: Story = {
       <div>
         <H3>Anatomy</H3>
         <Desc>Chip 是 **Material Design Filter Chip** 實作——多選(預設)或單選的 pill 控件。基於 Radix ToggleGroup,橋接 DS token。視覺上是一排獨立的 `rounded-full` pill,各自有 `gap-2` 間距(非連體,這是跟 SegmentedControl 的主要差異)。</Desc>
-        <ChipGroup defaultValue={['electronics', 'food']}>
+        <ChipGroup type="multiple" defaultValue={['electronics', 'food']}>
           <Chip value="electronics">電子產品</Chip>
           <Chip value="furniture">家具</Chip>
           <Chip value="food">食品</Chip>
@@ -64,7 +63,7 @@ export const SelectionMatrix: Story = {
       <div>
         <H3>Multiple(預設)</H3>
         <Desc>選取任意數量——filter panel 的 tag 選取、toolbar 多選過濾。</Desc>
-        <ChipGroup defaultValue={['zh', 'en']}>
+        <ChipGroup type="multiple" defaultValue={['zh', 'en']}>
           <Chip value="zh">中文</Chip>
           <Chip value="en">英文</Chip>
           <Chip value="ja">日文</Chip>
@@ -111,7 +110,7 @@ export const SizeMatrix: Story = {
             </tbody>
           </table>
         </div>
-        <ChipGroup defaultValue={['all']} type="single">
+        <ChipGroup type="single" defaultValue="all">
           <Chip value="all">全部</Chip>
           <Chip value="active">進行中</Chip>
           <Chip value="done">已完成</Chip>
@@ -166,7 +165,7 @@ export const StateMatrix: Story = {
 
         <div>
           <div className="text-caption text-fg-muted mb-2">四種狀態並存(hover 可在 Storybook 上試)</div>
-          <ChipGroup defaultValue={['selected']} type="multiple">
+          <ChipGroup type="multiple" defaultValue={['selected']}>
             <Chip value="default">Default(未選)</Chip>
             <Chip value="hover">Hover 我 ↓</Chip>
             <Chip value="selected">Selected</Chip>
@@ -202,7 +201,7 @@ export const LayoutMatrix: Story = {
         <H3>wrap(預設)</H3>
         <Desc>超出容器自然換行。適合空間充裕的 filter panel。</Desc>
         <div className="max-w-md border border-border rounded-md p-3">
-          <ChipGroup defaultValue={['a']}>
+          <ChipGroup type="multiple" defaultValue={['a']}>
             {['電子產品', '家具', '食品', '服飾', '書籍', '運動', '玩具', '美妝', '家電'].map(label => (
               <Chip key={label} value={label}>{label}</Chip>
             ))}
@@ -214,7 +213,7 @@ export const LayoutMatrix: Story = {
         <H3>scroll</H3>
         <Desc>水平捲動 + fade mask(共用 `horizontal-overflow` pattern,跟 Tabs 一致)。適合空間受限但希望保留 chip 視覺的場景。</Desc>
         <div className="max-w-md border border-border rounded-md p-3">
-          <ChipGroup layout="scroll" defaultValue={['a']}>
+          <ChipGroup type="multiple" layout="scroll" defaultValue={['a']}>
             {['電子產品', '家具', '食品', '服飾', '書籍', '運動', '玩具', '美妝', '家電'].map(label => (
               <Chip key={label} value={label}>{label}</Chip>
             ))}
@@ -226,7 +225,7 @@ export const LayoutMatrix: Story = {
         <H3>menu(overflow 收入 DropdownMenu)</H3>
         <Desc>隱藏溢出到下拉選單(類似 Tabs overflow="menu")。適合 chip 很多但使用者不常切後面的場景。</Desc>
         <div className="max-w-md border border-border rounded-md p-3">
-          <ChipGroup layout="menu" defaultValue={['a']}>
+          <ChipGroup type="multiple" layout="menu" defaultValue={['a']}>
             {['電子產品', '家具', '食品', '服飾', '書籍', '運動', '玩具', '美妝', '家電'].map(label => (
               <Chip key={label} value={label}>{label}</Chip>
             ))}

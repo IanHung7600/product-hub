@@ -361,6 +361,55 @@ const DropdownMenuSeparator = React.forwardRef<
 ))
 DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName
 
+// ── RadioItem（單選，排序方式等）──
+// Radix handles checked state; visual用 MenuItem 的 selected highlight。
+interface DropdownMenuRadioItemProps
+  extends React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem> {
+  /** Prefix icon(LucideIcon) */
+  startIcon?: LucideIcon
+  /** 次要說明文字 */
+  description?: React.ReactNode
+}
+
+const DropdownMenuRadioItem = React.forwardRef<
+  React.ElementRef<typeof DropdownMenuPrimitive.RadioItem>,
+  DropdownMenuRadioItemProps
+>(({ className, children, startIcon, description, disabled, ...props }, ref) => {
+  const size = useRowSize()
+
+  return (
+    <DropdownMenuPrimitive.RadioItem
+      ref={ref}
+      disabled={disabled}
+      onSelect={(e) => e.preventDefault()}
+      className={cn(radixItemClass, 'data-[state=checked]:[&>*]:bg-neutral-selected', className)}
+      {...props}
+    >
+      <MenuItem
+        size={size}
+        startIcon={startIcon}
+        description={description}
+        disabled={disabled}
+        role="presentation"
+        className="!bg-transparent hover:!bg-transparent pointer-events-none"
+      >
+        {children}
+      </MenuItem>
+    </DropdownMenuPrimitive.RadioItem>
+  )
+})
+DropdownMenuRadioItem.displayName = DropdownMenuPrimitive.RadioItem.displayName
+
+// ── Shortcut（鍵盤快捷鍵提示，ml-auto 靠右）──
+// 作為 MenuItem children 的後綴,視覺為 fg-muted 小字。
+const DropdownMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
+  <span
+    className={cn('ml-auto text-footnote text-fg-muted tracking-widest', className)}
+    {...props}
+  />
+)
+DropdownMenuShortcut.displayName = 'DropdownMenuShortcut'
+
 export {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -375,6 +424,8 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuShortcut,
   floatingLayerClass,
 }
 export type { SizeKey, DropdownMenuItemProps }

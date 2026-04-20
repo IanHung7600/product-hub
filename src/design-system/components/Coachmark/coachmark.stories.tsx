@@ -87,7 +87,6 @@ export const MultiStepTour: Story = {
   render: () => {
     const [step, setStep] = React.useState(0)
     const [open, setOpen] = React.useState(true)
-    const current = tourSteps[step]
     const isLast = step === tourSteps.length - 1
 
     return (

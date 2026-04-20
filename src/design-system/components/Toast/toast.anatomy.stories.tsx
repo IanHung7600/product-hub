@@ -1,8 +1,7 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { toast } from './toast'
 import { Button } from '@/design-system/components/Button/button'
-import { H3, Desc, Td, Th, Swatch, TokenCell } from '@/design-system/components/_anatomy/anatomy-utils'
+import { H3, Desc, Td, Th, TokenCell } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/Toast/設計規格',
@@ -129,8 +128,7 @@ export const StateBehavior: Story = {
       <div>
         <H3>生命週期四階段</H3>
         <Desc>
-          Toast 的行為由 sonner 管理,具體數值來自 Provider 層 `Sonner` 設定(詳見 `main.tsx` 的
-          `<Toaster />` props)。
+          {'Toast 的行為由 sonner 管理,具體數值來自 Provider 層 `Sonner` 設定(詳見 `main.tsx` 的 `<Toaster />` props)。'}
         </Desc>
         <div className="overflow-x-auto">
           <table className="text-caption border-collapse">

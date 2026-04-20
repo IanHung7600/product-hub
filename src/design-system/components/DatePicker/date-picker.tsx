@@ -154,8 +154,8 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
                 action={{
                   icon: X,
                   label: '清除日期',
-                  onClick: (e: React.MouseEvent) => {
-                    e.stopPropagation()
+                  onClick: (e) => {
+                    e?.stopPropagation()
                     onChange?.('')
                   },
                 }}

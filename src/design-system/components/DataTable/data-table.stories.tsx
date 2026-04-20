@@ -1,7 +1,7 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { createColumnHelper } from '@tanstack/react-table'
-import { Pencil, Trash2, Copy, MoreVertical } from 'lucide-react'
+import { Pencil, Trash2, MoreVertical } from 'lucide-react'
 import { DataTable } from './data-table'
 import { Button } from '@/design-system/components/Button/button'
 import { Empty } from '@/design-system/components/Empty/empty'
@@ -288,7 +288,7 @@ export const RowActions: Story = {
           columns={baseColumns}
           data={sampleData}
           height="auto"
-          rowActions={(row) => (
+          rowActions={() => (
             <>
               <Button variant="text" size="xs" iconOnly startIcon={Pencil} aria-label="編輯" />
               <Button variant="text" size="xs" iconOnly startIcon={Trash2} aria-label="刪除" danger />
@@ -303,7 +303,7 @@ export const RowActions: Story = {
           columns={baseColumns}
           data={sampleData.slice(0, 3)}
           height="auto"
-          rowActions={(row) => (
+          rowActions={() => (
             <>
               <Button variant="text" size="xs" iconOnly startIcon={Pencil} aria-label="編輯" />
               <Button variant="text" size="xs" iconOnly startIcon={MoreVertical} aria-label="更多操作" />
@@ -331,7 +331,7 @@ export const PinnedColumns: Story = {
               data={sampleData}
               height="auto"
               pinnedLeftColumns={['sku']}
-              rowActions={(row) => (
+              rowActions={() => (
                 <>
                   <Button variant="text" size="xs" iconOnly startIcon={Pencil} aria-label="編輯" />
                   <Button variant="text" size="xs" iconOnly startIcon={MoreVertical} aria-label="更多操作" />
@@ -349,7 +349,7 @@ export const PinnedColumns: Story = {
               data={manyRows}
               height="300px"
               pinnedLeftColumns={['sku']}
-              rowActions={(row) => (
+              rowActions={() => (
                 <>
                   <Button variant="text" size="xs" iconOnly startIcon={Pencil} aria-label="編輯" />
                   <Button variant="text" size="xs" iconOnly startIcon={MoreVertical} aria-label="更多操作" />
@@ -376,7 +376,7 @@ export const InlineEdit: Story = {
           data={sampleData}
           height="auto"
           inlineEdit
-          rowActions={(row) => (
+          rowActions={() => (
             <>
               <Button variant="text" size="xs" iconOnly startIcon={MoreVertical} aria-label="更多操作" />
             </>

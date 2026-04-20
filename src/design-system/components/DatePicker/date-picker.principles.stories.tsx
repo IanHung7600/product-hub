@@ -94,7 +94,7 @@ export const FormattingRule: Story = {
 
       <Rule
         title="Edit trigger 文字也受 formatOptions / locale 控制"
-        note="原本原生 <input type=\"date\"> 的 trigger 格式受瀏覽器 locale 控制無法干預;改自建後,edit trigger 顯示的已選日期也走 Intl.DateTimeFormat——跟 Display 模式完全一致"
+        note={'原本原生 <input type="date"> 的 trigger 格式受瀏覽器 locale 控制無法干預;改自建後,edit trigger 顯示的已選日期也走 Intl.DateTimeFormat——跟 Display 模式完全一致'}
       >
         <DatePicker
           value="2026-05-15"

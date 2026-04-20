@@ -1,4 +1,3 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { MessageCircle, UserPlus } from 'lucide-react'
 import { NameCard } from './name-card'

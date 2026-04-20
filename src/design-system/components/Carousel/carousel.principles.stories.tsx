@@ -364,7 +364,7 @@ export const TestimonialExample: Story = {
                   <div className="bg-surface-raised border border-border rounded-lg p-6 min-h-[180px] flex flex-col justify-between">
                     <p className="text-body leading-relaxed">「{t.quote}」</p>
                     <div className="flex items-center gap-3 mt-4">
-                      <Avatar name={t.name} size={36} />
+                      <Avatar alt={t.name} size={36} />
                       <div>
                         <div className="text-caption font-medium">{t.name}</div>
                         <div className="text-footnote text-fg-muted">{t.title}</div>

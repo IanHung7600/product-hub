@@ -1,6 +1,4 @@
-import * as React from 'react'
 import { Toaster as SonnerToaster, toast as sonnerToast } from 'sonner'
-import { cn } from '@/lib/utils'
 import { Notice, useInverseTheme, type NoticeVariant } from '@/design-system/components/Notice/notice'
 import { Button } from '@/design-system/components/Button/button'
 

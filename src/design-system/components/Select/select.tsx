@@ -97,7 +97,7 @@ const NativeSelect = React.forwardRef<HTMLSelectElement, SelectProps>(
     const iconSize = getIconSize(size)
     const showClear = clearable && value && resolvedMode === 'edit'
     const isTextDisplay = display === 'text'
-    const selectRef = React.useRef<HTMLSelectElement>(null)
+    const selectRef = React.useRef<HTMLSelectElement | null>(null)
     const setSelectRef = React.useCallback((el: HTMLSelectElement | null) => {
       selectRef.current = el
       if (typeof ref === 'function') ref(el)

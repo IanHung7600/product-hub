@@ -1,4 +1,3 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { HoverCard, HoverCardTrigger, HoverCardContent } from './hover-card'
 import { Avatar } from '@/design-system/components/Avatar/avatar'
@@ -22,7 +21,7 @@ export const Overview: Story = {
         <div className="flex items-center gap-6">
           <HoverCard>
             <HoverCardTrigger asChild>
-              <Avatar name="陳麒仁" size={40} />
+              <Avatar alt="陳麒仁" size={40} />
             </HoverCardTrigger>
             <HoverCardContent className="bg-surface-raised border border-border rounded-lg p-4 shadow-[var(--elevation-200)]">
               <div className="flex flex-col gap-2 w-56">

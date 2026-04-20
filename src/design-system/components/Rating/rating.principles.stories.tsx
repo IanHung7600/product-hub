@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
-import { Heart, ThumbsUp } from 'lucide-react'
+import { Heart, ThumbsUp, Star } from 'lucide-react'
 import { Rating } from './rating'
 import { Button } from '@/design-system/components/Button/button'
 import { Badge } from '@/design-system/components/Badge/badge'
@@ -155,11 +155,7 @@ export const YellowStarConvention: Story = {
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <div style={{ color: 'var(--primary)' }} className="inline-flex">
-              <Rating value={4.5} readOnly precision="half" size="lg" aria-label="誤用範例" icon={({ size, fill }) => (
-                <svg width={size} height={size} viewBox="0 0 24 24" fill={fill ?? 'currentColor'}>
-                  <path d="M12 .587l3.668 7.431 8.2 1.191-5.934 5.784 1.401 8.168L12 18.896l-7.335 3.865 1.401-8.168L.132 9.209l8.2-1.191z" />
-                </svg>
-              )} />
+              <Rating value={4.5} readOnly precision="half" size="lg" aria-label="誤用範例" icon={Star} />
             </div>
           </div>
           <Label warn>藍星讓使用者猶豫「這是什麼」→ 一瞬間流失 = 設計 bug</Label>

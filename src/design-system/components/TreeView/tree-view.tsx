@@ -13,7 +13,7 @@ import {
   type DragOverEvent,
 } from '@dnd-kit/core'
 import { ChevronRight } from 'lucide-react'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { cva } from 'class-variance-authority'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 // Row primitive 共用常數——單一 source of truth
@@ -159,7 +159,7 @@ function useNodeRegistry() {
 // TreeView
 // ═══════════════════════════════════════════════════════════════════════════
 
-export interface TreeViewProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface TreeViewProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onDragEnd'> {
   /** 元件尺寸,影響 node 高度、icon 大小、indent 寬度 */
   size?: SizeKey
   /**
@@ -739,7 +739,6 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
     const depth = React.useContext(DepthContext)
     const {
       size,
-      context,
       selectionMode,
       expandOnSelect,
       draggable,
@@ -769,7 +768,7 @@ const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
 
     // ── Drag hooks ──
     // Figma 風格:整列可拖(不用 grip handle),靠 distance:5 區分 click vs drag
-    const { attributes: dragAttrs, listeners: dragListeners, setNodeRef: setDragRef, isDragging: dndIsDragging } = useDraggable({
+    const { attributes: dragAttrs, listeners: dragListeners, setNodeRef: setDragRef } = useDraggable({
       id, disabled: !draggable || disabled,
     })
     const { setNodeRef: setDropRef } = useDroppable({
@@ -985,4 +984,3 @@ const ParentIdContext = React.createContext<string | null>(null)
 // ═══════════════════════════════════════════════════════════════════════════
 
 export { TreeView, TreeItem, treeItemVariants }
-export type { TreeDragEndEvent, DropPosition }

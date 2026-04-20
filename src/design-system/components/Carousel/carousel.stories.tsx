@@ -153,7 +153,7 @@ export const TestimonialCarousel = {
                   「{t.quote}」
                 </p>
                 <div className="flex items-center gap-3 mt-6">
-                  <Avatar name={t.name} size={40} />
+                  <Avatar alt={t.name} size={40} />
                   <div>
                     <div className="text-body font-medium">{t.name}</div>
                     <div className="text-caption text-fg-muted">{t.title}</div>

@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import React, { useState } from 'react'
-import { Mail, Bell, Settings, Globe, Code, Palette, Zap, User, ChevronDown, Plus } from 'lucide-react'
 import { Select } from '@/design-system/components/Select/select'
 import { Combobox } from '@/design-system/components/Combobox/combobox'
 import { Button } from '@/design-system/components/Button/button'

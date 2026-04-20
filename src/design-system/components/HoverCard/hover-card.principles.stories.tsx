@@ -43,7 +43,7 @@ export const VsTooltipRule: Story = {
           <HoverCardContent className="bg-surface-raised border border-border rounded-lg p-4 shadow-[var(--elevation-200)]">
             <div className="flex flex-col gap-2 w-64">
               <div className="flex items-center gap-3">
-                <Avatar name="陳麒仁" size={40} />
+                <Avatar alt="陳麒仁" size={40} />
                 <div>
                   <div className="text-body font-medium">陳麒仁</div>
                   <div className="text-caption text-fg-muted">Design Engineer</div>
@@ -71,7 +71,7 @@ export const VsTooltipRule: Story = {
           <div className="flex flex-col gap-1">
             <HoverCard>
               <HoverCardTrigger asChild>
-                <Avatar name="陳麒仁" size={32} />
+                <Avatar alt="陳麒仁" size={32} />
               </HoverCardTrigger>
               <HoverCardContent className="bg-surface-raised border border-border rounded-lg p-3">
                 <div className="flex flex-col gap-2 w-56">
@@ -127,7 +127,7 @@ export const PureBehaviorPrimitiveRule: Story = {
         note="人員類 Avatar 透過 `hoverCard` prop 自動 wrap HoverCardTrigger，不需要 consumer 手動組合。統一人員 hover 提供 NameCard 的體驗"
       >
         <div className="flex items-center gap-3">
-          <Avatar name="陳麒仁" size={40} hoverCard={
+          <Avatar alt="陳麒仁" size={40} hoverCard={
             <div className="flex flex-col gap-2 w-56">
               <div className="text-body font-medium">陳麒仁</div>
               <div className="text-caption text-fg-muted">Design Engineer · 台北</div>

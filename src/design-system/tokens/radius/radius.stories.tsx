@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import React from 'react'
 import { Button } from '@/design-system/components/Button/button'
 import { Plus } from 'lucide-react'
 

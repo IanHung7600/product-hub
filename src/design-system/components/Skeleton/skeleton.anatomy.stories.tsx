@@ -1,4 +1,3 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Skeleton } from './skeleton'
 import { H3, Desc } from '@/design-system/components/_anatomy/anatomy-utils'

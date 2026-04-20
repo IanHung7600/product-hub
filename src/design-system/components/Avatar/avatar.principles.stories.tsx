@@ -1,6 +1,6 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Settings, Bell, User, Home } from 'lucide-react'
+import { Settings, Bell, Home } from 'lucide-react'
 import { Avatar } from './avatar'
 import { Button } from '@/design-system/components/Button/button'
 import { Badge } from '@/design-system/components/Badge/badge'
@@ -37,11 +37,11 @@ export const IdentityVsIconRule: Story = {
         note="留言者頭像、團隊成員、workspace logo、app 身份。視覺上 identity 是唯一的、可被辨識的"
       >
         <div className="flex items-center gap-3">
-          <Avatar name="陳麒仁" size={32} />
+          <Avatar alt="陳麒仁" size={32} />
           <span className="text-body">陳麒仁留言</span>
         </div>
         <div className="flex items-center gap-3">
-          <Avatar name="Engineering Team" size={32} color="blue" />
+          <Avatar alt="Engineering Team" size={32} color="blue" />
           <span className="text-body">Engineering Team 專案</span>
         </div>
       </Rule>
@@ -51,7 +51,7 @@ export const IdentityVsIconRule: Story = {
         note="「設定」「通知」「首頁」這類功能 / 動作 / 概念不是「誰」,是「做什麼」。Icon 更適合——Avatar 用在這裡會讓使用者以為是某個人的頭像"
       >
         <div className="flex items-center gap-3">
-          <Avatar name="S" icon={Settings} size={32} />
+          <Avatar alt="S" icon={Settings} size={32} />
           <span className="text-body">❌ 設定用 Avatar</span>
         </div>
         <Label warn>↑ 「S」+ icon 讓使用者誤以為是某個人(使用者 S?)。功能導覽用 Lucide icon</Label>
@@ -67,7 +67,7 @@ export const IdentityVsIconRule: Story = {
       >
         <div className="flex items-center gap-3 flex-wrap">
           <div className="flex items-center gap-2">
-            <Avatar name="陳麒仁" size={24} />
+            <Avatar alt="陳麒仁" size={24} />
             <span className="text-footnote text-fg-muted">人員</span>
           </div>
           <div className="flex items-center gap-2">
@@ -75,7 +75,7 @@ export const IdentityVsIconRule: Story = {
             <span className="text-footnote text-fg-muted">首頁(概念)</span>
           </div>
           <div className="flex items-center gap-2">
-            <Avatar name="ABC Corp" size={24} color="purple" />
+            <Avatar alt="ABC Corp" size={24} color="purple" />
             <span className="text-footnote text-fg-muted">組織</span>
           </div>
           <div className="flex items-center gap-2">
@@ -97,10 +97,10 @@ export const FallbackRule: Story = {
         note="Fallback 用 `name` 取首字母(中文取第一字,英文取前兩字首字母大寫)。背景色由 `color` prop 決定"
       >
         <div className="flex items-center gap-3">
-          <Avatar name="陳麒仁" size={40} src="https://i.pravatar.cc/80?img=1" />
-          <Avatar name="陳麒仁" size={40} />
-          <Avatar name="Alice Wang" size={40} />
-          <Avatar name="ABC Corp" size={40} color="blue" />
+          <Avatar alt="陳麒仁" size={40} src="https://i.pravatar.cc/80?img=1" />
+          <Avatar alt="陳麒仁" size={40} />
+          <Avatar alt="Alice Wang" size={40} />
+          <Avatar alt="ABC Corp" size={40} color="blue" />
         </div>
         <Label>↑ 依序:有圖 / 中文首字 / 英文前兩字 / 組織首字 + 色彩</Label>
       </Rule>
@@ -109,7 +109,7 @@ export const FallbackRule: Story = {
         title="❌ src 壞掉又沒 name → 空 avatar（不可辨識）"
         note="Avatar 的核心是識別身份,沒 name 又沒 src 等於失去意義。必須至少有 name"
       >
-        <Avatar name="" size={40} src="https://invalid-url.example/fail.jpg" />
+        <Avatar alt="" size={40} src="https://invalid-url.example/fail.jpg" />
         <Label warn>↑ 空 avatar → 使用者不知道是誰</Label>
       </Rule>
     </div>
@@ -126,15 +126,15 @@ export const WithBadgeOverlayRule: Story = {
       >
         <div className="flex items-center gap-4">
           <div className="relative inline-flex">
-            <Avatar name="陳麒仁" size={40} />
+            <Avatar alt="陳麒仁" size={40} />
             <Badge dot variant="high" className="absolute bottom-0 right-0" aria-label="在線" />
           </div>
           <div className="relative inline-flex">
-            <Avatar name="Alice" size={40} />
+            <Avatar alt="Alice" size={40} />
             <Badge dot variant="low" className="absolute bottom-0 right-0" aria-label="離線" />
           </div>
           <div className="relative inline-flex">
-            <Avatar name="Bob" size={40} />
+            <Avatar alt="Bob" size={40} />
             <Badge dot variant="critical" className="absolute bottom-0 right-0" aria-label="忙碌" />
           </div>
         </div>
@@ -146,7 +146,7 @@ export const WithBadgeOverlayRule: Story = {
         note="chat / messenger 場景,Avatar 右上角顯示該對話的未讀數"
       >
         <div className="relative inline-flex">
-          <Avatar name="陳麒仁" size={40} />
+          <Avatar alt="陳麒仁" size={40} />
           <Badge count={3} variant="critical" className="absolute -top-1 -right-1" />
         </div>
         <Label>↑ chat list 常見 pattern</Label>
@@ -164,12 +164,12 @@ export const HoverCardIntegrationRule: Story = {
         note="避免 consumer 手動寫 HoverCardTrigger。hoverCard prop 會自動包裝 Avatar,提供統一的人員 hover 預覽體驗"
       >
         <Avatar
-          name="陳麒仁"
+          alt="陳麒仁"
           size={40}
           hoverCard={
             <div className="flex flex-col gap-2 w-56">
               <div className="flex items-center gap-3">
-                <Avatar name="陳麒仁" size={48} />
+                <Avatar alt="陳麒仁" size={48} />
                 <div>
                   <div className="text-body font-medium">陳麒仁</div>
                   <div className="text-caption text-fg-muted">Design Engineer · 台北</div>

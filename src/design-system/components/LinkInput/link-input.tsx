@@ -83,13 +83,11 @@ const LinkInput = React.forwardRef<HTMLInputElement, LinkInputProps>(
   ) => {
     const resolvedMode = disabled ? 'disabled' : mode
     const isEditable = resolvedMode === 'edit'
-    const iconSize = size === 'lg' ? 20 : 16
-    const actionHoverSize = iconSize + 2
 
     const [editing, setEditing] = React.useState(false)
     const [localValue, setLocalValue] = React.useState(value ?? '')
     const [localError, setLocalError] = React.useState(false)
-    const inputRef = React.useRef<HTMLInputElement>(null)
+    const inputRef = React.useRef<HTMLInputElement | null>(null)
 
     // Sync external value → local
     React.useEffect(() => {

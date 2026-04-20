@@ -1,6 +1,6 @@
 import type { Meta } from '@storybook/react'
 import { useState, useEffect } from 'react'
-import { Copy, Pencil, Trash2, Monitor, ChevronDown, ChevronRight, ExternalLink, Check } from 'lucide-react'
+import { Copy, Pencil, Trash2, Monitor, ChevronDown, ChevronRight, Check, type LucideIcon } from 'lucide-react'
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator,
@@ -476,7 +476,7 @@ const InspectorInner = () => {
 
 /** Static item preview for inspector (not interactive) */
 const ItemPreview = ({ size, danger, state, icon: Icon, label, shortcut }: {
-  size: SizeKey; danger: boolean; state: StateKey; icon: React.ComponentType<{ size: number; className?: string }>; label: string; shortcut?: string
+  size: SizeKey; danger: boolean; state: StateKey; icon: LucideIcon; label: string; shortcut?: string
 }) => {
   const iconPx = SIZE_SPECS[size].icon
   const bgClass = state === 'hover' ? 'bg-neutral-hover' : state === 'active/selected' ? 'bg-neutral-selected' : ''
@@ -494,7 +494,7 @@ const ItemPreview = ({ size, danger, state, icon: Icon, label, shortcut }: {
 
 /** Static subTrigger preview — suffix uses gap-1, shows value + ChevronRight */
 const SubTriggerPreview = ({ size, state, icon: Icon, label, triggerValue }: {
-  size: SizeKey; state: StateKey; icon: React.ComponentType<{ size: number; className?: string }>; label: string; triggerValue?: string
+  size: SizeKey; state: StateKey; icon: LucideIcon; label: string; triggerValue?: string
 }) => {
   const iconPx = SIZE_SPECS[size].icon
   const bgClass = state === 'hover' || state === 'active/selected' ? 'bg-neutral-hover' : ''

@@ -1,7 +1,7 @@
 import type { Meta } from '@storybook/react'
 import { useState, useEffect } from 'react'
-import { Mail, Bell, Settings, FileText, Folder, Plus } from 'lucide-react'
-import { MenuItem, MenuGroup, MenuFooter } from './menu-item'
+import { Mail, Bell, FileText } from 'lucide-react'
+import { MenuItem, MenuGroup } from './menu-item'
 import { Tag } from '@/design-system/components/Tag/tag'
 // Avatar is now passed as AvatarData (data object), rendered internally by MenuItem
 
@@ -278,8 +278,8 @@ export const Overview = {
                 ['header', 'boolean', 'false', '群組標題，不可選不可 hover'],
                 ['size', "'sm' | 'md' | 'lg'", "'md'", '尺寸，對齊 field-height token'],
                 ['endContent', 'ReactNode', '—', '後綴自訂內容（DropdownMenu 的 badge/endIcon/shortcut 經由此注入）'],
-                ['labelMaxLines', "number | 'none'", '1', '標籤最大行數，'none' 不截斷'],
-                ['descMaxLines', "number | 'none'", '2', '描述最大行數，'none' 不截斷'],
+                ['labelMaxLines', "number | 'none'", '1', `標籤最大行數，'none' 不截斷`],
+                ['descMaxLines', "number | 'none'", '2', `描述最大行數，'none' 不截斷`],
               ].map(([p, t, d, desc]) => (
                 <tr key={p}><Td mono>{p}</Td><Td mono>{t}</Td><Td mono>{d}</Td><Td>{desc}</Td></tr>
               ))}

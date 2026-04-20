@@ -73,18 +73,6 @@ const Swatch = ({ value, size = 'md' }: { value: string; size?: 'sm' | 'md' }) =
   return <span className={`${s} rounded-md shrink-0 border border-black/10`} style={{ backgroundColor: value === 'white' ? '#fff' : `var(${value})` }} />
 }
 
-const TokenAnnotation = ({ colors }: { colors: ColorSpec }) => (
-  <div className="flex flex-col gap-0.5 mt-2">
-    {([['bg', 'bg'], ['text', 'text']] as const).map(([key, label]) => (
-      <span key={key} className="inline-flex items-center gap-1 text-[10px]">
-        <Swatch value={colors[key]} size="sm" />
-        <span className="text-fg-muted w-5 shrink-0">{label}</span>
-        <span className="font-mono text-fg-secondary">{colors[key]}</span>
-      </span>
-    ))}
-  </div>
-)
-
 const Tab = ({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) => (
   <button type="button" onClick={onClick}
     className={`px-2.5 py-1 text-[12px] font-mono rounded-md cursor-pointer transition-colors ${

@@ -1,6 +1,6 @@
 import type { Meta } from '@storybook/react'
 import { useState } from 'react'
-import { User, Building2, Folder, Globe } from 'lucide-react'
+import { Building2, Folder, Globe } from 'lucide-react'
 import { Avatar } from './avatar'
 
 const meta: Meta = {

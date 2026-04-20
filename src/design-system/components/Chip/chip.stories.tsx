@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
-import { Star, ChevronDown, Check } from 'lucide-react'
+import { Star, ChevronDown } from 'lucide-react'
 import { Chip, ChipGroup } from './chip'
 import { Badge } from '@/design-system/components/Badge/badge'
 

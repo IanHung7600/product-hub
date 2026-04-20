@@ -20,7 +20,6 @@ type SizeKey = 'sm' | 'md' | 'lg'
 type ColorSpec = { bg: string; text: string; border: string }
 
 const MODES: ModeKey[] = ['edit', 'readonly', 'disabled']
-const STATES: StateKey[] = ['default', 'hover', 'focus', 'error', 'disabled']
 const SIZES: SizeKey[] = ['sm', 'md', 'lg']
 
 const MODE_DESC: Record<ModeKey, string> = {
@@ -107,18 +106,6 @@ const Swatch = ({ value, size = 'md' }: { value: string; size?: 'sm' | 'md' }) =
   }
   return <span className={`${s} rounded-md shrink-0 border border-black/10`} style={{ backgroundColor: `var(${value})` }} />
 }
-
-const TokenAnnotation = ({ colors }: { colors: ColorSpec }) => (
-  <div className="flex flex-col gap-0.5 mt-2">
-    {([['bg', 'bg'], ['text', 'text'], ['border', 'bdr']] as const).map(([key, label]) => (
-      <span key={key} className="inline-flex items-center gap-1 text-[10px]">
-        <Swatch value={colors[key]} size="sm" />
-        <span className="text-fg-muted w-5 shrink-0">{label}</span>
-        <span className="font-mono text-fg-secondary">{colors[key]}</span>
-      </span>
-    ))}
-  </div>
-)
 
 const Tab = ({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) => (
   <button type="button" onClick={onClick}

@@ -65,7 +65,7 @@ Modal 與 viewport 四邊保持 `--layout-space-bottom`（48px）最小間距。
 
 ## maxWidth
 
-預設 512px，consumer 可透過 `maxWidth` prop 調整。
+預設 512px，consumer 可透過 `maxWidth` prop 調整。型別 `string | number`（傳 number 視為 px）。
 
 ## 關閉按鈕
 

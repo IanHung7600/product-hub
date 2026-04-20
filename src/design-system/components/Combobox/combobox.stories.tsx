@@ -1,7 +1,7 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { createColumnHelper } from '@tanstack/react-table'
-import { Combobox, ComboboxDisplay } from './combobox'
+import { Combobox } from './combobox'
 import { Button } from '@/design-system/components/Button/button'
 import { DataTable } from '@/design-system/components/DataTable/data-table'
 import '@/design-system/components/DataTable/column-types'

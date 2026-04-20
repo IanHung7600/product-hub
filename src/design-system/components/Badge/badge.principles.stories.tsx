@@ -1,6 +1,6 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Bell, Inbox, Archive, FileText, MessageSquare, Filter, Settings } from 'lucide-react'
+import { Bell, Inbox, Archive, FileText, MessageSquare, Settings } from 'lucide-react'
 import { Badge } from './badge'
 import { Button } from '@/design-system/components/Button/button'
 

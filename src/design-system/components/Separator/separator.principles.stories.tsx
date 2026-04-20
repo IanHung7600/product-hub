@@ -45,7 +45,7 @@ export const WhoDecidesRule: Story = {
     <div>
       <Rule
         title="✅ Consumer 手動放置 → 用 Separator"
-        note="Consumer 在 JSX 裡明確決定「這裡要分隔」時使用 Separator。提供 role=\"separator\" 的 ARIA 語意,讓輔助技術辨識內容群組邊界"
+        note={'Consumer 在 JSX 裡明確決定「這裡要分隔」時使用 Separator。提供 role="separator" 的 ARIA 語意,讓輔助技術辨識內容群組邊界'}
       >
         <div className="border border-border rounded-lg p-4 max-w-md flex flex-col gap-3">
           <div>
@@ -115,7 +115,7 @@ export const DecorativeSemanticRule: Story = {
 
       <Rule
         title="明確結構性分組(語意分隔)→ decorative={false}"
-        note="當 Separator 真的代表內容層級的結構邊界(例如 profile page 的「個人」vs「團隊」兩個 section),設 decorative={false},讓 screen reader 讀出 role=\"separator\""
+        note={'當 Separator 真的代表內容層級的結構邊界(例如 profile page 的「個人」vs「團隊」兩個 section),設 decorative={false},讓 screen reader 讀出 role="separator"'}
       >
         <div className="border border-border rounded-lg p-4 max-w-md flex flex-col gap-3">
           <div>
@@ -178,7 +178,7 @@ export const NotAsBorderRule: Story = {
 
       <Rule
         title="❌ 用 Separator 模仿 Table 格線 / Card 輪廓"
-        note="格線與輪廓屬於容器邊界,不是內容分組。格線應是 table cell 的 `border-b`,Card 輪廓應是 `border border-border`。濫用 Separator 會產生大量 role=\"separator\",讓 screen reader 讀出雜訊"
+        note={'格線與輪廓屬於容器邊界,不是內容分組。格線應是 table cell 的 `border-b`,Card 輪廓應是 `border border-border`。濫用 Separator 會產生大量 role="separator",讓 screen reader 讀出雜訊'}
       >
         <div className="max-w-md">
           <div className="py-1 text-body">2026-04-18 登入</div>

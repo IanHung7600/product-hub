@@ -1,8 +1,7 @@
 import type { Meta } from '@storybook/react'
 import { useState, useEffect } from 'react'
-import { Plus, ChevronDown, Download, Trash2, Settings, Search, Maximize2 } from 'lucide-react'
+import { Plus, ChevronDown, Download, Trash2, Settings } from 'lucide-react'
 import { Button } from './button'
-import { Badge } from '@/design-system/components/Badge/badge'
 
 const meta: Meta = {
   title: 'Design System/Components/Button/設計規格',
@@ -101,30 +100,6 @@ const VARIANT_DESC: Record<VariantKey, string> = {
   tertiary: '最常用——取消、關閉、一般輔助操作',
   text: '低視覺權重，不需強調的輔助動作',
   link: '外觀像連結的按鈕，不用於操作列',
-}
-
-// Toggle pressed 狀態的 token 對照（僅 secondary/tertiary/text 支援）
-// secondary 與 tertiary 按下後視覺合併（都變 primary-subtle 系列）；
-// text 走 neutral-selected family，hover 反向變淺、:active 深一階。
-const PRESSED_TOKEN_MAP: Record<PressedVariantKey, Record<StateKey, ColorSpec>> = {
-  secondary: {
-    default: { bg: '--primary-subtle', text: '--primary', border: 'transparent' },
-    hover: { bg: '--primary-subtle', text: '--primary-hover', border: 'transparent' },
-    active: { bg: '--primary-subtle', text: '--primary-active', border: 'transparent' },
-    disabled: { bg: '--bg-disabled', text: '--fg-disabled', border: 'transparent' },
-  },
-  tertiary: {
-    default: { bg: '--primary-subtle', text: '--primary', border: 'transparent' },
-    hover: { bg: '--primary-subtle', text: '--primary-hover', border: 'transparent' },
-    active: { bg: '--primary-subtle', text: '--primary-active', border: 'transparent' },
-    disabled: { bg: '--bg-disabled', text: '--fg-disabled', border: 'transparent' },
-  },
-  text: {
-    default: { bg: '--neutral-selected', text: '--foreground', border: 'transparent' },
-    hover: { bg: '--neutral-selected-hover', text: '--foreground', border: 'transparent' },
-    active: { bg: '--neutral-selected-active', text: '--foreground', border: 'transparent' },
-    disabled: { bg: 'transparent', text: '--fg-disabled', border: 'transparent' },
-  },
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -583,12 +558,12 @@ export const SizeMatrix = {
           </tr></thead>
           <tbody>
             {([
-              { label: '高度', key: 'heightToken', sub: 'height' },
+              { label: '高度', key: 'heightToken', sub: 'height', subFn: undefined as ((s: SizeSpec) => string) | undefined },
               { label: '左右內距', key: 'pxToken', sub: undefined, subFn: (s: SizeSpec) => `${s.px}px` },
               { label: '元素間距', key: 'gapToken', sub: undefined, subFn: (s: SizeSpec) => `${s.gap}px` },
               { label: '字體', key: 'fontToken', sub: undefined, subFn: (s: SizeSpec) => s.font },
               { label: 'Icon', key: undefined as string | undefined, sub: undefined, subFn: (s: SizeSpec) => `${s.icon}px` },
-              { label: 'Min Width', key: 'minWToken', sub: undefined },
+              { label: 'Min Width', key: 'minWToken', sub: undefined, subFn: undefined as ((s: SizeSpec) => string) | undefined },
             ] as const).map((row) => (
               <tr key={row.label}>
                 <Td>{row.label}</Td>

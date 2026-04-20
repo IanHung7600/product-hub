@@ -1,4 +1,3 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Slider } from './slider'
 import { H3, Desc, Td, Th, TokenCell } from '@/design-system/components/_anatomy/anatomy-utils'
@@ -24,7 +23,7 @@ export const Overview: Story = {
 
       <div>
         <H3>Range mode(雙 thumb)</H3>
-        <Desc>Radix Slider 原生支援多 thumb——只要 `value` / `defaultValue` 傳 array > 1,自動渲染對應 thumb,range 落在最小和最大 thumb 之間。</Desc>
+        <Desc>Radix Slider 原生支援多 thumb——只要 `value` / `defaultValue` 傳 array 長度 &gt; 1,自動渲染對應 thumb,range 落在最小和最大 thumb 之間。</Desc>
         <div className="max-w-md border border-border rounded-lg p-6">
           <Slider defaultValue={[20, 80]} />
         </div>

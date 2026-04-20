@@ -1,4 +1,3 @@
-import * as React from 'react'
 
 /**
  * BooleanDisplay — 布林值的純文字顯示

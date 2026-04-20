@@ -119,9 +119,6 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       }
     }
 
-    const iconSize = size === 'lg' ? 20 : 16
-    const actionHoverSize = iconSize + 2
-
     return (
       <div
         className={cn(

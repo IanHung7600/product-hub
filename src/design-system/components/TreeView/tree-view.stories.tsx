@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import {
   Folder, FileText, FileCode, Image, Settings,
   CheckCircle2, Circle, Minus,
+  type LucideIcon,
 } from 'lucide-react'
 import { TreeView, TreeItem } from './tree-view'
 import { Checkbox } from '@/design-system/components/Checkbox/checkbox'
@@ -160,7 +161,7 @@ export const LongLabel: Story = {
 
 // ── Drag and Drop (functional — items actually move) ────────────────────
 
-interface DemoNode { id: string; label: string; icon: React.ComponentType<{ size: number; className?: string }>; children?: DemoNode[] }
+interface DemoNode { id: string; label: string; icon: LucideIcon; children?: DemoNode[] }
 
 function removeNode(nodes: DemoNode[], id: string): [DemoNode[], DemoNode | null] {
   let removed: DemoNode | null = null

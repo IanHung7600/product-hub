@@ -1,4 +1,3 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Users, Settings, Bell, FileText } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs'
@@ -47,10 +46,10 @@ export const Overview: Story = {
           <Tabs defaultValue="files">
             <TabsList>
               <TabsTrigger value="files" startIcon={FileText}>文件</TabsTrigger>
-              <TabsTrigger value="members" startIcon={Users} suffix={<Badge count={3} variant="low" />}>
+              <TabsTrigger value="members" startIcon={Users} badge={<Badge count={3} variant="low" />}>
                 成員
               </TabsTrigger>
-              <TabsTrigger value="notifications" startIcon={Bell} suffix={<Badge count={12} variant="high" />}>
+              <TabsTrigger value="notifications" startIcon={Bell} badge={<Badge count={12} variant="high" />}>
                 通知
               </TabsTrigger>
               <TabsTrigger value="settings" startIcon={Settings}>設定</TabsTrigger>
@@ -108,8 +107,8 @@ export const SizeMatrix: Story = {
             <div key={size}>
               <div className="text-caption text-fg-muted mb-2 font-mono">size="{size}"</div>
               <div className="border border-border rounded-lg p-4">
-                <Tabs size={size} defaultValue="a">
-                  <TabsList>
+                <Tabs defaultValue="a">
+                  <TabsList size={size}>
                     <TabsTrigger value="a">總覽</TabsTrigger>
                     <TabsTrigger value="b">成員</TabsTrigger>
                     <TabsTrigger value="c">設定</TabsTrigger>
@@ -196,10 +195,10 @@ export const ColorMatrix: Story = {
           <Tabs defaultValue="members">
             <TabsList>
               <TabsTrigger value="files" startIcon={FileText}>文件</TabsTrigger>
-              <TabsTrigger value="members" startIcon={Users} suffix={<Badge count={3} variant="low" />}>
+              <TabsTrigger value="members" startIcon={Users} badge={<Badge count={3} variant="low" />}>
                 成員
               </TabsTrigger>
-              <TabsTrigger value="notifications" startIcon={Bell} suffix={<Badge count={12} variant="high" />}>
+              <TabsTrigger value="notifications" startIcon={Bell} badge={<Badge count={12} variant="high" />}>
                 通知
               </TabsTrigger>
               <TabsTrigger value="settings" startIcon={Settings}>設定</TabsTrigger>
@@ -244,8 +243,8 @@ export const OverflowMatrix: Story = {
         <H3>overflow="scroll" — 水平捲動 + fade mask</H3>
         <Desc>Tabs 超出容器寬度時,左右兩端出現 scroll arrow + 漸變遮罩(fade mask)提示可捲動。使用 `useScrollEdges` + `OverflowScrollArrow` 共用 hook。</Desc>
         <div className="border border-border rounded-lg p-4 max-w-md">
-          <Tabs overflow="scroll" defaultValue="a">
-            <TabsList>
+          <Tabs defaultValue="a">
+            <TabsList overflow="scroll">
               <TabsTrigger value="a">總覽</TabsTrigger>
               <TabsTrigger value="b">成員</TabsTrigger>
               <TabsTrigger value="c">專案設定</TabsTrigger>
@@ -263,8 +262,8 @@ export const OverflowMatrix: Story = {
         <H3>overflow="menu" — 隱藏溢出 + DropdownMenu trigger</H3>
         <Desc>Tabs 超出容器時,溢出部分收入 DropdownMenu(由 OverflowMenuTriggerButton 觸發),避免 scroll 互動。適合 tab 數量較多但使用者不常切換到後面的場景。</Desc>
         <div className="border border-border rounded-lg p-4 max-w-md">
-          <Tabs overflow="menu" defaultValue="a">
-            <TabsList>
+          <Tabs defaultValue="a">
+            <TabsList overflow="menu">
               <TabsTrigger value="a">總覽</TabsTrigger>
               <TabsTrigger value="b">成員</TabsTrigger>
               <TabsTrigger value="c">專案設定</TabsTrigger>

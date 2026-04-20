@@ -19,11 +19,11 @@ export const Desc = ({ children }: { children: React.ReactNode }) => (
   <p className="text-caption text-fg-muted mb-4 max-w-[720px] leading-relaxed">{children}</p>
 )
 
-export const Td = ({ children, mono }: { children: React.ReactNode; mono?: boolean }) => (
-  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''}`}>{children}</td>
+export const Td = ({ children, mono, className }: { children: React.ReactNode; mono?: boolean; className?: string }) => (
+  <td className={`border border-border px-3 py-1.5 text-caption ${mono ? 'font-mono' : ''} ${className ?? ''}`}>{children}</td>
 )
 
-export const Th = ({ children }: { children: React.ReactNode }) => (
+export const Th = ({ children }: { children?: React.ReactNode }) => (
   <th className="border border-border px-3 py-1.5 text-caption text-fg-secondary bg-muted text-left">{children}</th>
 )
 

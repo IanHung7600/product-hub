@@ -48,8 +48,8 @@ const DialogOverlay = React.forwardRef<
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
 interface DialogContentProps extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {
-  /** 最大寬度。預設 512px。 */
-  maxWidth?: string
+  /** 最大寬度。預設 512px。傳 number 視為 px。 */
+  maxWidth?: string | number
   /**
    * 高度模式。
    * - 不傳（預設）：填滿 viewport（height = 100vh - inset*2），body 捲動。防止內容跳動。
@@ -64,6 +64,7 @@ const DialogContent = React.forwardRef<
 >(({ className, maxWidth = '512px', autoHeight, children, style, ...props }, ref) => {
   const insetCalc = `${DIALOG_INSET_VAR} * 2`
   const viewportH = `calc(100vh - ${insetCalc})`
+  const maxWidthCss = typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth
 
   const heightStyle: React.CSSProperties = autoHeight
     ? { maxHeight: viewportH }
@@ -87,7 +88,7 @@ const DialogContent = React.forwardRef<
         )}
         style={{
           boxShadow: 'var(--elevation-200)',
-          maxWidth: `min(${maxWidth}, calc(100vw - ${insetCalc}))`,
+          maxWidth: `min(${maxWidthCss}, calc(100vw - ${insetCalc}))`,
           ...heightStyle,
           ...style,
         }}

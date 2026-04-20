@@ -1,6 +1,5 @@
 import type { Meta } from '@storybook/react'
 import { useState, useEffect } from 'react'
-import { Pencil } from 'lucide-react'
 import { LinkInput } from './link-input'
 
 const meta: Meta = {

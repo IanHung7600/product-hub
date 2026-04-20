@@ -1,8 +1,7 @@
 import type { Meta } from '@storybook/react'
 import { useState, useEffect } from 'react'
-import { Calendar, X } from 'lucide-react'
 import { DatePicker, DatePickerDisplay } from './date-picker'
-import { Calendar as DSCalendar } from './calendar'
+import { Calendar as DSCalendar } from '@/design-system/components/Calendar/calendar'
 
 const meta: Meta = {
   title: 'Design System/Components/DatePicker/設計規格',

@@ -197,7 +197,6 @@ export const ClampPolicyRule: Story = {
       >
         <Checkbox
           label="我同意非常長的服務條款與隱私政策以及所有使用規範這段文字被截斷了你看不到剩下的部分"
-          labelMaxLines={1}
         />
         <Label warn>↑ 截斷同意條款 → 使用者可能同意了看不到的內容</Label>
       </Rule>

@@ -1,7 +1,7 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
-import { Mail, Check, Circle, Star, Bell, Settings, Plus, Folder, FileText, BarChart3 } from 'lucide-react'
+import { Mail, Star, Bell, Settings, Plus, Folder, FileText, BarChart3 } from 'lucide-react'
 import { MenuItem, MenuGroup, MenuFooter } from './menu-item'
 
 const meta: Meta<typeof MenuItem> = {

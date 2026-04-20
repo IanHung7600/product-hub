@@ -1,4 +1,3 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { X, Download, RotateCw } from 'lucide-react'
 import { FileItem } from './file-item'

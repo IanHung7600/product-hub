@@ -1,7 +1,5 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import { Check } from 'lucide-react'
-import { Steps, StepItem } from './steps'
+import { Steps, StepItem, StepLabel, StepDescription } from './steps'
 import { H3, Desc, Td, Th, TokenCell, Swatch } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
@@ -20,11 +18,11 @@ export const Overview: Story = {
         <Desc>Steps 是有序步驟序列——Indicator(圓形)+ Label + 可選 Description + Connector(連接線)。每個 StepItem 有三種狀態:completed / current / upcoming。</Desc>
         <div className="border border-border rounded-lg p-4 max-w-2xl">
           <Steps value="shipping" completedValues={['cart', 'payment']}>
-            <StepItem value="cart" label="購物車" />
-            <StepItem value="payment" label="付款資訊" />
-            <StepItem value="shipping" label="配送方式" description="當前步驟" />
-            <StepItem value="review" label="確認訂單" />
-            <StepItem value="done" label="完成" />
+            <StepItem value="cart"><StepLabel>購物車</StepLabel></StepItem>
+            <StepItem value="payment"><StepLabel>付款資訊</StepLabel></StepItem>
+            <StepItem value="shipping"><StepLabel>配送方式</StepLabel><StepDescription>當前步驟</StepDescription></StepItem>
+            <StepItem value="review"><StepLabel>確認訂單</StepLabel></StepItem>
+            <StepItem value="done"><StepLabel>完成</StepLabel></StepItem>
           </Steps>
         </div>
       </div>
@@ -83,10 +81,10 @@ export const OrientationMatrix: Story = {
         <Desc>步驟水平排列,常見於結帳流程 / wizard 頂部。Indicator 之間有橫向 connector。</Desc>
         <div className="border border-border rounded-lg p-4 max-w-2xl">
           <Steps value="payment" completedValues={['cart']}>
-            <StepItem value="cart" label="購物車" />
-            <StepItem value="payment" label="付款" />
-            <StepItem value="shipping" label="配送" />
-            <StepItem value="done" label="完成" />
+            <StepItem value="cart"><StepLabel>購物車</StepLabel></StepItem>
+            <StepItem value="payment"><StepLabel>付款</StepLabel></StepItem>
+            <StepItem value="shipping"><StepLabel>配送</StepLabel></StepItem>
+            <StepItem value="done"><StepLabel>完成</StepLabel></StepItem>
           </Steps>
         </div>
       </div>
@@ -96,9 +94,9 @@ export const OrientationMatrix: Story = {
         <Desc>步驟垂直排列,支援 description(多行描述)。常見於 onboarding / 安裝引導 / 複雜流程。</Desc>
         <div className="border border-border rounded-lg p-4 max-w-md">
           <Steps orientation="vertical" value="config" completedValues={['install']}>
-            <StepItem value="install" label="安裝套件" description="npm install @acme/cli" />
-            <StepItem value="config" label="設定環境" description="修改 .env.local 加入 API key" />
-            <StepItem value="deploy" label="部署上線" description="執行 acme deploy" />
+            <StepItem value="install"><StepLabel>安裝套件</StepLabel><StepDescription>npm install @acme/cli</StepDescription></StepItem>
+            <StepItem value="config"><StepLabel>設定環境</StepLabel><StepDescription>修改 .env.local 加入 API key</StepDescription></StepItem>
+            <StepItem value="deploy"><StepLabel>部署上線</StepLabel><StepDescription>執行 acme deploy</StepDescription></StepItem>
           </Steps>
         </div>
       </div>
@@ -176,10 +174,10 @@ export const ColorMatrix: Story = {
         <Desc>包含 error state 的結帳流程(例如付款失敗)。error 取代原本的 completed 指示。</Desc>
         <div className="border border-border rounded-lg p-4 max-w-2xl">
           <Steps value="shipping" completedValues={['cart']} errorValues={['payment']}>
-            <StepItem value="cart" label="購物車" />
-            <StepItem value="payment" label="付款失敗" description="信用卡驗證未通過" />
-            <StepItem value="shipping" label="配送方式" description="當前步驟" />
-            <StepItem value="review" label="確認訂單" />
+            <StepItem value="cart"><StepLabel>購物車</StepLabel></StepItem>
+            <StepItem value="payment"><StepLabel>付款失敗</StepLabel><StepDescription>信用卡驗證未通過</StepDescription></StepItem>
+            <StepItem value="shipping"><StepLabel>配送方式</StepLabel><StepDescription>當前步驟</StepDescription></StepItem>
+            <StepItem value="review"><StepLabel>確認訂單</StepLabel></StepItem>
           </Steps>
         </div>
       </div>
@@ -199,9 +197,9 @@ export const SizeMatrix: Story = {
             <div key={size} className="border border-dashed border-divider rounded-md p-4">
               <div className="text-caption text-fg-muted mb-2 font-mono">size="{size}"</div>
               <Steps size={size} value="b" completedValues={['a']}>
-                <StepItem value="a" label="第一步" />
-                <StepItem value="b" label="第二步" />
-                <StepItem value="c" label="第三步" />
+                <StepItem value="a"><StepLabel>第一步</StepLabel></StepItem>
+                <StepItem value="b"><StepLabel>第二步</StepLabel></StepItem>
+                <StepItem value="c"><StepLabel>第三步</StepLabel></StepItem>
               </Steps>
             </div>
           ))}
@@ -220,13 +218,12 @@ export const IndentAlignment: Story = {
         <Desc>**刻意打破 item-layout 的 24px 閾值規則**——不管 indicator 尺寸、不管有無 description,一律 inline 對齊。Column rhythm 優先於「大 prefix 視覺重量平衡文字塊」。這是 Steps 跟其他 row primitive 的本質差異——Steps 是「一條有連接關係的進度路徑」,column rhythm 是元件本身。</Desc>
         <div className="border border-border rounded-lg p-4 max-w-md">
           <Steps orientation="vertical" value="b" completedValues={['a']}>
-            <StepItem value="a" label="簡短 label" />
-            <StepItem
-              value="b"
-              label="帶有描述的 label"
-              description="即使有多行 description,indicator 仍然對齊 label 第一行,保持 column rhythm"
-            />
-            <StepItem value="c" label="另一個 label" />
+            <StepItem value="a"><StepLabel>簡短 label</StepLabel></StepItem>
+            <StepItem value="b">
+              <StepLabel>帶有描述的 label</StepLabel>
+              <StepDescription>即使有多行 description,indicator 仍然對齊 label 第一行,保持 column rhythm</StepDescription>
+            </StepItem>
+            <StepItem value="c"><StepLabel>另一個 label</StepLabel></StepItem>
           </Steps>
         </div>
         <p className="text-footnote text-fg-muted mt-3">業界共識:Apple HIG、Material 3、Linear、GitHub Actions 的 steps 都是 indicator 對齊 label 第一行</p>

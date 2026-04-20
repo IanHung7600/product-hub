@@ -137,7 +137,7 @@ function DataTableInner<TData>(
   const hasRowActions = !!rowActions
 
   // Refs
-  const tableRef = React.useRef<HTMLDivElement>(null)
+  const tableRef = React.useRef<HTMLDivElement | null>(null)
   const bodyRef = React.useRef<HTMLDivElement>(null)
   const centerHeaderRef = React.useRef<HTMLDivElement>(null)
   const centerBodyRef = React.useRef<HTMLDivElement>(null)

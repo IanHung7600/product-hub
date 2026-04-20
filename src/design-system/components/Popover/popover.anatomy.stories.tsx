@@ -1,8 +1,7 @@
-import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverBody, PopoverFooter, PopoverTitle } from './popover'
 import { Button } from '@/design-system/components/Button/button'
-import { H3, Desc, Td, Th, Swatch, TokenCell } from '@/design-system/components/_anatomy/anatomy-utils'
+import { H3, Desc, Td, Th, TokenCell } from '@/design-system/components/_anatomy/anatomy-utils'
 
 const meta: Meta = {
   title: 'Design System/Components/Popover/設計規格',
@@ -51,7 +50,7 @@ export const Overview: Story = {
               <tr><Td mono>align</Td><Td mono>'start' | 'center' | 'end'</Td><Td mono>'center'</Td><Td>相對 trigger 的對齊</Td></tr>
               <tr><Td mono>side</Td><Td mono>'top' | 'right' | 'bottom' | 'left'</Td><Td mono>'bottom'</Td><Td>浮層出現在 trigger 的哪一側</Td></tr>
               <tr><Td mono>sideOffset</Td><Td mono>number</Td><Td mono>4</Td><Td>與 trigger 的距離(px)</Td></tr>
-              <tr><Td mono>open / onOpenChange</Td><Td mono>boolean / (o) => void</Td><Td mono>—</Td><Td>controlled 開關(選用)</Td></tr>
+              <tr><Td mono>open / onOpenChange</Td><Td mono>{'boolean / (o) => void'}</Td><Td mono>—</Td><Td>controlled 開關(選用)</Td></tr>
               <tr><Td mono>modal</Td><Td mono>boolean</Td><Td mono>false</Td><Td>`true` 時鎖 body scroll + focus trap</Td></tr>
             </tbody>
           </table>
@@ -171,7 +170,7 @@ export const StateBehavior: Story = {
 
       <div>
         <H3>Disabled / loading / empty / error 的職責邊界</H3>
-        <Desc>Popover 是容器,本身無這些狀態——內容層負責。trigger 的 disabled 由 trigger 元件自己管(`<Button disabled>`);內容的 loading / empty / error 由 consumer 在 `PopoverContent` 內部渲染對應 primitive(Skeleton / Empty / Alert)。</Desc>
+        <Desc>{'Popover 是容器,本身無這些狀態——內容層負責。trigger 的 disabled 由 trigger 元件自己管(`<Button disabled>`);內容的 loading / empty / error 由 consumer 在 `PopoverContent` 內部渲染對應 primitive(Skeleton / Empty / Alert)。'}</Desc>
       </div>
     </div>
   ),
