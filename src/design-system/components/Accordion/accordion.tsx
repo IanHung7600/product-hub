@@ -10,8 +10,9 @@ import { cn } from '@/lib/utils'
  * AccordionContent),但視覺全改本 DS token。
  *
  * ── 視覺差異 vs shadcn 預設 ──
- * Shadcn 預設 hover 加底線(web 早期 link style),本 DS 改為文字色 tint(text-foreground)
- * 維持現代 SaaS 質感(Notion / Linear / Stripe 皆不用底線)。
+ * Shadcn 預設 hover 加底線(web 早期 link style),本 DS 改為文字色 tint
+ * (`hover:text-fg-secondary`)——維持現代 SaaS 質感(Notion / Linear / Stripe 皆不用
+ * 底線),但保留 hover 顏色變化作為可點擊提示(user 決策 2026-04-20)。
  * Chevron 用 Lucide + 本 DS icon size(16px),rotate 動畫 200ms。
  *
  * ── 使用情境 ──

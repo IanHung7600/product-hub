@@ -3,6 +3,7 @@ import { User } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/design-system/components/HoverCard/hover-card'
+import { Badge } from '@/design-system/components/Badge/badge'
 
 /**
  * Avatar — 頭像元件
@@ -81,8 +82,20 @@ export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
   color?: ColorKey
   /** 深底白字模式（step-6 背景 + 白色前景，warning 例外），預設 false */
   solid?: boolean
-  /** 在線狀態指示器，顯示在 avatar 右下角 */
-  status?: 'available' | 'away' | 'busy' | 'offline'
+  /**
+   * 在線狀態指示器(presence),顯示在 avatar **右下角**。
+   * 世界級對照:Slack / Teams / Discord — `online` 是最廣泛被理解的術語。
+   * 位置語義:右下 = "此人的 presence"(使用者聚焦於「這個人是誰 + 現在 在不在」)。
+   */
+  status?: 'online' | 'away' | 'busy' | 'offline'
+  /**
+   * 未讀 / 通知計數 badge,顯示在 avatar **右上角**。
+   * 世界級對照:chat app(iMessage / Slack thread / LINE / WhatsApp)一律右上角。
+   * 位置語義:右上 = "關於此對話的新事件數量"(使用者聚焦於「有多少未處理」);
+   * 與右下的 presence 共存不衝突(不同角、不同語義)。
+   * `> 99` 自動顯示 "99+"(交給內部 Badge 的 `max` 行為)。
+   */
+  badgeCount?: number
   /**
    * 傳入 HoverCard 內容（如 NameCard），hover avatar 時自動顯示。
    * 只有人員 avatar 需要傳；實體 avatar（專案、組織）不傳。
@@ -91,7 +104,7 @@ export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
-  ({ size = 32, shape = 'circle', src, alt, icon: Icon, color = 'neutral', solid = false, status, hoverCard, className, style, ...props }, ref) => {
+  ({ size = 32, shape = 'circle', src, alt, icon: Icon, color = 'neutral', solid = false, status, badgeCount, hoverCard, className, style, ...props }, ref) => {
     const [imgError, setImgError] = React.useState(false)
     const isFill = size === 'fill'
     // Fill 模式下 icon 用 60% 寬高、text 用 50cqi（container query inline-size）；
@@ -110,15 +123,19 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
 
     const FallbackIcon = Icon ?? User
 
-    // Status dot 尺寸：avatar 的 25%，最小 8px 最大 14px
-    const dotSize = isFill ? 10 : Math.max(8, Math.min(14, Math.round(numSize * 0.25)))
+    // Status dot 尺寸:avatar 的 28%(Slack / Teams / Discord 世界級平均),
+    // clamp [8, 16] — floor 8 保小 avatar 仍可辨識但不喧賓奪主(10 floor 會讓 24px
+    // avatar 的 dot 占 42% 太大);ceiling 16 防大 avatar dot 過度放大
+    const dotSize = isFill ? 10 : Math.max(8, Math.min(16, Math.round(numSize * 0.28)))
+    // Border ring 在 surface 上分離 dot 與 avatar,dotSize ≥ 12 時升階到 3px 保持視覺比例
     const dotBorder = dotSize >= 12 ? 3 : 2
 
+    // Semantic presence tokens — 見 color/semantic.css
     const STATUS_DOT_COLOR: Record<string, string> = {
-      available: 'var(--success)',
-      away: 'var(--warning)',
-      busy: 'var(--error)',
-      offline: 'var(--fg-muted)',
+      online: 'var(--status-online)',
+      away: 'var(--status-away)',
+      busy: 'var(--status-busy)',
+      offline: 'var(--status-offline)',
     }
 
     const avatarEl = (
@@ -162,23 +179,45 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
       </div>
     )
 
-    const baseEl = !status
+    const hasOverlay = status || typeof badgeCount === 'number'
+    const baseEl = !hasOverlay
       ? <div ref={ref} className={cn('inline-flex shrink-0', className)} style={style} {...props}>{avatarEl}</div>
       : (
         <div ref={ref} className={cn('relative inline-flex shrink-0', className)} style={style} {...props}>
           {avatarEl}
-          <span
-            className="absolute block rounded-full"
-            style={{
-              width: dotSize,
-              height: dotSize,
-              bottom: 0,
-              right: 0,
-              backgroundColor: STATUS_DOT_COLOR[status],
-              boxShadow: `0 0 0 ${dotBorder}px var(--surface-raised, var(--canvas))`,
-            }}
-            aria-label={status}
-          />
+          {/* Status dot:bottom-right(presence — 世界級對照 Slack / Teams / Discord),
+              落在 circle avatar 圓周 45° 位置 / square avatar 右下直角;
+              border ring 用 surface 色讓 dot 從 avatar 邊界視覺分離 */}
+          {status && (
+            <span
+              className="absolute block rounded-full"
+              style={{
+                width: dotSize,
+                height: dotSize,
+                bottom: 0,
+                right: 0,
+                backgroundColor: STATUS_DOT_COLOR[status],
+                boxShadow: `0 0 0 ${dotBorder}px var(--surface-raised, var(--canvas))`,
+              }}
+              role="status"
+              aria-label={`presence: ${status}`}
+            />
+          )}
+          {/* Count badge:top-right(chat 未讀 / 通知計數 — 世界級對照 iMessage /
+              Slack thread / LINE / WhatsApp)。消費 DS Badge(critical variant),
+              再加 ring 與 avatar 分離 */}
+          {typeof badgeCount === 'number' && badgeCount > 0 && (
+            <Badge
+              variant="critical"
+              count={badgeCount}
+              max={99}
+              className="absolute -top-1 -right-1"
+              style={{
+                boxShadow: `0 0 0 2px var(--surface-raised, var(--canvas))`,
+              }}
+              aria-label={`${badgeCount} unread`}
+            />
+          )}
         </div>
       )
 

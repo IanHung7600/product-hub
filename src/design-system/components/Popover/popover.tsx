@@ -1,8 +1,10 @@
 import * as React from "react"
 import * as PopoverPrimitive from "@radix-ui/react-popover"
+import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { SurfaceHeader, SurfaceBody, SurfaceFooter } from "@/design-system/patterns/overlay-surface/overlay-surface"
+import { ItemInlineActionButton } from "@/design-system/patterns/element-anatomy/item-anatomy"
 
 /**
  * Popover — Radix Popover + 設計系統 token
@@ -15,20 +17,28 @@ import { SurfaceHeader, SurfaceBody, SurfaceFooter } from "@/design-system/patte
  * PopoverContent：外殼（bg / border / radius / shadow / density），無內距。
  * PopoverHeader / PopoverBody / PopoverFooter：消費 overlay-surface pattern
  * 共用的 SurfaceHeader / SurfaceBody / SurfaceFooter primitives(padding SSOT)。
+ *
+ * ── Header dismiss X(2026-04-20 決策) ──
+ * 所有 PopoverHeader 一律附右上 X 按鈕(對齊 Dialog 的 canonical)。Popover 雖是
+ * non-modal + click-outside-to-close,但有 header 的 Popover 通常結構化程度高
+ * (title / 多區塊),明確的「關閉」入口讓使用者更易退出。無 header 的簡單 Popover
+ * 不加 X(click-outside / Esc 即可)。
  */
 
 const Popover = PopoverPrimitive.Root
 const PopoverTrigger = PopoverPrimitive.Trigger
+const PopoverClose = PopoverPrimitive.Close
 
 const PopoverContent = React.forwardRef<
   React.ElementRef<typeof PopoverPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
->(({ className, align = "center", sideOffset = 4, ...props }, ref) => (
+>(({ className, align = "center", sideOffset = 8, collisionPadding = 8, ...props }, ref) => (
   <PopoverPrimitive.Portal>
     <PopoverPrimitive.Content
       ref={ref}
       align={align}
       sideOffset={sideOffset}
+      collisionPadding={collisionPadding}
       data-density="md"
       className={cn(
         "z-50 w-72 rounded-lg border border-border bg-surface-raised text-foreground shadow-[var(--elevation-200)] outline-none",
@@ -43,7 +53,25 @@ const PopoverContent = React.forwardRef<
 ))
 PopoverContent.displayName = PopoverPrimitive.Content.displayName
 
-const PopoverHeader = SurfaceHeader
+// PopoverHeader: SurfaceHeader + Close X(對齊 Dialog 的 canonical,見 docblock)
+// justify-between 讓 children 與 Close 分左右。
+const PopoverHeader = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, children, ...props }, ref) => (
+  <SurfaceHeader
+    ref={ref}
+    className={cn("justify-between", className)}
+    {...props}
+  >
+    <div className="flex-1 min-w-0">{children}</div>
+    <PopoverPrimitive.Close asChild>
+      <ItemInlineActionButton icon={X} aria-label="關閉" size="md" />
+    </PopoverPrimitive.Close>
+  </SurfaceHeader>
+))
+PopoverHeader.displayName = "PopoverHeader"
+
 const PopoverBody = SurfaceBody
 const PopoverFooter = SurfaceFooter
 
@@ -63,6 +91,7 @@ export {
   Popover,
   PopoverTrigger,
   PopoverContent,
+  PopoverClose,
   PopoverHeader,
   PopoverBody,
   PopoverFooter,

@@ -106,11 +106,12 @@ interface DropdownMenuContentProps
 const DropdownMenuContent = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.Content>,
   DropdownMenuContentProps
->(({ className, size = 'md', sideOffset = 8, align = 'start', minWidth, maxHeight, children, ...props }, ref) => (
+>(({ className, size = 'md', sideOffset = 8, collisionPadding = 8, align = 'start', minWidth, maxHeight, children, ...props }, ref) => (
   <DropdownMenuPrimitive.Portal>
     <DropdownMenuPrimitive.Content
       ref={ref}
       sideOffset={sideOffset}
+      collisionPadding={collisionPadding}
       align={align}
       onCloseAutoFocus={(e) => e.preventDefault()}
       className={cn(floatingLayerClass, 'py-2', maxHeight && 'overflow-y-auto', className)}

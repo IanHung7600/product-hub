@@ -1,42 +1,29 @@
 import type { Meta } from '@storybook/react'
 import { useState } from 'react'
 import { CircleCheck, XCircle, X } from 'lucide-react'
-import { Progress } from './progress'
+import { ProgressBar } from './progress-bar'
 import { Button } from '@/design-system/components/Button/button'
 import { H3, Desc, Th, Td, TokenCell } from '@/design-system/stories-helpers/anatomy/anatomy-utils'
 
 const meta: Meta = {
-  title: 'Design System/Components/Progress/設計規格',
+  title: 'Design System/Components/ProgressBar/設計規格',
   parameters: { layout: 'padded' },
 }
 export default meta
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   Types & Data (與 progress.tsx 的 cva 對應表一致)
+   Types & Data (與 progress-bar.tsx 的 cva 對應表一致)
    ═══════════════════════════════════════════════════════════════════════════ */
 
 type StatusKey = 'inProgress' | 'success' | 'error'
-type SizeKey = 'sm' | 'md' | 'lg'
 type AffixKey = 'none' | 'value' | 'status-icon'
 
 const STATUSES: StatusKey[] = ['inProgress', 'success', 'error']
-const SIZES: SizeKey[] = ['sm', 'md', 'lg']
 
 const STATUS_TOKEN: Record<StatusKey, { fill: string; desc: string; affixIcon?: string }> = {
   inProgress: { fill: '--primary', desc: '進行中 / 未完成 ratio' },
   success: { fill: '--success', desc: '完成 / 成功', affixIcon: '--success' },
   error:   { fill: '--error',   desc: '失敗 / 中斷', affixIcon: '--error' },
-}
-
-interface SizeSpec {
-  heightPx: number
-  heightStyle: string
-  usage: string
-}
-const SIZE_SPECS: Record<SizeKey, SizeSpec> = {
-  sm: { heightPx: 2, heightStyle: 'style={{ height: 2 }}', usage: 'Table cell / FileItem compact / 密集列表' },
-  md: { heightPx: 4, heightStyle: 'style={{ height: 4 }}', usage: '一般用途(預設)' },
-  lg: { heightPx: 6, heightStyle: 'style={{ height: 6 }}', usage: 'Prominent card 的主要進度' },
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -93,7 +80,7 @@ export const Overview = {
           {STATUSES.map((s) => (
             <div key={s} className="flex items-center gap-4">
               <div className="w-28 shrink-0">
-                <Progress value={s === 'success' ? 100 : s === 'error' ? 60 : 45} status={s} size="md" />
+                <ProgressBar value={s === 'success' ? 100 : s === 'error' ? 60 : 45} status={s} />
               </div>
               <span className="font-mono text-caption w-20 text-fg-secondary">{s}</span>
               <span className="text-caption text-fg-secondary">{STATUS_TOKEN[s].desc}</span>
@@ -162,12 +149,11 @@ const PropRow = ({ label, children }: { label: string; children: React.ReactNode
 
 const InspectorInner = () => {
   const [status, setStatus] = useState<StatusKey>('inProgress')
-  const [size, setSize] = useState<SizeKey>('md')
   const [affix, setAffix] = useState<AffixKey>('value')
   const [value, setValue] = useState(45)
 
-  const spec = SIZE_SPECS[size]
   const sTok = STATUS_TOKEN[status]
+  const trackHeightPx = 4  // 固定(無 size prop)
   const affixNode =
     affix === 'value' ? ('value' as const) :
     affix === 'status-icon' ? ('status-icon' as const) :
@@ -181,12 +167,6 @@ const InspectorInner = () => {
           <span className="text-[11px] text-fg-muted w-16 shrink-0">Status</span>
           <div className="flex gap-1.5">
             {STATUSES.map((s) => <Tab key={s} active={status === s} onClick={() => setStatus(s)}>{s}</Tab>)}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] text-fg-muted w-16 shrink-0">Size</span>
-          <div className="flex gap-1.5">
-            {SIZES.map((sz) => <Tab key={sz} active={size === sz} onClick={() => setSize(sz)}>{sz}</Tab>)}
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -213,7 +193,7 @@ const InspectorInner = () => {
         {/* Left: preview */}
         <div className="flex flex-col gap-5 min-w-[360px]">
           <div className="px-6 py-10 rounded-lg bg-canvas border border-divider">
-            <Progress value={value} status={status} size={size} affix={affixNode} />
+            <ProgressBar value={value} status={status} affix={affixNode} />
           </div>
 
           {/* Blueprint:顯示 track 高度 + fill 寬度 */}
@@ -221,12 +201,12 @@ const InspectorInner = () => {
             <span className="text-[10px] text-fg-muted font-medium">Blueprint</span>
             <div className="relative rounded-md overflow-hidden bg-[rgba(253,218,158,0.3)] border-2 border-dashed border-[rgba(218,165,60,0.6)] px-2 py-3">
               <div className="relative">
-                <div className="rounded-full bg-secondary overflow-hidden" style={{ height: spec.heightPx }}>
+                <div className="rounded-full bg-secondary overflow-hidden" style={{ height: trackHeightPx }}>
                   <div className="h-full rounded-full transition-all duration-300"
                     style={{ width: `${value}%`, backgroundColor: `var(${sTok.fill})` }} />
                 </div>
                 <span className="absolute left-0 -bottom-5 text-[10px] font-mono text-fg-muted">
-                  track h={spec.heightPx}px · fill {value}%
+                  track h={trackHeightPx}px · fill {value}%
                 </span>
               </div>
             </div>
@@ -254,7 +234,7 @@ const InspectorInner = () => {
             <div className="py-2 border-b border-divider">
               <span className="text-[10px] font-semibold text-fg-muted uppercase tracking-wider">Layout</span>
             </div>
-            <PropRow label="高度">{spec.heightPx}px · {spec.heightStyle}</PropRow>
+            <PropRow label="高度">{trackHeightPx}px(固定,無 size prop)</PropRow>
             <PropRow label="Fill width">{`${value}%`}</PropRow>
             {affix !== 'none' && (
               <>
@@ -302,7 +282,7 @@ export const Inspector = {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const ColorMatrix = {
-  name: '3. 色彩對照',
+  name: '3. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <H3>Status × Token 對照</H3>
@@ -327,7 +307,7 @@ export const ColorMatrix = {
                 <Td mono>{s}</Td>
                 <Td>
                   <div className="w-[180px]">
-                    <Progress value={s === 'success' ? 100 : 60} status={s} size="md" />
+                    <ProgressBar value={s === 'success' ? 100 : 60} status={s} />
                   </div>
                 </Td>
                 <Td><TokenCell token="--secondary" /></Td>
@@ -346,9 +326,9 @@ export const ColorMatrix = {
       <div className="flex flex-col gap-3">
         <span className="text-caption font-medium text-fg-secondary">含 affix 預覽</span>
         <div className="flex flex-col gap-3 max-w-[420px]">
-          <Progress value={42} status="inProgress" size="md" affix="value" />
-          <Progress value={100} status="success" size="md" affix="status-icon" />
-          <Progress value={68} status="error" size="md" affix="status-icon" />
+          <ProgressBar value={42} status="inProgress" affix="value" />
+          <ProgressBar value={100} status="success" affix="status-icon" />
+          <ProgressBar value={68} status="error" affix="status-icon" />
         </div>
       </div>
     </div>
@@ -356,80 +336,11 @@ export const ColorMatrix = {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   4. 尺寸對照表
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-export const SizeMatrix = {
-  name: '4. 尺寸對照',
-  render: () => (
-    <div className="flex flex-col gap-8">
-      <H3>Size Token 對照</H3>
-      <Desc>
-        track 高度為固定 px(不隨 density 縮放)。size 選擇由情境決定:sm=列表內指標 / md=一般 / lg=主要 prominent。
-      </Desc>
-      <div className="overflow-x-auto">
-        <table className="border-collapse text-caption">
-          <thead>
-            <tr>
-              <Th>Size</Th>
-              <Th>Height</Th>
-              <Th>實作</Th>
-              <Th>使用時機</Th>
-            </tr>
-          </thead>
-          <tbody>
-            {SIZES.map((sz) => {
-              const spec = SIZE_SPECS[sz]
-              return (
-                <tr key={sz}>
-                  <Td mono>{sz}{sz === 'md' ? '(預設)' : ''}</Td>
-                  <Td mono>{spec.heightPx}px</Td>
-                  <Td mono>{spec.heightStyle}</Td>
-                  <Td>{spec.usage}</Td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <span className="text-caption font-medium text-fg-secondary">視覺對照(Status × Size)</span>
-        <div className="overflow-x-auto">
-          <table className="border-collapse">
-            <thead>
-              <tr>
-                <Th>Status</Th>
-                {SIZES.map((sz) => <Th key={sz}>{sz}</Th>)}
-              </tr>
-            </thead>
-            <tbody>
-              {STATUSES.map((s) => (
-                <tr key={s}>
-                  <Td mono>{s}</Td>
-                  {SIZES.map((sz) => (
-                    <Td key={sz}>
-                      <div className="w-[180px]">
-                        <Progress value={s === 'success' ? 100 : 55} status={s} size={sz} />
-                      </div>
-                    </Td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  ),
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   5. Affix 行為
+   4. Affix 行為
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const AffixBehavior = {
-  name: '5. Affix 行為',
+  name: '4. Affix 行為',
   render: () => (
     <div className="flex flex-col gap-8">
       <H3>Affix 三種模式</H3>
@@ -447,7 +358,7 @@ export const AffixBehavior = {
             配額使用率、下載進度等需要精確數字時使用。
           </p>
           <div className="w-[360px]">
-            <Progress value={45} status="inProgress" size="md" affix="value" />
+            <ProgressBar value={45} status="inProgress" affix="value" />
           </div>
         </div>
 
@@ -460,9 +371,9 @@ export const AffixBehavior = {
             inProgress → 無 icon(inProgress 非終態)。
           </p>
           <div className="flex flex-col gap-2 w-[360px]">
-            <Progress value={100} status="success" size="md" affix="status-icon" />
-            <Progress value={72} status="error" size="md" affix="status-icon" />
-            <Progress value={50} status="inProgress" size="md" affix="status-icon" />
+            <ProgressBar value={100} status="success" affix="status-icon" />
+            <ProgressBar value={72} status="error" affix="status-icon" />
+            <ProgressBar value={50} status="inProgress" affix="status-icon" />
             <span className="text-footnote text-fg-muted">↑ inProgress 傳 status-icon 時不渲染 icon(仍保留 wrapper gap)</span>
           </div>
         </div>
@@ -474,18 +385,18 @@ export const AffixBehavior = {
             上傳中提供取消按鈕;或顯示 <span className="font-mono">2.3 / 5.0 MB</span> 等具體 bytes。
           </p>
           <div className="flex flex-col gap-3 w-[360px]">
-            <Progress
+            <ProgressBar
               value={42}
               status="inProgress"
-              size="md"
+             
               affix={
                 <Button variant="text" size="xs" iconOnly startIcon={X} aria-label="取消上傳" />
               }
             />
-            <Progress
+            <ProgressBar
               value={66}
               status="inProgress"
-              size="md"
+             
               affix={<span className="text-caption text-fg-muted tabular-nums shrink-0">1.3 / 2.0 MB</span>}
             />
           </div>
@@ -495,10 +406,10 @@ export const AffixBehavior = {
         <div className="flex flex-col gap-2">
           <span className="text-caption font-medium text-fg-secondary">不傳 affix — 純 bar</span>
           <p className="text-footnote text-fg-muted">
-            不包 wrapper,Progress 本身就是整個元件。適合 FileItem 的 compact mode(上方已有檔名文字)。
+            不包 wrapper,ProgressBar 本身就是整個元件。適合 FileItem 的 compact mode(上方已有檔名文字)。
           </p>
           <div className="w-[360px]">
-            <Progress value={55} status="inProgress" size="sm" />
+            <ProgressBar value={55} status="inProgress" />
           </div>
         </div>
       </div>

@@ -62,7 +62,7 @@ const SIZE_SPECS: Record<
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -218,7 +218,7 @@ export const Overview: Story = {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const Inspector: Story = {
-  name: '元件檢閱器',
+  name: '2. 元件檢閱器',
   render: () => <SelectionInspector />,
 }
 
@@ -241,7 +241,7 @@ function SelectionInspector() {
               size={size}
               control={<Checkbox size={size} defaultChecked disabled={disabled} />}
               icon={prefix === 'icon' ? Shield : undefined}
-              avatar={prefix === 'avatar' ? { alt: '陳麒仁', color: 'indigo' } : undefined}
+              avatar={prefix === 'avatar' ? { alt: 'Ada Chen', color: 'indigo' } : undefined}
               label="Admin 層級操作"
               description={hasDesc ? '僅限 workspace owner 啟用此權限範圍' : undefined}
               disabled={disabled}
@@ -376,7 +376,7 @@ ${prefix === 'avatar' ? `avatar size = ${useBlock ? spec.avatarBlockPx : spec.av
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const PrefixAlignment: Story = {
-  name: 'Prefix 對齊規則(24px 閾值)',
+  name: '3. Prefix 對齊規則(24px 閾值)',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -432,8 +432,8 @@ export const PrefixAlignment: Story = {
             <div className="border border-divider rounded-md p-4 bg-muted">
               <SelectionItem
                 control={<Checkbox defaultChecked />}
-                avatar={{ alt: '陳麒仁', color: 'indigo' }}
-                label="陳麒仁"
+                avatar={{ alt: 'Ada Chen', color: 'indigo' }}
+                label="Ada Chen"
               />
             </div>
           </div>
@@ -444,8 +444,8 @@ export const PrefixAlignment: Story = {
             <div className="border border-divider rounded-md p-4 bg-muted">
               <SelectionItem
                 control={<Checkbox defaultChecked />}
-                avatar={{ alt: '陳麒仁', color: 'indigo' }}
-                label="陳麒仁"
+                avatar={{ alt: 'Ada Chen', color: 'indigo' }}
+                label="Ada Chen"
                 description="Design Engineer · Frontend team"
               />
             </div>
@@ -481,7 +481,7 @@ export const PrefixAlignment: Story = {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const SizeMatrix: Story = {
-  name: '尺寸對照表',
+  name: '4. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>

@@ -57,7 +57,7 @@ function InlineHoverExample() {
           name="Alice Chen"
           avatar={{ src: AVATAR_URL, alt: 'Alice' }}
           subtitle="Product Designer｜D-0042"
-          status="available"
+          status="online"
           actions={sampleActions}
           fields={[
             { label: 'ID', value: 'YHANAX' },
@@ -127,7 +127,7 @@ export const TriggerContextRule: Story = {
             name="Alice Chen"
             avatar={{ src: AVATAR_URL, alt: 'Alice' }}
             subtitle="Product Designer｜D-0042"
-            status="available"
+            status="online"
             fields={[
               { label: 'ID', value: 'YHANAX' },
               { label: 'Employee', value: '1234567' },
@@ -152,7 +152,7 @@ export const FixedWidthRule: Story = {
       >
         <div className="flex flex-col gap-3">
           <div className="border border-border rounded-lg">
-            <NameCard name="Bob" avatar={{ src: AVATAR_URL, alt: 'Bob' }} subtitle="Engineering" status="available" />
+            <NameCard name="Bob" avatar={{ src: AVATAR_URL, alt: 'Bob' }} subtitle="Engineering" status="online" />
           </div>
           <div className="border border-border rounded-lg">
             <NameCard
@@ -201,7 +201,7 @@ export const SectionRule: Story = {
               name="Alice Chen"
               avatar={{ src: AVATAR_URL, alt: 'Alice' }}
               subtitle="Designer"
-              status="available"
+              status="online"
               actions={sampleActions}
             />
           </div>

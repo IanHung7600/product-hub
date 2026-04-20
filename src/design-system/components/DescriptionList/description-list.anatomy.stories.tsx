@@ -10,7 +10,7 @@ export default meta
 type Story = StoryObj
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -58,7 +58,7 @@ export const Overview: Story = {
 }
 
 export const ColsMatrix: Story = {
-  name: 'cols(1 / 2 / 3)',
+  name: '2. cols(1 / 2 / 3)',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -78,7 +78,7 @@ export const ColsMatrix: Story = {
         <Desc>兩欄並排,適合 NameCard info fields / detail panel。</Desc>
         <div className="border border-border rounded-lg p-4 max-w-lg">
           <DescriptionList cols={2}>
-            <DescriptionItem label="姓名">陳麒仁</DescriptionItem>
+            <DescriptionItem label="姓名">Ada Chen</DescriptionItem>
             <DescriptionItem label="職稱">Design Engineer</DescriptionItem>
             <DescriptionItem label="Email">user@example.com</DescriptionItem>
             <DescriptionItem label="電話">0912-345-678</DescriptionItem>
@@ -110,7 +110,7 @@ export const ColsMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '狀態行為(空值 / 長值 / 多行 value)',
+  name: '3. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -121,7 +121,7 @@ export const StateBehavior: Story = {
         </Desc>
         <div className="border border-dashed border-divider rounded-md p-4 max-w-md">
           <DescriptionList cols={2}>
-            <DescriptionItem label="姓名">陳麒仁</DescriptionItem>
+            <DescriptionItem label="姓名">Ada Chen</DescriptionItem>
             <DescriptionItem label="職稱">—</DescriptionItem>
             <DescriptionItem label="Email">user@example.com</DescriptionItem>
             <DescriptionItem label="電話">—</DescriptionItem>
@@ -142,7 +142,7 @@ export const StateBehavior: Story = {
         </Desc>
         <div className="border border-dashed border-divider rounded-md p-4 max-w-md">
           <DescriptionList cols={2}>
-            <DescriptionItem label="姓名">陳麒仁</DescriptionItem>
+            <DescriptionItem label="姓名">Ada Chen</DescriptionItem>
             <DescriptionItem label="職稱">Senior Staff Principal Engineer, Design Systems</DescriptionItem>
             <DescriptionItem label="辦公地點">Taipei, Taiwan</DescriptionItem>
             <DescriptionItem label="Email">very.long.email.address@subdomain.example.com</DescriptionItem>

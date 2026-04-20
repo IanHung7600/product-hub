@@ -75,7 +75,7 @@ Taxonomy 放任一 folder 都會 scope 不對等。放頂層 `src/design-system/
 ## 不進 Family Model 的元件
 
 不能舉一反三的不分類:
-- **Self-contained primitive**:Switch / Checkbox / Radio / Avatar / Badge / Spinner / Skeleton / Separator —— 各自獨立視覺,無 slot 結構
+- **Self-contained primitive**:Switch / Checkbox / Radio / Avatar / Badge / CircularProgress / ProgressBar / Skeleton / Separator —— 各自獨立視覺,無 slot 結構
 - **Composite / multi-section**:Dialog / Sheet / NameCard / DataTable / Tabs / Sidebar / Popover / Tooltip / HoverCard / DropdownMenu / SelectMenu / Command / OverflowIndicator / Breadcrumb / Empty / DescriptionList —— 多區塊組合,各自 own 自己的 layout
 
 這些元件的 spec 直接描述自己的結構,不套 family。

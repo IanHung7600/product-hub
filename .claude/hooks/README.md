@@ -19,6 +19,8 @@
 | `enforce_home_charter.sh` | PreToolUse(Write) | 寫新檔到 classification-sensitive dir 前強制看 charter README;hooks/commands/agents 的 flat-file 慣例自動豁免 |
 | `pre_new_component_spec.sh` | PreToolUse(Write) | 建新 component spec.md 時強制 Layout Family 宣告 + 建議走 `/component-quality-gate` |
 | `check_cva_default_sync.sh` | PostToolUse(Edit/Write/MultiEdit) | 動到 cva `defaultVariants` 時 grep spec / docblock / anatomy 三方,警告不一致(SegmentedControl bug class 預防) |
+| `check_anatomy_section_numbering.sh` | PostToolUse(Edit/Write/MultiEdit) | 編輯 *.anatomy.stories.tsx 時驗證 `name: 'N. ...'` 編號 contiguous 1..N,drift 時警告 |
+| `check_sideoffset_canonical.sh` | PostToolUse(Edit/Write/MultiEdit) | overlay consumer 寫 `sideOffset={N!=8}` 時警告:DS canonical = 8,不該 override;overlay primitive source 本身豁免 |
 
 ## Task ↔ Hook 對照表(世界級設計任務觸發)
 

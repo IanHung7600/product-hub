@@ -29,7 +29,7 @@ const SIZE_SPECS: Record<SizeKey, { height: string; text: string; heightPx: numb
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -149,7 +149,7 @@ export const Overview: Story = {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const Inspector: Story = {
-  name: '元件檢閱器',
+  name: '2. 元件檢閱器',
   render: () => <OverflowInspector />,
 }
 
@@ -304,7 +304,7 @@ function OverflowInspector() {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const ShapeMatrix: Story = {
-  name: '形狀對照表',
+  name: '3. 形狀對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -390,7 +390,7 @@ export const ShapeMatrix: Story = {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const SizeMatrix: Story = {
-  name: '尺寸對照表',
+  name: '4. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>

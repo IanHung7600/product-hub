@@ -8,7 +8,6 @@ import {
   CarouselDots,
 } from './carousel'
 import { Button } from '@/design-system/components/Button/button'
-import { Avatar } from '@/design-system/components/Avatar/avatar'
 import { AspectRatio } from '@/design-system/components/AspectRatio/aspect-ratio'
 
 const meta: Meta = {
@@ -49,23 +48,6 @@ const productImages = [
   { label: '情境', gradient: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)' },
 ]
 
-const testimonials = [
-  {
-    name: '林婕欣',
-    title: 'Product Manager · Gogolook',
-    quote: '從接手 PRD 到工程交付,workflow 重新設計後節省了一半的會議時間。團隊終於能把精力放在真正困難的決策上。',
-  },
-  {
-    name: 'David Chen',
-    title: 'Engineering Lead · Appier',
-    quote: '導入後三個月內部署頻率翻倍。最驚喜的是 on-call 負擔下降,工程師可以專心寫 code 而不是修 bug。',
-  },
-  {
-    name: 'Sarah Wu',
-    title: 'Design Director · KKday',
-    quote: 'Design token 系統終於統一了——設計稿和 production 不再需要 QA 來回對 8 輪 pixel。',
-  },
-]
 
 // ── Stories ─────────────────────────────────────────────────────────────────
 
@@ -137,67 +119,13 @@ export const ProductImageGallery = {
   ),
 }
 
-export const TestimonialCarousel = {
-  name: 'Customer Testimonial(Linear / Stripe 首頁風格)',
-  render: () => (
-    <div className="max-w-[640px]">
-      <p className="text-caption text-fg-muted mb-3">
-        3 張客戶評語卡片輪播 · 非圖片場景,dots consumer 可 override 為深色
-      </p>
-      <Carousel opts={{ loop: true }}>
-        <CarouselContent>
-          {testimonials.map((t) => (
-            <CarouselItem key={t.name}>
-              <div className="bg-surface-raised border border-border rounded-lg p-8 min-h-[220px] flex flex-col justify-between">
-                <p className="text-body-lg text-foreground leading-relaxed">
-                  「{t.quote}」
-                </p>
-                <div className="flex items-center gap-3 mt-6">
-                  <Avatar alt={t.name} size={40} />
-                  <div>
-                    <div className="text-body font-medium">{t.name}</div>
-                    <div className="text-caption text-fg-muted">{t.title}</div>
-                  </div>
-                </div>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
-    </div>
-  ),
-}
-
-export const VerticalOrientation = {
-  name: 'Vertical orientation(少見場景)',
-  render: () => (
-    <div className="max-w-[480px]">
-      <p className="text-caption text-fg-muted mb-3">
-        垂直輪播 · 用於 story feed / 影片 feed 等少數場景 · 箭頭自動旋轉 90°
-      </p>
-      <div style={{ height: 320 }}>
-        <Carousel orientation="vertical" className="h-full">
-          <CarouselContent className="h-[320px]">
-            {heroBanners.slice(0, 3).map((b) => (
-              <CarouselItem key={b.city}>
-                <div
-                  className="h-[320px] rounded-lg overflow-hidden flex items-end p-6"
-                  style={{ background: b.gradient }}
-                >
-                  <div className="text-white">
-                    <div className="text-h3 font-bold">{b.city}</div>
-                    <div className="text-body opacity-95">{b.tagline}</div>
-                  </div>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious />
-          <CarouselNext />
-        </Carousel>
-      </div>
-    </div>
-  ),
-}
+// TestimonialCarousel / VerticalOrientation 範例於 2026-04-20 移除:
+//   - TestimonialCarousel:箭頭直接覆蓋文字 card(text 佔滿卡片高度),
+//     違反「箭頭 overlay 只覆蓋圖 / 背景,不壓文字」原則(見 principles story)。
+//     純文字 carousel 若真要保留,應改為 arrows OUTSIDE the card(旁邊,非 overlay)
+//     — 但該 layout 較少見,DS 不主動 demo
+//   - VerticalOrientation:垂直輪播使用情境少見(story feed / 影片 feed 外難找),
+//     且 embla 垂直模式在 a11y / touch gesture 上都次等,不值得做為 DS canonical
+//     範例示範
+//
+// 如果 consumer 有這兩類需求,自己評估合適性 — DS 不 demo 等於不背書

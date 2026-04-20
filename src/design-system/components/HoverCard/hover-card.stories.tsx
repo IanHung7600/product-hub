@@ -36,8 +36,8 @@ export const PersonNameCard: Story = {
         <span className="text-caption text-fg-muted">Reviewer:</span>
         <HoverCard>
           <HoverCardTrigger asChild>
-            <button type="button" aria-label="陳麒仁 個人資訊" className="cursor-pointer rounded-full">
-              <Avatar alt="陳麒仁" color="indigo" size={28} />
+            <button type="button" aria-label="Ada Chen 個人資訊" className="cursor-pointer rounded-full">
+              <Avatar alt="Ada Chen" color="indigo" size={28} />
             </button>
           </HoverCardTrigger>
           <HoverCardContent
@@ -45,10 +45,10 @@ export const PersonNameCard: Story = {
             style={{ boxShadow: 'var(--elevation-200)', width: 280 }}
           >
             <NameCard
-              name="陳麒仁"
-              avatar={{ alt: '陳麒仁', color: 'indigo' }}
+              name="Ada Chen"
+              avatar={{ alt: 'Ada Chen', color: 'indigo' }}
               subtitle="Design Engineer · Frontend"
-              status="available"
+              status="online"
               statusMessage="正在處理 login 頁重構"
               fields={[
                 { label: 'Timezone', value: 'UTC+8 台北' },
@@ -131,7 +131,7 @@ export const OverflowList: Story = {
           此樣式由 OverflowIndicator 使用(深色 tooltip-style)—— +N hover 看完整清單。
         </p>
         <div className="flex items-center gap-1">
-          <Avatar alt="陳麒仁" color="indigo" size={24} />
+          <Avatar alt="Ada Chen" color="indigo" size={24} />
           <Avatar alt="張美真" color="magenta" size={24} />
           <Avatar alt="林伯彥" color="green" size={24} />
           <HoverCard openDelay={200} closeDelay={300}>
@@ -240,12 +240,12 @@ export const TriggerShowcase: Story = {
           <span className="text-footnote text-fg-muted font-mono">trigger: Avatar</span>
           <HoverCard openDelay={200} closeDelay={300}>
             <HoverCardTrigger asChild>
-              <button type="button" aria-label="陳麒仁 個人資訊" className="cursor-pointer rounded-full">
-                <Avatar alt="陳麒仁" color="indigo" size={32} />
+              <button type="button" aria-label="Ada Chen 個人資訊" className="cursor-pointer rounded-full">
+                <Avatar alt="Ada Chen" color="indigo" size={32} />
               </button>
             </HoverCardTrigger>
             <HoverCardContent className="bg-surface-raised border border-border rounded-lg p-3">
-              <div className="text-caption">陳麒仁 · Design Engineer</div>
+              <div className="text-caption">Ada Chen · Design Engineer</div>
             </HoverCardContent>
           </HoverCard>
         </div>

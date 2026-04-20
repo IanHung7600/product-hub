@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { Filter, SlidersHorizontal } from 'lucide-react'
+import { Filter } from 'lucide-react'
 import {
   Popover,
   PopoverTrigger,
@@ -10,8 +10,6 @@ import {
   PopoverTitle,
 } from './popover'
 import { Button } from '@/design-system/components/Button/button'
-import { Field, FieldLabel } from '@/design-system/components/Field/field'
-import { Input } from '@/design-system/components/Input/input'
 import { Checkbox } from '@/design-system/components/Checkbox/checkbox'
 
 const meta: Meta = {
@@ -33,19 +31,30 @@ export const FilterPanel: Story = {
           <PopoverTitle>依狀態篩選</PopoverTitle>
         </PopoverHeader>
         <PopoverBody>
-          <div className="flex flex-col gap-2">
-            <label className="flex items-center gap-2 text-body">
-              <Checkbox defaultChecked /> 待處理
-            </label>
-            <label className="flex items-center gap-2 text-body">
-              <Checkbox defaultChecked /> 進行中
-            </label>
-            <label className="flex items-center gap-2 text-body">
-              <Checkbox /> 已完成
-            </label>
-            <label className="flex items-center gap-2 text-body">
-              <Checkbox /> 已封存
-            </label>
+          {/*
+           * Checkbox 直接消費 `label` prop(不手刻 `<label><Checkbox/>...</label>`)——
+           * Checkbox 內部用 SelectionItem 包裝,提供 proper touch target 高度
+           * (py = (field-height - 1lh)/2,行高自然撐足 32px md 高度)+ a11y(label
+           * 自動 bind to input)。
+           *
+           * gap-2(8px)是 consumer-decided 鬆緊度——filter 情境偏密集,gap-2 在 md
+           * item 間留呼吸不擠 / 不鬆散。未來若 DS 新增 `<CheckboxGroup>`(tech debt —
+           * 對齊 RadioGroup),間距走 group 內建 canonical,consumer 不再自訂 gap。
+           *
+           * 此 Popover 是「多選 + footer save CTA」模式 — 使用者勾多項但未立即 commit,
+           * 按「套用」才儲存 filter state(見 spec「合法但少見:Popover 內含可選 item
+           * 列 + footer save CTA」)。區別於 DropdownMenu 的「click 即觸發」模式。
+           */}
+          {/*
+           * 外層不加 gap — SelectionItem 自己的 py(= (field-height - 1lh)/2,tied to
+           * ui-size)就是 Checkbox group 的 canonical 間距。手動加 gap-2 會疊加成
+           * 比 canonical 鬆散的視覺,破壞跟 DS Checkbox VerticalGroup story 的一致性。
+           */}
+          <div className="grid">
+            <Checkbox defaultChecked label="待處理" />
+            <Checkbox defaultChecked label="進行中" />
+            <Checkbox label="已完成" />
+            <Checkbox label="已封存" />
           </div>
         </PopoverBody>
         <PopoverFooter>
@@ -57,70 +66,23 @@ export const FilterPanel: Story = {
   ),
 }
 
-export const SettingsPanel: Story = {
-  name: '設定 mini panel(Notion 頁面設定)',
-  render: () => (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="tertiary" startIcon={SlidersHorizontal}>頁面設定</Button>
-      </PopoverTrigger>
-      <PopoverContent align="end" className="w-80">
-        <PopoverHeader>
-          <PopoverTitle>頁面設定</PopoverTitle>
-        </PopoverHeader>
-        <PopoverBody>
-          <div className="flex flex-col gap-3">
-            <Field>
-              <FieldLabel>頁面標題</FieldLabel>
-              <Input defaultValue="Q1 產品路線圖" />
-            </Field>
-            <label className="flex items-center justify-between text-body">
-              <span>顯示目錄</span>
-              <Checkbox defaultChecked />
-            </label>
-            <label className="flex items-center justify-between text-body">
-              <span>小字體</span>
-              <Checkbox />
-            </label>
-            <label className="flex items-center justify-between text-body">
-              <span>全寬模式</span>
-              <Checkbox defaultChecked />
-            </label>
-          </div>
-        </PopoverBody>
-      </PopoverContent>
-    </Popover>
-  ),
-}
+// SettingsPanel story 於 2026-04-20 移除:
+//   原本是「顯示設定 mini panel (Notion 頁面設定)」— 用 Popover + 多個 horizontal
+//   Field + Switch 展示 settings list。
+//
+//   B13 決策(user 回饋):Notion 頁面設定的實際做法是 `<DropdownMenu>` +
+//   `<DropdownMenuCheckboxItem>` — menu 內 binary toggle 已由 CheckboxItem 覆蓋
+//   (見 `../DropdownMenu/dropdown-menu.stories.tsx` 的 `CheckboxItems` story)。
+//   Popover 的 canonical 是「自由組合 UI 面板」(filter / form / 圖表),純 toggle
+//   列表用 DropdownMenu 語意更準確 + 鍵盤上下導覽更自然。
+//
+//   同一情境兩處 demo = 噪音 + 教壞 consumer,不保留重複範例。Popover 只保留
+//   FilterPanel(多選 checkbox + footer save CTA — Popover canonical)即可。
 
-export const BareBody: Story = {
-  name: '純內容(w-auto p-0 覆寫 — SelectMenu style)',
-  render: () => (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="tertiary">選擇優先度</Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
-        <div className="flex flex-col py-1 min-w-[180px]">
-          {[
-            { icon: '🔥', label: '緊急', hint: 'Urgent' },
-            { icon: '🔴', label: '高', hint: 'High' },
-            { icon: '🟡', label: '中', hint: 'Medium' },
-            { icon: '🔵', label: '低', hint: 'Low' },
-            { icon: '⚪', label: '無', hint: 'No priority' },
-          ].map(item => (
-            <button
-              key={item.label}
-              type="button"
-              className="flex items-center gap-2 px-3 py-1.5 text-body text-left hover:bg-neutral-hover"
-            >
-              <span className="text-base">{item.icon}</span>
-              <span className="flex-1">{item.label}</span>
-              <span className="text-caption text-fg-muted">{item.hint}</span>
-            </button>
-          ))}
-        </div>
-      </PopoverContent>
-    </Popover>
-  ),
-}
+// BareBody 範例於 2026-04-20 移除:
+//   原 demo 是「選擇優先度」(5 個選項選一個)、手刻 `<Popover>` 內放 raw `<button>`
+//   item 列表 — 這是 `<Select>` / `<DropdownMenu>` 的標準情境,不該走 Popover。
+//
+//   B1 決策(user):menu / select / combobox 早已定義過那種「格式化的選單範例」,
+//   Popover 不再 demo。Popover 的本質是「輕量盡量不干擾使用者心流的 modal」—
+//   結構化 form / filter / settings 等情境才是 canonical。

@@ -6,6 +6,7 @@ import {
   PopoverContent,
   PopoverBody,
   PopoverFooter,
+  PopoverHeader,
 } from '@/design-system/components/Popover/popover'
 import { Button } from '@/design-system/components/Button/button'
 import { AspectRatio } from '@/design-system/components/AspectRatio/aspect-ratio'
@@ -16,16 +17,23 @@ import { AspectRatio } from '@/design-system/components/AspectRatio/aspect-ratio
  * 世界級對照:Apple HIG「Coachmark」(Apple 命名原處)/ Material「Feature Discovery」/
  * Ant Design `<Tour>` / Shepherd.js / react-joyride / Intercom Product Tours。
  *
- * user 敘述:「跟 popover 很像,只是隱藏 header」──完全正確。本元件 = **Popover 的
- * composition pattern**,consume 相同 overlay-surface SSOT 的 Body + Footer:
- *   - 無 Header(user 明確指示)
- *   - Media 區(圖 / 截圖 / illustration,full-width 邊緣對齊)
+ * 本元件 = **Popover 的 composition pattern**,consume 相同 overlay-surface SSOT:
+ *   - Header(可選,多步驟建議傳 `kind="tips" | "new-features" | 自訂 title`,
+ *     single-step 預設無 header 避免視覺過重)
+ *   - Media 區(圖 / 截圖 / illustration,full-width 邊緣對齊,由 AspectRatio 管比例)
  *   - Body(SurfaceBody padding):title + description 左對齊
  *   - Footer(SurfaceFooter padding,但 justify-between):step 計數左 / actions 右
  *
- * ── 多步導覽 ──
- * 單 Coachmark 用 `onSkip` + `onNext`;多步(current/total)consumer 自行管理 step
- * state,每步渲染一個 Coachmark,anchor 到對應 trigger element。
+ * ── 單 vs 多步驟 canonical(世界級行為規則) ──
+ *   1. **Single step**(無 `onPrev` 且 `isLastStep`):CTA 文字 = `doneLabel ?? '知道了'`
+ *      (Apple HIG / Intercom 慣例;不用 "Next" 因為沒有下一步)
+ *   2. **Multi step 第一步**(無 `onPrev`,有 `onNext`):CTA = "Next",Skip 顯示
+ *   3. **Multi step 中間 / 最後步**(有 `onPrev`):**Skip 不顯示**(使用者已投入進度,
+ *      再給 Skip 會讓「放棄」入口與「回上一步」衝突 — Linear / Pendo / Shepherd.js
+ *      同樣規則)。CTA = `isLastStep ? 'Done' : 'Next'`
+ *   4. **不強制 autoFocus 任何按鈕** — Radix Popover 預設 focus 第一個 focusable
+ *      (通常是 Prev 或 Skip),本元件不額外拉焦點到 Next,避免使用者以為一按 Enter
+ *      就會推進(實際上可能還在讀 body)。想推進者 tab 到 Next 再 Enter。
  *
  * ── 為什麼 Body+Footer 消費 overlay-surface ──
  * 避免 padding token 漂移:Dialog / Popover / Coachmark 三者共用同一套 Header/Body/Footer
@@ -51,26 +59,46 @@ export interface CoachmarkProps {
    * `1/1` 方圖 / `3/4` 直式 portrait。消費獨立的 `AspectRatio` primitive 元件。
    */
   mediaRatio?: number
+  /**
+   * 頂部 header 類型(多步驟 tour 建議傳)。
+   * - `'tips'` → header title = "使用技巧"
+   * - `'new-features'` → header title = "新功能介紹"
+   * - `ReactNode` → 自訂 title(string / JSX)
+   * - undefined → 無 header(單步驟常用)
+   */
+  kind?: 'tips' | 'new-features' | React.ReactNode
   /** 標題(bold) */
   title?: React.ReactNode
   /** 說明文字(normal weight,多行 OK) */
   description?: React.ReactNode
   /** 步驟計數(2 of 3);若需多步導覽 consumer 自行管理 current */
   step?: CoachmarkStep
-  /** Skip 按鈕 callback;不傳則不顯示 Skip */
+  /** Skip 按鈕 callback;不傳則不顯示 Skip。多步驟中間 / 最後步自動隱藏(有 onPrev 時) */
   onSkip?: () => void
   /** Next 按鈕 callback;不傳則不顯示 Next */
   onNext?: () => void
   /** Previous 按鈕 callback(多步 tour 第 2+ 步顯示);不傳則不顯示 */
   onPrev?: () => void
-  /** 最後一步時 Next 按鈕文字改用 done text(預設 "Next" / "Done") */
+  /**
+   * 最後一步 flag。影響 primary CTA 文字:
+   * - single step(無 onPrev 且 isLastStep):CTA = `doneLabel ?? '知道了'`
+   * - multi-step 最後步(有 onPrev 且 isLastStep):CTA = 'Done'
+   * - 其他:CTA = 'Next'
+   */
   isLastStep?: boolean
+  /** 自訂單步驟完成 CTA 文字(預設 `'知道了'`)。僅 single-step 使用 */
+  doneLabel?: string
   /** 浮層定位(對齊 Popover props) */
   side?: 'top' | 'right' | 'bottom' | 'left'
   align?: 'start' | 'center' | 'end'
   sideOffset?: number
   /** 外殼寬度(預設 w-80 = 320px,比一般 Popover 寬,因要放 media + 文字) */
   className?: string
+}
+
+const KIND_TITLE: Record<'tips' | 'new-features', string> = {
+  tips: '使用技巧',
+  'new-features': '新功能介紹',
 }
 
 const Coachmark = React.forwardRef<HTMLDivElement, CoachmarkProps>(
@@ -81,6 +109,7 @@ const Coachmark = React.forwardRef<HTMLDivElement, CoachmarkProps>(
       children,
       image,
       mediaRatio = 16 / 9,
+      kind,
       title,
       description,
       step,
@@ -88,15 +117,24 @@ const Coachmark = React.forwardRef<HTMLDivElement, CoachmarkProps>(
       onNext,
       onPrev,
       isLastStep = false,
+      doneLabel = '知道了',
       side = 'bottom',
       align = 'center',
       sideOffset = 8,
-      className,
     },
     ref,
   ) => {
-    const hasFooterContent = Boolean(step || onSkip || onNext || onPrev)
+    // 單/多步驟行為推導
+    const isSingleStep = isLastStep && !onPrev
+    const showSkip = Boolean(onSkip) && !onPrev   // canonical:有 onPrev → 不顯示 Skip
+    const nextLabel = isSingleStep ? doneLabel : isLastStep ? 'Done' : 'Next'
+
+    const hasFooterContent = Boolean(step || showSkip || onNext || onPrev)
     const stepText = step ? `${step.current} of ${step.total}` : null
+
+    // Header title 解析
+    const headerTitle =
+      kind === 'tips' || kind === 'new-features' ? KIND_TITLE[kind] : kind
 
     return (
       <Popover open={open} onOpenChange={onOpenChange}>
@@ -106,8 +144,16 @@ const Coachmark = React.forwardRef<HTMLDivElement, CoachmarkProps>(
           side={side}
           align={align}
           sideOffset={sideOffset}
-          className={cn('w-80 p-0 overflow-hidden', className)}
+          className={cn('w-80 p-0 overflow-hidden')}
         >
+          {headerTitle && (
+            <PopoverHeader>
+              <span className="text-caption font-medium text-fg-secondary uppercase tracking-wide">
+                {headerTitle}
+              </span>
+            </PopoverHeader>
+          )}
+
           {image && (
             <AspectRatio ratio={mediaRatio} className="w-full overflow-hidden bg-muted">
               {image}
@@ -132,7 +178,7 @@ const Coachmark = React.forwardRef<HTMLDivElement, CoachmarkProps>(
                   {stepText}
                 </span>
               ) : (
-                <span aria-hidden /> /* 保持 justify-between space,即使無 step 文字 */
+                <span aria-hidden /> /* 保持 justify-between space */
               )}
               <div className="flex items-center gap-2">
                 {onPrev && (
@@ -140,14 +186,14 @@ const Coachmark = React.forwardRef<HTMLDivElement, CoachmarkProps>(
                     Previous
                   </Button>
                 )}
-                {onSkip && (
+                {showSkip && (
                   <Button variant="tertiary" size="sm" onClick={onSkip}>
                     Skip
                   </Button>
                 )}
                 {onNext && (
                   <Button variant="primary" size="sm" onClick={onNext}>
-                    {isLastStep ? 'Done' : 'Next'}
+                    {nextLabel}
                   </Button>
                 )}
               </div>

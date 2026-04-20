@@ -22,11 +22,12 @@ const HoverCardTrigger = HoverCardPrimitive.Trigger
 const HoverCardContent = React.forwardRef<
   React.ElementRef<typeof HoverCardPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof HoverCardPrimitive.Content>
->(({ className, align = "center", sideOffset = 8, ...props }, ref) => (
+>(({ className, align = "center", sideOffset = 8, collisionPadding = 8, ...props }, ref) => (
   <HoverCardPrimitive.Content
     ref={ref}
     align={align}
     sideOffset={sideOffset}
+    collisionPadding={collisionPadding}
     className={cn(
       "z-50 outline-none",
       "data-[state=open]:animate-in data-[state=closed]:animate-out",

@@ -365,7 +365,7 @@ TreeItem 右側的 `actions` slot **只在 hover 該列時出現**(opacity 0 →
   icon={Inbox}
   label="Inbox"
   inlineActions={[
-    { icon: MoreHorizontal, label: '更多', onClick: handleMore },
+    { icon: MoreVertical, label: '更多', onClick: handleMore },
     { icon: Plus,           label: '新增', onClick: handleAdd },
   ]}
   actionsReveal="hover"  // 預設:hover/keyboard focus 才顯示。傳 false → 常駐

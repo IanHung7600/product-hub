@@ -256,12 +256,12 @@ export const Prohibitions: Story = {
 
       <Rule
         title="❌ 用 Rating 做 progress bar"
-        note="Rating 的語意是『給分』，用『填了 4 顆星』表達『完成 4/5 步』會讓使用者誤以為是評分而非進度。進度有具體 % 用 Progress bar，不定進度用 Spinner。"
+        note="Rating 的語意是『給分』,用『填了 4 顆星』表達『完成 4/5 步』會讓使用者誤以為是評分而非進度。進度有具體 % 用 ProgressBar(linear)或 CircularProgress(circular,有 value),不定進度用 CircularProgress(無 value,indeterminate)。"
       >
         <div className="flex flex-col gap-2 w-[320px] p-4 border border-border rounded-md">
           <div className="text-caption text-fg-secondary font-medium">完成 4/5 步</div>
           <Rating value={4} readOnly size="md" aria-label="誤用範例" />
-          <Label warn>❌ 使用者會以為「這個任務被評 4 星」→ 改 Progress bar</Label>
+          <Label warn>❌ 使用者會以為「這個任務被評 4 星」→ 改 ProgressBar</Label>
         </div>
       </Rule>
 

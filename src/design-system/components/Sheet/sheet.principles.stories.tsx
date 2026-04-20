@@ -86,9 +86,9 @@ export const VsDialogRule: Story = {
               </Field>
               <Field>
                 <FieldLabel>通知</FieldLabel>
-                <div className="flex flex-col gap-2">
-                  <label className="flex items-center gap-2 text-body"><Checkbox defaultChecked /> 新任務</label>
-                  <label className="flex items-center gap-2 text-body"><Checkbox /> 每日摘要</label>
+                <div className="grid">
+                  <Checkbox defaultChecked label="新任務" />
+                  <Checkbox label="每日摘要" />
                 </div>
               </Field>
             </div>
@@ -153,7 +153,7 @@ export const SidePropRule: Story = {
           <SheetContent side="right">
             <SheetHeader>
               <SheetTitle>任務詳情</SheetTitle>
-              <SheetDescription>#PROJ-234 · 指派給陳麒仁</SheetDescription>
+              <SheetDescription>#PROJ-234 · 指派給Ada Chen</SheetDescription>
             </SheetHeader>
             <div className="flex-1 py-4 text-body text-fg-secondary">
               (詳情內容)
@@ -315,9 +315,9 @@ export const WhenNotSheetRule: Story = {
           </PopoverTrigger>
           <PopoverContent align="start">
             <PopoverBody>
-              <div className="flex flex-col gap-2">
-                <label className="flex items-center gap-2 text-body"><Checkbox defaultChecked /> 進行中</label>
-                <label className="flex items-center gap-2 text-body"><Checkbox /> 已完成</label>
+              <div className="grid">
+                <Checkbox defaultChecked label="進行中" />
+                <Checkbox label="已完成" />
               </div>
             </PopoverBody>
           </PopoverContent>

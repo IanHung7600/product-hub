@@ -27,7 +27,7 @@ const statusOptions: SelectMenuOption[] = [
 ]
 
 const reviewerOptions: SelectMenuOption[] = [
-  { value: 'alice', label: '陳麒仁', avatar: { alt: '陳麒仁', color: 'indigo' }, description: 'Frontend' },
+  { value: 'alice', label: 'Ada Chen', avatar: { alt: 'Ada Chen', color: 'indigo' }, description: 'Frontend' },
   { value: 'bob', label: '張美真', avatar: { alt: '張美真', color: 'magenta' }, description: 'Platform' },
   { value: 'carol', label: '林伯彥', avatar: { alt: '林伯彥', color: 'green' }, description: 'Infra' },
   { value: 'dave', label: '黃怡君', avatar: { alt: '黃怡君', color: 'turquoise' }, description: 'QA' },
@@ -52,7 +52,7 @@ const labelGroups: SelectMenuGroupConfig[] = [
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => {
     const [value, setValue] = useState<string>('in_progress')
     return (
@@ -222,7 +222,7 @@ export const Overview: Story = {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const Inspector: Story = {
-  name: '元件檢閱器',
+  name: '2. 元件檢閱器',
   render: () => <SelectMenuInspector />,
 }
 
@@ -392,7 +392,7 @@ RowSizeProvider value=${size} 傳遞到所有 item slot (MenuItem / ItemIcon / I
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const ModeMatrix: Story = {
-  name: '功能模式對照表',
+  name: '3. 功能模式對照表',
   render: () => {
     const [single, setSingle] = useState<string>('todo')
     const [multi, setMulti] = useState<string[]>(['bug'])
@@ -585,7 +585,7 @@ export const ModeMatrix: Story = {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const SizeMatrix: Story = {
-  name: '尺寸對照表',
+  name: '4. 尺寸對照表',
   render: () => {
     const [sm, setSm] = useState<string>('todo')
     const [md, setMd] = useState<string>('todo')
@@ -676,7 +676,7 @@ export const SizeMatrix: Story = {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const StateBehavior: Story = {
-  name: '狀態行為',
+  name: '5. 狀態行為',
   render: () => {
     const [empty, setEmpty] = useState<string[]>([])
     const [grouped, setGrouped] = useState<string[]>([])

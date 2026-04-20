@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { Spinner } from '@/design-system/components/Spinner/spinner'
+import { CircularProgress } from '@/design-system/components/CircularProgress/circular-progress'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useFieldContext } from '@/design-system/components/Field/field-context'
@@ -48,6 +48,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/design-system/compone
  *   <Button variant="text" pressed={isPinned} startIcon={Pin} aria-label="釘選" iconOnly />
  *   <Button badge={<Badge count={3} />} endIcon={ChevronDown}>通知</Button>
  *   <Button size="sm" iconOnly startIcon={Plus} aria-label="新增" />
+ *   <Button iconOnly startIcon={Bell} aria-label="通知 (3 則)"
+ *           overlayBadge={<Badge count={3} />} />  ← badge 自動貼 icon 右上角
  *
  * ── asChild ──
  *   <Button asChild><Link to="/home">回首頁</Link></Button>
@@ -196,6 +198,15 @@ export interface ButtonProps
   startIcon?: LucideIcon
   /** 右側 badge（ReactNode），通常傳入計數指示器 */
   badge?: React.ReactNode
+  /**
+   * Overlay badge(iconOnly 專用)。接收 `<Badge>` 元素,Button 內部**自動定位在 startIcon 右上角**——
+   * badge 中心對齊 icon 的 top-right corner(Material BadgedBox / iOS App icon canonical),不是按鈕邊緣。
+   * 解決手刻 `relative + absolute -top-1 -right-1` 讓 badge 飄在按鈕 chrome 右上的問題。
+   *
+   * 世界級對照:Material BadgedBox、iOS App Icon、Ant Badge wrap icon,badge 相對於**視覺重心**(icon)。
+   * 只在 `iconOnly=true` 時生效;非 iconOnly 時應該用 inline `badge` prop 放 suffix 位置。
+   */
+  overlayBadge?: React.ReactNode
   /** 右側 icon（LucideIcon），放在 badge 右邊，通常用於 ChevronDown 等方向指示 */
   endIcon?: LucideIcon
   /** Icon-only 模式：移除 padding，變為正方形（必須同時設定 aria-label） */
@@ -233,6 +244,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       asChild = false,
       startIcon: StartIcon,
       badge,
+      overlayBadge,
       endIcon: EndIcon,
       iconOnly = false,
       loading = false,
@@ -285,7 +297,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         className={cn(
           buttonVariants({ variant: resolvedVariant, danger: resolvedDanger, size: resolvedSize, className }),
-          iconOnly && cn(ICON_ONLY_PX[resolvedSize], 'min-w-0 gap-1'),
+          // iconOnly 鐵律:width === height(即使 children / badge / loading 被誤傳,
+          // aspect-square 仍強制方形)。padding 用 calc 保 icon 在正中心,aspect-square
+          // 只是雙重保險,不影響 padding 計算。
+          iconOnly && cn(ICON_ONLY_PX[resolvedSize], 'aspect-square min-w-0 gap-0'),
           resolvedFullWidth && 'w-full',
         )}
         ref={ref}
@@ -296,10 +311,30 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {...toggleAttrs}
         {...restProps}
       >
-        {loading
-          ? <Spinner size={iconSize} />
-          : StartIcon && <StartIcon size={iconSize} aria-hidden />
-        }
+        {loading ? (
+          <CircularProgress size={iconSize} className="text-current" />
+        ) : StartIcon ? (
+          iconOnly && overlayBadge ? (
+            // Overlay badge canonical:wrapper 貼 icon 尺寸,badge 中心對齊 icon top-right corner
+            // (Material BadgedBox / iOS App icon),不是 button chrome 角。
+            //
+            // CSS 細節(2026-04-20 bug fix):用 `inline-block` + 明確 width/height + `leading-none`
+            // 避免 `inline-flex` span 在 Button flex container 內被撐高/撐寬(inline-flex 的 span
+            // 在某些瀏覽器下會把絕對定位子元素的 translate 計算基準搞錯,造成 badge 噴飛、Button
+            // aspect-square 失效)。明確給 span width/height = iconSize 鎖住 positioning context。
+            <span
+              className="relative inline-block leading-none shrink-0 pointer-events-none"
+              style={{ width: iconSize, height: iconSize }}
+            >
+              <StartIcon size={iconSize} aria-hidden />
+              <span className="absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 pointer-events-auto">
+                {overlayBadge}
+              </span>
+            </span>
+          ) : (
+            <StartIcon size={iconSize} aria-hidden />
+          )
+        ) : null}
         {children != null && <span className="px-1">{children}</span>}
         {hasSuffix && (
           <span className="inline-flex items-center gap-1">

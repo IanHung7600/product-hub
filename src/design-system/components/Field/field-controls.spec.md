@@ -53,6 +53,53 @@ Field/
 
 三種模式共用同一個 wrapper 結構（`fieldWrapperStyles`），只有底色、邊框、文字色不同。
 
+### Loading state(async 驗證 / debounce fetch 中)
+
+Loading **不是第四個 mode**,是 `edit` mode 的子狀態,語義 = **editable 仍可輸入**(UX「邊改邊讀」:debounce search / async validation 場景中 user 常需要繼續打字修正,凍結輸入反而破壞心流)。
+
+**世界級流派選擇**(editable 派 vs readonly 派):
+
+| DS | Loading input 做法 | 流派 |
+|----|-------------------|------|
+| Ant Input.Search | **input 仍 editable**,suffix spinner;submit 另鎖 | editable |
+| Material TextField | readonly + suffix adornment loader | readonly |
+| Polaris TextField | readonly + helpText 提示 | readonly |
+| Carbon TextInput | readonly + inline Loading | readonly |
+| Atlassian TextField | disabled | disabled(少數派) |
+| Apple HIG UITextField | visual overlay only,不阻礙輸入 | editable |
+
+**本 DS 採 editable 派**(Ant / Apple HIG):
+- **UX 理由**:debounce 搜尋場景,user 邊打邊看建議,凍結一格會卡節奏;async validation 若第一次失敗,user 該能立即改,不是等 spinner 完才能動
+- **對照 readonly 派**:readonly 派適合「提交後驗證」的場景(e.g. 表單 submit → 驗證),本 DS 的 `loading` prop 用在 debounce / inline validation,editable 更 fit
+
+**實作 canonical(Input / NumberInput / Combobox 等 Field 元件)**:
+- API:`loading?: boolean` prop
+- 內部:`loading=true` → wrapper `aria-busy="true"` + **endAction slot 自動塞 `<CircularProgress size={iconSize}/>`**(與 `endAction` prop 互斥,loading 優先)
+- input **不進 readonly / disabled**,保持可編輯
+- CircularProgress 尺寸:程式化 `iconSize`(sm/md=16, lg=20),消費者不用再傳
+- CircularProgress 顏色:走預設 `text-primary`(表達「正在處理,請注意」)
+- startIcon(Search 等語義 icon)**不受 loading 影響**,保留原位置
+
+```tsx
+// 世界級 canonical:search field 在 loading 中,user 仍可修改關鍵字
+<Input startIcon={Search} loading placeholder="搜尋..." />
+// → search icon 在 prefix(保留語義身分)
+// → CircularProgress 在 endAction 位置(暫時狀態)
+// → input editable + aria-busy,user 可繼續輸入 / 修改
+```
+
+❌ 禁止手刻路線:
+```tsx
+// 絕對不寫
+<div className="relative">
+  <Input startIcon={Search} />
+  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+    <CircularProgress size={16} />
+  </div>
+</div>
+```
+手刻 absolute 對齊容易跑掉(Field 元件內 loading 指示與既有 endAction 垂直對齊不一致)。一律用 `loading` prop。
+
 ### disabled 的停用原因
 
 停用原因由外部承擔，不在 input 內放 info icon：

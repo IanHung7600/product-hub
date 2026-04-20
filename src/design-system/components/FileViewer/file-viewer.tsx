@@ -16,6 +16,8 @@ import { Empty } from '@/design-system/components/Empty/empty'
 import { Separator } from '@/design-system/components/Separator/separator'
 import { AspectRatio } from '@/design-system/components/AspectRatio/aspect-ratio'
 import { Textarea } from '@/design-system/components/Textarea/textarea'
+import { Field, FieldLabel } from '@/design-system/components/Field/field'
+import { DescriptionList, DescriptionItem } from '@/design-system/components/DescriptionList/description-list'
 import {
   Popover,
   PopoverTrigger,
@@ -211,7 +213,7 @@ const ZoomInput: React.FC<ZoomInputProps> = ({ value, onChange, onFit }) => {
           </button>
         </PopoverTrigger>
       </div>
-      <PopoverContent align="end" sideOffset={4} className="w-56 p-1">
+      <PopoverContent align="end" className="w-56 p-1">
         <div className="py-1">
           {ZOOM_FIT_OPTIONS.map((opt) => (
             <button
@@ -415,8 +417,10 @@ const InfoPanel: React.FC<InfoPanelProps> = ({
           'px-[var(--layout-space-loose)] py-[var(--layout-space-tight)]',
         )}
       >
-        <div className="flex flex-col gap-1.5">
-          <span className="text-caption text-fg-muted">說明</span>
+        {/* 說明 — 用 DS Field + FieldLabel + Textarea(2026-04-20 B12 決策:
+            FileViewer 一律消費 DS Field 家族,不手刻 `<span>label` + raw control) */}
+        <Field>
+          <FieldLabel>說明</FieldLabel>
           <Textarea
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
@@ -425,33 +429,29 @@ const InfoPanel: React.FC<InfoPanelProps> = ({
             placeholder={readOnly ? '尚無說明' : '為這個檔案加上說明…'}
             rows={5}
           />
-        </div>
+        </Field>
 
+        {/* 檔案資訊 — 用 DS DescriptionList horizontal + divided(Google Drive /
+            Notion file info panel 模式):
+            - section header 用 FieldLabel 同款 typography 保視覺一致
+            - DescriptionList direction="horizontal" divided 提供 row 下底線
+              對齊格線,key 長度不一也易讀
+            - 不再手刻 dl/dt/dd — canonical 由 DS primitive own */}
         <div className="flex flex-col gap-2">
-          <span className="text-caption text-fg-muted">檔案資訊</span>
-          <dl className="flex flex-col gap-1.5 text-body">
-            <div className="flex justify-between gap-4">
-              <dt className="text-fg-secondary">檔名</dt>
-              <dd className="text-foreground text-right break-all">{file.name}</dd>
-            </div>
-            <div className="flex justify-between gap-4">
-              <dt className="text-fg-secondary">類型</dt>
-              <dd className="text-foreground text-right">{file.mimeType || '—'}</dd>
-            </div>
+          <span className="text-body font-normal text-foreground">檔案資訊</span>
+          <DescriptionList direction="horizontal" divided>
+            <DescriptionItem label="檔名">{file.name}</DescriptionItem>
+            <DescriptionItem label="類型">{file.mimeType || '—'}</DescriptionItem>
             {sizeText && (
-              <div className="flex justify-between gap-4">
-                <dt className="text-fg-secondary">大小</dt>
-                <dd className="text-foreground text-right tabular-nums">{sizeText}</dd>
-              </div>
+              <DescriptionItem label="大小">
+                <span className="tabular-nums">{sizeText}</span>
+              </DescriptionItem>
             )}
             {file.metadata &&
               Object.entries(file.metadata).map(([k, v]) => (
-                <div key={k} className="flex justify-between gap-4">
-                  <dt className="text-fg-secondary">{k}</dt>
-                  <dd className="text-foreground text-right break-all">{String(v)}</dd>
-                </div>
+                <DescriptionItem key={k} label={k}>{String(v)}</DescriptionItem>
               ))}
-          </dl>
+          </DescriptionList>
         </div>
       </div>
     </aside>
@@ -494,10 +494,8 @@ const Filmstrip: React.FC<FilmstripProps> = ({ files, activeIndex, onSelect }) =
       )}
       <div
         ref={scrollRef}
-        role="tablist"
-        aria-label="檔案佇列"
         className={cn(
-          'flex items-center gap-1',
+          'flex items-center',
           // 刻意隱藏 native scrollbar + 用 fade-mask(horizontal-overflow pattern)
           'scrollbar-none overflow-x-auto overflow-y-hidden h-full py-2',
           'w-full',
@@ -507,6 +505,16 @@ const Filmstrip: React.FC<FilmstripProps> = ({ files, activeIndex, onSelect }) =
           WebkitMaskImage: maskImage,
         }}
       >
+        {/* 內層 wrapper:mx-auto 讓 thumbs 在少量時水平置中,多量溢出時 mx-auto = 0 自然轉 scroll。
+            gap-[var(--layout-space-tight)] 走 DS density-aware token(不用 raw gap-1)——
+            世界級 idiom:Google Drive / Dropbox / Notion file preview 的 filmstrip 都是
+            少量置中 / 多量靠 start scroll。
+            role="tablist" 擺在 tabs 的直接父元件,符合 ARIA tab pattern 語意。 */}
+        <div
+          role="tablist"
+          aria-label="檔案佇列"
+          className="flex items-center gap-[var(--layout-space-tight)] mx-auto shrink-0"
+        >
         {files.map((file, i) => {
           const active = i === activeIndex
           const isImage = canRenderImage(file)
@@ -549,6 +557,7 @@ const Filmstrip: React.FC<FilmstripProps> = ({ files, activeIndex, onSelect }) =
             </button>
           )
         })}
+        </div>
       </div>
       {canScroll && !atEnd && (
         <OverflowScrollArrow direction="right" onClick={() => scrollByPage('right')} />

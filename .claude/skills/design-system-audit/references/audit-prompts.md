@@ -185,7 +185,7 @@ End: `N specs checked, V violations, top offenders: [list]` Under 500 words. Don
 ## 7. Spec Rule B 邊界案例
 
 **Type**: Consistency
-**Canonical source**: CLAUDE.md `# Spec 規則` → 邊界案例覆蓋 + Scope 預設 (Field family delegates to field-controls, Separator/Skeleton/Spinner claim 無互動狀態, etc.)
+**Canonical source**: CLAUDE.md `# Spec 規則` → 邊界案例覆蓋 + Scope 預設 (Field family delegates to field-controls, Separator/Skeleton/CircularProgress/ProgressBar claim 無互動狀態, etc.)
 **Rationale home**: element .spec.md —「本元件無 X 狀態」/「由 {family} spec 繼承」 one-liner acceptable
 
 ```
@@ -199,7 +199,7 @@ For each spec check:
 
 Scope defaults (do NOT flag if):
 - Field-family component delegating to field-controls.spec.md
-- Pure wrappers (Separator/Skeleton/Spinner) claiming "無互動狀態"
+- Pure wrappers (Separator/Skeleton/CircularProgress/ProgressBar) claiming "無互動狀態"
 - Dark mode handled by semantic token
 
 Report GENUINE gaps only: `ComponentName — missing: X / Y` + why not N/A
@@ -282,7 +282,7 @@ Check each .tsx and its .stories/.anatomy/.principles:
 
 DON'T flag:
 - Radix primitives (they manage ARIA internally — Checkbox / Radio / Dialog etc.)
-- Skeleton / Spinner (aria-hidden is common pattern)
+- Skeleton / CircularProgress (aria-hidden is common pattern)
 - Decorative icons without interactive parent
 
 Report: `file:line — missing: aria-label / role / keyboard`
@@ -343,51 +343,57 @@ Report: `file:line — violating text — real scenario suggestion`
 End: `N files checked, V violations.` Under 600 words. Don't fix.
 ```
 
-## 13. Anatomy Figma-inspect 完整度 + Canonical `export const` 命名
+## 13. Anatomy Figma-inspect 完整度 + Canonical `export const` 命名 + 中文 `name:` 覆寫
 
 **Type**: Consistency
-**Canonical source**: `/story-writing` anatomy-standard.md → canonical 5 件套 (`Overview / Inspector / ColorMatrix / SizeMatrix / StateBehavior`)
-**Rationale home**: element .spec.md — replacing/omitting a canonical 5 section requires a rationale paragraph explaining why (e.g., "Chart 色彩來自 ChartConfig 注入,無 ColorMatrix 表格"). Renaming is never allowed.
+**Canonical source**: `/story-writing` anatomy-standard.md → canonical 5 件套 (`Overview / Inspector / ColorMatrix / SizeMatrix / StateBehavior`) + 強制中文 `name:` 覆寫(含編號前綴)
+**Rationale home**: element .spec.md — replacing/omitting a canonical 5 section requires a rationale paragraph explaining why (e.g., "Badge 無互動狀態,不需 StateBehavior"). Renaming identifier is never allowed.
 
 ```
-Your job: audit .anatomy.stories.tsx against `/story-writing` anatomy-standard.md, enforcing CLAUDE.md 「Consistency Audit 原則」 (canonical + rationale-for-deviation).
+Your job: audit .anatomy.stories.tsx against `/story-writing` anatomy-standard.md on THREE layers, enforcing CLAUDE.md 「Consistency Audit 原則」.
 
-**Canonical export const names** (一字不差, in order):
-1. `Overview` — 元件總覽 (Anatomy + Variant 一覽 + Props table)
-2. `Inspector` — 元件檢閱器 (controls + blueprint + Inspect panel)
-3. `ColorMatrix` — 色彩對照表 (Variant × State + live swatches via `style={{backgroundColor:'var(--token)'}}`)
-4. `SizeMatrix` — 尺寸對照表 (Size token table + Visual matrix)
-5. `StateBehavior` — 狀態行為 (interaction transitions + disabled for all variants)
+**Layer 1 — Canonical `export const` names** (一字不差, in order):
+1. `Overview` / 2. `Inspector` / 3. `ColorMatrix` / 4. `SizeMatrix` / 5. `StateBehavior`
+Additional `export const` 6+ allowed (component-specific, no rationale required).
+Replacing canonical 5 with different identifier → VIOLATION regardless of rationale.
+Missing canonical 5 → requires rationale paragraph in .spec.md.
 
-Additional story 6+ is allowed (component-specific, no rationale required).
-**Replacing** one of canonical 5 requires a rationale paragraph in that component's `.spec.md`.
+**Layer 2 — Mandatory `name:` 中文覆寫(含編號前綴,一字不差)**:
+1. `Overview`     → `name: '1. 元件總覽'`
+2. `Inspector`    → `name: '2. 元件檢閱器'`
+3. `ColorMatrix`  → `name: '3. 色彩對照表'`
+4. `SizeMatrix`   → `name: '4. 尺寸對照表'`
+5. `StateBehavior`→ `name: '5. 狀態行為'`
+6+ (extras)      → `name: '6. {中文描述}'` / `'7. {中文描述}'` (編號連續,中文命名)
 
-For each `src/design-system/components/*/[^.]*.anatomy.stories.tsx`:
-1. Grep `^export const ([A-Za-z]+)` — collect the actual list
-2. Check which of canonical 5 are present / missing / renamed
-3. For any MISSING or RENAMED:
-   - Open component's .spec.md
-   - Grep for rationale mentioning that section (e.g., Chart skipping ColorMatrix must have spec.md text explaining why)
-4. Flag:
-   - Missing canonical + no rationale → VIOLATION
-   - Renamed canonical (e.g., `VisualTokens` instead of `ColorMatrix`) → VIOLATION regardless of rationale (renaming not allowed per anatomy-standard.md rule 3)
-   - Canonical 5 complete but has 6+ extras → OK, note only
-   - Missing canonical WITH rationale → OK
+依賴 `export const` identifier 讓 Storybook sidebar 顯示英文 = VIOLATION(sidebar 中英混雜)。
+素顏型 `name: '元件總覽'`(無編號) = VIOLATION(Storybook sidebar 字母序亂)。
+帶括號 context `name: '6. Orientation(horizontal / vertical)'` = VIOLATION(canonical 命名不應混英文 context)。
+編號不連續(跳 5 直接到 7) = VIOLATION。
 
-Also grep for content-level issues (only if export const canonical passes):
+**Layer 3 — Content hygiene** (only if Layer 1+2 pass):
 - Density dual values (`md density / lg density` columns) — CLAUDE.md forbids
 - `rest` instead of `default` — dev language violation
 - Token name shown without live swatch (`var()` inline style)
 - Raw pixels when token exists
-- Content mismatch (principles in anatomy, showcase in anatomy)
+
+**For each `src/design-system/components/*/*.anatomy.stories.tsx`**:
+1. Grep `^export const ([A-Za-z]+)` — Layer 1 identifier list
+2. For each export, grep its `name:` field value — Layer 2 中文覆寫
+3. Check canonical 5 presence + rationale in .spec.md for any missing
 
 Report format:
-- `ComponentName: missing [Inspector, ColorMatrix] — no rationale in spec.md`
-- `ComponentName: renamed SizeBehavior→SizeMatrix — rename not allowed (any rationale invalid)`
-- `ComponentName: canonical 5 + extras [StandardRatios] — OK`
-- `ComponentName: missing ColorMatrix — rationale found at chart.spec.md:L45 ✓`
+- `ComponentName L1: missing [Inspector, ColorMatrix] — no rationale in spec.md`
+- `ComponentName L1: renamed VisualTokens (not ColorMatrix) — rename forbidden`
+- `ComponentName L2: Overview 無 name 覆寫 (sidebar 顯示英文)` ← 39 件常見
+- `ComponentName L2: ColorMatrix name='3. 色彩對照' 漏「表」字`
+- `ComponentName L2: 素顏型無編號 '元件總覽'`
+- `ComponentName L2: extra story 6 name='6. Orientation(horizontal)' 含英文 context`
+- `ComponentName L3: density dual values in SizeMatrix column`
+- `ComponentName: canonical 5 + name 覆寫完整 + extras [StandardRatios='6. 標準比例'] — OK`
+- `ComponentName: missing StateBehavior — rationale found at badge.spec.md:L45 ✓`
 
-End: `N checked, V canonical violations (no-rationale or renamed), I content issues. Top 5 worst: [list]`. Under 700 words. Don't fix.
+End: `N checked, L1 V1 violations, L2 V2 violations, L3 V3 content issues. Top 5 worst: [list]`. Under 900 words. Don't fix.
 ```
 
 ---
@@ -611,3 +617,59 @@ Don't flag:
 
 End: `N specs checked, M hardcoded violations, top 5: [list]`. Under 400 words. Don't fix.
 ```
+
+---
+
+## 21. Stories / consumer code 手刻繞 DS canonical(視覺對齊盲點的可機械化前哨)
+
+**Type**: Absolute
+**Canonical source**: CLAUDE.md `# UI 開發規則`「Story / consumer code 禁止手刻既有 DS 元件已支援的 pattern」+ 元件 spec.md(提供的 API)
+**Rationale home**: N/A — hand-craft 繞 DS canonical 是 absolute bug,不容 rationale 例外
+
+**背景**:pixel-level 視覺對齊無法 grep(需 visual regression 工具,長期基建 tech debt)。但「stories 自刻 `absolute + translate-y-1/2` 繞過 DS 元件的 loading / overlay / search 等 pattern」是**強信號**——這類 hand-craft 在不同 size / density 下視覺對齊跑掉,是視覺 bug 的上游。本 dim 抓 hand-craft 反 canonical 路徑,預防視覺 bug 進 production。
+
+```
+Your job: grep stories (.stories.tsx / .anatomy.stories.tsx / .principles.stories.tsx) and non-DS consumer code for hand-crafted patterns that bypass existing DS component APIs. Per CLAUDE.md 「Story / consumer code 禁止手刻既有 DS 元件已支援的 pattern」.
+
+Hand-craft 反 canonical 的強信號 pattern(每個違反 → VIOLATION):
+
+**A. 自刻 Input loading(繞過 `<Input loading/>` prop)**:
+- grep: `<div className="[^"]*relative[^"]*">[\s\S]*?<input[\s\S]*?absolute[\s\S]*?translate-y-1/2[\s\S]*?</div>` (multiline)
+- 或: 同檔案近距離出現 `<input` + `absolute.*(translate-y-1/2|top-1/2)` + (`CircularProgress` / `Loader2`)
+- 正確做法: `<Input startIcon={Search} loading />`
+
+**B. 自刻 Field endAction loading(繞過元件 `loading` prop)**:
+- grep: NumberInput / Combobox / Select / DatePicker 鄰近 `CircularProgress` / `Loader2` 非 consumer 導出
+- 正確做法: 元件 `loading` prop(若元件沒支援 → 回元件 spec 討論擴 API,不自刻)
+
+**C. 自刻全頁 loading overlay(繞過 `<Empty icon={<CircularProgress/>}/>` compose)**:
+- grep: `absolute\s+inset-0[\s\S]*?flex[\s\S]*?items-center[\s\S]*?justify-center[\s\S]*?(CircularProgress|Loader2)`
+- 正確做法: `<Empty icon={<CircularProgress size={48}/>} title="..." description="..."/>`
+
+**D. 自刻 search field(繞過 `<Input startIcon={Search}/>`)**:
+- grep: `<input[\s\S]*?type=["']?(text\|search)` + `Search.*size=\{16\}` + 在同一個 JSX tree 非 DS 元件消費 context
+- 正確做法: `<Input startIcon={Search} placeholder="..."/>`
+
+**E. 自刻 table loading row/cell(繞過 DataTable loading 能力)**:
+- grep: `<table` 手刻 + CircularProgress / Loader2 在內
+- 正確做法: `<DataTable loading/>` 或 DataTable empty state slot `<Empty icon={<CircularProgress/>}/>`
+
+**Exemption(唯一合法自刻場景)**:
+- `.principles.stories.tsx` 的 ❌ Don't 範例(示範錯誤 pattern 給 reader 看的反例)— 必須明確標 ❌ 或 `Don't` label
+- 探索性 `/explorations/` prototype 暫時 code(但要標註「pattern 缺口,pending DS 擴 API」)
+
+For each violation:
+1. File:line + hand-craft 片段
+2. 違反哪個 signal(A/B/C/D/E)
+3. 建議 canonical 路徑(要用哪個元件的什麼 prop)
+
+Report format:
+- `path/to/story.stories.tsx:L42 [signal A] — 手刻 Input + absolute CircularProgress,改用 <Input loading/>`
+- `path/to/explorations/x.tsx:L88 [signal C] — 手刻全頁 overlay,改用 <Empty icon={<CircularProgress/>}/>`
+
+End: `N files checked, V violations by signal: A=?, B=?, C=?, D=?, E=?. Top 5 worst: [list]`. Under 700 words. Don't fix.
+```
+
+---
+
+**後續待辦(已記 memory tech debt)**:pixel-level 視覺 regression 基建(Chromatic / Playwright screenshots)— 本 dim 只是**上游攔截**,不涵蓋「已用對 API 但視覺仍跑掉」的 pixel bug。真正視覺對齊 audit 需要視覺工具,不是 grep 能 cover 的維度。

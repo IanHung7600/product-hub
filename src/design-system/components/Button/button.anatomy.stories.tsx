@@ -257,7 +257,7 @@ export const Overview = {
                 ['endIcon', 'LucideIcon', '—', '右側 icon（方向指示，如 ChevronDown）'],
                 ['badge', 'ReactNode', '—', '右側 badge（通知計數）'],
                 ['iconOnly', 'boolean', 'false', '正方形模式，需搭配 aria-label'],
-                ['loading', 'boolean', 'false', 'Spinner + 自動 disabled + aria-busy'],
+                ['loading', 'boolean', 'false', 'CircularProgress(indeterminate)+ 自動 disabled + aria-busy'],
                 ['fullWidth', 'boolean', 'false', '撐滿父容器'],
                 ['asChild', 'boolean', 'false', '透過 Radix Slot 套用至子元件'],
               ].map(([p, t, d, desc]) => (
@@ -400,7 +400,7 @@ const InspectorInner = () => {
                 </div>
                 <div className="ml-3 flex flex-col gap-0.5">
                   <TkVal token={s.heightToken} value={s.height} />
-                  <span className="font-mono text-[10px] text-fg-muted">px-[calc((h-icon)/2)] · 自然正方形 · min-w-0</span>
+                  <span className="font-mono text-[10px] text-fg-muted">px-[calc((h-icon)/2)] + aspect-square · min-w-0</span>
                 </div>
               </div>
             )}
@@ -429,7 +429,7 @@ const InspectorInner = () => {
             {iconOnly ? (
               <>
                 <PropRow label="內距">px-[calc((h-icon)/2)]</PropRow>
-                <PropRow label="形狀">自然正方形（padding 推導）</PropRow>
+                <PropRow label="形狀">正方形(padding 公式 + aspect-square CSS 雙重鎖)</PropRow>
                 <PropRow label="Min Width">min-w-0</PropRow>
               </>
             ) : (
@@ -638,11 +638,11 @@ export const StateBehavior = {
       </div>
 
       <div className="flex flex-col gap-4">
-        <span className="text-caption font-medium text-fg-secondary">Loading — Spinner 替換規則</span>
+        <span className="text-caption font-medium text-fg-secondary">Loading — CircularProgress 替換規則</span>
         {[
-          { label: '有 startIcon', before: <Button startIcon={Download}>匯出</Button>, after: <Button startIcon={Download} loading>匯出</Button>, desc: 'startIcon → spinner（同位置）' },
-          { label: '無 startIcon', before: <Button>儲存</Button>, after: <Button loading>儲存</Button>, desc: 'spinner 加在文字左側' },
-          { label: 'iconOnly', before: <Button iconOnly startIcon={Download} aria-label="下載" />, after: <Button iconOnly startIcon={Download} loading aria-label="下載" />, desc: 'spinner 替換 icon' },
+          { label: '有 startIcon', before: <Button startIcon={Download}>匯出</Button>, after: <Button startIcon={Download} loading>匯出</Button>, desc: 'startIcon → CircularProgress(同位置)' },
+          { label: '無 startIcon', before: <Button>儲存</Button>, after: <Button loading>儲存</Button>, desc: 'CircularProgress 加在文字左側' },
+          { label: 'iconOnly', before: <Button iconOnly startIcon={Download} aria-label="下載" />, after: <Button iconOnly startIcon={Download} loading aria-label="下載" />, desc: 'CircularProgress 替換 icon' },
           { label: '有 endIcon', before: <Button startIcon={Download} endIcon={ChevronDown}>匯出</Button>, after: <Button startIcon={Download} loading endIcon={ChevronDown}>匯出</Button>, desc: 'endIcon 維持顯示' },
         ].map(({ label, before, after, desc }) => (
           <div key={label} className="flex items-center gap-3">

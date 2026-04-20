@@ -2,7 +2,7 @@ import * as React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import {
   LayoutDashboard, Inbox, Users, Settings, Bell,
-  Folder, FileText, FileCode, Plus, MoreHorizontal,
+  Folder, FileText, FileCode, Plus, MoreVertical,
 } from 'lucide-react'
 import {
   SidebarProvider,
@@ -279,7 +279,7 @@ export const MixedContent: Story = {
                         startIcon={Folder}
                         actionsReveal="hover"
                         inlineActions={[
-                          { icon: MoreHorizontal, label: '更多動作', onClick: () => {} },
+                          { icon: MoreVertical, label: '更多動作', onClick: () => {} },
                           { icon: Plus, label: '新增', onClick: () => {} },
                         ]}
                       >

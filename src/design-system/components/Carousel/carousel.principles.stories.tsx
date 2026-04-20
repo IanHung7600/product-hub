@@ -213,14 +213,14 @@ export const ArrowHoverOnly: Story = {
             </div>
             <button
               type="button"
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-surface-raised border border-border shadow-[var(--elevation-200)] flex items-center justify-center"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-md bg-surface border border-border flex items-center justify-center"
               aria-label="上一張(永遠可見的範例)"
             >
               ‹
             </button>
             <button
               type="button"
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-surface-raised border border-border shadow-[var(--elevation-200)] flex items-center justify-center"
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-md bg-surface border border-border flex items-center justify-center"
               aria-label="下一張(永遠可見的範例)"
             >
               ›

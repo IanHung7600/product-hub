@@ -1,7 +1,7 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Skeleton } from './skeleton'
-import { Spinner } from '@/design-system/components/Spinner/spinner'
+import { CircularProgress } from '@/design-system/components/CircularProgress/circular-progress'
 
 const meta: Meta = {
   title: 'Design System/Components/Skeleton/設計原則',
@@ -30,8 +30,8 @@ const Label = ({ children, warn }: { children: React.ReactNode; warn?: boolean }
 
 // ── Stories ───────────────────────────────────────────────────────────────────
 
-export const SkeletonVsSpinnerRule: Story = {
-  name: 'Skeleton vs Spinner',
+export const SkeletonVsCircularProgressRule: Story = {
+  name: 'Skeleton vs CircularProgress',
   render: () => (
     <div>
       <Rule
@@ -51,11 +51,11 @@ export const SkeletonVsSpinnerRule: Story = {
       </Rule>
 
       <Rule
-        title="Spinner — 不可預期時長 / 不知佈局的操作"
-        note="Button loading、form submitting、小區塊 inline 等待——當「會出現什麼」不確定,或根本不是內容佔位而是行為回饋時,用 Spinner"
+        title="CircularProgress — 不可預期時長 / 不知佈局的操作"
+        note="Button loading、form submitting、小區塊 inline 等待——當「會出現什麼」不確定,或根本不是內容佔位而是行為回饋時,用 CircularProgress(indeterminate)"
       >
         <div className="flex items-center gap-2 border border-border rounded-md px-3 py-2 w-72">
-          <Spinner size={16} />
+          <CircularProgress size={16} />
           <span className="text-body text-fg-muted">正在送出訂單...</span>
         </div>
         <Label>Stripe 結帳送出中:沒有「佈局」可佔位,只是行為回饋</Label>
@@ -63,10 +63,10 @@ export const SkeletonVsSpinnerRule: Story = {
 
       <Rule
         title="判準——先問「佈局已知嗎?」"
-        note="能描述「資料回來後會是什麼樣」→ Skeleton;只知道「有事情在進行」→ Spinner"
+        note="能描述「資料回來後會是什麼樣」→ Skeleton;只知道「有事情在進行」→ CircularProgress"
       >
         <Label>佈局已知 → Skeleton(內容佔位)</Label>
-        <Label>佈局未知 → Spinner(行為回饋)</Label>
+        <Label>佈局未知 → CircularProgress(行為回饋)</Label>
       </Rule>
     </div>
   ),
@@ -137,13 +137,13 @@ export const DurationRule: Story = {
 
       <Rule
         title="❌ 長時間(&gt; 5s)一直 Skeleton——使用者懷疑卡住"
-        note="長時間靜態 skeleton 會讓使用者以為網路斷線或系統卡住。此時改用 Spinner + 進度文案(「處理中,大約 10 秒」),或 progress bar"
+        note="長時間靜態 skeleton 會讓使用者以為網路斷線或系統卡住。此時改用 CircularProgress + 進度文案(「處理中,大約 10 秒」),或 ProgressBar"
       >
         <div className="flex items-center gap-2 border border-border rounded-md px-3 py-2 w-72">
-          <Spinner size={16} />
+          <CircularProgress size={16} />
           <span className="text-body text-fg-muted">分析中,這可能需要一分鐘...</span>
         </div>
-        <Label>&gt; 5s 的長工作 → 改用 Spinner + 進度文字,告知使用者仍在處理</Label>
+        <Label>&gt; 5s 的長工作 → 改用 CircularProgress + 進度文字,告知使用者仍在處理</Label>
       </Rule>
     </div>
   ),

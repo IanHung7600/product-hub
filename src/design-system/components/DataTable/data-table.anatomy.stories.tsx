@@ -46,7 +46,7 @@ const CATEGORY_OPTIONS = [
 // ── Stories ────────────────────────────────────────────────────────────────
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => {
     const col = createColumnHelper<Product>()
     const columns = [
@@ -86,7 +86,7 @@ export const Overview: Story = {
 }
 
 export const ColumnTypes: Story = {
-  name: 'Column Type 自動渲染',
+  name: '2. Column Type 自動渲染',
   render: () => {
     const col = createColumnHelper<Product>()
     const columns = [
@@ -131,7 +131,7 @@ export const ColumnTypes: Story = {
 }
 
 export const RowHeightMatrix: Story = {
-  name: 'Row Height Tier(閱讀 vs 掃描模式)',
+  name: '3. Row Height Tier(閱讀 vs 掃描模式)',
   render: () => {
     const col = createColumnHelper<Product>()
     const columns = [
@@ -169,7 +169,7 @@ export const RowHeightMatrix: Story = {
 }
 
 export const AlignmentRule: Story = {
-  name: '對齊規則(跨產業共識)',
+  name: '4. 對齊規則(跨產業共識)',
   render: () => {
     const col = createColumnHelper<Product>()
     const columns = [
@@ -207,7 +207,7 @@ export const AlignmentRule: Story = {
 }
 
 export const Features: Story = {
-  name: '功能特性(排序 / 虛擬捲動)',
+  name: '5. 功能特性(排序 / 虛擬捲動)',
   render: () => {
     const col = createColumnHelper<Product>()
     const columns = [
@@ -245,7 +245,7 @@ export const Features: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '色彩對照(header / row / cell 狀態)',
+  name: '6. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -380,7 +380,7 @@ export const ColorMatrix: Story = {
 }
 
 export const EmptyState: Story = {
-  name: '空狀態',
+  name: '7. 空狀態',
   render: () => {
     const col = createColumnHelper<Product>()
     const columns = [
@@ -399,7 +399,7 @@ export const EmptyState: Story = {
 }
 
 export const BorderedProp: Story = {
-  name: 'bordered prop(預設 true)',
+  name: '8. bordered prop(預設 true)',
   render: () => {
     const col = createColumnHelper<Product>()
     const columns = [

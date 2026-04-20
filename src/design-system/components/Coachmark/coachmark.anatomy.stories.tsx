@@ -33,7 +33,7 @@ const DemoMedia = ({
 // ── 1. Overview ──────────────────────────────────────────────────────────────
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -98,7 +98,7 @@ export const Overview: Story = {
               <tr><Td mono>isLastStep</Td><Td mono>boolean</Td><Td mono>false</Td><Td>true 時 Next 文字改 Done</Td></tr>
               <tr><Td mono>side</Td><Td mono>'top' | 'right' | 'bottom' | 'left'</Td><Td mono>'bottom'</Td><Td>對齊 Popover props</Td></tr>
               <tr><Td mono>align</Td><Td mono>'start' | 'center' | 'end'</Td><Td mono>'center'</Td><Td>對齊 Popover props</Td></tr>
-              <tr><Td mono>sideOffset</Td><Td mono>number</Td><Td mono>8</Td><Td>比 Popover 預設 4 大(Coachmark 要更明顯的斷離)</Td></tr>
+              <tr><Td mono>sideOffset</Td><Td mono>number</Td><Td mono>8</Td><Td>對齊 Popover DS canonical(8px,見 `popover.spec.md`)</Td></tr>
               <tr><Td mono>className</Td><Td mono>string</Td><Td mono>'w-80 p-0 overflow-hidden'</Td><Td>預設寬 320px(比 Popover 的 w-72 寬,因放 media + 多行文字)</Td></tr>
             </tbody>
           </table>
@@ -111,7 +111,7 @@ export const Overview: Story = {
 // ── 2. Inspector ─────────────────────────────────────────────────────────────
 
 export const Inspector: Story = {
-  name: '元件檢閱器',
+  name: '2. 元件檢閱器',
   render: () => {
     const [hasImage, setHasImage] = React.useState(true)
     const [hasStep, setHasStep] = React.useState(true)
@@ -180,7 +180,7 @@ export const Inspector: Story = {
                 <tr><Td>Button size</Td><Td mono>sm(Previous / Skip / Next 全 sm)</Td></tr>
                 <tr><Td>Previous / Skip variant</Td><Td mono>tertiary</Td></tr>
                 <tr><Td>Next variant</Td><Td mono>primary</Td></tr>
-                <tr><Td>sideOffset</Td><Td mono>8px(預設;Popover 預設 4px)</Td></tr>
+                <tr><Td>sideOffset</Td><Td mono>8px(對齊 Popover DS canonical)</Td></tr>
                 <tr><Td>Density</Td><Td mono>繼承 Popover(鎖 md)</Td></tr>
               </tbody>
             </table>
@@ -194,7 +194,7 @@ export const Inspector: Story = {
 // ── 3. Color ─────────────────────────────────────────────────────────────────
 
 export const ColorMatrix: Story = {
-  name: '色彩對照表',
+  name: '3. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -223,7 +223,7 @@ export const ColorMatrix: Story = {
 // ── 4. Size ──────────────────────────────────────────────────────────────────
 
 export const SizeMatrix: Story = {
-  name: '尺寸對照表',
+  name: '4. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -263,7 +263,7 @@ export const SizeMatrix: Story = {
 // ── 5. State / Multi-step Behavior ───────────────────────────────────────────
 
 export const StateBehavior: Story = {
-  name: '狀態與多步行為',
+  name: '5. 狀態行為',
   render: () => {
     const [singleOpen, setSingleOpen] = React.useState(true)
 

@@ -2,25 +2,66 @@
 
 以 `Button/button.anatomy.stories.tsx` 為範本。每個元件的設計規格必須包含以下 5 個 story。
 
-## Canonical `export const` 名稱(五件套)
+## 為什麼有「設計規格」(anatomy.stories.tsx 的目的)
 
-每個 `.anatomy.stories.tsx` 的 `export const` 識別名稱必須用英文且**一字不差對齊以下 canonical**:
+設計規格取代 Figma inspect,是**元件的技術規格表**。滿足兩個 audience:
 
-| 順序 | `export const` | 對應中文 story `name` |
+1. **設計師 / PM 讀 spec**:詳盡解剖學(anatomy 圖標示每個 slot)、每個數值的 token 來源、每個 variant × state 的色彩組合、每個 size 的尺寸藍圖 — **檢閱方便性必須超越 Figma**,不需切工具,一頁看完
+2. **工程師讀 code**:依規格資訊能直接開發出一模一樣的 tsx,不靠設計師協助 — token name / Tailwind class / padding / gap / typography 全部在規格上,Inspect 面板即時 resolve 出 px 值
+
+因此 canonical 5 story 不是裝飾,是**兩個 audience 各自需要的資訊分層**:
+- `Overview` = anatomy 圖 + variant 一覽 + props 速查(「這元件長什麼樣」)
+- `Inspector` = 即時預覽 + inspect 面板(「各 prop 切換時 token 怎麼變」,超越 Figma 的互動檢閱)
+- `ColorMatrix` = variant × state 色彩矩陣(「每格色彩 token 是哪個」)
+- `SizeMatrix` = size × variant 尺寸藍圖(「每格尺寸 token 是哪個」)
+- `StateBehavior` = 互動狀態前後對照(「hover / active / disabled 怎麼變」)
+
+5 個分層任一缺口 = 規格不完整 = Figma inspect 的替代目標沒達到。這就是為什麼 canonical 5 不是 5 個 random story,而是「足以 100% 還原元件」的最小必要切片。
+
+## Canonical `export const` 名稱 + 中文顯示名(五件套)
+
+每個 `.anatomy.stories.tsx` 的 `export const` 識別名稱必須用英文、中文 story 顯示名必須**強制 `name:` 覆寫**,且兩者**一字不差對齊**以下 canonical:
+
+| 順序 | `export const` | 中文 story `name`(強制覆寫,含編號前綴) |
 |------|--------------|---------------------|
-| 1 | `Overview` | `'元件總覽'` |
-| 2 | `Inspector` | `'元件檢閱器'` |
-| 3 | `ColorMatrix` | `'色彩對照表'` |
-| 4 | `SizeMatrix` | `'尺寸對照表'` |
-| 5 | `StateBehavior` | `'狀態行為'` |
+| 1 | `Overview` | `'1. 元件總覽'` |
+| 2 | `Inspector` | `'2. 元件檢閱器'` |
+| 3 | `ColorMatrix` | `'3. 色彩對照表'` |
+| 4 | `SizeMatrix` | `'4. 尺寸對照表'` |
+| 5 | `StateBehavior` | `'5. 狀態行為'` |
+| 6+ | 元件特有 | `'6. XXX'` / `'7. XXX'` 依順序編號(中文命名,見下方擴充規則) |
 
-**允許的偏離(遵守 CLAUDE.md「Consistency Audit 原則」)**:
+```ts
+export const Overview = {
+  name: '1. 元件總覽',  // ← 強制覆寫,不可省
+  render: () => (...),
+} satisfies Story
+```
 
-1. **追加第 6+ 個元件特有 story**:OK,不需 rationale(例如 AspectRatio 的 `StandardRatios`、Chip 的 `LayoutMatrix`、Slider 的 `ColorBindingRule`)
-2. **取代 canonical 5 中的某一個**:**必須在元件 spec.md 寫一段 rationale**,說明為什麼這個元件不需要(或用別的方式呈現)該面向(例如 Chart 沒有 `ColorMatrix` 因為色彩來自 ChartConfig — 這個理由要在 chart.spec.md 寫清楚)
-3. **同概念改名(如 `VisualTokens` 取代 `ColorMatrix`)**:不允許,一律改回 canonical。視覺 token 表本質就是色彩對照的延伸,沒有獨立身分。
+### 為什麼強制 `name:` 覆寫 + 編號
 
-**`/design-system-audit` Dimension 13 會強制 grep 比對**,偏離 canonical 但元件 spec.md 無 rationale 的一律報 violation。
+- **強制中文覆寫**:不覆寫時 Storybook sidebar 顯示英文 identifier(`Overview`),中英混雜破壞中文 spec 一致性。39/57 元件未覆寫,在 sidebar 呈現英文,這是 governance bug
+- **強制編號**:Storybook sidebar 不依 `export` 順序,改依 story `name` 字母排序。中文無字母序,sidebar 會亂序;加編號前綴強制排序 canonical 化,順序跟 anatomy-standard 這份文件一致
+- **世界級對照**:Polaris(Anatomy / Variants / States)/ Material(Anatomy / Guidelines)/ Atlassian(Examples / Code) 的 Storybook 皆為每個 story 明確標題,從不靠 identifier 帶出 sidebar 名稱
+
+### 允許的偏離(CLAUDE.md「Consistency Audit 原則」公式)
+
+1. **追加第 6+ 個元件特有 story**:OK,不需 rationale。命名遵循以下格式:
+   - `export const` 用 PascalCase 英文(如 `StandardRatios` / `LayoutMatrix` / `ColorBindingRule`)
+   - 中文 `name:` 必須用編號前綴 + 中文描述:`'6. 標準比例'` / `'6. 佈局矩陣'` / `'6. 色彩綁定規則'`
+   - ❌ 不准用素顏型 `'色彩綁定規則'`(破壞編號連續性)
+   - ❌ 不准帶括號 context `'6. Orientation(horizontal / vertical)'` — 括號寫在 story 標題本體,不影響 sidebar 文字
+2. **缺 canonical 5 某一項**:**必須在元件 spec.md 寫一段 rationale**,格式:「本元件無 `{StateBehavior}` story,因為 {原因}」。典型原因:
+   - Badge / Tag:純視覺 indicator,無互動狀態 → 不需 StateBehavior
+   - Chart:色彩來自 ChartConfig 不來自元件 variant → 不需 ColorMatrix
+   - Separator / Skeleton / CircularProgress / Avatar:無 size tier(自由 number)→ 不需 SizeMatrix(或 SizeMatrix 改為「範圍展示」)
+3. **同概念改名**:不允許(如 `VisualTokens` 取代 `ColorMatrix` / `StyleMatrix` 取代 `ColorMatrix`)一律改回 canonical
+
+**`/design-system-audit` Dimension 13 強制 grep 比對**:
+- `export const` 名稱 ≠ canonical → violation
+- 無 `name:` 覆寫(依賴 identifier) → violation
+- `name:` 值 ≠ canonical 中文(含編號前綴) → violation
+- 缺 canonical 5 某項且 spec.md 無 rationale → violation
 
 ## 1. 元件總覽
 

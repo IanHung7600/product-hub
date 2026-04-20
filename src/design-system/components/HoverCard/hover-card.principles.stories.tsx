@@ -38,14 +38,14 @@ export const VsTooltipRule: Story = {
       >
         <HoverCard>
           <HoverCardTrigger asChild>
-            <span className="underline cursor-pointer">@陳麒仁</span>
+            <span className="underline cursor-pointer">@Ada Chen</span>
           </HoverCardTrigger>
           <HoverCardContent className="bg-surface-raised border border-border rounded-lg p-4 shadow-[var(--elevation-200)]">
             <div className="flex flex-col gap-2 w-64">
               <div className="flex items-center gap-3">
-                <Avatar alt="陳麒仁" size={40} />
+                <Avatar alt="Ada Chen" size={40} />
                 <div>
-                  <div className="text-body font-medium">陳麒仁</div>
+                  <div className="text-body font-medium">Ada Chen</div>
                   <div className="text-caption text-fg-muted">Design Engineer</div>
                 </div>
               </div>
@@ -71,11 +71,11 @@ export const VsTooltipRule: Story = {
           <div className="flex flex-col gap-1">
             <HoverCard>
               <HoverCardTrigger asChild>
-                <Avatar alt="陳麒仁" size={32} />
+                <Avatar alt="Ada Chen" size={32} />
               </HoverCardTrigger>
               <HoverCardContent className="bg-surface-raised border border-border rounded-lg p-3">
                 <div className="flex flex-col gap-2 w-56">
-                  <div className="text-body font-medium">陳麒仁</div>
+                  <div className="text-body font-medium">Ada Chen</div>
                   <Button variant="tertiary" size="sm">查看 profile</Button>
                 </div>
               </HoverCardContent>
@@ -127,14 +127,14 @@ export const PureBehaviorPrimitiveRule: Story = {
         note="人員類 Avatar 透過 `hoverCard` prop 自動 wrap HoverCardTrigger，不需要 consumer 手動組合。統一人員 hover 提供 NameCard 的體驗"
       >
         <div className="flex items-center gap-3">
-          <Avatar alt="陳麒仁" size={40} hoverCard={
+          <Avatar alt="Ada Chen" size={40} hoverCard={
             <div className="flex flex-col gap-2 w-56">
-              <div className="text-body font-medium">陳麒仁</div>
+              <div className="text-body font-medium">Ada Chen</div>
               <div className="text-caption text-fg-muted">Design Engineer · 台北</div>
               <Button variant="tertiary" size="sm">傳訊息</Button>
             </div>
           } />
-          <span className="text-body">陳麒仁</span>
+          <span className="text-body">Ada Chen</span>
         </div>
         <Label>↑ Avatar hoverCard prop 自動整合,無需手動 HoverCardTrigger</Label>
       </Rule>

@@ -26,7 +26,9 @@ import { cn } from '@/lib/utils'
  * precision="half" — 半星(0.5, 1, 1.5, 2, 2.5, ..., 5)
  */
 
-const SIZE_PX = { sm: 16, md: 20, lg: 24 } as const
+// Size 對齊 Checkbox / Radio family:sm/md 皆 16px(field-height-sm/md 都是 16 控件),lg=20
+// 理由:Rating 常與 Checkbox / Radio 在同一 form 出現,視覺 baseline 對齊避免刻度不一致
+const SIZE_PX = { sm: 16, md: 16, lg: 20 } as const
 
 export interface RatingProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   /** 當前評分(0 ~ max) */
@@ -171,9 +173,10 @@ function StarIcon({ Icon, sizePx, fillRatio, isHalf, interactive, onHover, onCli
         onMouseEnter={() => onHover(false)}
         onClick={() => onClick(false)}
         className={cn(
-          'inline-flex p-0 border-0 bg-transparent',
+          // p-0 + border-0 + outline-none 三層移除:button 預設視覺(避免 ring / border 漏出)
+          'inline-flex p-0 border-0 bg-transparent outline-none',
+          'focus-visible:outline-none',  // focus 視覺由 parent div ring 承擔,不 per-star ring
           interactive ? 'cursor-pointer' : 'cursor-default',
-          interactive && 'hover:scale-110 transition-transform',
         )}
         style={{ color: fill }}
         tabIndex={-1}

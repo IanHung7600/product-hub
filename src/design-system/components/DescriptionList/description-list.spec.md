@@ -29,8 +29,38 @@
 
 ## 結構
 
-- `DescriptionList`：外層 `dl`，CSS grid 容器
-- `DescriptionItem`：一組 `dt`（label）+ `dd`（value），包在 `div` 內作為 grid item
+- `DescriptionList`：外層 `dl`，vertical 模式為 CSS grid、horizontal 模式為 flex column
+- `DescriptionItem`：一組 `dt`（label）+ `dd`（value），透過 context 知道當前 direction 自動切 layout
+
+## Direction(2026-04-20 新增)
+
+| direction | Layout | 典型情境 | 世界級對照 |
+|-----------|--------|---------|-----------|
+| `vertical`(預設)| label 在上 / value 在下 | NameCard detail、sidebar 長 value(地址、bio) | Atlassian DescriptionList、Polaris DescriptionList |
+| `horizontal` | label 左 / value 右對齊 | **file info panel / 訂單詳情 / settings summary**(短 value 的 metadata 列) | Google Drive file info、Notion file panel、iOS Settings |
+
+**判斷法**:
+- value 預期長(多字、可能換行)→ vertical(讓 value 佔滿寬)
+- value 短(檔名、日期、大小、類型)+ 強調 label↔value 對應 → horizontal
+
+### divided(horizontal 專用)
+
+每個 item 下方加 `border-b border-divider`,rows 之間有視覺格線。**長列表 / key 長度不一**時建議開;短列表(< 4 rows)或單一相似長度 keys 不需要。
+
+```tsx
+// 短 metadata 列,無需 divider
+<DescriptionList direction="horizontal">
+  <DescriptionItem label="建立">2026-04-20</DescriptionItem>
+  <DescriptionItem label="修改">2026-04-20</DescriptionItem>
+</DescriptionList>
+
+// 檔案資訊 — 多 row + key 長度不一 → divided 對齊格線
+<DescriptionList direction="horizontal" divided>
+  <DescriptionItem label="檔名">Q1 財報分析.xlsx</DescriptionItem>
+  <DescriptionItem label="類型">application/vnd.xlsx</DescriptionItem>
+  <DescriptionItem label="大小">1.2 MB</DescriptionItem>
+</DescriptionList>
+```
 
 ## Typography（閱讀模式）
 
@@ -42,19 +72,65 @@
 
 ## 間距
 
-- **label → value**（同 item 內）：`mt-0.5`（2px）——極小間距，視覺上 label 與 value 緊密配對
-- **items 之間垂直 gap**：`gap-y-[var(--layout-space-tight)]`——density-aware，跟隨系統密度設定
-- **columns 之間水平 gap**：`gap-x-4`（16px）
+### Vertical direction
+
+- **label → value**(同 item 內):`mt-0.5`(2px)——極小間距,視覺上 label 與 value 緊密配對
+- **items 之間垂直 gap**:`gap-y-[var(--layout-space-tight)]`——density-aware,跟隨系統密度設定
+- **columns 之間水平 gap**:`gap-x-4`(16px)
+
+### Horizontal direction(divided=false)
+
+- **items 之間垂直 gap**:`mb-[var(--layout-space-tight)]` per item(last:mb-0)——density-aware,等同 vertical 的 items gap
+- label ↔ value 水平距離:`justify-between` + `gap-4`(最小 16px,content 之間拉開)
+
+### Horizontal direction(divided=true)
+
+- 每個 item `py-[var(--layout-space-tight)]`(density-aware,形成 cell-like row 高度)
+- 每個 item 底部 `border-b border-divider`,`last:border-b-0`——row 之間視覺格線,key 長度不一時易於對齊掃描
+- **何時開 divided**:長列表(≥ 4 rows)/ key 長度差異大(短 vs 長 label 並排易顯亂) → divided 可對齊格線;短列表(< 4 rows)且 key 長度相近 → 不需 divided(border 反而噪音)
+- **世界級對照**:Google Drive 詳細資訊面板 / Notion 檔案屬性 / iOS Settings list rows,divided 是 file info / settings 的 canonical 呈現
 
 ## Props
 
-### `cols`：grid 欄數
+### `direction`:vertical / horizontal
+
+見上「Direction」段。
+
+### `divided`:horizontal 專用 row divider
+
+見上「divided」段。
+
+### `cols`:grid 欄數(vertical 才生效)
 
 | 值 | 用途 |
 |---|---|
-| `1`（預設） | 垂直堆疊，適合窄容器（NameCard、sidebar detail） |
-| `2` | 兩欄並排，適合中等寬度（NameCard info fields） |
-| `3` | 三欄，適合寬容器（detail panel） |
+| `1`(預設)| 垂直堆疊,適合窄容器(NameCard、sidebar detail)|
+| `2` | 兩欄並排,適合中等寬度(NameCard info fields)|
+| `3` | 三欄,適合寬容器(detail panel)|
+
+Horizontal 模式永遠單欄(label + value 排列就是橫向,不再有欄概念)。
+
+## Section heading 模式(consumer pattern)
+
+consumer 要在 DL 上方加 section heading(「基本資料」/「團隊資訊」等)時,**heading → first-item 的 gap 必須等於 item → item 的 gap**(都走 `var(--layout-space-tight)` density-aware token):
+
+```tsx
+<div>
+  <div className="text-body font-medium mb-[var(--layout-space-tight)]">基本資料</div>
+  <DescriptionList>
+    <DescriptionItem label="姓名">Ada Chen</DescriptionItem>
+    <DescriptionItem label="Email">ada.chen@example.com</DescriptionItem>
+  </DescriptionList>
+</div>
+```
+
+**為什麼相等**(Gestalt proximity canonical):heading 與下方 items 的關係是「擁有 / 歸屬」—— 相同距離讓視覺上 heading 與 items 形成一個群組。若拉大 gap(例 `mb-4`),heading 看似與 items「分離」,失去歸屬感;若縮小 gap(例 `mb-0`),heading 與 items 黏在一起無呼吸。
+
+**世界級對照**:iOS Settings / Notion properties / Ant Descriptions / Polaris Card.Section — heading 和 items 之間的 gap 皆與 item-item gap 相等(或近似)。
+
+**Heading typography 建議**:`text-body font-medium text-foreground`(同 item label size,靠 weight 區分層級),不用加粗 / 放大 / 換色——讓 heading 是「標籤」不是「標題」。
+
+---
 
 ## vs Field 系統
 

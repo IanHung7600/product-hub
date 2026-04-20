@@ -128,7 +128,7 @@ const SidebarPreview = ({
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-2">
@@ -254,7 +254,7 @@ export const Overview: Story = {
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const SizeMatrix: Story = {
-  name: '尺寸對照表',
+  name: '2. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-2">
@@ -337,7 +337,7 @@ export const SizeMatrix: Story = {
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const ColorMatrix: Story = {
-  name: '色彩對照表',
+  name: '3. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-2">
@@ -427,7 +427,7 @@ export const ColorMatrix: Story = {
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const ChromeTokens: Story = {
-  name: '寬度與 Chrome Token',
+  name: '4. 寬度與 Chrome Token',
   render: () => (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-2">

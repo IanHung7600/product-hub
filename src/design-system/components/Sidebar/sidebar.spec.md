@@ -510,7 +510,7 @@ Consumer 不需要任何額外 code——只要加一個 prop:
   startIcon={Folder}
   actionsReveal="hover"
   inlineActions={[
-    { icon: MoreHorizontal, label: '更多', onClick: handleMore },
+    { icon: MoreVertical, label: '更多', onClick: handleMore },
     { icon: Plus,           label: '新增', onClick: handleAdd },
   ]}
 >

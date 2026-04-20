@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { useState } from 'react'
 import { Rating } from './rating'
+import { Button } from '@/design-system/components/Button/button'
+import { Field, FieldLabel, FieldError } from '@/design-system/components/Field/field'
 
 const meta: Meta<typeof Rating> = {
   title: 'Design System/Components/Rating/展示',
@@ -62,7 +64,7 @@ export const InteractiveReview: Story = {
         <div className="flex flex-col gap-4 w-[420px] p-5 border border-border rounded-md bg-surface">
           <div className="text-body font-semibold">為這次服務評分</div>
           <p className="text-caption text-fg-muted">
-            台北信義區 · 鼎泰豐 · 2026/04/15 用餐
+            訂單編號 #A-2026-0412 · 完成於 2026/04/15
           </p>
           <div className="flex items-center gap-3 py-2">
             <Rating
@@ -70,25 +72,43 @@ export const InteractiveReview: Story = {
               onChange={setRating}
               size="lg"
               precision="full"
-              aria-label="為這次用餐給 1 到 5 星"
+              aria-label="為這次服務給 1 到 5 星"
             />
             <span className="text-body text-fg-secondary min-w-[48px]">
               {labels[rating] ?? ''}
             </span>
           </div>
           <div className="flex items-center gap-2 justify-end pt-1">
-            <button
-              type="button"
-              disabled={rating === 0}
-              className="h-field-md px-3 rounded-md bg-primary text-white text-body font-medium disabled:opacity-disabled disabled:cursor-not-allowed"
-            >
+            <Button variant="primary" size="md" disabled={rating === 0}>
               送出評分
-            </button>
+            </Button>
           </div>
         </div>
       )
     }
     return <ReviewForm />
+  },
+}
+
+/* ── Field 包裝(Rating 可塞進 Field wrapper)── */
+export const InField: Story = {
+  name: '包在 Field 內',
+  render: () => {
+    const [rating, setRating] = useState(0)
+    return (
+      <div className="w-[420px]">
+        <Field>
+          <FieldLabel required>整體滿意度</FieldLabel>
+          <Rating
+            value={rating}
+            onChange={setRating}
+            size="md"
+            aria-label="整體滿意度評分"
+          />
+          {rating === 0 && <FieldError>請至少給 1 星</FieldError>}
+        </Field>
+      </div>
+    )
   },
 }
 
@@ -109,7 +129,7 @@ export const SizeVariants: Story = {
         <span className="text-caption font-medium text-fg-secondary">md — 一般卡片、評論列表（預設）</span>
         <div className="flex items-center gap-3 p-3 border border-border rounded-md">
           <Rating value={5} readOnly size="md" aria-label="這則評論 5 星" />
-          <span className="text-caption text-fg-muted">王小明 · 2 天前</span>
+          <span className="text-caption text-fg-muted">匿名使用者 · 2 天前</span>
         </div>
       </div>
       <div className="flex flex-col gap-2">
@@ -132,7 +152,7 @@ export const DisabledState: Story = {
       </p>
       <div className="flex items-center gap-3 p-3 border border-border rounded-md bg-surface">
         <div className="flex-1">
-          <div className="text-body font-medium">鼎泰豐 · 2025/11/03 訂單</div>
+          <div className="text-body font-medium">訂單 #A-2025-11-03</div>
           <div className="text-caption text-fg-muted mt-0.5">評分期限已過</div>
         </div>
         <Rating value={4} disabled aria-label="此訂單已完成評分 4 星，無法修改" />

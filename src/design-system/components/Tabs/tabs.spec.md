@@ -175,7 +175,7 @@ Arrow buttons 用 `pointer-events-none` 外層 + `pointer-events-auto` 內層包
 - 所有 `TabsTrigger` 渲染在 DOM 中（保留 Radix Tabs 的 roving tabindex）
 - 用 `useOverflowIndices()` 偵測哪些 trigger 溢出
 - 溢出的 trigger 套 `invisible`（`visibility: hidden`，不接受 hit test 但保持 layout）
-- 右側渲染 `<Button variant="text" iconOnly startIcon={MoreHorizontal} />`
+- 右側渲染 `<Button variant="text" iconOnly startIcon={MoreVertical} />`(overflow menu canonical icon,見 CLAUDE.md「常用 icon canonical」)
 - 點擊開 DropdownMenu，內容是對應的 tab labels
 - 點 menu item 透過 Tabs context 的 `onValueChange` 觸發選擇變化，Radix 自然更新 `data-state` 並讓對應 trigger 浮現
 

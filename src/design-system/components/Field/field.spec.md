@@ -324,11 +324,15 @@ Field 透過 Context 暴露以下狀態給子元件（Primitive 可以透過 `us
 ## FieldGroup — 多 Field 垂直堆疊
 
 ```tsx
-<FieldGroup gap="normal">
+<FieldGroup gap="normal" horizontalLabelWidth="120px">
   <Field><FieldLabel>姓名</FieldLabel><Input /></Field>
-  <Field><FieldLabel>email</FieldLabel><Input /></Field>
-  <Field orientation="horizontal" labelWidth="120px">
-    <FieldLabel>訂閱</FieldLabel>
+  <Field><FieldLabel>Email</FieldLabel><Input /></Field>
+  <Field orientation="horizontal">
+    <FieldLabel>訂閱通知</FieldLabel>
+    <Switch />
+  </Field>
+  <Field orientation="horizontal">
+    <FieldLabel>小字體</FieldLabel>
     <Switch />
   </Field>
 </FieldGroup>
@@ -341,6 +345,16 @@ gap 三個語意層級(具體 gap token 見 `field.tsx` cva):
 | `compact` | 密集表單、dialog 內 |
 | `normal`(預設) | 標準表單 |
 | `loose` | 寬鬆大表單、settings 頁 |
+
+### FieldGroup `horizontalLabelWidth` cascade(2026-04-20)
+
+同一畫面 / 同一 FieldGroup 內多個 horizontal Field **必須共用 label 欄寬度**。若每個 Field 各自傳 `labelWidth`(或省略 → 內容撐開),label 寬度會參差不齊,Switch / Input 的左邊緣不對齊,視覺上每一行「歪七扭八」。
+
+**世界級 idiom**:macOS System Settings / iOS Settings / GitHub Settings / Notion preferences / Figma 偏好設定——setting list 的 label 全部固定寬、control 全部右對齊,列與列對齊成可掃描的欄位格網。
+
+`FieldGroup horizontalLabelWidth` 透過 React Context cascade 到所有子 Field(含 `vertical` 模式的 Field 不受影響——vertical 無 label 欄概念)。單一 Field 仍可用自己的 `labelWidth` prop 覆寫 group 預設(罕見 — 通常 group 預設就是 canonical)。
+
+**搭配 Switch 自動齊右**:horizontal Field 內的 Switch 自動 `ml-auto` 推到右邊緣。配合 FieldGroup `horizontalLabelWidth` → 整排 toggles 的 switch 視覺完全對齊。
 
 ---
 

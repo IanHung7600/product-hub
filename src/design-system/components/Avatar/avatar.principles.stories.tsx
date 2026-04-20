@@ -2,8 +2,7 @@ import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Settings, Bell, Home } from 'lucide-react'
 import { Avatar } from './avatar'
-import { Button } from '@/design-system/components/Button/button'
-import { Badge } from '@/design-system/components/Badge/badge'
+import { NameCard, NameCardDefaultActions } from '@/design-system/components/NameCard/name-card'
 
 const meta: Meta = {
   title: 'Design System/Components/Avatar/設計原則',
@@ -37,8 +36,8 @@ export const IdentityVsIconRule: Story = {
         note="留言者頭像、團隊成員、workspace logo、app 身份。視覺上 identity 是唯一的、可被辨識的"
       >
         <div className="flex items-center gap-3">
-          <Avatar alt="陳麒仁" size={32} />
-          <span className="text-body">陳麒仁留言</span>
+          <Avatar alt="Ada Chen" size={32} />
+          <span className="text-body">Ada Chen留言</span>
         </div>
         <div className="flex items-center gap-3">
           <Avatar alt="Engineering Team" size={32} color="blue" />
@@ -67,7 +66,7 @@ export const IdentityVsIconRule: Story = {
       >
         <div className="flex items-center gap-3 flex-wrap">
           <div className="flex items-center gap-2">
-            <Avatar alt="陳麒仁" size={24} />
+            <Avatar alt="Ada Chen" size={24} />
             <span className="text-footnote text-fg-muted">人員</span>
           </div>
           <div className="flex items-center gap-2">
@@ -97,8 +96,8 @@ export const FallbackRule: Story = {
         note="Fallback 用 `name` 取首字母(中文取第一字,英文取前兩字首字母大寫)。背景色由 `color` prop 決定"
       >
         <div className="flex items-center gap-3">
-          <Avatar alt="陳麒仁" size={40} src="https://i.pravatar.cc/80?img=1" />
-          <Avatar alt="陳麒仁" size={40} />
+          <Avatar alt="Ada Chen" size={40} src="https://i.pravatar.cc/80?img=1" />
+          <Avatar alt="Ada Chen" size={40} />
           <Avatar alt="Alice Wang" size={40} />
           <Avatar alt="ABC Corp" size={40} color="blue" />
         </div>
@@ -117,76 +116,97 @@ export const FallbackRule: Story = {
 }
 
 export const WithBadgeOverlayRule: Story = {
-  name: 'Avatar + Badge overlay（狀態通知）',
+  name: 'Avatar overlay:presence dot / count badge',
   render: () => (
     <div>
       <Rule
-        title="Avatar 右上角疊 Badge dot — 在線狀態指示"
-        note="人員 Avatar 疊 dot 表示 online / offline / busy。Avatar 承載身份,Badge 承載狀態"
+        title="Avatar 右下角 status dot — presence(在線 / 忙碌 / 離開 / 離線)"
+        note="用 Avatar 的 `status` prop(不是手刻 `<Badge dot>`)—— 顏色走 presence semantic token(`--status-online` 等,獨立於 success / error / warning),位置固定 avatar 右下角,尺寸程式化 28%"
       >
         <div className="flex items-center gap-4">
-          <div className="relative inline-flex">
-            <Avatar alt="陳麒仁" size={40} />
-            <Badge dot variant="high" className="absolute bottom-0 right-0" aria-label="在線" />
-          </div>
-          <div className="relative inline-flex">
-            <Avatar alt="Alice" size={40} />
-            <Badge dot variant="low" className="absolute bottom-0 right-0" aria-label="離線" />
-          </div>
-          <div className="relative inline-flex">
-            <Avatar alt="Bob" size={40} />
-            <Badge dot variant="critical" className="absolute bottom-0 right-0" aria-label="忙碌" />
-          </div>
+          <Avatar alt="Ada" size={40} status="online" />
+          <Avatar alt="Alex" size={40} status="busy" />
+          <Avatar alt="Ben" size={40} status="away" />
+          <Avatar alt="Bella" size={40} status="offline" />
         </div>
-        <Label>↑ 在線(high)/離線(low)/忙碌(critical)——dot 必有 aria-label</Label>
+        <Label>↑ online / busy / away / offline ── dot 自動 `role="status"` + aria-label</Label>
       </Rule>
 
       <Rule
-        title="Avatar 疊 Badge count — 未讀訊息"
-        note="chat / messenger 場景,Avatar 右上角顯示該對話的未讀數"
+        title="Avatar 右上角 count badge — 未讀訊息(chat / messenger 場景)"
+        note="用 Avatar 的 `badgeCount` prop(不是手刻 `<Badge count>`)—— 內部消費 DS Badge critical variant + surface ring,max=99 自動處理 99+"
       >
-        <div className="relative inline-flex">
-          <Avatar alt="陳麒仁" size={40} />
-          <Badge count={3} variant="critical" className="absolute -top-1 -right-1" />
+        <div className="flex items-center gap-4">
+          <Avatar alt="Ada" size={40} badgeCount={3} />
+          <Avatar alt="Alex" size={40} badgeCount={12} />
+          <Avatar alt="Ben" size={40} badgeCount={128} />
         </div>
-        <Label>↑ chat list 常見 pattern</Label>
+        <Label>↑ count 3 / 12 / 128(超過 99 顯示 "99+")</Label>
+      </Rule>
+
+      <Rule
+        title="status + badgeCount 可同時存在(不同角、不同語義)"
+        note="右下 presence + 右上 count 是世界級 chat app(Slack / LINE / WhatsApp)的標配。兩個 overlay 管不同事,不衝突"
+      >
+        <div className="flex items-center gap-4">
+          <Avatar alt="Ada" size={40} status="online" badgeCount={3} />
+          <Avatar alt="Alex" size={40} status="busy" badgeCount={99} />
+        </div>
+        <Label>↑ 右下 presence + 右上 未讀(iMessage / Slack pattern)</Label>
       </Rule>
     </div>
   ),
 }
 
 export const HoverCardIntegrationRule: Story = {
-  name: 'Avatar + HoverCard 整合',
+  name: 'Avatar + NameCard 整合',
   render: () => (
     <div>
       <Rule
-        title="人員 Avatar 用 hoverCard prop 自動整合 HoverCard"
-        note="避免 consumer 手動寫 HoverCardTrigger。hoverCard prop 會自動包裝 Avatar,提供統一的人員 hover 預覽體驗"
+        title="人員 Avatar 的 hover 預覽必須用 NameCard"
+        note="NameCard 是 DS canonical 人員 hover 內容元件(avatar + name + subtitle + actions + status + fields 統一佈局)。Avatar 的 hoverCard prop 接 NameCard,不可手刻 JSX — 手刻會漂移出 NameCard 對齊 / 間距 / status token 規則"
       >
         <Avatar
-          alt="陳麒仁"
+          alt="Ada Chen"
           size={40}
           hoverCard={
-            <div className="flex flex-col gap-2 w-56">
-              <div className="flex items-center gap-3">
-                <Avatar alt="陳麒仁" size={48} />
-                <div>
-                  <div className="text-body font-medium">陳麒仁</div>
-                  <div className="text-caption text-fg-muted">Design Engineer · 台北</div>
-                </div>
-              </div>
-              <Button variant="tertiary" size="sm">傳訊息</Button>
-            </div>
+            <NameCard
+              name="Ada Chen"
+              subtitle="Design Engineer · 台北"
+              actions={<NameCardDefaultActions />}
+            />
           }
         />
-        <Label>↑ hover 我的 avatar 彈出 NameCard(按 Message 按鈕不會消失)</Label>
+        <Label>↑ hover avatar 彈出 NameCard(action 列:Chat + Audio call canonical)</Label>
       </Rule>
 
       <Rule
-        title="❌ 關鍵資訊只靠 HoverCard 顯示（觸控裝置看不到）"
-        note="hover 在手機 / 平板無法觸發。關鍵資訊(角色、權限、是否離職)應該在主頁面有其他管道看到,不能只靠 Avatar hover"
+        title="❌ 關鍵資訊只靠 hover 顯示(觸控裝置看不到)"
+        note="NameCard hover 本身用法沒錯,問題是「資訊的唯一出口」。觸控裝置無 hover 能力,若必看資訊(狀態角色、是否離職、權限等)只出現在 hover 浮層裡,平板 / 手機使用者完全錯過。hover 是**補充資訊**管道,不是**關鍵資訊**唯一載體"
       >
-        <Label warn>若 Avatar hover 是唯一看到「該成員已離職」的途徑 → 觸控使用者完全錯過</Label>
+        <div className="flex items-start gap-8">
+          <div className="flex flex-col gap-2">
+            <Avatar alt="Alex Wang" size={48}
+              hoverCard={
+                <NameCard name="Alex Wang" subtitle="Engineer · 已離職" />
+              }
+            />
+            <Label warn>❌ 「已離職」只出現在 hover 內 — 觸控使用者看不到,可能誤發訊息給已離職成員</Label>
+          </div>
+          <div className="flex flex-col gap-2">
+            {/* Family 2 card-header mode(avatar > text block,見 item-anatomy.spec.md「Card header 大 prefix 對齊」):
+                items-start + text column `justify-center min-h-[avatar-size]`,短文字置中於 avatar、長文字自然撐高。
+                gap-3(12px)對齊 card header canonical(非 gap-2 的 row 緊湊間距)。 */}
+            <div className="flex items-start gap-3">
+              <Avatar alt="Alex Wang" size={48} className="opacity-50" />
+              <div className="flex flex-col justify-center min-w-0 flex-1" style={{ minHeight: 48 }}>
+                <span className="text-body font-medium text-fg-muted">Alex Wang</span>
+                <span className="text-caption text-error mt-0.5">已離職</span>
+              </div>
+            </div>
+            <Label>✅ 關鍵狀態直接在主畫面呈現(opacity + 文字標示 + Family 2 card-header 對齊),hover 補充細節即可</Label>
+          </div>
+        </div>
       </Rule>
     </div>
   ),

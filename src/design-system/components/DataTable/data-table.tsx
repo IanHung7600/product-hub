@@ -196,9 +196,18 @@ function DataTableInner<TData>(
     const meta = cell.column.columnDef.meta
     const colType = meta?.type as ColumnType | undefined
     const wrap = autoRowHeight && meta?.wrap === true
-    const isCompound = colType === 'select' || colType === 'multiSelect' || colType === 'person' || colType === 'multiPerson' || colType === 'url'
+    // 已知 compound 欄位(Tag / PersonDisplay 等自帶 layout)直接 bypass TruncateCell,
+    // 因為 `truncate` 的 inline baseline context 會破壞自訂 layout 的垂直對齊。
+    const isKnownCompound = colType === 'select' || colType === 'multiSelect' || colType === 'person' || colType === 'multiPerson' || colType === 'url'
     const content = colType ? renderTypedValue(cell.getValue(), meta, autoRowHeight, size) : flexRender(cell.column.columnDef.cell, cell.getContext())
-    return wrap ? <span className="break-words min-w-0">{content}</span> : isCompound ? content : <TruncateCell>{content}</TruncateCell>
+    // Consumer 自訂 cell(無 colType)若回傳 React element,視為 compound — consumer 自己處理
+    // 對齊與截斷。回傳 primitive(string / number)才走 TruncateCell。
+    // 理由:TruncateCell 的 `span.truncate` 強制 white-space:nowrap + inline baseline,
+    // 對 inline-flex / icon+text 自訂結構會拉歪(見 circular-progress sync table 案例)。
+    const isConsumerCompound = !colType && React.isValidElement(content)
+    return wrap ? <span className="break-words min-w-0">{content}</span>
+      : (isKnownCompound || isConsumerCompound) ? content
+      : <TruncateCell>{content}</TruncateCell>
   }
 
   const iconSize = size === 'lg' ? 20 : 16

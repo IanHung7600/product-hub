@@ -164,10 +164,10 @@ const InspectorInner = () => {
           </div>
           <div className="relative h-[200px] rounded-md border-2 border-dashed border-primary/30 bg-neutral-hover/40">
             {/* Arrow positions */}
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full border-2 border-dashed border-info flex items-center justify-center text-[9px] text-info font-mono">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-md border-2 border-dashed border-info flex items-center justify-center text-[9px] text-info font-mono">
               Prev
             </div>
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full border-2 border-dashed border-info flex items-center justify-center text-[9px] text-info font-mono">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-md border-2 border-dashed border-info flex items-center justify-center text-[9px] text-info font-mono">
               Next
             </div>
             {/* Dots */}
@@ -195,14 +195,14 @@ const InspectorInner = () => {
         <div className="px-4 py-3 border-b border-divider">
           <div className="text-[10px] font-semibold text-fg-muted uppercase tracking-wider mb-2">Arrow(Previous / Next)</div>
           <div className="flex flex-col gap-1.5 text-[12px] font-mono">
-            <div className="flex justify-between"><span className="text-fg-muted">Size</span><span>w-9 h-9(36px)</span></div>
-            <div className="flex justify-between"><span className="text-fg-muted">Shape</span><span>rounded-full</span></div>
-            <div className="flex justify-between items-center"><span className="text-fg-muted">Fill</span><TokenCell token="--surface-raised" /></div>
+            <div className="flex justify-between"><span className="text-fg-muted">Component</span><span>&lt;Button variant="tertiary" size="md" iconOnly /&gt;</span></div>
+            <div className="flex justify-between"><span className="text-fg-muted">Size</span><span>h-field-md(field-height-md,iconOnly 方形)</span></div>
+            <div className="flex justify-between"><span className="text-fg-muted">Shape</span><span>rounded-md(繼承 Button,不破例)</span></div>
+            <div className="flex justify-between items-center"><span className="text-fg-muted">Fill</span><TokenCell token="--surface" /></div>
             <div className="flex justify-between items-center"><span className="text-fg-muted">Stroke</span><TokenCell token="--border" /></div>
-            <div className="flex justify-between"><span className="text-fg-muted">Shadow</span><span>--elevation-200</span></div>
-            <div className="flex justify-between items-center"><span className="text-fg-muted">Hover</span><TokenCell token="--neutral-hover" /></div>
-            <div className="flex justify-between"><span className="text-fg-muted">Icon</span><span>16px</span></div>
-            <div className="flex justify-between"><span className="text-fg-muted">Opacity</span><span>0 → 100(group-hover / focus-visible)</span></div>
+            <div className="flex justify-between items-center"><span className="text-fg-muted">Hover</span><span>text/border → --primary-hover(Button tertiary)</span></div>
+            <div className="flex justify-between"><span className="text-fg-muted">Icon</span><span>16px(Button 程式化)</span></div>
+            <div className="flex justify-between"><span className="text-fg-muted">Opacity</span><span>0 → 100(group-hover / focus-within)</span></div>
           </div>
         </div>
 

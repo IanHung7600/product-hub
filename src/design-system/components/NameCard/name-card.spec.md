@@ -41,6 +41,25 @@ NameCard 固定 **320px 寬**（見 `.tsx` 的 `w-[320px]`）——HoverCard 浮
 
 對照世界級：Material Snackbar 固定 344px、Slack message modal 固定寬度——**單一元件的 canonical 寬度屬於該元件自己的 design spec，不抽為跨元件 token**。Token 系統只管共享值（如 `--field-height-*`、`--layout-space-*`）；單一元件獨有的結構常數留在 component code + 本 spec。
 
+## Action 行(2026-04-20 canonical)
+
+Action 區的 layout **永遠等寬均分容器寬度**——multiple actions 每個 Button 取相同 `1fr` 寬、single action 撐滿整個 NameCard width。實作 = `grid grid-flow-col auto-cols-fr gap-2` + `[&>*]:w-full` 強制每個 child fill grid cell。
+
+```
+[ Chat      ][ Audio call ▾ ]   ← 2 個 action:各 50%
+[     Message           ]       ← 1 個 action:100%
+[ Follow  ][ Message ][ ...]    ← 3 個 action:各 33%
+```
+
+**為什麼等寬均分**:
+- NameCard 是**人員關係卡**,action 是 relationship actions(Chat / Audio / Message / Follow)——這類動作視覺權重對等,無主次之分,等寬最直覺
+- Single action 撐滿讓「行動列」永遠占滿 card 底部,視覺節奏一致(不會「單一 button 孤零零縮在左邊」)
+- 世界級對照:iOS Contact card / macOS Contact / LinkedIn profile card / Slack profile modal 的 action row——全部等寬
+
+**Consumer 跨 story / 跨 consumer 必須用同一組 canonical actions**:
+
+NameCard 的 default actions **是 `Chat + Audio call`**(chat app 標配,對齊 name-card.stories.tsx 的 `actionButtons` 常數)。story / principles / consumer code 不要每個範例改成不同 action——同一個元件在不同 demo 下出現 3 種不同 action 組合,讓 consumer 誤以為 action 會隨情境自動變。**例外**:要展示 single-action / 3-action 數量差異時才改,並明示「這是展示 action 數量變化」。
+
 ## Profile Header
 
 - **Avatar**：透過 Avatar `status` prop 顯示狀態圓點（見 `avatar.spec.md`）
@@ -49,7 +68,7 @@ NameCard 固定 **320px 寬**（見 `.tsx` 的 `w-[320px]`）——HoverCard 浮
 
 ## Status 區
 
-非互動狀態標籤以 `bg-muted` 承載（不用 `bg-secondary`——Muted 視覺重量更低,對齊 Badge / Skeleton family）。狀態點顏色語意：available=success / away=warning / busy=error / offline=fg-muted。訊息以 DescriptionItem 呈現,clamp 兩行避免無限伸展。
+非互動狀態標籤以 `bg-muted` 承載(不用 `bg-secondary`——Muted 視覺重量更低,對齊 Badge / Skeleton family)。狀態點顏色走 `--status-*` presence token(2026-04-20):`online` / `away` / `busy` / `offline`——跟 Avatar status 同源、獨立於 success/warning/error(presence 不是 validation state)。訊息必須包在 `<DescriptionList>` 內以 `<DescriptionItem>` 呈現(不可孤立 dt/dd),clamp 兩行避免無限伸展。
 
 ## Info Fields
 
@@ -75,7 +94,7 @@ NameCard 固定 **320px 寬**（見 `.tsx` 的 `w-[320px]`）——HoverCard 浮
 - ❌ 不要硬寫內部 Avatar size——NameCard Profile Header 的 avatar 尺寸由元件內部規格決定,consumer 覆寫會破壞 text column 對齊公式
 - ❌ 不要 override HoverCard `z-index` / `sideOffset` / `collisionPadding`——浮層行為由 `../HoverCard/hover-card.spec.md` + `../../patterns/overlay-surface/overlay-surface.spec.md` 管理,單獨 override 會破壞跨浮層的一致 stacking
 - ❌ 不要把非人員資料塞進 NameCard(例如檔案預覽、物件資訊)——NameCard 是人員專屬模板,語意不可挪用;其他 hover 詳情請自組 HoverCard content
-- ❌ Status section 的狀態點不要自訂色——`available=success / away=warning / busy=error / offline=fg-muted` 是 canonical 映射,與 Avatar status 同源,改色會跨元件漂移
+- ❌ Status section 的狀態點不要自訂色——走 `--status-online/away/busy/offline` presence token canonical,與 Avatar status 同源,改色會跨元件漂移
 - ❌ Action button 不要放動詞性 icon-only(例 Trash2 刪除)——NameCard actions 是關係型快速動作(Message / Invite / Follow),破壞性操作應走 Dialog confirm flow
 
 ---

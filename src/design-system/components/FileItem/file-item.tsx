@@ -3,7 +3,7 @@ import { Paperclip, CircleCheck, XCircle, Download, RotateCw } from 'lucide-reac
 import { cn } from '@/lib/utils'
 import { Avatar } from '@/design-system/components/Avatar/avatar'
 import { Button } from '@/design-system/components/Button/button'
-import { Progress } from '@/design-system/components/Progress/progress'
+import { ProgressBar } from '@/design-system/components/ProgressBar/progress-bar'
 
 /**
  * FileItem — 檔案顯示 / 上傳進度
@@ -31,8 +31,8 @@ const STATUS_ICON = {
   error: { icon: XCircle, color: 'text-error' },
 } as const
 
-// Progress status 映射:uploading=inProgress(藍) / completed=success(綠) / error=error(紅)
-// 與 Progress 元件的 status prop 對齊,不需再維護 PROGRESS_COLOR 本地 map。
+// ProgressBar status 映射:uploading=inProgress(藍) / completed=success(綠) / error=error(紅)
+// 與 ProgressBar 元件的 status prop 對齊,不需再維護 PROGRESS_COLOR 本地 map。
 const PROGRESS_STATUS_MAP = {
   uploading: 'inProgress',
   completed: 'success',
@@ -99,12 +99,14 @@ const FileItem = React.forwardRef<HTMLDivElement, FileItemProps>(
 
     const hoverClass = onClick ? 'cursor-pointer hover:bg-neutral-hover' : ''
 
-    // 消費 Progress 元件(SSOT);不再自 roll bar。rich=md(4px)/ compact=sm(2px)。
+    // 消費 ProgressBar 元件(SSOT);不再自 roll bar。
+    // height override:compact mode 用 2px(極密集 row layout),rich mode 用預設 4px。
+    // 這是 ProgressBar `height` prop 的唯一合法 consumer(見 progress-bar.tsx docblock)。
     const progressBar = hasStatus ? (
-      <Progress
+      <ProgressBar
         value={progressWidth}
         status={PROGRESS_STATUS_MAP[status!]}
-        size={isRich ? 'md' : 'sm'}
+        height={isRich ? undefined : 2}
       />
     ) : null
 
@@ -247,7 +249,7 @@ const FileItem = React.forwardRef<HTMLDivElement, FileItemProps>(
           </div>
         </div>
 
-        {/* Progress bar: absolute 底部, left 對齊 label（跳過 icon + gap） */}
+        {/* ProgressBar: absolute 底部, left 對齊 label(跳過 icon + gap) */}
         {progressBar && (
           <div className="absolute bottom-0 right-3" style={{ left: `calc(0.75rem + ${ICON_PX}px + 0.5rem)` }}>
             {progressBar}

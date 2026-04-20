@@ -20,7 +20,7 @@ export default meta
 type Story = StoryObj
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -42,7 +42,7 @@ export const Overview: Story = {
 }
 
 export const CommonShapes: Story = {
-  name: '常見形狀',
+  name: '2. 常見形狀',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -110,7 +110,7 @@ export const CommonShapes: Story = {
 }
 
 export const DesignPrinciple: Story = {
-  name: '設計原則',
+  name: '3. 設計原則',
   render: () => (
     <div className="flex flex-col gap-6">
       <div>

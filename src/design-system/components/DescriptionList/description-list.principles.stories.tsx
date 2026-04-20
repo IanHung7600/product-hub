@@ -48,8 +48,8 @@ export const VsDataTableRule: Story = {
         <Frame className="max-w-md">
           <div className="text-body font-medium mb-2">使用者資料</div>
           <DescriptionList cols={1}>
-            <DescriptionItem label="姓名">陳麒仁</DescriptionItem>
-            <DescriptionItem label="Email">qijenchen@example.com</DescriptionItem>
+            <DescriptionItem label="姓名">Ada Chen</DescriptionItem>
+            <DescriptionItem label="Email">ada.chen@example.com</DescriptionItem>
             <DescriptionItem label="職稱">Design Engineer</DescriptionItem>
           </DescriptionList>
         </Frame>
@@ -71,8 +71,8 @@ export const VsDataTableRule: Story = {
             </thead>
             <tbody>
               <tr className="border-t border-divider">
-                <td className="py-2">陳麒仁</td>
-                <td className="py-2">qijenchen@example.com</td>
+                <td className="py-2">Ada Chen</td>
+                <td className="py-2">ada.chen@example.com</td>
                 <td className="py-2">Design</td>
               </tr>
               <tr className="border-t border-divider">
@@ -92,8 +92,8 @@ export const VsDataTableRule: Story = {
       >
         <Frame className="max-w-md">
           <DescriptionList cols={1}>
-            <DescriptionItem label="姓名">陳麒仁</DescriptionItem>
-            <DescriptionItem label="Email">qijenchen@example.com</DescriptionItem>
+            <DescriptionItem label="姓名">Ada Chen</DescriptionItem>
+            <DescriptionItem label="Email">ada.chen@example.com</DescriptionItem>
             <DescriptionItem label="姓名">王小明</DescriptionItem>
             <DescriptionItem label="Email">ming@example.com</DescriptionItem>
             <DescriptionItem label="姓名">林大華</DescriptionItem>
@@ -116,7 +116,7 @@ export const LayoutRule: Story = {
       >
         <Frame className="max-w-xs">
           <DescriptionList cols={1}>
-            <DescriptionItem label="Email">qijenchen@example.com</DescriptionItem>
+            <DescriptionItem label="Email">ada.chen@example.com</DescriptionItem>
             <DescriptionItem label="職稱">Senior Design Engineer</DescriptionItem>
             <DescriptionItem label="團隊">Design Systems</DescriptionItem>
             <DescriptionItem label="時區">UTC+8(台北)</DescriptionItem>
@@ -148,7 +148,7 @@ export const LayoutRule: Story = {
       >
         <Frame className="max-w-xs">
           <DescriptionList cols={2}>
-            <DescriptionItem label="Email">qijenchen@example.com</DescriptionItem>
+            <DescriptionItem label="Email">ada.chen@example.com</DescriptionItem>
             <DescriptionItem label="職稱">Senior Design Engineer</DescriptionItem>
           </DescriptionList>
         </Frame>
@@ -168,9 +168,9 @@ export const LabelAlignmentRule: Story = {
       >
         <Frame className="max-w-md">
           <DescriptionList cols={2}>
-            <DescriptionItem label="姓名">陳麒仁</DescriptionItem>
+            <DescriptionItem label="姓名">Ada Chen</DescriptionItem>
             <DescriptionItem label="職稱">Design Engineer</DescriptionItem>
-            <DescriptionItem label="Email">qijenchen@example.com</DescriptionItem>
+            <DescriptionItem label="Email">ada.chen@example.com</DescriptionItem>
             <DescriptionItem label="電話">0912-345-678</DescriptionItem>
           </DescriptionList>
         </Frame>
@@ -197,11 +197,11 @@ export const LabelAlignmentRule: Story = {
         <Frame className="max-w-md">
           <div className="flex justify-between py-1">
             <span className="text-body text-fg-secondary">姓名</span>
-            <span className="text-body">陳麒仁</span>
+            <span className="text-body">Ada Chen</span>
           </div>
           <div className="flex justify-between py-1">
             <span className="text-body text-fg-secondary">Email</span>
-            <span className="text-body">qijenchen@example.com</span>
+            <span className="text-body">ada.chen@example.com</span>
           </div>
         </Frame>
         <Label warn>
@@ -242,7 +242,7 @@ export const NoInteractionRule: Story = {
         <div className="flex flex-col gap-3 max-w-md">
           <Field>
             <FieldLabel>Email</FieldLabel>
-            <Input defaultValue="qijenchen@example.com" />
+            <Input defaultValue="ada.chen@example.com" />
           </Field>
           <Field>
             <FieldLabel>職稱</FieldLabel>
@@ -260,7 +260,7 @@ export const NoInteractionRule: Story = {
           <DescriptionList cols={1}>
             <DescriptionItem label="Email">
               <div className="flex items-center gap-2">
-                <span>qijenchen@example.com</span>
+                <span>ada.chen@example.com</span>
                 <Button variant="text" size="xs">編輯</Button>
               </div>
             </DescriptionItem>
@@ -277,8 +277,8 @@ export const NoInteractionRule: Story = {
       >
         <Frame className="max-w-md">
           <DescriptionList cols={2}>
-            <DescriptionItem label="姓名">陳麒仁</DescriptionItem>
-            <DescriptionItem label="Email">qijenchen@example.com</DescriptionItem>
+            <DescriptionItem label="姓名">Ada Chen</DescriptionItem>
+            <DescriptionItem label="Email">ada.chen@example.com</DescriptionItem>
             <DescriptionItem label="姓名">王小明</DescriptionItem>
             <DescriptionItem label="Email">ming@example.com</DescriptionItem>
           </DescriptionList>

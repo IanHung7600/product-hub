@@ -129,6 +129,14 @@ export interface FieldProps extends Omit<React.HTMLAttributes<HTMLDivElement>, '
   controlLayout?: FieldControlLayout
 }
 
+// ── FieldGroup Context(cascade horizontal labelWidth)──
+// 同一畫面多個 horizontal Field,label 寬度應統一對齊 → FieldGroup 提供 SSOT。
+// 下面 Field 組件自動 consume,consumer 可用 Field 的 labelWidth prop 覆寫單行。
+interface FieldGroupContextValue {
+  horizontalLabelWidth?: string
+}
+const FieldGroupContext = React.createContext<FieldGroupContextValue>({})
+
 const Field = React.forwardRef<HTMLDivElement, FieldProps>(
   (
     {
@@ -152,6 +160,10 @@ const Field = React.forwardRef<HTMLDivElement, FieldProps>(
     const id = idProp ?? generatedId
     const descriptionId = `${id}-description`
     const errorId = `${id}-error`
+
+    // FieldGroup cascade:group 的 horizontalLabelWidth 是 fallback,單行 labelWidth 覆寫
+    const groupCtx = React.useContext(FieldGroupContext)
+    const effectiveLabelWidth = labelWidth ?? groupCtx.horizontalLabelWidth
 
     // mode=disabled 與 disabled prop 任一為 true 即視為 disabled
     const disabled = disabledProp || mode === 'disabled'
@@ -231,8 +243,8 @@ const Field = React.forwardRef<HTMLDivElement, FieldProps>(
             className={cn('grid gap-x-3 items-start', className)}
             style={{
               gridTemplateColumns: 'var(--field-label-width, auto) minmax(0, 1fr)',
-              ...(labelWidth !== undefined
-                ? ({ ['--field-label-width' as string]: labelWidth } as React.CSSProperties)
+              ...(effectiveLabelWidth !== undefined
+                ? ({ ['--field-label-width' as string]: effectiveLabelWidth } as React.CSSProperties)
                 : undefined),
               ...style,
             }}
@@ -451,18 +463,36 @@ FieldError.displayName = 'FieldError'
 export interface FieldGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Field 之間的垂直間距，預設 'normal'（gap-4） */
   gap?: 'compact' | 'normal' | 'loose'
+  /**
+   * 同一 group 內所有 horizontal Field 共用的 label 欄寬度。
+   *
+   * 支援任何 CSS length(`"140px"` / `"10rem"` / `"30%"` 等)。預設不指定——
+   * 每個 Field 自動以 label 內容撐開(容易歪七扭八)。
+   *
+   * 世界級 idiom:macOS System Settings / iOS Settings / GitHub Settings 的
+   * setting list 一律 label 固定寬、control 右對齊,列與列整齊對齊。
+   *
+   * 單一 Field 可以用自己的 `labelWidth` prop 覆寫 cascade 值。
+   */
+  horizontalLabelWidth?: string
 }
 
 const FieldGroup = React.forwardRef<HTMLDivElement, FieldGroupProps>(
-  ({ className, gap = 'normal', ...props }, ref) => {
+  ({ className, gap = 'normal', horizontalLabelWidth, ...props }, ref) => {
     const gapClass = gap === 'compact' ? 'gap-3' : gap === 'loose' ? 'gap-6' : 'gap-4'
+    const groupCtxValue = React.useMemo(
+      () => ({ horizontalLabelWidth }),
+      [horizontalLabelWidth],
+    )
     return (
-      <div
-        ref={ref}
-        className={cn('flex flex-col min-w-0', gapClass, className)}
-        data-field-group=""
-        {...props}
-      />
+      <FieldGroupContext.Provider value={groupCtxValue}>
+        <div
+          ref={ref}
+          className={cn('flex flex-col min-w-0', gapClass, className)}
+          data-field-group=""
+          {...props}
+        />
+      </FieldGroupContext.Provider>
     )
   }
 )

@@ -10,7 +10,7 @@ export default meta
 type Story = StoryObj
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -63,7 +63,7 @@ export const Overview: Story = {
 }
 
 export const SizeMatrix: Story = {
-  name: 'Size 對照',
+  name: '2. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-6 max-w-md">
       <div>
@@ -81,7 +81,7 @@ export const SizeMatrix: Story = {
 }
 
 export const ModeMatrix: Story = {
-  name: 'Mode 對照(edit / readonly / disabled)',
+  name: '3. Mode 對照(edit / readonly / disabled)',
   render: () => (
     <div className="flex flex-col gap-6 max-w-md">
       <div>
@@ -121,7 +121,7 @@ export const ModeMatrix: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '色彩對照(mode × error 狀態)',
+  name: '4. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -210,7 +210,7 @@ export const ColorMatrix: Story = {
 }
 
 export const RowsResizeMatrix: Story = {
-  name: 'Rows 與 Resize',
+  name: '5. Rows 與 Resize',
   render: () => (
     <div className="flex flex-col gap-6 max-w-md">
       <div>

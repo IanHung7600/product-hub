@@ -270,6 +270,16 @@
   /* Notification */
   --notification:         var(--color-deep-orange-6);
 
+  /* Presence Status — 使用者線上狀態指示(Avatar 右下角 badge)
+     語義 token 而非直接用 --success / --error / --warning,因為 presence 與
+     「操作成功 / 操作錯誤 / 警告」語境不同,未來可能獨立演化(例如 brand 要
+     把 online 改成更明顯的霓虹綠)。世界級對照:Slack / Teams / Discord /
+     Linear 都有獨立的 presence namespace */
+  --status-online:        var(--color-green-6);    /* 在線(對齊 success 色相) */
+  --status-busy:          var(--color-deep-orange-6); /* 忙碌(對齊 error 色相,強烈可見) */
+  --status-away:          var(--color-yellow-6);   /* 離開(對齊 warning 色相) */
+  --status-offline:       var(--color-neutral-6);  /* 離線(neutral,弱化) */
+
   /* Border / Divider */
   --border:               var(--color-neutral-5);  /* 元件標準邊框 */
   --border-hover:         var(--color-neutral-6);  /* input、checkbox、radio hover 邊框 */
@@ -402,6 +412,12 @@
   --color-warning:               var(--warning);
   --color-warning-foreground:    var(--warning-foreground);
   --color-notification:          var(--notification);
+
+  /* Presence Status(Avatar badge) */
+  --color-status-online:         var(--status-online);
+  --color-status-busy:           var(--status-busy);
+  --color-status-away:           var(--status-away);
+  --color-status-offline:        var(--status-offline);
 
   /* Hover / Active */
   --color-primary-hover:         var(--primary-hover);

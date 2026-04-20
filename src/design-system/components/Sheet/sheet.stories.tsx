@@ -46,10 +46,10 @@ export const CreateProjectRight: Story = {
           </Field>
           <Field>
             <FieldLabel>預設通知</FieldLabel>
-            <div className="flex flex-col gap-2">
-              <label className="flex items-center gap-2 text-body"><Checkbox defaultChecked /> 新任務指派給我</label>
-              <label className="flex items-center gap-2 text-body"><Checkbox defaultChecked /> 我參與的任務有新評論</label>
-              <label className="flex items-center gap-2 text-body"><Checkbox /> 每日摘要</label>
+            <div className="grid">
+              <Checkbox defaultChecked label="新任務指派給我" />
+              <Checkbox defaultChecked label="我參與的任務有新評論" />
+              <Checkbox label="每日摘要" />
             </div>
           </Field>
         </div>
@@ -73,13 +73,13 @@ export const EditUserRight: Story = {
       </SheetTrigger>
       <SheetContent side="right" className="flex flex-col">
         <SheetHeader>
-          <SheetTitle>陳麒仁</SheetTitle>
+          <SheetTitle>Ada Chen</SheetTitle>
           <SheetDescription>Design Engineer · 加入於 2024-08-12</SheetDescription>
         </SheetHeader>
         <div className="flex-1 overflow-y-auto py-4 flex flex-col gap-4">
           <Field>
             <FieldLabel>顯示名稱</FieldLabel>
-            <Input defaultValue="陳麒仁" />
+            <Input defaultValue="Ada Chen" />
           </Field>
           <Field>
             <FieldLabel>職稱</FieldLabel>
@@ -87,14 +87,14 @@ export const EditUserRight: Story = {
           </Field>
           <Field>
             <FieldLabel>Email</FieldLabel>
-            <Input defaultValue="qijenchen@example.com" />
+            <Input defaultValue="ada.chen@example.com" />
           </Field>
           <Field>
             <FieldLabel>權限</FieldLabel>
-            <div className="flex flex-col gap-2">
-              <label className="flex items-center gap-2 text-body"><Checkbox defaultChecked /> 可管理成員</label>
-              <label className="flex items-center gap-2 text-body"><Checkbox defaultChecked /> 可編輯設定</label>
-              <label className="flex items-center gap-2 text-body"><Checkbox /> 可刪除專案</label>
+            <div className="grid">
+              <Checkbox defaultChecked label="可管理成員" />
+              <Checkbox defaultChecked label="可編輯設定" />
+              <Checkbox label="可刪除專案" />
             </div>
           </Field>
         </div>

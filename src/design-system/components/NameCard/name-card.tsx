@@ -1,39 +1,67 @@
 import * as React from 'react'
+import { MessageCircle, Phone, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Avatar, type AvatarData } from '@/design-system/components/Avatar/avatar'
 import { Button } from '@/design-system/components/Button/button'
 import { DescriptionList, DescriptionItem } from '@/design-system/components/DescriptionList/description-list'
 
 /**
+ * NameCardDefaultActions — canonical 預設 action 組合
+ *
+ * ── 為什麼需要 export ──
+ * NameCard 的 action 列在世界級 chat/contact app 是「關係型快速動作」的 canonical
+ * (Slack / iMessage / LinkedIn / Figma 皆如此):**Chat / Message + Audio call**。
+ * 跨 consumer(avatar.principles / name-card.stories / future product code)應該用
+ * 同一組預設,避免每個範例各自發明 action 組合,讓 reader 誤以為 action 會隨情境自動變。
+ *
+ * ── 使用方式 ──
+ *   <NameCard name="..." actions={<NameCardDefaultActions />} />
+ *
+ * ── 何時要換成自訂 action ──
+ * - Single-action 情境(只要「傳訊息」)→ consumer 傳 `<Button>傳訊息</Button>`
+ * - 特定情境的 action(管理員「撤銷邀請」/ HR「離職管理」)→ consumer 自訂
+ * - 非人員關係動作(「訂購此商品」)→ 根本不應該用 NameCard
+ *
+ * Chat + Audio call 是 **default**,不是 **only**——consumer 可覆寫,但需有明確理由。
+ */
+export const NameCardDefaultActions = () => (
+  <>
+    <Button variant="tertiary" size="sm" startIcon={MessageCircle}>Chat</Button>
+    <Button variant="tertiary" size="sm" startIcon={Phone} endIcon={ChevronDown}>Audio call</Button>
+  </>
+)
+
+/**
  * NameCard — 人員 HoverCard 的內容元件
  *
- * ── Padding ──
- * px-4 (16px) py-2 (8px) 固定——compact hover card 不需要大 padding。
+ * ── Status 對齊 Avatar presence canonical(2026-04-20) ──
+ * status type = `online | away | busy | offline`,跟 Avatar 的 presence prop 對齊
+ * (世界級 Slack / Teams / Discord term);dot 色走 `--status-*` semantic token
+ * (獨立於 success/error/warning,避免語義衝突)。
  *
  * ── Avatar 對齊 ──
- * 跟 FileItem rich 統一：右側 text column 用 justify-center + minHeight=avatar。
- * 短文字置中於 avatar，長文字（多行名字）自然撐高。
+ * 跟 FileItem rich 統一:右側 text column 用 justify-center + minHeight=avatar。
+ * 短文字置中於 avatar,長文字(多行名字)自然撐高。
  *
- * ── View more ──
- * Button link w-full——card footer 的 action 填滿容器。
- *
- * ── DataField ──
- * Status message、ID、Employee number 都用 DataField（label + value 統一規格）。
+ * ── Info fields ──
+ * Status message / ID / Employee number 等唯讀屬性全部用 DescriptionList 家族
+ * 承載(不手刻 dt/dd),canonical 由 DS primitive own。
  */
 
 const AVATAR_SIZE = 64
 
-type StatusType = 'available' | 'away' | 'busy' | 'offline'
+type StatusType = 'online' | 'away' | 'busy' | 'offline'
 
+// Presence semantic tokens(見 color/semantic.css)——跟 Avatar status dot 共用
 const STATUS_DOT_COLOR: Record<StatusType, string> = {
-  available: 'bg-success',
-  away: 'bg-warning',
-  busy: 'bg-error',
-  offline: 'bg-fg-muted',
+  online: 'var(--status-online)',
+  away: 'var(--status-away)',
+  busy: 'var(--status-busy)',
+  offline: 'var(--status-offline)',
 }
 
 const STATUS_LABEL: Record<StatusType, string> = {
-  available: 'Available',
+  online: 'Online',
   away: 'Away',
   busy: 'Busy',
   offline: 'Offline',
@@ -94,9 +122,14 @@ const NameCard = React.forwardRef<HTMLDivElement, NameCardProps>(
           </div>
         </div>
 
-        {/* ── Action buttons ── */}
+        {/* ── Action buttons ──
+            均分空間 + 填滿格子(canonical):多個 action 等寬瓜分容器寬度,
+            單一 action 也撐滿容器 → 視覺上「行動列」永遠佔滿 NameCard 底部。
+            `grid grid-flow-col auto-cols-fr`:每個 child 自動 1fr;
+            `[&>*]:w-full`:Button 預設 inline-flex 不 stretch,強制 w-full 填滿 grid cell。
+            世界級對照:iOS contact card / macOS contact / LinkedIn profile card 的 action row。 */}
         {actions && (
-          <div className="flex items-center gap-2 px-4 pb-3">
+          <div className="grid grid-flow-col auto-cols-fr gap-2 px-4 pb-3 [&>*]:w-full">
             {actions}
           </div>
         )}
@@ -104,16 +137,21 @@ const NameCard = React.forwardRef<HTMLDivElement, NameCardProps>(
         {/* ── Status badge + message ── */}
         {hasStatus && (
           <div className="border-t border-divider px-4 py-3 flex flex-col gap-3">
-            {/* Status badge */}
+            {/* Status badge — dot 色走 --status-* presence token,label 走 STATUS_LABEL canonical */}
             <div className="flex items-center gap-2 px-3 py-2 bg-muted rounded-md">
-              <span className={cn('w-2.5 h-2.5 rounded-full shrink-0', STATUS_DOT_COLOR[status!])} />
+              <span
+                className="w-2.5 h-2.5 rounded-full shrink-0"
+                style={{ backgroundColor: STATUS_DOT_COLOR[status!] }}
+              />
               <span className="text-body">{STATUS_LABEL[status!]}</span>
             </div>
-            {/* Status message */}
+            {/* Status message — 必須包在 DescriptionList 才語意正確(dt/dd 必須在 dl 內) */}
             {statusMessage && (
-              <DescriptionItem label="Status message">
-                <span className="line-clamp-2">{statusMessage}</span>
-              </DescriptionItem>
+              <DescriptionList>
+                <DescriptionItem label="Status message">
+                  <span className="line-clamp-2">{statusMessage}</span>
+                </DescriptionItem>
+              </DescriptionList>
             )}
           </div>
         )}

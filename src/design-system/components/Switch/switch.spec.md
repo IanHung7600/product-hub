@@ -109,6 +109,31 @@ Switch 可透過 `label` / `description` props 內部直接渲染緊鄰文字：
 
 在 `<Field>` context 內時 label / description prop 自動忽略（由 FieldLabel / FieldDescription 接管），避免雙層 label。
 
+### Horizontal Field 自動齊右(2026-04-20)
+
+在 `<Field orientation="horizontal">` 內 Switch 自動 `ml-auto`(control area 是 `flex items-center`,Switch 被推到最右邊),**不需要 consumer 傳 className**。這對齊 iOS Settings / macOS System Settings / GitHub Settings / Figma preferences 的 canonical:**toggle 永遠齊右,label 左對齊、固定寬度**——視覺掃描快、列與列對齊一致。
+
+視覺上等同於 horizontal `<DescriptionItem>`(label 左 / value 右 `justify-between`)——同一個心智模型:**label 描述、trailing slot 呈現狀態**(value 或 toggle)。
+
+**同一畫面多個 horizontal Switch Field → 必搭配 `FieldGroup horizontalLabelWidth={...}`**:否則每個 label 會被內容撐到不同寬度,Switch 左邊緣不對齊,整排參差不齊(世界級 UI 通病,Settings 類型畫面特別明顯)。見 `../Field/field.spec.md`「FieldGroup horizontalLabelWidth cascade」。
+
+### 對齊情境:Settings list vs Form edit(2026-04-20)
+
+世界級對照 Switch 在 horizontal layout 有**兩種**對齊慣例,由 **context 決定**:
+
+| Context | 對齊 | 世界級對照 |
+|---------|------|-----------|
+| **Settings list**(獨立每項 row,一項一個偏好,即時生效,無 submit) | **齊右** | macOS System Settings / iOS Settings / GitHub Settings / Linear Settings |
+| **Form edit**(多欄位混合 control,使用者 submit 才生效) | **緊跟 label / 與其他 control 對齊** | Ant Design Form layout=horizontal / Material Form / Polaris Form |
+
+**判斷法**:這個頁面有 submit button 嗎?
+- **有** → form → Switch 本來就不是 canonical(該用 Checkbox,見上「與 Checkbox 的分界」)—— 若硬要用 Switch 代替 submit-flow Checkbox,需 consumer 明確不 ml-auto。
+- **無** → settings list → **auto ml-auto 齊右 canonical**(本元件 2026-04-20 行為)
+
+本 DS 的 `auto ml-auto` 邏輯是**為 settings list 最佳化**。若 consumer 把 Switch 放 submit form 並想「緊跟 label」,需自行在 `<Switch className="ml-0">` 覆寫——但更推薦重新考慮是不是該用 Checkbox。
+
+> **記住**:在 form 內 + Switch 緊跟 label 的覆寫寫法是 **`<Switch className="ml-0" />`**。這是**目前唯一**需要 consumer 明示 override 的 Switch 行為(其他 layout 都 auto)。但 99% 情境使用者應該先問「是不是該用 Checkbox」——Switch 即時生效的心智模型跟 submit form 本來就衝突。
+
 ---
 
 ## 禁止事項

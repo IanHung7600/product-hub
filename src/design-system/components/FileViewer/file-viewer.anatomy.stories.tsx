@@ -76,7 +76,7 @@ const OpenViewer: React.FC<{
 // ─── 1. Overview ─────────────────────────────────────────────────────────────
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -284,7 +284,7 @@ export const Overview: Story = {
 // ─── 2. Inspector ────────────────────────────────────────────────────────────
 
 export const Inspector: Story = {
-  name: '元件檢閱器',
+  name: '2. 元件檢閱器',
   render: () => {
     const [showFilmstrip, setShowFilmstrip] = React.useState(true)
     const [readOnly, setReadOnly] = React.useState(false)
@@ -459,7 +459,7 @@ export const Inspector: Story = {
 // ─── 3. ColorMatrix ──────────────────────────────────────────────────────────
 
 export const ColorMatrix: Story = {
-  name: '色彩對照表(dark-locked chrome)',
+  name: '3. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -595,7 +595,7 @@ export const ColorMatrix: Story = {
 // ─── 4. SizeMatrix ───────────────────────────────────────────────────────────
 
 export const SizeMatrix: Story = {
-  name: '尺寸對照表(fixed chrome,不隨 density)',
+  name: '4. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -735,7 +735,7 @@ export const SizeMatrix: Story = {
 // ─── 5. StateBehavior ────────────────────────────────────────────────────────
 
 export const StateBehavior: Story = {
-  name: '狀態與互動行為',
+  name: '5. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -1000,7 +1000,7 @@ export const StateBehavior: Story = {
 // ─── 6. Extras:Renderer Registry ─────────────────────────────────────────────
 
 export const RendererRegistry: Story = {
-  name: '延伸機制(registerFileRenderer)',
+  name: '6. 延伸機制(registerFileRenderer)',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>

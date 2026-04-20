@@ -2,6 +2,7 @@ import * as React from 'react'
 import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { Button } from '@/design-system/components/Button/button'
 
 /**
  * Carousel — 圖片 / 內容水平(或垂直)輪播
@@ -197,70 +198,73 @@ const CarouselItem = React.forwardRef<
 CarouselItem.displayName = 'CarouselItem'
 
 // ── Arrow buttons(hover 才顯示)────────────────────────────────────────────
+// 使用 DS Button (secondary + iconOnly size md);hover-only 顯示由 wrapper 的
+// opacity transition 控制(Button 本身不負責)。此 wrapper 存在僅為絕對定位 +
+// hover/focus 可見性,不再覆寫 Button 的視覺 token。
 
-type ArrowProps = Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onClick' | 'disabled'>
+type ArrowProps = { className?: string }
 
-const arrowBaseClass = cn(
-  'absolute z-10 inline-flex items-center justify-center',
-  'w-9 h-9 rounded-full',
-  'bg-surface-raised text-foreground shadow-[var(--elevation-200)]',
-  'border border-border',
+const arrowWrapperClass = cn(
+  'absolute z-10',
   'transition-opacity duration-200',
   'opacity-0 group-hover/carousel:opacity-100',
-  'hover:bg-neutral-hover',
-  'disabled:opacity-0 disabled:pointer-events-none',
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-  // 鍵盤 focus 時強制顯示(焦點可見原則)
-  'focus-visible:opacity-100',
+  'focus-within:opacity-100',
+  '[&:has(button:disabled)]:opacity-0 [&:has(button:disabled)]:pointer-events-none',
 )
 
 const CarouselPrevious = React.forwardRef<HTMLButtonElement, ArrowProps>(
-  ({ className, ...props }, ref) => {
+  ({ className }, ref) => {
     const { orientation, scrollPrev, canScrollPrev } = useCarousel()
     return (
-      <button
-        ref={ref}
-        type="button"
-        aria-label="上一張"
-        disabled={!canScrollPrev}
-        onClick={scrollPrev}
+      <div
         className={cn(
-          arrowBaseClass,
+          arrowWrapperClass,
           orientation === 'horizontal'
             ? 'left-3 top-1/2 -translate-y-1/2'
             : 'top-3 left-1/2 -translate-x-1/2 rotate-90',
           className,
         )}
-        {...props}
       >
-        <ChevronLeft size={16} />
-      </button>
+        <Button
+          ref={ref}
+          variant="tertiary"
+          size="md"
+          iconOnly
+          startIcon={ChevronLeft}
+          aria-label="上一張"
+          disabled={!canScrollPrev}
+          onClick={scrollPrev}
+        />
+      </div>
     )
   },
 )
 CarouselPrevious.displayName = 'CarouselPrevious'
 
 const CarouselNext = React.forwardRef<HTMLButtonElement, ArrowProps>(
-  ({ className, ...props }, ref) => {
+  ({ className }, ref) => {
     const { orientation, scrollNext, canScrollNext } = useCarousel()
     return (
-      <button
-        ref={ref}
-        type="button"
-        aria-label="下一張"
-        disabled={!canScrollNext}
-        onClick={scrollNext}
+      <div
         className={cn(
-          arrowBaseClass,
+          arrowWrapperClass,
           orientation === 'horizontal'
             ? 'right-3 top-1/2 -translate-y-1/2'
             : 'bottom-3 left-1/2 -translate-x-1/2 rotate-90',
           className,
         )}
-        {...props}
       >
-        <ChevronRight size={16} />
-      </button>
+        <Button
+          ref={ref}
+          variant="tertiary"
+          size="md"
+          iconOnly
+          startIcon={ChevronRight}
+          aria-label="下一張"
+          disabled={!canScrollNext}
+          onClick={scrollNext}
+        />
+      </div>
     )
   },
 )

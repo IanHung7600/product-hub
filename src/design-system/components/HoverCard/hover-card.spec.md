@@ -65,6 +65,10 @@ HoverCardContent 只提供：
 
 預設 `8px`，與系統其他浮層（Tooltip、Popover）統一。
 
+## align
+
+**HoverCard 走「輕量浮層」例外**(見 `../Popover/popover.spec.md`「SSOT 適用範圍」)—— hover 觸發、預設展示為主、寬度隨內容自適應,Radix 預設 `center` 即可涵蓋絕大多數情境。`align` 由 consumer 視視覺需求自選(NameCard hover 常用 `start` 對齊 avatar 左邊緣),**不強制對齊 structured overlay 的 trigger-position canonical**。
+
 ## 用途
 
 - **NameCard**：人員 Avatar hover 顯示詳細資訊

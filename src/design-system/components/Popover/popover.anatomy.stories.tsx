@@ -11,7 +11,7 @@ export default meta
 type Story = StoryObj
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -49,7 +49,7 @@ export const Overview: Story = {
             <tbody>
               <tr><Td mono>align</Td><Td mono>'start' | 'center' | 'end'</Td><Td mono>'center'</Td><Td>相對 trigger 的對齊</Td></tr>
               <tr><Td mono>side</Td><Td mono>'top' | 'right' | 'bottom' | 'left'</Td><Td mono>'bottom'</Td><Td>浮層出現在 trigger 的哪一側</Td></tr>
-              <tr><Td mono>sideOffset</Td><Td mono>number</Td><Td mono>4</Td><Td>與 trigger 的距離(px)</Td></tr>
+              <tr><Td mono>sideOffset</Td><Td mono>number</Td><Td mono>8 ★default</Td><Td>與 trigger 的距離(px)。DS canonical = 8(對標 Notion / Linear / Figma / Stripe)</Td></tr>
               <tr><Td mono>open / onOpenChange</Td><Td mono>{'boolean / (o) => void'}</Td><Td mono>—</Td><Td>controlled 開關(選用)</Td></tr>
               <tr><Td mono>modal</Td><Td mono>boolean</Td><Td mono>false</Td><Td>`true` 時鎖 body scroll + focus trap</Td></tr>
             </tbody>
@@ -61,7 +61,7 @@ export const Overview: Story = {
 }
 
 export const PlacementMatrix: Story = {
-  name: '定位(side × align)',
+  name: '2. 定位(side × align)',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -90,7 +90,7 @@ export const PlacementMatrix: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '色彩對照表',
+  name: '3. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -118,7 +118,7 @@ export const ColorMatrix: Story = {
 }
 
 export const SizeMatrix: Story = {
-  name: '尺寸對照表',
+  name: '4. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -142,14 +142,14 @@ export const SizeMatrix: Story = {
 
       <div>
         <H3>sideOffset(與 trigger 的距離)</H3>
-        <Desc>預設 4px。`sideOffset={8}` 用於有明顯邊界感的情境(如 toolbar popover);過大會讓浮層「斷開」視覺連接。</Desc>
+        <Desc>DS canonical = **8px**(對標 Notion / Linear / Figma / Stripe)。&lt; 4px 會讓浮層貼死 trigger 失去「另一層」感;&gt; 12px 會拉斷 trigger ↔ content 的視覺關聯。consumer 通常不需改,特殊情境(如 anchored tooltip-like)可傳覆蓋。</Desc>
       </div>
     </div>
   ),
 }
 
 export const StateBehavior: Story = {
-  name: '狀態行為',
+  name: '5. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>

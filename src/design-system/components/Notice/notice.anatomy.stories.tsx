@@ -61,7 +61,7 @@ function SubtleShell({ variant, children }: { variant: NoticeVariant; children: 
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -205,7 +205,7 @@ export const Overview: Story = {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const Inspector: Story = {
-  name: '元件檢閱器',
+  name: '2. 元件檢閱器',
   render: () => {
     return <NoticeInspector />
   },
@@ -358,7 +358,7 @@ text-body = 14px   leading-compact = 1.3
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const VariantIconMap: Story = {
-  name: '變體 × icon 對照',
+  name: '3. 變體 × icon 對照',
   render: () => (
     <div className="flex flex-col gap-6">
       <div>
@@ -464,7 +464,7 @@ export const VariantIconMap: Story = {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const StateBehavior: Story = {
-  name: '狀態行為',
+  name: '4. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>

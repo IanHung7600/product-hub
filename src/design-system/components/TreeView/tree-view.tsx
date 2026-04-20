@@ -701,7 +701,7 @@ export interface TreeItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>
    *   icon={Inbox}
    *   label="Inbox"
    *   inlineActions={[
-   *     { icon: MoreHorizontal, label: '更多', onClick: handleMore },
+   *     { icon: MoreVertical, label: '更多', onClick: handleMore },
    *     { icon: Plus,           label: '新增', onClick: handleAdd },
    *   ]}
    *   actionsReveal="hover"

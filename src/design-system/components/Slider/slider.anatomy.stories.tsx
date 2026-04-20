@@ -10,7 +10,7 @@ export default meta
 type Story = StoryObj
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -56,7 +56,7 @@ export const Overview: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '色彩對照表(track / range / thumb)',
+  name: '2. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -87,7 +87,7 @@ export const ColorMatrix: Story = {
 }
 
 export const SizeMatrix: Story = {
-  name: 'Size(只控容器外高)',
+  name: '3. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-6">
       <div>
@@ -107,7 +107,7 @@ export const SizeMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '狀態行為(default / hover / active / focus / disabled)',
+  name: '4. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-6 max-w-md">
       <div>
@@ -138,7 +138,7 @@ export const StateBehavior: Story = {
 }
 
 export const ColorBindingRule: Story = {
-  name: 'Range ↔ Thumb border 綁定規則',
+  name: '5. Range ↔ Thumb border 綁定規則',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -167,7 +167,7 @@ export const ColorBindingRule: Story = {
 }
 
 export const KeyboardMatrix: Story = {
-  name: '鍵盤操作(Radix 原生)',
+  name: '6. 鍵盤操作(Radix 原生)',
   render: () => (
     <div className="flex flex-col gap-6">
       <div>

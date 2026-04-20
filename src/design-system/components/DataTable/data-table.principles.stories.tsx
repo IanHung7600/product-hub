@@ -203,7 +203,7 @@ export const EmptyStateRule: Story = {
 
         <Rule
           title="Loading / Error 不是 DataTable 的職責"
-          note="載入中 → consumer 在 table 外層顯示 Spinner / Skeleton。載入失敗 → consumer 顯示 Alert。DataTable 只處理「確定有 column + 有 data(或沒 data)」的情境,不處理生命週期"
+          note="載入中 → consumer 在 table 外層顯示 CircularProgress / Skeleton。載入失敗 → consumer 顯示 Alert。DataTable 只處理「確定有 column + 有 data(或沒 data)」的情境,不處理生命週期"
         >
           <Label>判斷法:「我知道 data 是什麼嗎?」知道 → 傳給 DataTable;還在載 → 外面 Skeleton;載失敗 → 外面 Alert</Label>
         </Rule>

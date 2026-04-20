@@ -223,7 +223,7 @@ export const IconRule: Story = {
       >
         <div className="flex items-center gap-2 flex-wrap">
           <Tag variant="neutral" avatar={<img src="https://i.pravatar.cc/40?img=1" className="w-4 h-4 rounded-full" />}>
-            陳麒仁
+            Ada Chen
           </Tag>
           <Tag variant="neutral" avatar={<img src="https://i.pravatar.cc/40?img=2" className="w-4 h-4 rounded-full" />}>
             Alice

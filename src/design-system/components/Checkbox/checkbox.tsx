@@ -45,6 +45,23 @@ const checkboxVariants = cva(
 // ── Check Icon Size ─────────────────────────────────────────────────────────
 const checkIconSize: Record<string, number> = { sm: 12, md: 12, lg: 16 }
 
+// ── Check Icon Stroke Weight ────────────────────────────────────────────────
+// 16px 以下 icon 視覺不夠顯眼 → 用較粗 stroke 補償。Lucide 預設 strokeWidth=2 在
+// 12px 下 render 約 1px 線寬,視覺偏細;加粗到 3.5(render ≈ 1.75px)才有足夠視覺權重。
+// 16px 用 2.5(render ≈ 1.67px)讓 checked 態的 check icon 夠顯眼。
+//
+// 為什麼不是 3 / 2:本 session 實測 3 / 2 在 storybook 上兩個 size 的 render 線寬差僅
+// 0.17px(1.5 vs 1.33),使用者肉眼看不出差異(image #64 回報)。改為 3.5 / 2.5:
+//   - md 12px × 3.5 → 1.75px 線寬
+//   - lg 16px × 2.5 → 1.67px 線寬
+// 兩者仍接近但 md 的線寬 **絕對值** 跟 16px 預設(1.33)有更明顯差異,視覺上「小 check 更粗」。
+//
+// 世界級對照:iOS HIG / Material 3 / Polaris 的 checkmark 在 <16px 下皆加粗 compensate。
+// 為什麼不用 Lucide absoluteStrokeWidth:那保持「絕對 px 粗細」,我們反而要「小尺寸比例更粗」。
+//
+// Check 與 Minus(indeterminate)共用此規則;Switch 的 SPECS.checkStroke 採同樣值。
+const checkStrokeWidth: Record<string, number> = { sm: 3.5, md: 3.5, lg: 2.5 }
+
 // ── Types ───────────────────────────────────────────────────────────────────
 
 export interface CheckboxProps
@@ -91,6 +108,7 @@ const Checkbox = React.forwardRef<
   ) => {
     const sizeKey = size ?? 'md'
     const iconPx = checkIconSize[sizeKey]
+    const iconStrokeWidth = checkStrokeWidth[sizeKey]
 
     // Field context：在 Field 內時忽略自己的 label/description
     const fieldCtx = useFieldContext()
@@ -116,8 +134,8 @@ const Checkbox = React.forwardRef<
       >
         <CheckboxPrimitive.Indicator className="grid place-content-center text-current">
           {props.checked === 'indeterminate'
-            ? <Minus style={{ width: iconPx, height: iconPx }} />
-            : <Check style={{ width: iconPx, height: iconPx }} />
+            ? <Minus style={{ width: iconPx, height: iconPx }} strokeWidth={iconStrokeWidth} />
+            : <Check style={{ width: iconPx, height: iconPx }} strokeWidth={iconStrokeWidth} />
           }
         </CheckboxPrimitive.Indicator>
       </CheckboxPrimitive.Root>

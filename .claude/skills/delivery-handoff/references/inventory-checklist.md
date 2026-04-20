@@ -38,7 +38,7 @@ done
 | Input     | 3     | PaymentForm.tsx |
 | Dialog    | 2     | ConfirmDialog.tsx, EditDialog.tsx |
 | Empty     | 1     | EmptyCart.tsx |
-| Progress  | 1     | UploadingBanner.tsx |
+| ProgressBar | 1   | UploadingBanner.tsx |
 | ScrollArea | 1    | ItemList.tsx |
 | ...       |       |       |
 ```

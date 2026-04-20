@@ -159,7 +159,7 @@ Chip 的 overflow 處理有三種模式：
 - 所有 Chip 渲染在 DOM 中（保留 Radix ToggleGroup 的 a11y）
 - 用 `useOverflowIndices()` 偵測哪些 chip 溢出
 - 溢出的 chip 套 `invisible`（`visibility: hidden`，不佔 hit test 但保持 layout）
-- 右側渲染 `<Button variant="text" iconOnly startIcon={MoreHorizontal} />`（對齊決策 10）
+- 右側渲染 `<Button variant="text" iconOnly startIcon={MoreVertical} />`(overflow menu canonical icon,見 CLAUDE.md「常用 icon canonical」;對齊決策 10)
 - 點擊開 DropdownMenu，內容是 `DropdownMenuCheckboxItem` 陣列，checked 狀態跟 ChipGroup 當前 value 同步
 - 點 menu item 時呼叫 ChipGroup 的 `onValueChange`，更新的值同時反映到可見 chips 和 menu checked state
 

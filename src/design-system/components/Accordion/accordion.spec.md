@@ -54,14 +54,14 @@ Accordion 是**垂直堆疊、可收合的多區塊容器**——每個 item 由
 |------|-------|
 | AccordionItem 底線 | `border-b border-divider` |
 | Trigger 文字 | `text-body font-medium text-foreground` |
-| Trigger hover | `hover:text-fg-secondary`（不用底線） |
+| Trigger hover | `hover:text-fg-secondary`（文字色 tint 提示可點擊；不用底線） |
 | Trigger focus-visible | `ring-2 ring-ring ring-offset-2` |
 | Chevron | `ChevronDown 16px`,`text-fg-muted`,data-state=open 旋轉 180deg,transition 200ms |
 | Content 文字 | `text-body text-fg-secondary` |
 | Trigger / Content 垂直 padding | `py-4` / `pb-4` |
 | 展開動畫 | `animate-accordion-down 200ms ease-out`（見 `globals.css`） |
 
-**為什麼 hover 不用底線**:shadcn 預設 `hover:underline` 是 web 早期 link convention,現代 SaaS(Notion / Linear / Stripe / Vercel)皆不使用。改用 `text-fg-secondary`(文字色 tint 弱化)維持統一質感。
+**為什麼 hover 不用底線**:shadcn 預設 `hover:underline` 是 web 早期 link convention,現代 SaaS(Notion / Linear / Stripe / Vercel)皆不使用。改用 `hover:text-fg-secondary`(文字色 tint 弱化)維持統一質感,同時保留可點擊提示——不變色會讓使用者不確定是否能點擊,比起「被誤以為是 link」的風險,「失去可點擊提示」的風險更高。
 
 ---
 

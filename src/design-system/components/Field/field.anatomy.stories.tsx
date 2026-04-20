@@ -17,7 +17,7 @@ export default meta
 type Story = StoryObj
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -84,7 +84,7 @@ export const Overview: Story = {
 }
 
 export const OrientationMatrix: Story = {
-  name: 'Orientation × Control 矩陣',
+  name: '2. Orientation × Control 矩陣',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -154,7 +154,7 @@ export const OrientationMatrix: Story = {
 }
 
 export const SizeMatrix: Story = {
-  name: 'Size × Control 矩陣',
+  name: '3. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -191,7 +191,7 @@ export const SizeMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '狀態行為(required / invalid / disabled / readonly)',
+  name: '4. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -247,7 +247,7 @@ export const StateBehavior: Story = {
           <FieldGroup>
             <Field orientation="horizontal" required size="md">
               <FieldLabel>姓名</FieldLabel>
-              <Input defaultValue="陳麒仁" />
+              <Input defaultValue="Ada Chen" />
             </Field>
             <Field orientation="horizontal" size="md">
               <FieldLabel>電子郵件</FieldLabel>
@@ -266,7 +266,7 @@ export const StateBehavior: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '色彩對照(label / required / invalid / disabled)',
+  name: '5. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -374,7 +374,7 @@ export const ColorMatrix: Story = {
 }
 
 export const FieldGroupBehavior: Story = {
-  name: 'FieldGroup — 多 Field 堆疊',
+  name: '6. FieldGroup — 多 Field 堆疊',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>

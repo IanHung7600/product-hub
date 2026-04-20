@@ -1,7 +1,5 @@
 import type { Meta } from '@storybook/react'
-import { MessageCircle, Phone, ChevronDown } from 'lucide-react'
-import { NameCard } from './name-card'
-import { Button } from '@/design-system/components/Button/button'
+import { NameCard, NameCardDefaultActions } from './name-card'
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/design-system/components/HoverCard/hover-card'
 import { Avatar } from '@/design-system/components/Avatar/avatar'
 
@@ -12,11 +10,6 @@ const meta: Meta = {
 export default meta
 
 const noop = () => {}
-
-const actionButtons = <>
-  <Button variant="tertiary" size="sm" startIcon={MessageCircle} className="flex-1">Chat</Button>
-  <Button variant="tertiary" size="sm" startIcon={Phone} endIcon={ChevronDown} className="flex-1">Audio call</Button>
-</>
 
 function NameCardHover({ name, src, subtitle, minimal }: { name: string; src: string; subtitle: string; minimal?: boolean }) {
   return (
@@ -34,10 +27,10 @@ function NameCardHover({ name, src, subtitle, minimal }: { name: string; src: st
           name={name}
           avatar={{ src, alt: name }}
           subtitle={subtitle}
-          status="available"
+          status="online"
           {...(!minimal ? {
             statusMessage: 'Out of Office: Back on Monday! For urgent matters please contact @Wei-Lun Cheng in the meantime.',
-            actions: actionButtons,
+            actions: <NameCardDefaultActions />,
             fields: [
               { label: 'ID', value: 'YHANAX' },
               { label: 'Employee number', value: '1234567' },

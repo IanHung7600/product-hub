@@ -12,7 +12,7 @@ export default meta
 type Story = StoryObj
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -72,7 +72,7 @@ export const Overview: Story = {
 }
 
 export const SizeMatrix: Story = {
-  name: 'Size 對照',
+  name: '2. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -106,7 +106,7 @@ export const SizeMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '狀態行為(selected / hover / disabled)',
+  name: '3. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -159,7 +159,7 @@ export const StateBehavior: Story = {
 }
 
 export const FullWidthMatrix: Story = {
-  name: 'fullWidth 行為',
+  name: '4. fullWidth 行為',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -201,7 +201,7 @@ export const FullWidthMatrix: Story = {
 }
 
 export const IconOnlyMatrix: Story = {
-  name: 'iconOnly(group-level)',
+  name: '5. iconOnly(group-level)',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>

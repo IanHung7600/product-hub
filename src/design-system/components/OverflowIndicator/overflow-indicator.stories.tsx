@@ -62,7 +62,7 @@ export const ComboboxTagOverflow: Story = {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 const reviewers = [
-  { name: '陳麒仁', color: 'indigo' as const },
+  { name: 'Ada Chen', color: 'indigo' as const },
   { name: '張美真', color: 'magenta' as const },
   { name: '林伯彥', color: 'green' as const },
   { name: '黃怡君', color: 'turquoise' as const },
@@ -179,7 +179,7 @@ const rows = [
   {
     title: '登入頁改版',
     assignees: [
-      { name: '陳麒仁', color: 'indigo' as const },
+      { name: 'Ada Chen', color: 'indigo' as const },
       { name: '張美真', color: 'magenta' as const },
     ],
   },

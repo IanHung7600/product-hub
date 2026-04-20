@@ -113,8 +113,8 @@ export const WithPrefixAvatarBlock: Story = {
       </p>
       <SelectionItem
         control={<Checkbox defaultChecked />}
-        avatar={{ alt: '陳麒仁', color: 'indigo' }}
-        label="陳麒仁"
+        avatar={{ alt: 'Ada Chen', color: 'indigo' }}
+        label="Ada Chen"
         description="Design Engineer · Frontend team"
       />
       <SelectionItem

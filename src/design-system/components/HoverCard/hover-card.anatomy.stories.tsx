@@ -12,7 +12,7 @@ export default meta
 type Story = StoryObj
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -21,11 +21,11 @@ export const Overview: Story = {
         <div className="flex items-center gap-6">
           <HoverCard>
             <HoverCardTrigger asChild>
-              <Avatar alt="陳麒仁" size={40} />
+              <Avatar alt="Ada Chen" size={40} />
             </HoverCardTrigger>
             <HoverCardContent className="bg-surface-raised border border-border rounded-lg p-4 shadow-[var(--elevation-200)]">
               <div className="flex flex-col gap-2 w-56">
-                <div className="text-body font-medium">陳麒仁</div>
+                <div className="text-body font-medium">Ada Chen</div>
                 <div className="text-caption text-fg-muted">Design Engineer · 台北</div>
                 <Button variant="tertiary" size="sm">傳訊息</Button>
               </div>
@@ -70,7 +70,7 @@ export const Overview: Story = {
 }
 
 export const VisualVariants: Story = {
-  name: 'Consumer 的兩種常見視覺',
+  name: '2. Consumer 的兩種常見視覺',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -83,7 +83,7 @@ export const VisualVariants: Story = {
             </HoverCardTrigger>
             <HoverCardContent className="bg-surface-raised border border-border rounded-lg p-4 shadow-[var(--elevation-200)]">
               <div className="w-56">
-                <div className="text-body font-medium mb-1">陳麒仁</div>
+                <div className="text-body font-medium mb-1">Ada Chen</div>
                 <div className="text-caption text-fg-muted mb-3">Design Engineer · 台北</div>
                 <Button variant="tertiary" size="sm">傳訊息</Button>
               </div>

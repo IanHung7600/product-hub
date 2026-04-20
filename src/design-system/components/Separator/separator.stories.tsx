@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { MoreHorizontal, Pencil, Copy, Trash2 } from 'lucide-react'
+import { MoreVertical, Pencil, Copy, Trash2 } from 'lucide-react'
 import { Separator } from './separator'
 import { DescriptionList, DescriptionItem } from '@/design-system/components/DescriptionList/description-list'
 import { Button } from '@/design-system/components/Button/button'
@@ -74,7 +74,7 @@ export const InDropdownMenu: Story = {
   render: () => (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="tertiary" size="sm" startIcon={MoreHorizontal}>
+        <Button variant="tertiary" size="sm" startIcon={MoreVertical}>
           更多操作
         </Button>
       </DropdownMenuTrigger>
@@ -93,16 +93,22 @@ export const BetweenSections: Story = {
   name: '在 DescriptionList 區塊之間',
   render: () => (
     <div className="border border-border rounded-lg p-4 max-w-md flex flex-col gap-4">
+      {/*
+       * heading → first-item gap 對齊 item → item gap(都是 layout-space-tight):
+       * Gestalt proximity canonical —— 相同距離代表 heading 擁有下方 items;
+       * 若拉大 gap 反而讓 heading 看似「分離」,與 items 的歸屬關係變弱。世界級 idiom:
+       * iOS Settings / Notion properties / Ant Descriptions 皆採相等 gap。
+       */}
       <div>
-        <div className="text-body font-medium mb-2">基本資料</div>
+        <div className="text-body font-medium mb-[var(--layout-space-tight)]">基本資料</div>
         <DescriptionList cols={1}>
-          <DescriptionItem label="姓名">陳麒仁</DescriptionItem>
-          <DescriptionItem label="Email">qijenchen@example.com</DescriptionItem>
+          <DescriptionItem label="姓名">Ada Chen</DescriptionItem>
+          <DescriptionItem label="Email">ada.chen@example.com</DescriptionItem>
         </DescriptionList>
       </div>
       <Separator />
       <div>
-        <div className="text-body font-medium mb-2">團隊資訊</div>
+        <div className="text-body font-medium mb-[var(--layout-space-tight)]">團隊資訊</div>
         <DescriptionList cols={1}>
           <DescriptionItem label="團隊">Design Systems</DescriptionItem>
           <DescriptionItem label="職稱">Design Engineer</DescriptionItem>

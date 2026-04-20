@@ -101,14 +101,21 @@ export const ContrastFloorRule: Story = {
       >
         <div className="flex items-center gap-3">
           <span className="text-footnote text-fg-muted w-20">Case 1:</span>
-          <div className="relative inline-flex">
-            <Button variant="tertiary" size="sm" iconOnly startIcon={Bell} aria-label="通知 (3)" />
-            <Badge count={3} variant="high" className="absolute -top-1 -right-1" />
-          </div>
+          <Button
+            variant="tertiary"
+            size="sm"
+            iconOnly
+            startIcon={Bell}
+            aria-label="通知 (3)"
+            overlayBadge={<Badge count={3} variant="high" />}
+          />
           <Label>semantic=high,容器 contrast floor=low → 用 high(semantic ≥ floor)</Label>
         </div>
         <div className="flex items-center gap-3">
           <span className="text-footnote text-fg-muted w-20">Case 2:</span>
+          {/* ❌ anti-pattern demo intentionally kept: text+icon Button + overlay Badge
+              展示 semantic 錯配(primary 容器逼 passive count 升 critical);同時保留
+              text+icon+overlay 的幾何 anti-pattern — badge 飄在 button chrome 角而非 icon 角 */}
           <div className="relative inline-flex">
             <Button variant="primary" startIcon={Bell}>通知</Button>
             <Badge count={3} variant="critical" className="absolute -top-1 -right-1" />
@@ -117,10 +124,14 @@ export const ContrastFloorRule: Story = {
         </div>
         <div className="flex items-center gap-3">
           <span className="text-footnote text-fg-muted w-20">Case 3:</span>
-          <div className="relative inline-flex">
-            <Button variant="tertiary" size="sm" iconOnly startIcon={Bell} aria-label="錯誤 (5)" />
-            <Badge count={5} variant="critical" className="absolute -top-1 -right-1" />
-          </div>
+          <Button
+            variant="tertiary"
+            size="sm"
+            iconOnly
+            startIcon={Bell}
+            aria-label="錯誤 (5)"
+            overlayBadge={<Badge count={5} variant="critical" />}
+          />
           <Label>semantic=critical 業務需求本身急 → critical,不受 floor 封頂</Label>
         </div>
       </Rule>
@@ -136,11 +147,28 @@ export const ContrastFloorRule: Story = {
         title="❌ 為了「能在深色容器上看見」把 passive count 升 critical"
         note="扭曲 level 語意——把「被動資訊」包裝成「需立即處理」,誤導使用者的注意力分配"
       >
+        {/* ❌ anti-pattern demo intentionally kept: text+icon Button + overlay Badge
+            本 story 主軸是 semantic level 錯配(passive 被迫 critical),demo 幾何用
+            舊 pattern 保留「text+icon + overlay」本身就是 anti-pattern 的視覺訊號 */}
         <div className="relative inline-flex">
           <Button variant="primary" startIcon={Archive}>Archive</Button>
           <Badge count={128} variant="critical" className="absolute -top-1 -right-1" />
         </div>
         <Label warn>↑ Archive 的 128 被強制 critical 紅色 → 使用者誤以為「要去看」,實際只是總數</Label>
+      </Rule>
+
+      <Rule
+        title="✓ 正確做法:按鈕降級 + badge 回歸 low"
+        note="Archive 是**歸檔/整理**動作,不是 primary CTA——本來就該是 tertiary。按鈕降級後容器 contrast floor 放寬,badge 可以用 passive 原本的 low level,semantic 跟 visual 一致,訊號清楚。「想要 primary 按鈕 + critical badge」通常是資訊架構設定錯——重看:這顆按鈕真的是頁面主 CTA 嗎?"
+      >
+        {/* Note: 本 story 聚焦 level semantic 對照(critical → low);幾何仍是
+            text+icon Button + overlay,非 iconOnly overlay canonical。若要幾何也對齊
+            canonical 應改為 iconOnly + `overlayBadge` prop,或移除 overlay 改 inline badge */}
+        <div className="relative inline-flex">
+          <Button variant="tertiary" startIcon={Archive}>Archive</Button>
+          <Badge count={128} variant="low" className="absolute -top-1 -right-1" />
+        </div>
+        <Label>↑ tertiary Archive + low badge(灰底灰字)—— 「有 128 筆被歸檔」passive 展示,不誘導 click</Label>
       </Rule>
     </div>
   ),
@@ -155,33 +183,66 @@ export const DotVsCountRule: Story = {
         note="未讀訊息 / 錯誤數 / 購物車品項——使用者會根據數字決定行動優先序"
       >
         <div className="flex items-center gap-4">
-          <div className="relative inline-flex">
-            <Button variant="tertiary" size="sm" iconOnly startIcon={MessageSquare} aria-label="訊息 (3)" />
-            <Badge count={3} variant="critical" className="absolute -top-1 -right-1" />
-          </div>
-          <div className="relative inline-flex">
-            <Button variant="tertiary" size="sm" iconOnly startIcon={MessageSquare} aria-label="訊息 (42)" />
-            <Badge count={42} variant="critical" className="absolute -top-1 -right-1" />
-          </div>
-          <div className="relative inline-flex">
-            <Button variant="tertiary" size="sm" iconOnly startIcon={MessageSquare} aria-label="訊息 (150+)" />
-            <Badge count={150} max={99} variant="critical" className="absolute -top-1 -right-1" />
-          </div>
+          <Button
+            variant="tertiary"
+            size="sm"
+            iconOnly
+            startIcon={MessageSquare}
+            aria-label="訊息 (3)"
+            overlayBadge={<Badge count={3} variant="critical" />}
+          />
+          <Button
+            variant="tertiary"
+            size="sm"
+            iconOnly
+            startIcon={MessageSquare}
+            aria-label="訊息 (42)"
+            overlayBadge={<Badge count={42} variant="critical" />}
+          />
+          <Button
+            variant="tertiary"
+            size="sm"
+            iconOnly
+            startIcon={MessageSquare}
+            aria-label="訊息 (150+)"
+            overlayBadge={<Badge count={150} max={99} variant="critical" />}
+          />
           <Label>3 vs 42 vs 99+ 觸發不同 urgency 感</Label>
         </div>
       </Rule>
 
       <Rule
         title="Dot — 存在性指示（「有新東西」即訊號）"
-        note="新功能提示、unsaved changes、在線狀態——具體數量不重要或無意義"
+        note="新功能提示、unsaved changes、在線狀態——具體數量不重要或無意義。Dot overlay 的 canonical:**只疊在 iconOnly button / 單一 icon / avatar 上**(容器本身就是單一視覺重心)。text + icon button 的右上角離 icon 太遠,dot 會像飄在空中的裝飾,語義不成立。"
       >
         <div className="flex items-center gap-4">
+          <Button
+            variant="tertiary"
+            size="sm"
+            iconOnly
+            startIcon={Settings}
+            aria-label="設定(有新功能)"
+            overlayBadge={<Badge dot variant="critical" aria-label="有新功能" />}
+          />
+          <Label>「設定有新功能」—— iconOnly Button `overlayBadge` prop,dot 中心貼齒輪 icon 的 top-right corner(不是按鈕角)</Label>
+        </div>
+      </Rule>
+
+      <Rule
+        title="❌ text + icon button 右上疊 dot"
+        note="按鈕寬度遠大於 icon,dot 跑到按鈕右邊緣,離 icon 太遠視覺上不連結。使用者不會把 dot 和齒輪 icon 的「有新功能」語義配對起來"
+      >
+        <div className="flex items-center gap-4">
+          {/* ❌ anti-pattern demo intentionally kept: text+icon Button + overlay dot —— 整個 Rule 的主軸就是
+              「dot 飄在 button chrome 角不是 icon 角」,此處保留 old `relative + absolute` pattern 作為
+              視覺反例,讓讀者看到 dot 為何離 icon 很遠 */}
           <div className="relative inline-flex">
             <Button variant="tertiary" size="sm" startIcon={Settings}>設定</Button>
             <Badge dot variant="critical" className="absolute -top-1 -right-1" aria-label="有新功能" />
           </div>
-          <Label>「設定有新功能」——有即可,不需知道多少個</Label>
+          <Label warn>↑ dot 飄在「設定」文字右上角的空處,跟齒輪 icon 毫無視覺連結</Label>
         </div>
+        <Label>改法:(a) 按鈕改 iconOnly + dot 疊 icon 角落、(b) 移除 dot 改用內部文字 badge(目前 DS 無 text-only badge,屬 tech debt)、(c) 移到 text 後 inline 小字「設定(新)」</Label>
       </Rule>
 
       <Rule
@@ -202,10 +263,14 @@ export const AccessibilityRule: Story = {
         title="Parent 元件的 aria-label 必須整合 badge 資訊"
         note="Badge 本身是裝飾層——screen reader 需要從 parent 的 aria-label 取得完整 context。「通知 (3 則未讀)」比「通知」+「3」更清楚"
       >
-        <div className="relative inline-flex">
-          <Button variant="tertiary" size="sm" iconOnly startIcon={Bell} aria-label="通知 (3 則未讀)" />
-          <Badge count={3} variant="critical" className="absolute -top-1 -right-1" />
-        </div>
+        <Button
+          variant="tertiary"
+          size="sm"
+          iconOnly
+          startIcon={Bell}
+          aria-label="通知 (3 則未讀)"
+          overlayBadge={<Badge count={3} variant="critical" />}
+        />
         <Label>✓ aria-label="通知 (3 則未讀)" — screen reader 一次讀出完整資訊</Label>
       </Rule>
 
@@ -245,13 +310,17 @@ export const PlacementRule: Story = {
   render: () => (
     <div>
       <Rule
-        title="Overlay — 疊加在元件角落（最常見）"
-        note="Button iconOnly / Avatar / Icon 的右上角疊 badge。badge 用 absolute,不影響主元件 layout box"
+        title="Overlay — 疊加在視覺重心（iconOnly / avatar / 純 icon）"
+        note="canonical API:`<Button overlayBadge={...}>` — badge 中心對齊 icon 的 top-right corner(Material BadgedBox / iOS App Icon)。不手刻 relative + absolute,避免 badge 飄到 button chrome 邊緣"
       >
-        <div className="relative inline-flex">
-          <Button variant="tertiary" size="sm" iconOnly startIcon={Bell} aria-label="通知 (3)" />
-          <Badge count={3} variant="critical" className="absolute -top-1 -right-1" />
-        </div>
+        <Button
+          variant="tertiary"
+          size="sm"
+          iconOnly
+          startIcon={Bell}
+          aria-label="通知 (3)"
+          overlayBadge={<Badge count={3} variant="critical" />}
+        />
       </Rule>
 
       <Rule
@@ -277,15 +346,18 @@ export const PlacementRule: Story = {
       </Rule>
 
       <Rule
-        title="❌ 一個元件疊多個 badge（signal crowding）"
-        note="多個 badge 同時爭奪注意力 → 失去 signal 功能。合併資訊成一個 badge"
+        title="❌ 一個元件同時疊多個同類 badge（signal crowding）"
+        note="同一 trigger 疊兩個不同 urgency 的**同類訊號**(count + dot 都是通知重要性)→ 使用者無法判斷哪個重要。合併成一個 badge。不同角、不同語義 OK(Avatar 右下 presence + 右上 count 是合法,見「Avatar + badgeCount + status」demo)"
       >
+        {/* ❌ anti-pattern demo intentionally kept: Button `overlayBadge` prop 只支援單一 badge
+            (canonical 就是避免 signal crowding);本 rule 主軸是「不該這樣做」,用舊
+            `relative + absolute` 手刻兩個 badge 作為視覺反例 */}
         <div className="relative inline-flex">
           <Button variant="tertiary" size="sm" iconOnly startIcon={Bell} aria-label="通知" />
           <Badge count={3} variant="critical" className="absolute -top-1 -right-1" />
           <Badge dot variant="high" className="absolute -bottom-1 -right-1" />
         </div>
-        <Label warn>↑ 同一顆按鈕疊兩個 badge(count + dot)→ 使用者無法判斷重要性</Label>
+        <Label warn>↑ 同一顆 Bell 按鈕同時表達「未讀 3」和「有更新(dot)」—— 兩個都是通知訊號,語義重疊 → 使用者混淆</Label>
       </Rule>
     </div>
   ),

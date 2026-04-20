@@ -104,11 +104,11 @@ export const VsHoverCardRule: Story = {
       >
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button variant="tertiary" size="sm">陳麒仁</Button>
+            <Button variant="tertiary" size="sm">Ada Chen</Button>
           </TooltipTrigger>
           <TooltipContent>
             <div className="flex flex-col gap-1">
-              <span>陳麒仁</span>
+              <span>Ada Chen</span>
               <button className="text-primary">→ 查看 profile</button>
             </div>
           </TooltipContent>

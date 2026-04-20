@@ -528,7 +528,7 @@ const CheckboxPreview = ({ size, label, checked, state }: {
       <div className="h-[1lh] flex items-center shrink-0">
         <div className={`rounded border flex items-center justify-center shrink-0 ${isCheckedVisual ? 'bg-primary border-primary' : 'border-border'}`}
           style={{ width: checkboxPx, height: checkboxPx }}>
-          {isCheckedVisual && <Check size={checkboxPx * 0.65} className="text-white" strokeWidth={2.5} />}
+          {isCheckedVisual && <Check size={checkboxPx * 0.65} className="text-white" strokeWidth={3} />}
         </div>
       </div>
       <span>{label}</span>
@@ -583,7 +583,7 @@ export const ColorMatrix = {
                           <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
                             isCheckboxSelected ? 'bg-primary border-primary' : 'border-border'
                           }`}>
-                            {isCheckboxSelected && <Check size={10} className="text-white" strokeWidth={2.5} />}
+                            {isCheckboxSelected && <Check size={10} className="text-white" strokeWidth={3} />}
                           </div>
                         )}
                         {st === 'active/selected' ? (type === 'checkbox' ? 'checked' : 'selected') : type}

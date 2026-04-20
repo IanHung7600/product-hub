@@ -200,7 +200,7 @@ export const DataTypeRule: Story = {
         title="Input 只用於純文字——沒有格式化需求的 value"
         note="姓名、URL、搜尋字串、email。格式化邏輯是 identity（value → value）"
       >
-        <Input placeholder="姓名" defaultValue="陳麒仁" />
+        <Input placeholder="姓名" defaultValue="Ada Chen" />
         <Input startIcon={Globe} defaultValue="https://example.com" />
         <Input startIcon={Search} placeholder="搜尋..." />
       </Rule>

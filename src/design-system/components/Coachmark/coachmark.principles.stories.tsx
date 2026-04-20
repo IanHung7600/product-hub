@@ -80,9 +80,9 @@ export const VsPopoverRule: Story = {
           <PopoverContent align="start">
             <PopoverHeader><PopoverTitle>依狀態篩選</PopoverTitle></PopoverHeader>
             <PopoverBody>
-              <div className="flex flex-col gap-2">
-                <label className="flex items-center gap-2 text-body"><Checkbox defaultChecked /> 進行中</label>
-                <label className="flex items-center gap-2 text-body"><Checkbox /> 已完成</label>
+              <div className="grid">
+                <Checkbox defaultChecked label="進行中" />
+                <Checkbox label="已完成" />
               </div>
             </PopoverBody>
           </PopoverContent>

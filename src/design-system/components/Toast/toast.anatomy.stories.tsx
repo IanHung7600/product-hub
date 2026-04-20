@@ -11,7 +11,7 @@ export default meta
 type Story = StoryObj
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -57,7 +57,7 @@ export const Overview: Story = {
 }
 
 export const ContainerArchitecture: Story = {
-  name: 'Container 三層架構',
+  name: '2. Container 三層架構',
   render: () => (
     <div className="flex flex-col gap-6">
       <div>
@@ -87,7 +87,7 @@ export const ContainerArchitecture: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '色彩對照表(Variant × Theme 策略)',
+  name: '3. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-6">
       <div>
@@ -122,7 +122,7 @@ export const ColorMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '狀態行為(dismiss / stacking / pause / swipe)',
+  name: '4. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>

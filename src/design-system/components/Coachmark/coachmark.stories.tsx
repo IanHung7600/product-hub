@@ -32,7 +32,7 @@ const MediaGradient = ({
 // ── Single Coachmark: Intercom-style feature discovery ──────────────────────
 
 export const FeatureDiscovery: Story = {
-  name: '新功能介紹(Intercom / Slack 風格)',
+  name: '單步驟新功能介紹(Intercom / Slack 風格)',
   render: () => {
     const [open, setOpen] = React.useState(true)
     return (
@@ -43,14 +43,14 @@ export const FeatureDiscovery: Story = {
           image={<MediaGradient from="#6366f1" to="#8b5cf6" icon={Bot} label="AI 助理" />}
           title="試試新的 AI 助理"
           description="在任何文件中按下 AI 按鈕,讓 Claude 幫你摘要、翻譯或改寫內容。"
-          onSkip={() => setOpen(false)}
           onNext={() => setOpen(false)}
+          isLastStep  /* single-step → CTA = 「知道了」 */
           side="bottom"
           align="center"
         >
           <Button variant="primary" startIcon={Bot}>AI 助理</Button>
         </Coachmark>
-        <p className="text-footnote text-fg-muted">↑ 首次看到新功能時主動介紹;使用者可 Skip 或點 Next 確認</p>
+        <p className="text-footnote text-fg-muted">↑ 單步驟只有 1 個 CTA「知道了」,無 Skip(單步驟沒有跳過意義)</p>
       </div>
     )
   },
@@ -96,14 +96,18 @@ export const MultiStepTour: Story = {
             <Coachmark
               key={s.anchor}
               open={open && step === i}
-              onOpenChange={(o) => { if (!o) setOpen(false) }}
+              // canonical fix:只有目前 active step 才回報 tour 退出;其他 Coachmark 的
+              // 「被切換導致的關閉」不代表使用者要結束整個 tour(原本 bug:step i→i+1
+              // 切換時 i 的 Coachmark 關閉會誤觸發全局 setOpen(false),導致 next 卡住)
+              onOpenChange={(o) => { if (step === i && !o) setOpen(false) }}
+              kind="new-features"
               image={<MediaGradient from={s.media.from} to={s.media.to} icon={s.icon} label={s.media.label} />}
               title={s.title}
               description={s.description}
               step={{ current: i + 1, total: tourSteps.length }}
               onPrev={i > 0 ? () => setStep(i - 1) : undefined}
               onSkip={() => setOpen(false)}
-              onNext={() => (isLast && step === i ? setOpen(false) : setStep(i + 1))}
+              onNext={() => (i === tourSteps.length - 1 ? setOpen(false) : setStep(i + 1))}
               isLastStep={i === tourSteps.length - 1}
               side="bottom"
               align="start"
@@ -120,6 +124,9 @@ export const MultiStepTour: Story = {
             目前第 {step + 1} / {tourSteps.length} 步{isLast ? '(最後步 — Next 變 Done)' : ''}
           </span>
         </div>
+        <p className="text-footnote text-fg-muted">
+          ↑ 多步驟:`kind="new-features"` header 提示脈絡;第 1 步有 Skip,按 Next 進 2+ 步後 Skip 自動隱藏(canonical)
+        </p>
       </div>
     )
   },
@@ -139,6 +146,7 @@ export const TextOnly: Story = {
           title="新版圖表模式已上線"
           description="Dashboard 現在支援互動式圖表,可切換折線 / 長條 / 圓餅。點選右上圖表圖示查看。"
           onNext={() => setOpen(false)}
+          isLastStep  /* single-step → CTA = 「知道了」 */
           side="bottom"
           align="end"
         >
@@ -168,7 +176,7 @@ export const WithIllustration: Story = {
               }}
             >
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center">
+                <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center" style={{ boxShadow: 'var(--elevation-100)' }}>
                   <Sparkles className="w-6 h-6 text-primary" />
                 </div>
                 <div className="text-caption text-foreground font-medium">Figma-style preview</div>
@@ -177,8 +185,8 @@ export const WithIllustration: Story = {
           }
           title="Auto-layout 讓設計更有彈性"
           description="選取多個 layer 後按 Shift+A 建立 auto-layout,元素會自動對齊並隨內容調整。"
-          onSkip={() => setOpen(false)}
           onNext={() => setOpen(false)}
+          isLastStep  /* single-step → CTA = 「知道了」 */
           side="bottom"
           align="start"
         >

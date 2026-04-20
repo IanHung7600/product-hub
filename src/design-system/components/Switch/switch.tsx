@@ -68,10 +68,14 @@ const switchVariants = cva(
   }
 )
 
-const SPECS: Record<string, { thumb: number; check: number; translate: string }> = {
-  sm: { thumb: 20, check: 12, translate: 'translateX(20px)' },
-  md: { thumb: 20, check: 12, translate: 'translateX(20px)' },
-  lg: { thumb: 24, check: 16, translate: 'translateX(24px)' },
+const SPECS: Record<string, { thumb: number; check: number; checkStroke: number; translate: string }> = {
+  // checkStroke:16px 以下 icon 視覺不夠顯眼 → 加粗 stroke 補償(跟 Checkbox 共用原則,
+  // 見 checkbox.tsx 的 checkStrokeWidth 註解)。12px 用 3.5(render ≈ 1.75px 線寬,比 Lucide
+  // 預設的 1px render 明顯更粗,視覺跟 16px 預設 stroke 的 1.33px 有足夠區別),16px 用 2.5
+  // (render ≈ 1.67px,比預設 1.33px 稍粗讓 toggle check 夠顯眼)。跨 size 配對值由 checkbox.tsx 共用。
+  sm: { thumb: 20, check: 12, checkStroke: 3.5, translate: 'translateX(20px)' },
+  md: { thumb: 20, check: 12, checkStroke: 3.5, translate: 'translateX(20px)' },
+  lg: { thumb: 24, check: 16, checkStroke: 2.5, translate: 'translateX(24px)' },
 }
 
 export interface SwitchProps
@@ -123,6 +127,14 @@ const Switch = React.forwardRef<
     const effectiveLabel = insideField ? undefined : label
     const effectiveDescription = insideField ? undefined : description
 
+    // 在 horizontal Field 內自動齊右(iOS / macOS Settings canonical):
+    // horizontal Field 的 layout 是 label(固定寬)| control area(fill),Switch 作為
+    // trailing control 應靠右(對齊 horizontal DescriptionItem 的「label 左 / value 右」模式)。
+    // 世界級對照:iOS Settings / macOS System Settings / GitHub Settings / Figma prefs
+    // 一律 switch 齊右 — 視覺掃描快、對齊一致。
+    const alignRightInField =
+      insideField && fieldCtx?.orientation === 'horizontal' ? 'ml-auto' : ''
+
     // Id 連結：優先使用 prop，再退到 Field context 的 id，最後用 useId 生成
     const generatedId = React.useId()
     const inputId = idProp ?? fieldCtx?.id ?? generatedId
@@ -130,7 +142,7 @@ const Switch = React.forwardRef<
     const rootEl = (
       <SwitchPrimitives.Root
         id={inputId}
-        className={cn(switchVariants({ size }), className)}
+        className={cn(switchVariants({ size }), alignRightInField, className)}
         ref={ref}
         disabled={disabled}
         aria-readonly={readOnly || undefined}
@@ -152,6 +164,7 @@ const Switch = React.forwardRef<
           {/* Check icon — Radix Thumb inherits data-state from Root */}
           <Check
             size={spec.check}
+            strokeWidth={spec.checkStroke}
             className="text-primary opacity-0 transition-opacity duration-150 group-data-[state=checked]:opacity-100"
             aria-hidden
           />

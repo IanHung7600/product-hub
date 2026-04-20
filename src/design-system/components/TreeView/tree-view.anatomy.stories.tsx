@@ -12,7 +12,7 @@ export default meta
 type Story = StoryObj
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -85,7 +85,7 @@ export const Overview: Story = {
 
 
 export const SizeMatrix: Story = {
-  name: 'Size 對照(sm / md / lg)',
+  name: '2. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -134,7 +134,7 @@ export const SizeMatrix: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '色彩對照(row 狀態色彩)',
+  name: '3. 色彩對照表',
   render: () => {
     const [selected, setSelected] = React.useState<Set<string>>(new Set(['beach']))
     return (
@@ -210,7 +210,7 @@ export const ColorMatrix: Story = {
 }
 
 export const IndentMatrix: Story = {
-  name: 'Indent 與 Tree Guide',
+  name: '4. Indent 與 Tree Guide',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -248,7 +248,7 @@ export const IndentMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '狀態行為(selected / expanded / hover)',
+  name: '5. 狀態行為',
   render: () => {
     const [selected, setSelected] = React.useState<Set<string>>(new Set(['resume']))
     return (
@@ -289,7 +289,7 @@ export const StateBehavior: Story = {
 }
 
 export const KeyboardMatrix: Story = {
-  name: '鍵盤導覽(ARIA tree)',
+  name: '6. 鍵盤導覽(ARIA tree)',
   render: () => (
     <div className="flex flex-col gap-6">
       <div>

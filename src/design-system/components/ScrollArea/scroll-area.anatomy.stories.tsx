@@ -284,7 +284,7 @@ export const ColorMatrix: Story = {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const SizeMatrix: Story = {
-  name: '4. 尺寸規格',
+  name: '4. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-6">
       <div>

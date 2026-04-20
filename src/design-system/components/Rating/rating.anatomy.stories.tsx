@@ -339,9 +339,9 @@ export const SizeMatrix = {
       <div>
         <H3>Size 對照</H3>
         <Desc>
-          Rating 的 size 對應 icon px（16 / 20 / 24），跟 Lucide icon 標準尺寸同步。
-          不走 field-height family——Rating 是 pure visual indicator，高度由 icon 自然撐起，
-          沒有 padding / border box 需要對齊 Field。
+          Rating 的 size 對應 icon px(16 / 16 / 20),**對齊 Checkbox / Radio 控件尺寸**——
+          常與 Checkbox / Radio 在同一 form 出現,icon 大小對齊讓控件視覺 baseline 穩定。
+          不走 field-height family(Rating 是 pure visual indicator,高度由 icon 自然撐起)。
         </Desc>
       </div>
 

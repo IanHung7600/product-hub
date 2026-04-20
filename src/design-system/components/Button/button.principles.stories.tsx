@@ -199,13 +199,17 @@ export const IconRule: Story = {
 
       <Rule
         title="icon + overlay 角標 — 通知類按鈕"
-        note="角標用外部 relative 容器疊加，不用 Button 的 badge prop（inline badge 會破壞正方形）"
+        note="用 `overlayBadge` prop 傳入 Badge,Button 內部自動把 badge 中心對齊 icon top-right corner(Material BadgedBox canonical)——不手刻 `relative + absolute -top-1 -right-1` 讓 badge 飄到按鈕 chrome 邊緣"
       >
-        <div className="relative inline-flex">
-          <Button variant="tertiary" size="sm" iconOnly startIcon={Bell} aria-label="通知" />
-          <Badge count={3} className="absolute -top-1 -right-1" />
-        </div>
-        <Label>↑ 角標外掛，Button 本身保持正方形</Label>
+        <Button
+          variant="tertiary"
+          size="sm"
+          iconOnly
+          startIcon={Bell}
+          aria-label="通知 (3)"
+          overlayBadge={<Badge count={3} variant="critical" />}
+        />
+        <Label>↑ overlayBadge prop 自動定位,Button 保持正方形,badge 貼 icon 不飄 chrome 角</Label>
       </Rule>
 
       <Rule

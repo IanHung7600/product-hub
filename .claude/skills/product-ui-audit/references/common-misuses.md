@@ -152,7 +152,7 @@
 
 ---
 
-## Skeleton / Spinner / Empty 混用
+## Skeleton / CircularProgress / Empty 混用
 
 ### ❌ Loading 狀態用 Empty
 
@@ -160,7 +160,7 @@
 {isLoading && <Empty description="Loading..." />}  {/* ❌ */}
 ```
 
-**正解**:Skeleton(骨架)或 Spinner(不知時長)。Empty 是「確認無資料」。
+**正解**:Skeleton(骨架)或 CircularProgress(不知時長,indeterminate)。Empty 是「確認無資料」。全頁 loading 可 `<Empty icon={<CircularProgress size={48}/>} title="載入中" />`。
 
 ### ❌ Error 狀態用 Empty
 
@@ -172,23 +172,23 @@
 
 ---
 
-## Progress / Spinner 混用
+## ProgressBar / CircularProgress 混用
 
-### ❌ 不知進度硬套 Progress(value=0 / 亂跳)
-
-```tsx
-<Progress value={isLoading ? 30 : 100} />  // ❌ 進度無法量化
-```
-
-**正解**:`<Spinner>` 做 indeterminate。Progress 是 determinate。
-
-### ❌ Spinner 用於已知百分比
+### ❌ 不知進度硬套 ProgressBar(value=0 / 亂跳)
 
 ```tsx
-<Spinner />  {/* 明明已知 45% */}
+<ProgressBar value={isLoading ? 30 : 100} />  // ❌ 進度無法量化
 ```
 
-**正解**:`<Progress value={45} affix="value" />`。
+**正解**:`<CircularProgress>`(不傳 value)做 indeterminate。ProgressBar 是 determinate。
+
+### ❌ 已知百分比的大區塊進度用 CircularProgress indeterminate
+
+```tsx
+<CircularProgress />  {/* 明明已知 45% */}
+```
+
+**正解**:大區塊 / 頁面級用 `<ProgressBar value={45} affix="value" />`;inline 小空間用 `<CircularProgress value={45} affix="value" />`。
 
 ---
 

@@ -99,7 +99,7 @@ Dialog 是容器，無整體 disabled / loading / empty 狀態——這些屬於
 
 | 狀態 | 處理方式 |
 |------|---------|
-| **Loading**（內容載入中）| Consumer 在 `DialogContent` 內渲染 Skeleton / Spinner，不是讓 Dialog 本身等待開啟 |
+| **Loading**(內容載入中) | Consumer 在 `DialogContent` 內渲染 Skeleton / CircularProgress,不是讓 Dialog 本身等待開啟 |
 | **Empty**（如步驟 dialog 還沒資料）| Consumer 在 content 區用 `Empty` primitive |
 | **Error**（操作失敗）| Consumer 在 content 區用 `Alert` |
 | **Disabled**（整個 dialog）| N/A——dialog 要麼開著（可互動）要麼關著（不存在）。要鎖操作請 disable 內部個別 Button / Field |

@@ -99,7 +99,7 @@ export const OrientationRule: Story = {
             </Field>
             <Field orientation="horizontal">
               <FieldLabel>顯示名稱</FieldLabel>
-              <Input defaultValue="陳麒仁" />
+              <Input defaultValue="Ada Chen" />
             </Field>
             <Field orientation="horizontal">
               <FieldLabel>時區</FieldLabel>

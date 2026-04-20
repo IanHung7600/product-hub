@@ -18,7 +18,7 @@ type Story = StoryObj
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const Overview: Story = {
-  name: '元件總覽',
+  name: '1. 元件總覽',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -29,9 +29,9 @@ export const Overview: Story = {
         </Desc>
         <div className="border border-border rounded-lg p-4">
           <NameCard
-            name="陳麒仁"
+            name="Ada Chen"
             subtitle="Design Engineer · Engineering"
-            status="available"
+            status="online"
             statusMessage="目前 Sprint 23 衝刺中,訊息可能稍慢回覆"
             actions={
               <>
@@ -80,7 +80,7 @@ export const Overview: Story = {
                 ['name', 'string', '必填', '姓名(profile header)'],
                 ['subtitle', 'string', '—', '職稱 / 位置 / 描述'],
                 ['avatar', 'AvatarData', '—', '{ src?, alt?, color? };size/status 由 NameCard 覆寫'],
-                ['status', "'available' | 'away' | 'busy' | 'offline'", '—', '觸發 Status section + Avatar 狀態點'],
+                ['status', "'online' | 'away' | 'busy' | 'offline'", '—', '觸發 Status section + Avatar 狀態點'],
                 ['statusMessage', 'ReactNode', '—', 'Status message(line-clamp 2)'],
                 ['actions', 'ReactNode', '—', 'CTA buttons(通常 2 個 sm Button)'],
                 ['fields', '{ label: string; value: string }[]', '—', 'Info fields,走 DescriptionList cols=2'],
@@ -121,7 +121,7 @@ export const Overview: Story = {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const SectionMatrix: Story = {
-  name: 'Section 組合(minimal → full)',
+  name: '2. Section 組合(minimal → full)',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -152,7 +152,7 @@ export const SectionMatrix: Story = {
           <NameCard
             name="Diana Lin"
             subtitle="Engineering Manager"
-            status="available"
+            status="online"
             actions={
               <>
                 <Button variant="primary" size="sm" startIcon={MessageCircle}>傳訊</Button>
@@ -168,9 +168,9 @@ export const SectionMatrix: Story = {
         <Desc>加上結構化資訊——組織頁成員列表 hover 看到聯絡方式,不用跳去 profile。</Desc>
         <div className="border border-dashed border-divider rounded-md p-4 inline-block">
           <NameCard
-            name="陳麒仁"
+            name="Ada Chen"
             subtitle="Design Engineer"
-            status="available"
+            status="online"
             fields={[
               { label: 'Email', value: 'user@example.com' },
               { label: '團隊', value: 'Engineering' },
@@ -186,9 +186,9 @@ export const SectionMatrix: Story = {
         <Desc>完整資訊卡(profile + actions + status + fields + view more)。適合公司內部組織工具的成員 hover,一次看到所有重要資訊。</Desc>
         <div className="border border-dashed border-divider rounded-md p-4 inline-block">
           <NameCard
-            name="陳麒仁"
+            name="Ada Chen"
             subtitle="Design Engineer · Engineering"
-            status="available"
+            status="online"
             statusMessage="目前專案 Sprint 23 衝刺中"
             actions={
               <>
@@ -215,7 +215,7 @@ export const SectionMatrix: Story = {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const ColorMatrix: Story = {
-  name: '色彩對照表(Status)',
+  name: '3. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -228,10 +228,10 @@ export const ColorMatrix: Story = {
           <table className="text-caption border-collapse">
             <thead><tr><Th>status</Th><Th>顯示文字</Th><Th>Avatar dot 色</Th><Th>Status 區 bg</Th><Th>語意</Th></tr></thead>
             <tbody>
-              <tr><Td mono>available</Td><Td mono>Available</Td><Td><TokenCell token="--success" /></Td><Td><TokenCell token="--muted" /></Td><Td>正常可聯絡</Td></tr>
-              <tr><Td mono>away</Td><Td mono>Away</Td><Td><TokenCell token="--warning" /></Td><Td><TokenCell token="--muted" /></Td><Td>暫時離開</Td></tr>
-              <tr><Td mono>busy</Td><Td mono>Busy</Td><Td><TokenCell token="--error" /></Td><Td><TokenCell token="--muted" /></Td><Td>勿打擾</Td></tr>
-              <tr><Td mono>offline</Td><Td mono>Offline</Td><Td><TokenCell token="--fg-muted" /></Td><Td><TokenCell token="--muted" /></Td><Td>離線</Td></tr>
+              <tr><Td mono>online</Td><Td mono>Online</Td><Td><TokenCell token="--status-online" /></Td><Td><TokenCell token="--muted" /></Td><Td>正常可聯絡</Td></tr>
+              <tr><Td mono>away</Td><Td mono>Away</Td><Td><TokenCell token="--status-away" /></Td><Td><TokenCell token="--muted" /></Td><Td>暫時離開</Td></tr>
+              <tr><Td mono>busy</Td><Td mono>Busy</Td><Td><TokenCell token="--status-busy" /></Td><Td><TokenCell token="--muted" /></Td><Td>勿打擾</Td></tr>
+              <tr><Td mono>offline</Td><Td mono>Offline</Td><Td><TokenCell token="--status-offline" /></Td><Td><TokenCell token="--muted" /></Td><Td>離線</Td></tr>
             </tbody>
           </table>
         </div>
@@ -240,10 +240,10 @@ export const ColorMatrix: Story = {
       <div>
         <H3>四種狀態實際渲染</H3>
         <div className="grid grid-cols-2 gap-4">
-          {(['available', 'away', 'busy', 'offline'] as const).map(s => (
+          {(['online', 'away', 'busy', 'offline'] as const).map(s => (
             <div key={s} className="border border-dashed border-divider rounded-md p-3">
               <div className="text-caption text-fg-muted mb-2 font-mono">status="{s}"</div>
-              <NameCard name="陳麒仁" subtitle="Design Engineer" status={s} />
+              <NameCard name="Ada Chen" subtitle="Design Engineer" status={s} />
             </div>
           ))}
         </div>
@@ -274,7 +274,7 @@ export const ColorMatrix: Story = {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const HoverCardIntegration: Story = {
-  name: 'HoverCard 整合(觸發行為)',
+  name: '4. HoverCard 整合(觸發行為)',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -285,7 +285,7 @@ export const HoverCardIntegration: Story = {
         </Desc>
         <div className="border border-border rounded-lg p-6 flex items-center gap-8">
           {[
-            { name: '陳麒仁', subtitle: 'Design Engineer', status: 'available' as const },
+            { name: 'Ada Chen', subtitle: 'Design Engineer', status: 'online' as const },
             { name: 'Alice Wang', subtitle: 'Frontend Engineer', status: 'busy' as const },
             { name: 'Bob Chen', subtitle: 'PM, Growth', status: 'away' as const },
           ].map(p => (
@@ -342,7 +342,7 @@ export const HoverCardIntegration: Story = {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const StateBehavior: Story = {
-  name: '邊界狀態(空值 / 過長文字 / 多行 name)',
+  name: '5. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -367,7 +367,7 @@ export const StateBehavior: Story = {
         </Desc>
         <div className="border border-dashed border-divider rounded-md p-4 inline-block">
           <NameCard
-            name="陳麒仁"
+            name="Ada Chen"
             subtitle="Design Engineer"
             status="busy"
             statusMessage="目前正在衝刺 Sprint 23 的 design system audit,預計 4/25 完成,期間除 P0 issue 外不處理新功能需求,緊急事項請聯絡 @alice 或 @bob 代理"
