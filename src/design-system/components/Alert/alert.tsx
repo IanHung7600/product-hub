@@ -18,7 +18,7 @@ import { Notice, useInverseTheme, SUBTLE_ICON_COLOR, type NoticeVariant } from '
  *   warning → bg on outer, data-theme="light" on inner
  *
  * ── Placement ──
- * inline: rounded-lg
+ * inline: rounded-md(card-level 圓角,非 overlay — 因 Alert 在頁面流內,非 floating)
  * fixed: 無圓角,full-width,無 border
  */
 

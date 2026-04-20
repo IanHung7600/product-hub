@@ -111,6 +111,20 @@ SelectMenu 是**多區塊 composite primitive**,不擁有獨立色彩決策:
 
 ---
 
+## shadcn passthrough 例外說明
+
+SelectMenu 是 **composite**(Popover trigger + Command search + 滾動 MenuItem list + 浮動 surface),純 declarative API。**不套 `forwardRef` / `...props` spread`**,同 PeoplePicker 理由:
+
+- **沒有單一 DOM root 可 ref**:trigger / search input / list / content portal 各自 DOM tree 離散
+- **`...props` spread 目標不明**:composite 的 root wrapper 只是 control 容器,spread 到那裡 consumer 無從預期作用
+- **API 邊界明確**:SelectMenu 暴露「選值」語意(value / onChange / options / mode),不暴露 DOM 細節
+
+`displayName = 'SelectMenu'` 保留。若 consumer 需要 DOM-level 控制(custom trigger / portal / search input ref),改用底層 Popover + Command 自組。
+
+`asChild` 不支援(composite 非 Slot-compat)。
+
+---
+
 ## 相關
 
 - `../Menu/menu-item.spec.md` — 選項 row 的 item-layout 共用規則（SelectMenu 消費 MenuItem）

@@ -87,6 +87,16 @@ AspectRatio 是 pure layout primitive(container 鎖比例),本身:
 
 ---
 
+## shadcn passthrough 例外說明
+
+AspectRatio export 為 `const AspectRatio = AspectRatioPrimitive.Root`(**直接 re-export Radix primitive,無額外 wrapper**),不套 `React.forwardRef` / `displayName` / `...props` spread / `asChild` 的 shadcn canonical 五件套。
+
+**為什麼豁免**:Radix `AspectRatioPrimitive.Root` 本身已實作這五件套(forwardRef-ed / displayName 為 `"AspectRatio"` / `...props` 內部 spread 至 inner `<div>` / asChild 透過 Slot 支援)。在我們自己 wrap 一層只會 indirection 不加值,且會 **break** Radix 內建的 displayName / Slot 支援。這是 shadcn-official 模式(shadcn 元件庫的 AspectRatio 也是直接 re-export),非 drift。
+
+**何時需要自己 wrap**:若未來要加預設 className / 自訂 ratio 常數 / 內建 consumer 視覺 guard(如強制 border-radius),再 wrap。目前無此需求。
+
+---
+
 ## 相關
 
 - `../Coachmark/coachmark.spec.md` — **本元件 consumer**:media 區預設 `mediaRatio=16/9`

@@ -112,6 +112,18 @@ PeoplePicker 是 **composite Field Control**(Field shell + Avatar + SelectMenu),
 
 ---
 
+## shadcn passthrough 例外說明
+
+PeoplePicker 是 **composite 元件**(Popover + Command + SelectMenu + Avatar 內部組裝),其 API 為完全 declarative(value / onChange / size / mode / options...)。**不套 `forwardRef` / `...props` spread**:
+
+- **沒有單一 DOM root 可 ref**:consumer「對誰 forward」含糊——指 Popover trigger?Command search input?SelectMenu content?任一選擇都會誤導 consumer
+- **`...props` spread 會撒到何處?** composite 元件無 identity DOM,spread 若到 root wrapper 多半無意義(wrapper 只是 flex container);到 trigger 則語義不清
+- **API 邊界明確才是 composite 價值**:PeoplePicker 暴露的是「選人」語意,不是「彈出選單 + 搜尋 + 渲染頭像」的 DOM 細節。若 consumer 需要 DOM-level 控制,該用底層 Popover + Combobox 自組,不該透過 PeoplePicker
+
+`displayName = 'PeoplePicker'` 保留,無 `asChild`(composite 不是 Slot-compat)。
+
+---
+
 ## 相關
 
 - `./person-display.tsx` — PersonValue 的顯示元件（Avatar + Name，readonly / DataTable cell 用）

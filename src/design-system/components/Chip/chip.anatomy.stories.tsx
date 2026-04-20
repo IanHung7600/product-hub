@@ -31,7 +31,7 @@ export const Overview: Story = {
           <table className="text-caption border-collapse">
             <thead><tr><Th>元件</Th><Th>主要 Props</Th></tr></thead>
             <tbody>
-              <tr><Td mono>ChipGroup</Td><Td mono>type?: 'single' | 'multiple'(default 'multiple'),value / onValueChange,size,layout</Td></tr>
+              <tr><Td mono>ChipGroup</Td><Td mono>type: 'single' | 'multiple'(必填,Radix ToggleGroup 要求),value / onValueChange,size,layout</Td></tr>
               <tr><Td mono>Chip</Td><Td mono>value(必填),startIcon,disabled</Td></tr>
             </tbody>
           </table>

@@ -101,6 +101,22 @@ Display 模式（readonly / disabled / DataTable cell）使用 `Intl.DateTimeFor
 
 ---
 
+## shadcn passthrough 例外說明
+
+DatePicker 套 `React.forwardRef` + `displayName`,但**不 `...props` spread DOM**——consumer 透過 `DatePickerProps` 明列 API surface(value / onChange / mode / size / formatOptions 等),不 spread 任何剩餘 DOM attrs 到 trigger。
+
+**為什麼 intentional**:DatePicker trigger 是 **compound**(Display 模式為 span 視覺、Edit 模式為 Button),不同 render tree。若 spread `...props` 則會 leak 到特定一邊,另一邊 consumer 誤以為無效:
+
+- consumer 傳 `onFocus` → 期待作用在「edit trigger button」,但 Display 模式無 trigger 會忽略
+- consumer 傳 `data-testid` → 指向哪個 render tree 取決於當下 mode,測試不穩定
+- consumer 傳 className → **這個有明確語義**:套在 root wrapper(不論哪個 mode 都穩定),`DatePickerProps.className` 顯式接收
+
+顯式列 API surface 符合世界級 composite 元件慣例(Material DatePicker / Atlassian DateTimePicker 皆如此),consumer 知道能傳什麼,避免靜默失效。
+
+**`asChild` 不支援**:同理,compound trigger 無單一 Slot 目標。consumer 若要自訂 trigger 視覺,改用 DatePickerDisplay + 自家 Button composition。
+
+---
+
 ## 相關
 
 - `../Input/input.spec.md` — 純文字 YYYY-MM-DD（不需 picker 互動的場景）

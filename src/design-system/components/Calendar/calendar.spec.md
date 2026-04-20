@@ -84,6 +84,20 @@ Consumer 無需額外處理,保留 react-day-picker API 即可。
 
 ---
 
+## shadcn passthrough 例外說明
+
+Calendar 本元件是**對 `react-day-picker` 的 `<DayPicker>` 元件薄包裝**,用於橋接 DS token(classNames 覆寫 + components 注入自訂 IconLeft/IconRight)。**不套 `React.forwardRef`**,原因如下:
+
+- **底層 `DayPicker` 自己不接受 forwarded ref**——react-day-picker 的 API 是 declarative props(selected / onSelect / classNames / components 等),沒有 DOM ref 介面可 forward
+- **沒有我們擁有的 DOM root 可 ref**——Calendar 的視覺全由 `DayPicker` render,我們只注入 className token 覆寫,沒有自己的外層 `<div>` 容器
+- **Radix-compat 的 forwardRef 在此無意義**——若硬 wrap 成 `const Calendar = forwardRef(...)` 則 ref 會指向哪裡?指向 `DayPicker`(DayPicker 不支援),或指向 consumer 不期待的節點,都不對
+
+保留 `displayName = 'Calendar'` 讓 React DevTools / Storybook 辨識;`...props` 透過 props interface 顯式列舉 passthrough 至 DayPicker(不 spread DOM,保持 API 邊界清楚)。
+
+**何時應改**:若未來 react-day-picker 升級提供 forwardRef 或 `ref` prop,或我們決定包一層自有 DOM 容器(如加 footer action buttons),再改為 canonical forwardRef wrapper。
+
+---
+
 ## 相關
 
 - `../DatePicker/date-picker.spec.md` — **本元件 consumer**:DatePicker 消費 Calendar 作為選日 popup
