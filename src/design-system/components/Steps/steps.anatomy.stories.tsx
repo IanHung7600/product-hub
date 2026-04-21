@@ -72,8 +72,57 @@ export const Overview: Story = {
   ),
 }
 
+export const Inspector: Story = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: { description: { story: '右側 Controls 切 Steps props 即時 render,取代 Figma inspect。切 `value` 切換 current step、改 `orientation` / `size` 對照排列與尺寸,切 `linear` 看 upcoming step 是否可點。' } },
+  },
+  args: {
+    value: 'shipping',
+    completedValues: ['cart', 'payment'],
+    errorValues: [],
+    size: 'md',
+    orientation: 'vertical',
+    linear: true,
+    expansion: 'follow-active',
+  },
+  argTypes: {
+    value: {
+      control: 'radio',
+      options: ['cart', 'payment', 'shipping', 'review', 'done'],
+      description: '當前步驟 value',
+    },
+    completedValues: {
+      control: 'object',
+      description: '已完成的步驟 values(例:["cart", "payment"])',
+    },
+    errorValues: {
+      control: 'object',
+      description: '錯誤的步驟 values(例:["payment"])',
+    },
+    size: { control: 'radio', options: ['sm', 'md', 'lg'] },
+    orientation: { control: 'radio', options: ['vertical', 'horizontal'] },
+    linear: {
+      control: 'boolean',
+      description: 'true=僅能順序前進 / false=任意跳步',
+    },
+    expansion: { control: 'radio', options: ['follow-active', 'multiple'] },
+  },
+  render: (args) => (
+    <div className="border border-border rounded-lg p-4 max-w-2xl">
+      <Steps {...args}>
+        <StepItem value="cart"><StepLabel>購物車</StepLabel><StepDescription>3 件商品,合計 NT$ 2,490</StepDescription></StepItem>
+        <StepItem value="payment"><StepLabel>付款資訊</StepLabel><StepDescription>信用卡 / ATM / LINE Pay</StepDescription></StepItem>
+        <StepItem value="shipping"><StepLabel>配送方式</StepLabel><StepDescription>宅配 2-3 個工作天</StepDescription></StepItem>
+        <StepItem value="review"><StepLabel>確認訂單</StepLabel><StepDescription>檢視並送出</StepDescription></StepItem>
+        <StepItem value="done"><StepLabel>完成</StepLabel></StepItem>
+      </Steps>
+    </div>
+  ),
+}
+
 export const OrientationMatrix: Story = {
-  name: '2. 方向',
+  name: '3. 方向',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -105,7 +154,7 @@ export const OrientationMatrix: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '3. 色彩對照表',
+  name: '4. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -186,7 +235,7 @@ export const ColorMatrix: Story = {
 }
 
 export const SizeMatrix: Story = {
-  name: '4. 尺寸對照表',
+  name: '5. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-6">
       <div>
@@ -210,7 +259,7 @@ export const SizeMatrix: Story = {
 }
 
 export const IndentAlignment: Story = {
-  name: '5. 欄位節奏',
+  name: '6. 欄位節奏',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>

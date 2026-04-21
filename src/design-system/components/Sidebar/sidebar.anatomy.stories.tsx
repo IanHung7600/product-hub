@@ -250,11 +250,58 @@ export const Overview: Story = {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 2. Size 對照
+// 2. 元件檢閱器
+// ═══════════════════════════════════════════════════════════════════════════
+
+interface InspectorArgs {
+  size: 'sm' | 'md' | 'lg'
+  activeId: 'dashboard' | 'inbox' | 'team' | 'notifications' | 'settings'
+  width: number
+}
+
+export const Inspector: Story = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '右側 Controls 切 SidebarProvider props 即時 render,取代 Figma inspect。切 `size` 看 row height tier(sm / md / lg 對齊 item-layout);切 `activeId` 觀察不同 active 位置的 neutral-selected 底色;調 `width` 看寬度調整(min 240px)。',
+      },
+    },
+  },
+  args: {
+    size: 'md',
+    activeId: 'dashboard',
+    width: 272,
+  },
+  argTypes: {
+    size: {
+      control: 'radio',
+      options: ['sm', 'md', 'lg'],
+      description: 'propagate 到所有 row 元件(SidebarMenuButton / SidebarGroupLabel / ...)',
+    },
+    activeId: {
+      control: 'radio',
+      options: ['dashboard', 'inbox', 'team', 'notifications', 'settings'],
+      description: '當前 active item(router-driven 時從 URL 算出)',
+    },
+    width: {
+      control: { type: 'range', min: 240, max: 360, step: 8 },
+      description: '展開寬度(預設 272 / 最小 240)',
+    },
+  },
+  render: (args) => {
+    const { size, activeId, width } = args as InspectorArgs
+    return <SidebarPreview size={size} activeId={activeId} width={width} />
+  },
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 3. Size 對照
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const SizeMatrix: Story = {
-  name: '2. 尺寸對照表',
+  name: '3. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-2">
@@ -333,11 +380,11 @@ export const SizeMatrix: Story = {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 3. 色彩 / 狀態對照
+// 4. 色彩 / 狀態對照
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const ColorMatrix: Story = {
-  name: '3. 色彩對照表',
+  name: '4. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-2">
@@ -423,11 +470,11 @@ export const ColorMatrix: Story = {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 4. 尺寸 / 寬度 token
+// 5. 尺寸 / 寬度 token
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const ChromeTokens: Story = {
-  name: '4. 寬度與 Chrome Token',
+  name: '5. 寬度與 Chrome Token',
   render: () => (
     <div className="flex flex-col gap-10">
       <div className="flex flex-col gap-2">

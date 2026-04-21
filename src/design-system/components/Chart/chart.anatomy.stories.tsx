@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import {
+  Area,
+  AreaChart,
   Bar,
   BarChart,
   CartesianGrid,
@@ -124,8 +126,97 @@ export const Overview: Story = {
   ),
 }
 
+// ── Inspector sample(單一資料集,供檢閱器使用)─────────────────────────────
+
+type ChartType = 'bar' | 'line' | 'area' | 'pie'
+
+interface InspectorArgs {
+  type: ChartType
+  showLegend: boolean
+  showGrid: boolean
+  tooltipIndicator: 'dot' | 'line' | 'dashed'
+}
+
+export const Inspector: Story = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '右側 Controls 切 chart 類型與視覺選項即時 render,取代 Figma inspect。切 type 觀察同一份 ChartConfig(desktop / mobile)在不同圖表類型下的色彩應用;tooltipIndicator 切換 dot / line / dashed 看指示器視覺差異。',
+      },
+    },
+  },
+  args: {
+    type: 'bar',
+    showLegend: true,
+    showGrid: true,
+    tooltipIndicator: 'dot',
+  },
+  argTypes: {
+    type: {
+      control: 'select',
+      options: ['bar', 'line', 'area', 'pie'],
+      description: 'bar=數值比較 / line=趨勢 / area=累積 / pie=比例分布',
+    },
+    showLegend: { control: 'boolean', description: '顯示底部圖例' },
+    showGrid: { control: 'boolean', description: '顯示 Cartesian 網格(bar / line / area 適用)' },
+    tooltipIndicator: {
+      control: 'select',
+      options: ['dot', 'line', 'dashed'],
+      description: 'tooltip 色彩指示器形狀',
+    },
+  },
+  render: (args) => {
+    const { type, showLegend, showGrid, tooltipIndicator } = args as InspectorArgs
+    return (
+      <div className="max-w-2xl">
+        <ChartContainer config={type === 'pie' ? subscriptionConfig : visitorConfig}>
+          {type === 'bar' ? (
+            <BarChart accessibilityLayer data={visitorData}>
+              {showGrid && <CartesianGrid vertical={false} />}
+              <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
+              <YAxis tickLine={false} axisLine={false} />
+              <ChartTooltip content={<ChartTooltipContent indicator={tooltipIndicator} />} />
+              {showLegend && <ChartLegend content={<ChartLegendContent />} />}
+              <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
+              <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
+            </BarChart>
+          ) : type === 'line' ? (
+            <LineChart accessibilityLayer data={visitorData}>
+              {showGrid && <CartesianGrid vertical={false} />}
+              <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
+              <YAxis tickLine={false} axisLine={false} />
+              <ChartTooltip content={<ChartTooltipContent indicator={tooltipIndicator} />} />
+              {showLegend && <ChartLegend content={<ChartLegendContent />} />}
+              <Line dataKey="desktop" type="monotone" stroke="var(--color-desktop)" strokeWidth={2} dot={false} />
+              <Line dataKey="mobile" type="monotone" stroke="var(--color-mobile)" strokeWidth={2} dot={false} />
+            </LineChart>
+          ) : type === 'area' ? (
+            <AreaChart accessibilityLayer data={visitorData}>
+              {showGrid && <CartesianGrid vertical={false} />}
+              <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} />
+              <YAxis tickLine={false} axisLine={false} />
+              <ChartTooltip content={<ChartTooltipContent indicator={tooltipIndicator} />} />
+              {showLegend && <ChartLegend content={<ChartLegendContent />} />}
+              <Area dataKey="desktop" type="monotone" stroke="var(--color-desktop)" fill="var(--color-desktop)" fillOpacity={0.3} strokeWidth={2} stackId="visitors" />
+              <Area dataKey="mobile" type="monotone" stroke="var(--color-mobile)" fill="var(--color-mobile)" fillOpacity={0.3} strokeWidth={2} stackId="visitors" />
+            </AreaChart>
+          ) : (
+            <PieChart>
+              <ChartTooltip content={<ChartTooltipContent hideLabel indicator={tooltipIndicator} />} />
+              <Pie data={subscriptionData} dataKey="users" nameKey="tier" innerRadius={40} strokeWidth={2} />
+              {showLegend && <ChartLegend content={<ChartLegendContent nameKey="tier" />} />}
+            </PieChart>
+          )}
+        </ChartContainer>
+      </div>
+    )
+  },
+}
+
 export const CategoryTokens: Story = {
-  name: '2. 類別配色 Token',
+  name: '3. 類別配色 Token',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -149,7 +240,7 @@ export const CategoryTokens: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '3. 色彩對照表',
+  name: '4. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>

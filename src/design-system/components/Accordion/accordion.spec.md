@@ -48,20 +48,18 @@ Accordion 是**垂直堆疊、可收合的多區塊容器**——每個 item 由
 
 ---
 
-## 視覺 token
+## 視覺規則
 
-| 區塊 | Token |
-|------|-------|
-| AccordionItem 底線 | `border-b border-divider` |
-| Trigger 文字 | `text-body font-medium text-foreground` |
-| Trigger hover | `hover:text-fg-secondary`（文字色 tint 提示可點擊；不用底線） |
-| Trigger focus-visible | `ring-2 ring-ring ring-offset-2` |
-| Chevron | `ChevronDown 16px`,`text-fg-muted`,data-state=open 旋轉 180deg,transition 200ms |
-| Content 文字 | `text-body text-fg-secondary` |
-| Trigger / Content 垂直 padding | `py-4` / `pb-4` |
-| 展開動畫 | `animate-accordion-down 200ms ease-out`（見 `globals.css`） |
+- **AccordionItem 底線**:相鄰 item 以底 divider 分隔(視覺界定每一段)
+- **Trigger 文字**:正常閱讀色 + medium 字重(可掃視的 section heading 等級)
+- **Trigger hover**:文字色 tint 弱化,**不用 underline**
+- **Chevron**:朝下 → data-state=open 旋轉 180° → 朝上,transition 帶平滑
+- **Content 文字**:次要閱讀色—— 主資訊在 trigger,展開內容是補充
+- **焦點環**:鍵盤 focus 用 ring token(非自訂 outline)
 
-**為什麼 hover 不用底線**:shadcn 預設 `hover:underline` 是 web 早期 link convention,現代 SaaS(Notion / Linear / Stripe / Vercel)皆不使用。改用 `hover:text-fg-secondary`(文字色 tint 弱化)維持統一質感,同時保留可點擊提示——不變色會讓使用者不確定是否能點擊,比起「被誤以為是 link」的風險,「失去可點擊提示」的風險更高。
+**為什麼 hover 不用底線**:shadcn 預設 `hover:underline` 是 web 早期 link convention,現代 SaaS(Notion / Linear / Stripe / Vercel)皆不使用。改用文字色 tint 弱化維持統一質感,同時保留可點擊提示——不變色會讓使用者不確定是否能點擊,比起「被誤以為是 link」的風險,「失去可點擊提示」的風險更高。
+
+完整 class / token 對照見 anatomy story(`ColorMatrix` + `SizeMatrix`)。
 
 ---
 

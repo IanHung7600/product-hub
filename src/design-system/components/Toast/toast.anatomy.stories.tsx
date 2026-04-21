@@ -56,8 +56,80 @@ export const Overview: Story = {
   ),
 }
 
+// ── Inspector ─────────────────────────────────────────────────────────────
+
+interface InspectorArgs {
+  variant: 'neutral' | 'success' | 'info' | 'warning' | 'error'
+  title: string
+  description: string
+  duration: number
+  withAction: boolean
+}
+
+export const Inspector: Story = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '右側 Controls 切 ToastOptions 即時觸發,取代 Figma inspect。Toast 不是 JSX 元件而是 `toast()` 函式呼叫——點「觸發 toast」依 args 在右下角跳出對應通知;切 `variant` 看 5 種色彩 + inverse theme 切換,切 `withAction` 加上「復原」CTA。',
+      },
+    },
+  },
+  args: {
+    variant: 'success',
+    title: '已刪除 3 則訊息',
+    description: '訊息已移至「已刪除」資料夾',
+    duration: 4000,
+    withAction: true,
+  },
+  argTypes: {
+    variant: {
+      control: 'radio',
+      options: ['neutral', 'success', 'info', 'warning', 'error'],
+      description: 'neutral / success = inverse theme / info / error = dark / warning = light',
+    },
+    title: { control: 'text', description: '主要訊息' },
+    description: { control: 'text', description: '補充說明,自然換行' },
+    duration: {
+      control: { type: 'range', min: 2000, max: 10000, step: 1000 },
+      description: '自動關閉時間(ms),action toast 建議加長至 6000',
+    },
+    withAction: { control: 'boolean', description: '附 undo action button(樂觀 UI 反悔窗口)' },
+  },
+  render: (args) => {
+    const { variant, title, description, duration, withAction } = args as InspectorArgs
+    return (
+      <div className="flex flex-col gap-3">
+        <Button
+          variant="tertiary"
+          onClick={() =>
+            toast({
+              variant,
+              title,
+              description,
+              duration,
+              action: withAction
+                ? {
+                    label: '復原',
+                    onClick: () => toast({ variant: 'info', title: '已復原', duration: 2000 }),
+                  }
+                : undefined,
+            })
+          }
+        >
+          觸發 toast
+        </Button>
+        <p className="text-footnote text-fg-muted">
+          toast 會在右下角跳出(由 Provider 層 `&lt;Toaster /&gt;` 決定位置)。連續點擊觸發多個 toast 觀察 stacking。
+        </p>
+      </div>
+    )
+  },
+}
+
 export const ContainerArchitecture: Story = {
-  name: '2. Container 三層架構',
+  name: '3. Container 三層架構',
   render: () => (
     <div className="flex flex-col gap-6">
       <div>
@@ -87,7 +159,7 @@ export const ContainerArchitecture: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '3. 色彩對照表',
+  name: '4. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-6">
       <div>
@@ -122,7 +194,7 @@ export const ColorMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '4. 狀態行為',
+  name: '5. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>

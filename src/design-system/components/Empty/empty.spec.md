@@ -41,36 +41,27 @@
 
 ## Slots
 
-| Slot | Prop | 預設 | 說明 |
-|---|---|---|---|
-| Icon | `icon?: LucideIcon \| ReactElement` | 無 | LucideIcon → 自動包 `<Avatar size={48} color="neutral" />`(icon 28px);ReactElement → 原樣渲染 |
-| Title | `title?: string` | 無 | `text-body-lg font-medium text-foreground text-center` |
-| Description | `description?: string` | 無 | `text-body text-fg-secondary text-center` |
-| Action | `action?: ReactNode` | 無 | Button 或任何 CTA,居中 |
+- **Icon**(`icon?: LucideIcon | ReactElement`,預設無):LucideIcon 會自動包 48px neutral Avatar + 28px icon;ReactElement 原樣渲染(consumer 可自帶 Illustration、ColorAvatar、CircularProgress)
+- **Title**(`title?: string`,預設無):主要標題,foreground + medium 字重,居中
+- **Description**(`description?: string`,預設無 — 但是唯一必有的 slot):說明文字,次要色、居中
+- **Action**(`action?: ReactNode`,預設無):CTA Button 或任何操作,居中
 
 ## 間距
 
-固定值，不隨 density 變（Empty 是展示性元件，不是工作區域元件）：
+固定值,不隨 density 變(Empty 是展示性元件,不是工作區域元件——展示性文字不跟 field-height tier 連動):
 
-| Gap | 值 | 語意 |
-|---|---|---|
-| Icon → Title/Desc | `mb-4`（16px） | 視覺→文字過渡，48px icon 需要充足呼吸空間 |
-| Title → Description | `mt-0.5`（2px） | Item-layout canonical（同資訊塊） |
-| Description → Action | `mt-6`（24px） | 資訊→行動的視覺暫停，引導使用者注意 CTA |
+- **Icon → Title/Desc**:視覺 → 文字過渡需充足呼吸空間(48px icon 尺寸不宜貼近文字)
+- **Title → Description**:緊密配對(同資訊塊,對齊 item-layout canonical 的 label ↔ desc gap)
+- **Description → Action**:資訊 → 行動的視覺暫停,引導使用者注意 CTA
 
-Outer padding 由 **consumer 容器** 決定:
-- Table 空狀態:`py-12`
-- SelectMenu dropdown:`py-6`
-- Page-level:`py-16`
+Outer padding 由 **consumer 容器** 決定(Table 空狀態需較大留白、SelectMenu dropdown 較緊湊、Page-level 最寬鬆)。
 
 ## Typography
 
-| 元素 | Class | 大小 | 色彩 |
-|---|---|---|---|
-| Title | `text-body-lg font-medium` | 16px | `text-foreground` |
-| Description | `text-body` | 14px | `text-fg-muted` — placeholder 等級(跟 input placeholder 同色) |
+- **Title**:body-lg + medium 字重 / foreground 色(主要閱讀重量)
+- **Description**:body tier / **`fg-muted` placeholder 等級色**(跟 input placeholder 同色,提示「這裡暫時沒內容」)
 
-固定不隨 density 變——展示性文字,不需要跟 field-height tier 連動。
+完整 slot / gap / typography 的 class 與 px 對照見 anatomy `Overview`(Slot 與 Spacing)+ `SlotCombinations`(Slot 間距規則)stories。
 
 ## 文字不限寬
 

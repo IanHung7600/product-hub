@@ -85,8 +85,102 @@ export const Overview: Story = {
   ),
 }
 
+// ── Inspector ─────────────────────────────────────────────────────────────
+
+interface InspectorArgs {
+  size: 'sm' | 'md' | 'lg'
+  overflow: 'none' | 'scroll' | 'menu'
+  value: 'overview' | 'members' | 'settings'
+  withIcons: boolean
+  withBadges: boolean
+}
+
+export const Inspector: Story = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '右側 Controls 切 Tabs / TabsList props 即時 render,取代 Figma inspect。切 `size` 看 tab 高度 tier(--tab-height-*);切 `overflow` 模擬溢出處理行為(scroll 需寬度不足才觸發,示例用 `max-w` 限縮容器);切 `value` 觀察 selected underline 位置。',
+      },
+    },
+  },
+  args: {
+    size: 'md',
+    overflow: 'none',
+    value: 'overview',
+    withIcons: true,
+    withBadges: true,
+  },
+  argTypes: {
+    size: {
+      control: 'radio',
+      options: ['sm', 'md', 'lg'],
+      description: 'sm=Dialog / dense / md★default=一般頁面 / lg=page-level hero',
+    },
+    overflow: {
+      control: 'radio',
+      options: ['none', 'scroll', 'menu'],
+      description: 'none★default / scroll=水平捲動 + fade mask / menu=⋯ dropdown',
+    },
+    value: {
+      control: 'radio',
+      options: ['overview', 'members', 'settings'],
+      description: '當前 selected tab',
+    },
+    withIcons: { control: 'boolean', description: 'startIcon(對應專案 / 成員 / 設定 icon)' },
+    withBadges: { control: 'boolean', description: '成員 tab 顯示 3、通知顯示 12(Badge suffix)' },
+  },
+  render: (args) => {
+    const { size, overflow, value, withIcons, withBadges } = args as InspectorArgs
+    const containerClass = overflow === 'scroll' || overflow === 'menu' ? 'max-w-sm' : 'max-w-2xl'
+    return (
+      <div className={`border border-border rounded-lg p-4 ${containerClass}`}>
+        <Tabs value={value} onValueChange={() => {}}>
+          <TabsList size={size} overflow={overflow}>
+            <TabsTrigger value="overview" startIcon={withIcons ? FileText : undefined}>
+              總覽
+            </TabsTrigger>
+            <TabsTrigger
+              value="members"
+              startIcon={withIcons ? Users : undefined}
+              badge={withBadges ? <Badge count={3} variant="low" /> : undefined}
+            >
+              成員
+            </TabsTrigger>
+            <TabsTrigger
+              value="settings"
+              startIcon={withIcons ? Settings : undefined}
+              badge={withBadges ? <Badge count={12} variant="high" /> : undefined}
+            >
+              設定
+            </TabsTrigger>
+            {(overflow === 'scroll' || overflow === 'menu') && (
+              <>
+                <TabsTrigger value="billing" startIcon={withIcons ? Bell : undefined}>計費</TabsTrigger>
+                <TabsTrigger value="integrations">整合</TabsTrigger>
+                <TabsTrigger value="security">安全性</TabsTrigger>
+                <TabsTrigger value="api">API keys</TabsTrigger>
+              </>
+            )}
+          </TabsList>
+          <TabsContent value="overview" className="mt-4 text-body text-fg-secondary">
+            專案的總覽資訊(KPI / 最近活動 / 團隊成員簡介)
+          </TabsContent>
+          <TabsContent value="members" className="mt-4 text-body text-fg-secondary">
+            專案成員列表(3 人待邀請)
+          </TabsContent>
+          <TabsContent value="settings" className="mt-4 text-body text-fg-secondary">
+            專案設定(12 個通知待閱讀)
+          </TabsContent>
+        </Tabs>
+      </div>
+    )
+  },
+}
+
 export const SizeMatrix: Story = {
-  name: '2. 尺寸對照表',
+  name: '3. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -124,7 +218,7 @@ export const SizeMatrix: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '3. 色彩對照表',
+  name: '4. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -211,7 +305,7 @@ export const ColorMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '4. 狀態行為',
+  name: '5. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -236,7 +330,7 @@ export const StateBehavior: Story = {
 }
 
 export const OverflowMatrix: Story = {
-  name: '5. Overflow 處理(scroll / menu)',
+  name: '6. Overflow 處理(scroll / menu)',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -286,7 +380,7 @@ export const OverflowMatrix: Story = {
 }
 
 export const SpacingTokens: Story = {
-  name: '6. 間距 Token',
+  name: '7. 間距 Token',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>

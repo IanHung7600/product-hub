@@ -60,8 +60,92 @@ export const Overview: Story = {
   ),
 }
 
+// ── Inspector ─────────────────────────────────────────────────────────────
+
+interface InspectorArgs {
+  side: 'top' | 'right' | 'bottom' | 'left'
+  align: 'start' | 'center' | 'end'
+  sideOffset: number
+  width: 'w-72' | 'w-80' | 'w-96'
+  showHeader: boolean
+  showFooter: boolean
+}
+
+export const Inspector: Story = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '右側 Controls 切 PopoverContent props 即時 render,取代 Figma inspect。點擊「開啟篩選設定」觸發浮層,切 `side` / `align` 看 12 種定位組合;調 `sideOffset` 看與 trigger 距離。預設 open 以便直接觀察。',
+      },
+    },
+  },
+  args: {
+    side: 'bottom',
+    align: 'center',
+    sideOffset: 8,
+    width: 'w-72',
+    showHeader: true,
+    showFooter: true,
+  },
+  argTypes: {
+    side: {
+      control: 'radio',
+      options: ['top', 'right', 'bottom', 'left'],
+      description: '浮層出現在 trigger 的哪一側(Radix 撞牆自動翻轉)',
+    },
+    align: {
+      control: 'radio',
+      options: ['start', 'center', 'end'],
+      description: '相對 trigger 的對齊',
+    },
+    sideOffset: {
+      control: { type: 'range', min: 0, max: 24, step: 2 },
+      description: 'DS canonical = 8(對標 Notion / Linear / Figma / Stripe)',
+    },
+    width: {
+      control: 'radio',
+      options: ['w-72', 'w-80', 'w-96'],
+      description: 'w-72★default(簡短設定)/ w-96(內容複雜)',
+    },
+    showHeader: { control: 'boolean', description: '顯示 PopoverHeader(含右上 X 關閉)' },
+    showFooter: { control: 'boolean', description: '顯示 PopoverFooter(含 CTA 按鈕)' },
+  },
+  render: (args) => {
+    const { side, align, sideOffset, width, showHeader, showFooter } = args as InspectorArgs
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Popover defaultOpen>
+          <PopoverTrigger asChild>
+            <Button variant="tertiary">篩選設定</Button>
+          </PopoverTrigger>
+          <PopoverContent side={side} align={align} sideOffset={sideOffset} className={width}>
+            {showHeader && (
+              <PopoverHeader><PopoverTitle>依類型篩選</PopoverTitle></PopoverHeader>
+            )}
+            <PopoverBody>
+              <div className="flex flex-col gap-1.5 text-caption text-fg-secondary">
+                <label className="flex items-center gap-2"><input type="checkbox" defaultChecked /> 待處理</label>
+                <label className="flex items-center gap-2"><input type="checkbox" defaultChecked /> 進行中</label>
+                <label className="flex items-center gap-2"><input type="checkbox" /> 已完成</label>
+              </div>
+            </PopoverBody>
+            {showFooter && (
+              <PopoverFooter>
+                <Button variant="tertiary" size="sm" className="flex-1">清除</Button>
+                <Button variant="primary" size="sm" className="flex-1">套用</Button>
+              </PopoverFooter>
+            )}
+          </PopoverContent>
+        </Popover>
+      </div>
+    )
+  },
+}
+
 export const PlacementMatrix: Story = {
-  name: '2. 定位(side × align)',
+  name: '3. 定位(side × align)',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -90,7 +174,7 @@ export const PlacementMatrix: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '3. 色彩對照表',
+  name: '4. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -118,7 +202,7 @@ export const ColorMatrix: Story = {
 }
 
 export const SizeMatrix: Story = {
-  name: '4. 尺寸對照表',
+  name: '5. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -149,7 +233,7 @@ export const SizeMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '5. 狀態行為',
+  name: '6. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>

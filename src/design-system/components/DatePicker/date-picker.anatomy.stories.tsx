@@ -1,3 +1,4 @@
+// @anatomy-exempt: anatomy specs / token 對照表格用 raw <table>,非業務資料表。業務資料表才用 <DataTable>。
 import type { Meta } from '@storybook/react'
 import { useState, useEffect } from 'react'
 import { DatePicker, DatePickerDisplay } from './date-picker'
@@ -804,10 +805,61 @@ export const CalendarTokens = {
 
           {/* Token table */}
           <div className="flex-1 min-w-[420px]">
-            <span className="text-caption font-medium text-fg-secondary block mb-2">Token 對照</span>
+            <span className="text-caption font-medium text-fg-secondary block mb-2">Cell state token(5 種 canonical)</span>
             <div className="overflow-x-auto">
               <table className="border-collapse text-caption w-full">
-                <thead><tr><Th>區塊</Th><Th>Token / Utility</Th><Th>說明</Th></tr></thead>
+                <thead><tr><Th>State</Th><Th>視覺</Th><Th>Token / Class</Th><Th>備註</Th></tr></thead>
+                <tbody>
+                  <tr>
+                    <Td>正常(未 hover)</Td>
+                    <Td>黑字透明底</Td>
+                    <Td mono>text-foreground</Td>
+                    <Td>base state</Td>
+                  </tr>
+                  <tr>
+                    <Td>today</Td>
+                    <Td>文字下方藍色底線</Td>
+                    <Td mono>underline · decoration-primary · decoration-2 · underline-offset-4</Td>
+                    <Td>非 ring circle(避免與 hover 混淆,對齊 Ant / Google Calendar / macOS Calendar)</Td>
+                  </tr>
+                  <tr>
+                    <Td>disabled</Td>
+                    <Td>灰底圓圈 + 淺灰字</Td>
+                    <Td mono>bg-neutral-2 · rounded-full · text-fg-disabled</Td>
+                    <Td>與 outside month 視覺略有區隔</Td>
+                  </tr>
+                  <tr>
+                    <Td>selected(single / range 端點)</Td>
+                    <Td>藍底白字圓</Td>
+                    <Td mono>bg-primary · text-on-emphasis · rounded-full</Td>
+                    <Td>range_start / range_end 共用此視覺</Td>
+                  </tr>
+                  <tr>
+                    <Td>range track(中間日期)</Td>
+                    <Td>灰底矩形橫條</Td>
+                    <Td mono>bg-neutral-2(day 容器層)</Td>
+                    <Td>與端點圓接縫形成連續 bar</Td>
+                  </tr>
+                  <tr>
+                    <Td>hover(未選中)</Td>
+                    <Td>藍圈 outline 無 fill</Td>
+                    <Td mono>hover:ring-1 · hover:ring-primary · hover:bg-transparent</Td>
+                    <Td>非 filled 避免跟 selected 混淆</Td>
+                  </tr>
+                  <tr>
+                    <Td>outside month</Td>
+                    <Td>弱化字色</Td>
+                    <Td mono>text-fg-disabled</Td>
+                    <Td>上下月溢出日期;不套 disabled 灰底圓(outside 只是「非當月」不是「禁選」)</Td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <span className="text-caption font-medium text-fg-secondary block mb-2 mt-6">其他區塊 token</span>
+            <div className="overflow-x-auto">
+              <table className="border-collapse text-caption w-full">
+                <thead><tr><Th>區塊</Th><Th>Token / Class</Th><Th>說明</Th></tr></thead>
                 <tbody>
                   <tr>
                     <Td>月份 caption</Td>
@@ -816,47 +868,34 @@ export const CalendarTokens = {
                   </tr>
                   <tr>
                     <Td>Nav 按鈕(prev / next)</Td>
-                    <Td mono>h-7 · w-7 · rounded-md · text-fg-muted · hover:bg-neutral-hover</Td>
-                    <Td>Tertiary-style icon button,hover 才浮現背景</Td>
+                    <Td mono>h-9 · w-9 · rounded-md · text-fg-muted · hover:bg-neutral-hover</Td>
+                    <Td>Tertiary-style icon button,hover 才浮現背景。w-9 對齊 day cell 做左右對稱</Td>
                   </tr>
                   <tr>
                     <Td>星期標頭</Td>
-                    <Td mono>text-caption · text-fg-muted · font-normal</Td>
+                    <Td mono>h-8 · w-9 · text-caption · text-fg-muted · font-normal</Td>
                     <Td>Mon / Tue...弱化為輔助資訊</Td>
                   </tr>
                   <tr>
                     <Td>日格</Td>
-                    <Td mono>h-9 · w-9 · rounded-md · text-body</Td>
-                    <Td>36×36 圓角方格,容納點擊區 + 視覺指示</Td>
+                    <Td mono>h-9 · w-9</Td>
+                    <Td>36×36,容納點擊區 + 視覺指示</Td>
                   </tr>
                   <tr>
-                    <Td>Hover</Td>
-                    <Td mono>hover:bg-neutral-hover</Td>
-                    <Td>統一 neutral-hover,與 MenuItem / Button tertiary hover 一致</Td>
-                  </tr>
-                  <tr>
-                    <Td>Selected</Td>
-                    <Td mono>bg-primary · text-white</Td>
-                    <Td>實心 primary 填色,明確「這是選中日」</Td>
-                  </tr>
-                  <tr>
-                    <Td>Today(未選)</Td>
-                    <Td mono>ring-1 · ring-primary</Td>
-                    <Td>Framing 視覺,不搶 selected 焦點</Td>
-                  </tr>
-                  <tr>
-                    <Td>Outside month</Td>
-                    <Td mono>text-fg-disabled</Td>
-                    <Td>上下月溢出日期淡化</Td>
-                  </tr>
-                  <tr>
-                    <Td>Disabled</Td>
-                    <Td mono>text-fg-disabled · opacity-50</Td>
-                    <Td>不可選日期(未來 min/max date 功能)</Td>
+                    <Td>Popover padding</Td>
+                    <Td mono>p-3(12px 四邊對稱)</Td>
+                    <Td>chevron 到 popover 邊距 = 最邊欄 day cell 到 popover 邊距</Td>
                   </tr>
                 </tbody>
               </table>
             </div>
+
+            <p className="text-footnote text-fg-muted mt-4">
+              <strong>State stacking</strong>:today + selected → selected 勝出(藍底白字圓);today + range-middle → track 灰底 + underline 仍可見。
+            </p>
+            <p className="text-footnote text-fg-muted mt-2">
+              <strong>對照 TimePicker</strong>:TimePicker panel 選項 selected 用 `bg-neutral-selected`(「列表選中」語意,跟 SelectMenu 同流派);DatePicker 用 primary(「最終選定日期」強 affordance,對齊 Google / Notion / Ant)。
+            </p>
           </div>
         </div>
 

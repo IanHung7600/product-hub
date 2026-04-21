@@ -84,8 +84,89 @@ export const Overview: Story = {
 }
 
 
+// ── Inspector ─────────────────────────────────────────────────────────────
+
+interface InspectorArgs {
+  size: 'sm' | 'md' | 'lg'
+  context: 'sidebar' | 'menu'
+  selectionMode: 'single' | 'multiple' | 'none'
+  expandOnSelect: boolean
+}
+
+export const Inspector: Story = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '右側 Controls 切 TreeView props 即時 render,取代 Figma inspect。切 `size` 看 row height tier 與 indentStep(sm/md=24 / lg=28);切 `context` 看水平 padding 差異(sidebar=16px / menu=12px);切 `selectionMode` 觀察單選 / 多選互動差異。使用真實的 Engineering 團隊檔案樹。',
+      },
+    },
+  },
+  args: {
+    size: 'md',
+    context: 'sidebar',
+    selectionMode: 'single',
+    expandOnSelect: false,
+  },
+  argTypes: {
+    size: {
+      control: 'radio',
+      options: ['sm', 'md', 'lg'],
+      description: 'sm=Dialog / Sidebar dense / md★default / lg=閱讀舒適(doc outline)',
+    },
+    context: {
+      control: 'radio',
+      options: ['sidebar', 'menu'],
+      description: 'sidebar=頁面側邊欄(layout-space-loose)/ menu=浮層(px-3 對齊 MenuItem)',
+    },
+    selectionMode: {
+      control: 'radio',
+      options: ['single', 'multiple', 'none'],
+      description: 'single=sidebar nav / multiple=批次選取 / none=純展示',
+    },
+    expandOnSelect: {
+      control: 'boolean',
+      description: '點 label 同時展開 children(預設 false,chevron 是展開的唯一控件)',
+    },
+  },
+  render: (args) => {
+    const { size, context, selectionMode, expandOnSelect } = args as InspectorArgs
+    return (
+      <div className="border border-border rounded-lg p-4 max-w-md">
+        <TreeView
+          size={size}
+          context={context}
+          selectionMode={selectionMode}
+          expandOnSelect={expandOnSelect}
+          defaultExpandedIds={['src', 'components']}
+          defaultSelectedIds={['button']}
+          aria-label="Project file tree"
+        >
+          <TreeItem id="src" label="src" icon={Folder}>
+            <TreeItem id="components" label="components" icon={Folder}>
+              <TreeItem id="button" label="Button.tsx" icon={FileText} />
+              <TreeItem id="input" label="Input.tsx" icon={FileText} />
+              <TreeItem id="avatar" label="Avatar.tsx" icon={FileText} />
+            </TreeItem>
+            <TreeItem id="hooks" label="hooks" icon={Folder}>
+              <TreeItem id="use-theme" label="useTheme.ts" icon={FileText} />
+            </TreeItem>
+            <TreeItem id="assets" label="assets" icon={Folder}>
+              <TreeItem id="logo" label="logo.svg" icon={Image} />
+            </TreeItem>
+          </TreeItem>
+          <TreeItem id="docs" label="docs" icon={Folder}>
+            <TreeItem id="readme" label="README.md" icon={FileText} />
+          </TreeItem>
+        </TreeView>
+      </div>
+    )
+  },
+}
+
 export const SizeMatrix: Story = {
-  name: '2. 尺寸對照表',
+  name: '3. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -134,7 +215,7 @@ export const SizeMatrix: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '3. 色彩對照表',
+  name: '4. 色彩對照表',
   render: () => {
     const [selected, setSelected] = React.useState<Set<string>>(new Set(['beach']))
     return (
@@ -210,7 +291,7 @@ export const ColorMatrix: Story = {
 }
 
 export const IndentMatrix: Story = {
-  name: '4. Indent 與 Tree Guide',
+  name: '5. Indent 與 Tree Guide',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -248,7 +329,7 @@ export const IndentMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '5. 狀態行為',
+  name: '6. 狀態行為',
   render: () => {
     const [selected, setSelected] = React.useState<Set<string>>(new Set(['resume']))
     return (
@@ -289,7 +370,7 @@ export const StateBehavior: Story = {
 }
 
 export const KeyboardMatrix: Story = {
-  name: '6. 鍵盤導覽(ARIA tree)',
+  name: '7. 鍵盤導覽(ARIA tree)',
   render: () => (
     <div className="flex flex-col gap-6">
       <div>

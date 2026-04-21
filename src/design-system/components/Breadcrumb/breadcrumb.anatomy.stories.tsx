@@ -1,3 +1,4 @@
+// @anatomy-exempt: anatomy specs / token 對照表格用 raw <table>,非業務資料表。業務資料表才用 <DataTable>。
 import type { Meta, StoryObj } from '@storybook/react'
 import {
   Breadcrumb,
@@ -10,12 +11,19 @@ import {
 } from './breadcrumb'
 import { H3, Desc, Td, Th, TokenCell } from '@/design-system/stories-helpers/anatomy/anatomy-utils'
 
+type InspectorArgs = {
+  size: 'sm' | 'md' | 'lg'
+  useEllipsis: boolean
+  depth: 3 | 4 | 5
+}
+
 const meta: Meta = {
   title: 'Design System/Components/Breadcrumb/設計規格',
   parameters: { layout: 'padded' },
 }
 export default meta
 type Story = StoryObj
+type InspectorStory = StoryObj<InspectorArgs>
 
 export const Overview: Story = {
   name: '1. 元件總覽',
@@ -62,36 +70,78 @@ export const Overview: Story = {
   ),
 }
 
-export const CollapseMatrix: Story = {
-  name: '2. 長路徑收合(Ellipsis)',
-  render: () => (
-    <div className="flex flex-col gap-6">
-      <div>
-        <H3>路徑過長時用 Ellipsis 收合中間</H3>
-        <Desc>保留第一層(根)+ 最後兩層(當前 + 上一層),中間以 `...` 取代。使用者需要看到「我在哪裡」+「根位置」,中間層通常不需要完整可見。</Desc>
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="#">Home</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbEllipsis />
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink href="#">專案</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>設定</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-        <p className="text-footnote text-fg-muted mt-3">Ellipsis 可以 hover 展開中間層(consumer 自行實作互動,本元件只渲染 `...` icon)</p>
-      </div>
-    </div>
-  ),
+export const Inspector: InspectorStory = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: {
+      description: {
+        story: '在右側 Controls 面板切換 size / useEllipsis / depth,即時查看 Breadcrumb 在不同字級與路徑深度下的呈現。世界級 DS 的 Inspector = Figma inspect 替代。',
+      },
+    },
+  },
+  args: {
+    size: 'md',
+    useEllipsis: false,
+    depth: 4,
+  },
+  argTypes: {
+    size: {
+      control: 'radio',
+      options: ['sm', 'md', 'lg'],
+      description: '字體尺寸 — 對齊配對的 page title(sm→h4 / md→h3 / lg→h2)',
+    },
+    useEllipsis: {
+      control: 'boolean',
+      description: '是否在中間插入 Ellipsis 收合(模擬長路徑場景)',
+    },
+    depth: {
+      control: { type: 'radio' },
+      options: [3, 4, 5],
+      description: '路徑層數(含當前頁)',
+    },
+  },
+  render: (args) => {
+    const path = ['專案', 'Q1 行銷活動', '電子報', '圖檔資產', 'hero-banner.png'].slice(0, args.depth)
+    const last = path[path.length - 1]
+    const middle = path.slice(0, -1)
+    return (
+      <Breadcrumb>
+        <BreadcrumbList size={args.size}>
+          {args.useEllipsis && middle.length > 2 ? (
+            <>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="#">{middle[0]}</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbEllipsis />
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink href="#">{middle[middle.length - 1]}</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{last}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </>
+          ) : (
+            <>
+              {middle.flatMap((label, i) => [
+                <BreadcrumbItem key={`item-${i}`}>
+                  <BreadcrumbLink href="#">{label}</BreadcrumbLink>
+                </BreadcrumbItem>,
+                <BreadcrumbSeparator key={`sep-${i}`} />,
+              ])}
+              <BreadcrumbItem>
+                <BreadcrumbPage>{last}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </>
+          )}
+        </BreadcrumbList>
+      </Breadcrumb>
+    )
+  },
 }
 
 export const SizeMatrix: Story = {
@@ -254,6 +304,38 @@ export const UsageExamples: Story = {
             <BreadcrumbItem><BreadcrumbPage>Button 重構</BreadcrumbPage></BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
+      </div>
+    </div>
+  ),
+}
+
+export const CollapseMatrix: Story = {
+  name: '6. 長路徑收合(Ellipsis)',
+  render: () => (
+    <div className="flex flex-col gap-6">
+      <div>
+        <H3>路徑過長時用 Ellipsis 收合中間</H3>
+        <Desc>保留第一層(根)+ 最後兩層(當前 + 上一層),中間以 `...` 取代。使用者需要看到「我在哪裡」+「根位置」,中間層通常不需要完整可見。</Desc>
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="#">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbEllipsis />
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="#">專案</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>設定</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        <p className="text-footnote text-fg-muted mt-3">Ellipsis 可以 hover 展開中間層(consumer 自行實作互動,本元件只渲染 `...` icon)</p>
       </div>
     </div>
   ),

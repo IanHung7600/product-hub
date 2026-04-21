@@ -85,8 +85,79 @@ export const Overview: Story = {
   },
 }
 
+// ── Inspector ─────────────────────────────────────────────────────────────
+
+interface InspectorArgs {
+  size: 'sm' | 'md' | 'lg'
+  bordered: boolean
+  pinnedLeft: boolean
+  pinnedRight: boolean
+  inlineEdit: boolean
+  height: 'auto' | '300px'
+}
+
+export const Inspector: Story = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '右側 Controls 切 DataTable props 即時 render,取代 Figma inspect。調整 `size` 看 row height tier 差異;`pinnedLeft` / `pinnedRight` 切換 frozen column 切出三區域(left / center / right);`height` 切換 auto 與固定(啟用虛擬捲動)。',
+      },
+    },
+  },
+  args: {
+    size: 'md',
+    bordered: true,
+    pinnedLeft: true,
+    pinnedRight: false,
+    inlineEdit: false,
+    height: 'auto',
+  },
+  argTypes: {
+    size: {
+      control: 'select',
+      options: ['sm', 'md', 'lg'],
+      description: 'sm=compact(掃視)/ md=cozy★default / lg=comfortable(閱讀)',
+    },
+    bordered: { control: 'boolean', description: '外框(嵌入已帶框容器時可設 false 避免雙重邊框)' },
+    pinnedLeft: { control: 'boolean', description: 'Pin 產品名稱欄到左側,橫向捲動時保持可見' },
+    pinnedRight: { control: 'boolean', description: 'Pin 上架日期欄到右側' },
+    inlineEdit: { control: 'boolean', description: 'inline edit 視覺:cell 間加垂直分隔線 + select 欄顯示 chevron' },
+    height: {
+      control: 'select',
+      options: ['auto', '300px'],
+      description: 'auto=全渲染(少於 50 筆)/ 固定值=啟用 TanStack Virtual(多於 100 筆)',
+    },
+  },
+  render: (args) => {
+    const { size, bordered, pinnedLeft, pinnedRight, inlineEdit, height } = args as InspectorArgs
+    const col = createColumnHelper<Product>()
+    const columns = [
+      col.accessor('name', { header: 'Product', size: 200, meta: { type: 'string' } }),
+      col.accessor('category', { header: 'Category', size: 140, meta: { type: 'select', options: CATEGORY_OPTIONS } }),
+      col.accessor('stock', { header: 'Stock', size: 140, meta: { type: 'select', options: STATUS_OPTIONS } }),
+      col.accessor('price', { header: 'Price', size: 120, meta: { type: 'currency', prefix: '$' } }),
+      col.accessor('available', { header: 'Available', size: 100, meta: { type: 'boolean' } }),
+      col.accessor('launchDate', { header: 'Launch', size: 140, meta: { type: 'date' } }),
+    ]
+    return (
+      <DataTable
+        columns={columns}
+        data={SAMPLE_DATA}
+        size={size}
+        bordered={bordered}
+        inlineEdit={inlineEdit}
+        height={height}
+        pinnedLeftColumns={pinnedLeft ? ['name'] : undefined}
+        pinnedRightColumns={pinnedRight ? ['launchDate'] : undefined}
+      />
+    )
+  },
+}
+
 export const ColumnTypes: Story = {
-  name: '2. Column Type 自動渲染',
+  name: '3. Column Type 自動渲染',
   render: () => {
     const col = createColumnHelper<Product>()
     const columns = [
@@ -131,7 +202,7 @@ export const ColumnTypes: Story = {
 }
 
 export const RowHeightMatrix: Story = {
-  name: '3. Row Height Tier(閱讀 vs 掃描模式)',
+  name: '4. Row Height Tier(閱讀 vs 掃描模式)',
   render: () => {
     const col = createColumnHelper<Product>()
     const columns = [
@@ -169,7 +240,7 @@ export const RowHeightMatrix: Story = {
 }
 
 export const AlignmentRule: Story = {
-  name: '4. 對齊規則(跨產業共識)',
+  name: '5. 對齊規則(跨產業共識)',
   render: () => {
     const col = createColumnHelper<Product>()
     const columns = [
@@ -207,7 +278,7 @@ export const AlignmentRule: Story = {
 }
 
 export const Features: Story = {
-  name: '5. 功能特性(排序 / 虛擬捲動)',
+  name: '6. 功能特性(排序 / 虛擬捲動)',
   render: () => {
     const col = createColumnHelper<Product>()
     const columns = [
@@ -245,7 +316,7 @@ export const Features: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '6. 色彩對照表',
+  name: '7. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -380,7 +451,7 @@ export const ColorMatrix: Story = {
 }
 
 export const EmptyState: Story = {
-  name: '7. 空狀態',
+  name: '8. 空狀態',
   render: () => {
     const col = createColumnHelper<Product>()
     const columns = [
@@ -399,7 +470,7 @@ export const EmptyState: Story = {
 }
 
 export const BorderedProp: Story = {
-  name: '8. bordered prop(預設 true)',
+  name: '9. bordered prop(預設 true)',
   render: () => {
     const col = createColumnHelper<Product>()
     const columns = [

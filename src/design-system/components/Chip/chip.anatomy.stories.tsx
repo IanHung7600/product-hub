@@ -1,6 +1,16 @@
+// @anatomy-exempt: anatomy specs / token 對照表格用 raw <table>,非業務資料表。業務資料表才用 <DataTable>。
 import type { Meta, StoryObj } from '@storybook/react'
+import { Star, Tag as TagIcon } from 'lucide-react'
 import { Chip, ChipGroup } from './chip'
 import { H3, Desc, Td, Th, TokenCell } from '@/design-system/stories-helpers/anatomy/anatomy-utils'
+
+type InspectorArgs = {
+  type: 'single' | 'multiple'
+  selected: boolean
+  disabled: boolean
+  withStartIcon: boolean
+  layout: 'wrap' | 'scroll' | 'menu'
+}
 
 const meta: Meta = {
   title: 'Design System/Components/Chip/設計規格',
@@ -8,6 +18,7 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
+type InspectorStory = StoryObj<InspectorArgs>
 
 export const Overview: Story = {
   name: '1. 元件總覽',
@@ -56,8 +67,67 @@ export const Overview: Story = {
   ),
 }
 
+export const Inspector: InspectorStory = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: {
+      description: {
+        story: '在右側 Controls 面板切換 type / selected / disabled / startIcon / layout,即時查看 Chip 狀態。世界級 DS 的 Inspector = Figma inspect 替代。',
+      },
+    },
+  },
+  args: {
+    type: 'multiple',
+    selected: true,
+    disabled: false,
+    withStartIcon: false,
+    layout: 'wrap',
+  },
+  argTypes: {
+    type: {
+      control: 'radio',
+      options: ['single', 'multiple'],
+      description: 'ToggleGroup 選擇模式:multiple(多選,預設)/ single(單選互斥)',
+    },
+    selected: {
+      control: 'boolean',
+      description: '「精選」chip 是否選中(預覽選中態視覺)',
+    },
+    disabled: {
+      control: 'boolean',
+      description: '「下架」chip 是否停用',
+    },
+    withStartIcon: {
+      control: 'boolean',
+      description: '是否在 chip 加 startIcon(Tag / Star)',
+    },
+    layout: {
+      control: 'radio',
+      options: ['wrap', 'scroll', 'menu'],
+      description: 'overflow 行為:wrap(換行,預設)/ scroll(fade mask)/ menu(收入 Dropdown)',
+    },
+  },
+  render: (args) => {
+    const groupProps =
+      args.type === 'multiple'
+        ? ({ type: 'multiple' as const, defaultValue: args.selected ? ['featured'] : [] })
+        : ({ type: 'single' as const, defaultValue: args.selected ? 'featured' : '' })
+    return (
+      <div className="max-w-md border border-border rounded-md p-3">
+        <ChipGroup layout={args.layout} {...groupProps}>
+          <Chip value="featured" startIcon={args.withStartIcon ? Star : undefined}>精選</Chip>
+          <Chip value="new" startIcon={args.withStartIcon ? TagIcon : undefined}>新品</Chip>
+          <Chip value="sale">特價</Chip>
+          <Chip value="limited">限量</Chip>
+          <Chip value="discontinued" disabled={args.disabled}>下架</Chip>
+        </ChipGroup>
+      </div>
+    )
+  },
+}
+
 export const SelectionMatrix: Story = {
-  name: '2. Multi vs Single 選擇',
+  name: '3. Multi vs Single 選擇',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -85,7 +155,7 @@ export const SelectionMatrix: Story = {
 }
 
 export const SizeMatrix: Story = {
-  name: '3. 尺寸對照表',
+  name: '4. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -121,7 +191,7 @@ export const SizeMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '4. 狀態行為',
+  name: '5. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -194,7 +264,7 @@ export const StateBehavior: Story = {
 }
 
 export const LayoutMatrix: Story = {
-  name: '5. Layout(wrap / scroll / menu)',
+  name: '6. Layout(wrap / scroll / menu)',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>

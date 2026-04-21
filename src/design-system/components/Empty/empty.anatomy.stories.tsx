@@ -1,8 +1,28 @@
+// @anatomy-exempt: anatomy specs / token 對照表格用 raw <table>,非業務資料表。業務資料表才用 <DataTable>。
 import type { Meta, StoryObj } from '@storybook/react'
-import { Inbox, Search, FileText } from 'lucide-react'
+import { Inbox, Search, FileText, FolderOpen, Bell, Users } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { Empty } from './empty'
 import { Button } from '@/design-system/components/Button/button'
 import { H3, Desc, Td, Th } from '@/design-system/stories-helpers/anatomy/anatomy-utils'
+
+type InspectorArgs = {
+  iconKey: 'none' | 'Inbox' | 'Search' | 'FileText' | 'FolderOpen' | 'Bell' | 'Users'
+  title: string
+  description: string
+  withAction: boolean
+  actionLabel: string
+}
+
+const ICON_OPTIONS: Record<string, LucideIcon | undefined> = {
+  none: undefined,
+  Inbox,
+  Search,
+  FileText,
+  FolderOpen,
+  Bell,
+  Users,
+}
 
 const meta: Meta = {
   title: 'Design System/Components/Empty/設計規格',
@@ -10,6 +30,7 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
+type InspectorStory = StoryObj<InspectorArgs>
 
 export const Overview: Story = {
   name: '1. 元件總覽',
@@ -36,7 +57,7 @@ export const Overview: Story = {
             <tbody>
               <tr><Td mono>icon</Td><Td>選填</Td><Td>Avatar 48px neutral + icon</Td><Td>—</Td></tr>
               <tr><Td mono>title</Td><Td>選填</Td><Td>16px font-medium centered</Td><Td mono>--layout-space-tight</Td></tr>
-              <tr><Td mono>description</Td><Td>必有(預設唯一 slot)</Td><Td>14px fg-secondary centered</Td><Td mono>mt-0.5(2px,跟 item-layout 一致)</Td></tr>
+              <tr><Td mono>description</Td><Td>必有(預設唯一 slot)</Td><Td>14px · fg-secondary(有 title/action 時)/ fg-muted(孤身 description,placeholder tier)· centered</Td><Td mono>mt-0.5(2px,跟 item-layout 一致)</Td></tr>
               <tr><Td mono>action</Td><Td>選填</Td><Td>CTA Button</Td><Td mono>--layout-space-loose</Td></tr>
             </tbody>
           </table>
@@ -65,8 +86,50 @@ export const Overview: Story = {
   ),
 }
 
+export const Inspector: InspectorStory = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: {
+      description: {
+        story: '在右側 Controls 面板切換 icon / title / description / action,即時查看 Empty 在不同 slot 組合下的呈現。Empty 是純 layout 元件,所有 slot 皆可選,最少只需 description。',
+      },
+    },
+  },
+  args: {
+    iconKey: 'Inbox',
+    title: '收件匣已清空',
+    description: '所有訊息都處理完畢,可以好好休息了',
+    withAction: false,
+    actionLabel: '建立專案',
+  },
+  argTypes: {
+    iconKey: {
+      control: 'select',
+      options: ['none', 'Inbox', 'Search', 'FileText', 'FolderOpen', 'Bell', 'Users'],
+      description: 'Icon(選 none 則不渲染 icon slot)',
+    },
+    title: { control: 'text', description: '主要標題(留白則不渲染)' },
+    description: { control: 'text', description: '說明文字(預設唯一 slot)' },
+    withAction: { control: 'boolean', description: '是否顯示 CTA button' },
+    actionLabel: { control: 'text', description: 'CTA button 文字' },
+  },
+  render: (args) => {
+    const icon = ICON_OPTIONS[args.iconKey]
+    return (
+      <div className="border border-border rounded-lg p-8 max-w-md">
+        <Empty
+          icon={icon}
+          title={args.title || undefined}
+          description={args.description}
+          action={args.withAction ? <Button variant="primary">{args.actionLabel}</Button> : undefined}
+        />
+      </div>
+    )
+  },
+}
+
 export const ScenarioMatrix: Story = {
-  name: '2. 常見場景',
+  name: '3. 常見場景',
   render: () => (
     <div className="flex flex-col gap-6">
       <div>
@@ -99,7 +162,7 @@ export const ScenarioMatrix: Story = {
 }
 
 export const SlotCombinations: Story = {
-  name: '3. Slot 組合(description only → full)',
+  name: '4. Slot 組合(description only → full)',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>

@@ -67,8 +67,74 @@ export const Overview: Story = {
   ),
 }
 
+// ── Inspector ─────────────────────────────────────────────────────────────
+
+interface InspectorArgs {
+  side: 'top' | 'right' | 'bottom' | 'left'
+  width: 'default' | 'sm' | 'lg'
+  showFooter: boolean
+}
+
+export const Inspector: Story = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '右側 Controls 切 SheetContent props 即時 render,取代 Figma inspect。切 `side` 看四個方向的滑入動畫 + 位置;切 `width` 看自訂寬度覆寫。點 trigger 觸發 Sheet,Esc 或點遮罩關閉。',
+      },
+    },
+  },
+  args: {
+    side: 'right',
+    width: 'default',
+    showFooter: true,
+  },
+  argTypes: {
+    side: {
+      control: 'radio',
+      options: ['top', 'right', 'bottom', 'left'],
+      description: 'right★default(detail drawer)/ left(mobile nav)/ top(notification)/ bottom(action sheet)',
+    },
+    width: {
+      control: 'radio',
+      options: ['default', 'sm', 'lg'],
+      description: 'default=w-3/4 + sm:max-w-md / sm=max-w-sm / lg=max-w-lg',
+    },
+    showFooter: { control: 'boolean', description: '顯示 SheetFooter(含「取消 / 儲存」CTA)' },
+  },
+  render: (args) => {
+    const { side, width, showFooter } = args as InspectorArgs
+    const widthClass =
+      width === 'sm' ? 'sm:max-w-sm' : width === 'lg' ? 'sm:max-w-lg' : ''
+    return (
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button variant="tertiary">開啟任務詳情</Button>
+        </SheetTrigger>
+        <SheetContent side={side} className={widthClass}>
+          <SheetHeader>
+            <SheetTitle>修復付款流程 bug</SheetTitle>
+            <SheetDescription>#PROJ-1234 · 指派給陳大明</SheetDescription>
+          </SheetHeader>
+          <div className="flex-1 p-4 text-body">
+            <p className="mb-3 text-fg-secondary">使用者於結帳最後一步點選「完成付款」後,頁面無回應...</p>
+            <p className="text-caption text-fg-muted">(完整 task detail 內容)</p>
+          </div>
+          {showFooter && (
+            <SheetFooter>
+              <Button variant="tertiary">標記為已解決</Button>
+              <Button variant="primary">儲存變更</Button>
+            </SheetFooter>
+          )}
+        </SheetContent>
+      </Sheet>
+    )
+  },
+}
+
 export const SideMatrix: Story = {
-  name: '2. Side 方向 × 用途',
+  name: '3. Side 方向 × 用途',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -112,7 +178,7 @@ export const SideMatrix: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '3. 色彩對照表',
+  name: '4. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -138,7 +204,7 @@ export const ColorMatrix: Story = {
 }
 
 export const SizeMatrix: Story = {
-  name: '4. 尺寸對照表',
+  name: '5. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -164,7 +230,7 @@ export const SizeMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '5. 狀態行為',
+  name: '6. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>

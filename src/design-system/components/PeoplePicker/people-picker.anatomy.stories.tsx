@@ -81,8 +81,36 @@ export const Overview: Story = {
   ),
 }
 
+export const Inspector: Story = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: { description: { story: '右側 Controls 切 props 即時 render,取代 Figma inspect。切 `mode` 看 edit / readonly / disabled 視覺差異,切 `size` 對照 field-height tier。' } },
+  },
+  args: {
+    mode: 'edit',
+    size: 'md',
+    disabled: false,
+    value: SAMPLE_PEOPLE[0],
+    people: SAMPLE_PEOPLE,
+    searchPlaceholder: '搜尋指派對象…',
+    emptyText: '沒有符合的人員',
+  },
+  argTypes: {
+    mode: { control: 'radio', options: ['edit', 'readonly', 'disabled'] },
+    size: { control: 'radio', options: ['sm', 'md', 'lg'] },
+    disabled: { control: 'boolean' },
+    searchPlaceholder: { control: 'text' },
+    emptyText: { control: 'text' },
+  },
+  render: (args) => (
+    <div className="max-w-md">
+      <PeoplePicker {...args} onChange={() => {}} />
+    </div>
+  ),
+}
+
 export const ModeMatrix: Story = {
-  name: '2. Mode 對照',
+  name: '3. Mode 對照',
   render: () => (
     <div className="flex flex-col gap-4 max-w-md">
       <div>
@@ -108,7 +136,7 @@ export const ModeMatrix: Story = {
 }
 
 export const SizeMatrix: Story = {
-  name: '3. 尺寸對照表',
+  name: '4. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -155,7 +183,7 @@ export const SizeMatrix: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '4. 色彩對照表',
+  name: '5. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -251,7 +279,7 @@ export const ColorMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '5. 狀態行為',
+  name: '6. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-10 max-w-md">
       <div>
@@ -326,7 +354,7 @@ export const StateBehavior: Story = {
 }
 
 export const PersonValueType: Story = {
-  name: '6. PersonValue 型別',
+  name: '7. PersonValue 型別',
   render: () => (
     <div className="flex flex-col gap-6">
       <div>

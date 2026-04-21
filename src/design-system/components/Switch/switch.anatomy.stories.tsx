@@ -1,5 +1,6 @@
+// @anatomy-exempt: anatomy specs / token 對照表格用 raw <table>,非業務資料表。業務資料表才用 <DataTable>。
 import type { Meta, StoryObj } from '@storybook/react'
-import { Switch } from './switch'
+import { Switch, type SwitchProps } from './switch'
 import { H3, Desc, Td, Th, Swatch, TokenCell } from '@/design-system/stories-helpers/anatomy/anatomy-utils'
 
 const meta: Meta = {
@@ -8,6 +9,7 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
+type InspectorStory = StoryObj<SwitchProps>
 
 export const Overview: Story = {
   name: '1. 元件總覽',
@@ -48,8 +50,40 @@ export const Overview: Story = {
   ),
 }
 
+export const Inspector: InspectorStory = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: {
+      description: {
+        story: '在右側 Controls 面板切換 size / checked / disabled / readOnly / label 組合,即時查看 Switch 狀態。世界級 DS 的 Inspector = Figma inspect 替代。',
+      },
+    },
+  },
+  args: {
+    size: 'md',
+    defaultChecked: true,
+    disabled: false,
+    readOnly: false,
+    label: '啟用通知',
+    description: '收到新訊息時立即提醒',
+  },
+  argTypes: {
+    size: {
+      control: 'radio',
+      options: ['sm', 'md', 'lg'],
+      description: '尺寸(sm = md 視覺同,lg track 24×48)',
+    },
+    defaultChecked: { control: 'boolean', description: '預設 ON / OFF' },
+    disabled: { control: 'boolean', description: '停用(opacity-disabled 保留顏色)' },
+    readOnly: { control: 'boolean', description: '唯讀(視覺正常,互動鎖定)' },
+    label: { control: 'text', description: 'inline label(留空 → 只渲染 switch 本體)' },
+    description: { control: 'text', description: 'inline description(需搭配 label)' },
+  },
+  render: (args) => <Switch {...args} />,
+}
+
 export const SizeMatrix: Story = {
-  name: '2. 尺寸對照表',
+  name: '3. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -84,7 +118,7 @@ export const SizeMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '3. 狀態行為',
+  name: '4. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -140,7 +174,7 @@ export const StateBehavior: Story = {
 }
 
 export const LabelIntegration: Story = {
-  name: '4. label / description 整合',
+  name: '5. label / description 整合',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>

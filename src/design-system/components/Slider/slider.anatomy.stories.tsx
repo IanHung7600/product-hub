@@ -55,8 +55,39 @@ export const Overview: Story = {
   ),
 }
 
+export const Inspector: Story = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: { description: { story: '右側 Controls 切 props 即時 render,取代 Figma inspect。調整 `min` / `max` / `step` / `defaultValue` 看值域行為,切 `size` 看容器高度 tier(track / thumb 視覺固定)。' } },
+  },
+  args: {
+    defaultValue: [60],
+    min: 0,
+    max: 100,
+    step: 1,
+    size: 'md',
+    disabled: false,
+  },
+  argTypes: {
+    defaultValue: {
+      control: 'object',
+      description: '[single] 或 [min, max] range mode(例:[20, 80])',
+    },
+    min: { control: { type: 'number' } },
+    max: { control: { type: 'number' } },
+    step: { control: { type: 'number', min: 1 } },
+    size: { control: 'radio', options: ['sm', 'md', 'lg'] },
+    disabled: { control: 'boolean' },
+  },
+  render: (args) => (
+    <div className="max-w-md border border-border rounded-lg p-6">
+      <Slider {...args} />
+    </div>
+  ),
+}
+
 export const ColorMatrix: Story = {
-  name: '2. 色彩對照表',
+  name: '3. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -87,7 +118,7 @@ export const ColorMatrix: Story = {
 }
 
 export const SizeMatrix: Story = {
-  name: '3. 尺寸對照表',
+  name: '4. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-6">
       <div>
@@ -107,7 +138,7 @@ export const SizeMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '4. 狀態行為',
+  name: '5. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-6 max-w-md">
       <div>
@@ -138,7 +169,7 @@ export const StateBehavior: Story = {
 }
 
 export const ColorBindingRule: Story = {
-  name: '5. Range ↔ Thumb border 綁定規則',
+  name: '6. Range ↔ Thumb border 綁定規則',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -167,7 +198,7 @@ export const ColorBindingRule: Story = {
 }
 
 export const KeyboardMatrix: Story = {
-  name: '6. 鍵盤操作(Radix 原生)',
+  name: '7. 鍵盤操作(Radix 原生)',
   render: () => (
     <div className="flex flex-col gap-6">
       <div>

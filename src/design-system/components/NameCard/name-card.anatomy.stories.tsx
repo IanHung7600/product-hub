@@ -1,10 +1,21 @@
+// @anatomy-exempt: anatomy specs / token 對照表格用 raw <table>,非業務資料表。業務資料表才用 <DataTable>。
 import type { Meta, StoryObj } from '@storybook/react'
 import { MessageCircle, UserPlus } from 'lucide-react'
-import { NameCard } from './name-card'
+import { NameCard, NameCardDefaultActions } from './name-card'
 import { Avatar } from '@/design-system/components/Avatar/avatar'
 import { Button } from '@/design-system/components/Button/button'
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/design-system/components/HoverCard/hover-card'
 import { H3, Desc, Td, Th, TokenCell } from '@/design-system/stories-helpers/anatomy/anatomy-utils'
+
+type InspectorArgs = {
+  name: string
+  subtitle: string
+  status: 'none' | 'online' | 'away' | 'busy' | 'offline'
+  withStatusMessage: boolean
+  withActions: boolean
+  withFields: boolean
+  withViewMore: boolean
+}
 
 const meta: Meta = {
   title: 'Design System/Components/NameCard/設計規格',
@@ -12,6 +23,7 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
+type InspectorStory = StoryObj<InspectorArgs>
 
 /* ═══════════════════════════════════════════════════════════════════════════
    1. Overview — anatomy + structure + props + layout tokens
@@ -117,11 +129,73 @@ export const Overview: Story = {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   2. SectionMatrix — show 5 sections in combinations (minimal → full)
+   2. Inspector — interactive Storybook Controls inspector
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+export const Inspector: InspectorStory = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: {
+      description: {
+        story: '在右側 Controls 面板切換 status / 各 section 的開關,即時查看 NameCard 在不同組合下的呈現。世界級 DS 的 Inspector = Figma inspect 替代。',
+      },
+    },
+  },
+  args: {
+    name: 'Ada Chen',
+    subtitle: 'Design Engineer · Engineering',
+    status: 'online',
+    withStatusMessage: true,
+    withActions: true,
+    withFields: true,
+    withViewMore: true,
+  },
+  argTypes: {
+    name: { control: 'text', description: '姓名' },
+    subtitle: { control: 'text', description: '職稱 / 描述' },
+    status: {
+      control: 'select',
+      options: ['none', 'online', 'away', 'busy', 'offline'],
+      description: 'Avatar presence + Status section(none = 不渲染 status 區)',
+    },
+    withStatusMessage: { control: 'boolean', description: '是否顯示 status message(需搭配 status)' },
+    withActions: { control: 'boolean', description: '是否顯示 Chat + Audio call 預設動作列' },
+    withFields: { control: 'boolean', description: '是否顯示 Info fields(DescriptionList)' },
+    withViewMore: { control: 'boolean', description: '是否顯示 View more 連結' },
+  },
+  render: (args) => {
+    const status = args.status === 'none' ? undefined : args.status
+    return (
+      <div className="border border-dashed border-divider rounded-md p-4 inline-block">
+        <NameCard
+          name={args.name}
+          subtitle={args.subtitle}
+          status={status}
+          statusMessage={args.withStatusMessage && status ? '目前 Sprint 23 衝刺中,訊息可能稍慢回覆' : undefined}
+          actions={args.withActions ? <NameCardDefaultActions /> : undefined}
+          fields={
+            args.withFields
+              ? [
+                  { label: 'Email', value: 'ada@example.com' },
+                  { label: '團隊', value: 'Engineering' },
+                  { label: '時區', value: 'UTC+8' },
+                  { label: '員工編號', value: '#E-2048' },
+                ]
+              : undefined
+          }
+          onViewMore={args.withViewMore ? () => {} : undefined}
+        />
+      </div>
+    )
+  },
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   3. SectionMatrix — show 5 sections in combinations (minimal → full)
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const SectionMatrix: Story = {
-  name: '2. Section 組合(minimal → full)',
+  name: '3. Section 組合(minimal → full)',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -211,11 +285,11 @@ export const SectionMatrix: Story = {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   3. ColorMatrix — 4 status × avatar dot + bg color mapping
+   4. ColorMatrix — 4 status × avatar dot + bg color mapping
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const ColorMatrix: Story = {
-  name: '3. 色彩對照表',
+  name: '4. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -270,11 +344,11 @@ export const ColorMatrix: Story = {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   4. HoverCardIntegration — canonical usage pattern
+   5. HoverCardIntegration — canonical usage pattern
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const HoverCardIntegration: Story = {
-  name: '4. HoverCard 整合(觸發行為)',
+  name: '5. HoverCard 整合(觸發行為)',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -338,11 +412,11 @@ export const HoverCardIntegration: Story = {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   5. StateBehavior — edge cases (empty, overflow, multiline)
+   6. StateBehavior — edge cases (empty, overflow, multiline)
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const StateBehavior: Story = {
-  name: '5. 狀態行為',
+  name: '6. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>

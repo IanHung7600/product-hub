@@ -63,8 +63,36 @@ export const Overview: Story = {
   ),
 }
 
+export const Inspector: Story = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: { description: { story: '右側 Controls 切 props 即時 render,取代 Figma inspect。調整 `mode` / `status` / `progress` 看 compact vs rich 佈局與狀態 icon/進度條變化。' } },
+  },
+  args: {
+    name: 'Q1-marketing-report.pdf',
+    mode: 'rich',
+    status: 'uploading',
+    progress: 60,
+    description: '2.4 MB · 上傳中',
+    thumbnailSrc: 'https://i.pravatar.cc/112?img=3',
+  },
+  argTypes: {
+    name: { control: 'text' },
+    mode: { control: 'radio', options: ['compact', 'rich'] },
+    status: { control: 'radio', options: [undefined, 'uploading', 'completed', 'error'] },
+    progress: { control: { type: 'range', min: 0, max: 100, step: 1 } },
+    description: { control: 'text' },
+    thumbnailSrc: { control: 'text' },
+  },
+  render: (args) => (
+    <div className="max-w-lg">
+      <FileItem {...args} />
+    </div>
+  ),
+}
+
 export const ModeMatrix: Story = {
-  name: '2. Mode 對照(compact vs rich)',
+  name: '3. Mode 對照(compact vs rich)',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -105,7 +133,7 @@ export const ModeMatrix: Story = {
 }
 
 export const SizeMatrix: Story = {
-  name: '3. 尺寸對照表',
+  name: '4. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -171,7 +199,7 @@ export const SizeMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '4. 狀態行為',
+  name: '5. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-4 max-w-lg">
       <div>

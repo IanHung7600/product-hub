@@ -62,8 +62,36 @@ export const Overview: Story = {
   ),
 }
 
+export const Inspector: Story = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: { description: { story: '右側 Controls 切 props 即時 render,取代 Figma inspect。切 `mode` 看 edit / readonly / disabled 外觀差異,調 `rows` 看高度、切 `error` 看錯誤邊框。' } },
+  },
+  args: {
+    mode: 'edit',
+    size: 'md',
+    rows: 3,
+    error: false,
+    placeholder: '寫下您對這個 PR 的 review 意見…',
+    defaultValue: '',
+  },
+  argTypes: {
+    mode: { control: 'radio', options: ['edit', 'readonly', 'disabled'] },
+    size: { control: 'radio', options: ['sm', 'md', 'lg'] },
+    rows: { control: { type: 'number', min: 1, max: 20 } },
+    error: { control: 'boolean', description: 'error 視覺(border-error + aria-invalid)' },
+    placeholder: { control: 'text' },
+    defaultValue: { control: 'text' },
+  },
+  render: (args) => (
+    <div className="max-w-md">
+      <Textarea {...args} />
+    </div>
+  ),
+}
+
 export const SizeMatrix: Story = {
-  name: '2. 尺寸對照表',
+  name: '3. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-6 max-w-md">
       <div>
@@ -81,7 +109,7 @@ export const SizeMatrix: Story = {
 }
 
 export const ModeMatrix: Story = {
-  name: '3. Mode 對照(edit / readonly / disabled)',
+  name: '4. Mode 對照(edit / readonly / disabled)',
   render: () => (
     <div className="flex flex-col gap-6 max-w-md">
       <div>
@@ -121,7 +149,7 @@ export const ModeMatrix: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '4. 色彩對照表',
+  name: '5. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -210,7 +238,7 @@ export const ColorMatrix: Story = {
 }
 
 export const RowsResizeMatrix: Story = {
-  name: '5. Rows 與 Resize',
+  name: '6. Rows 與 Resize',
   render: () => (
     <div className="flex flex-col gap-6 max-w-md">
       <div>

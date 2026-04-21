@@ -111,24 +111,21 @@ interface CalendarEvent {
 
 ### Cell 規則
 
-| 區塊 | 規則 |
-|------|------|
-| Cell 高度 | MVP 月 view 固定 `min-h-28`(112px),容納 header 日期 + 3 event tile |
-| Cell 寬度 | `1fr` 等分 7 欄(週) |
-| 日期 header | `h-7` top,右上角數字(對齊 Google Calendar)`text-body font-medium` |
-| Today cell | 日期數字 wrap in `rounded-full bg-primary text-on-emphasis px-2 py-0.5`(對齊 Google Calendar today pill) |
-| Outside day cell | 日期 `text-fg-disabled`,背景比當月 cell 稍暗(`bg-neutral-2`) |
-| Hover cell | `hover:bg-neutral-hover`(點擊新增入口) |
-| Weekend cell | 可選 `bg-neutral-2`(對齊 Google)——可由 prop 控制,MVP 不開 |
+- **Cell 尺寸**:MVP 月 view cell 高度固定,容納日期 header + 3 個 event tile;寬度 7 欄等分
+- **日期 header**:右上角數字(對齊 Google Calendar 視覺慣例)
+- **Today cell**:日期數字以 primary-filled pill 強調(對齊 Google Calendar today pill)
+- **Outside day cell**:上/下月溢出日期弱化字色 + 背景略暗區分
+- **Hover cell**:整 cell 帶 neutral-hover 提示可點擊新增入口
+- **Weekend cell**:可選弱化背景(對齊 Google;MVP 預設關閉)
 
 ### Event tile 規則
 
-| 視覺 | Token |
-|------|-------|
-| 一般 event(timed) | `bg-{color}-subtle text-{color}-text rounded-md px-1.5 py-0.5 text-caption truncate` |
-| All-day event | 同上 + `rounded-md` 但可橫跨多 cell(實作用 absolute 或 grid-column span) |
-| Hover tile | `hover:bg-{color}-hover` 微暗化 |
-| 超出 tile 限制 | 顯示 `+N more`(對齊 Google Calendar)click 展開 popover 列表 |
+- **一般 event(timed)**:`{color}-subtle` 底色 + `{color}-text` 文字,圓角 + 緊湊 padding + truncate(單行)
+- **All-day event**:同一般 tile 但橫跨多 cell(grid-column span)
+- **Hover tile**:用 `{color}-hover` 微暗化表示可點擊
+- **超出 tile 限制**:顯示「+N more」(對齊 Google Calendar),點擊展開 popover 列表
+
+完整 cell + event tile 的 class / token 對照見 anatomy `ColorMatrix` story。
 
 ### Toolbar
 

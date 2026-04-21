@@ -1,5 +1,6 @@
+// @anatomy-exempt: anatomy specs / token 對照表格用 raw <table>,非業務資料表。業務資料表才用 <DataTable>。
 import type { Meta, StoryObj } from '@storybook/react'
-import { Alert } from './alert'
+import { Alert, type AlertProps } from './alert'
 import { H3, Desc, Td, Th } from '@/design-system/stories-helpers/anatomy/anatomy-utils'
 
 const meta: Meta = {
@@ -8,6 +9,7 @@ const meta: Meta = {
 }
 export default meta
 type Story = StoryObj
+type InspectorStory = StoryObj<AlertProps>
 
 export const Overview: Story = {
   name: '1. 元件總覽',
@@ -45,6 +47,46 @@ export const Overview: Story = {
       </div>
     </div>
   ),
+}
+
+export const Inspector: InspectorStory = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: {
+      description: {
+        story: '在右側 Controls 面板切換 variant / appearance / placement / dismissible,即時查看 render 結果。世界級 DS 的 Inspector = Figma inspect 替代,讓 designer 直接在 Storybook 試出各種組合。',
+      },
+    },
+  },
+  args: {
+    variant: 'warning',
+    appearance: 'subtle',
+    placement: 'inline',
+    title: '方案即將到期',
+    description: '您的 Pro 方案將在 3 天後到期,請及時續訂以維持服務',
+    dismissible: true,
+  },
+  argTypes: {
+    variant: {
+      control: 'select',
+      options: ['neutral', 'info', 'success', 'warning', 'error'],
+      description: '語意類型(決定 icon + 色彩)',
+    },
+    appearance: {
+      control: 'radio',
+      options: ['subtle', 'solid'],
+      description: '視覺重量:subtle(淺底邊框,預設)/ solid(飽和底色,全站警告)',
+    },
+    placement: {
+      control: 'radio',
+      options: ['inline', 'fixed'],
+      description: 'inline(預設,圓角嵌入)/ fixed(頂部全域,無圓角無邊框)',
+    },
+    title: { control: 'text', description: '主要訊息' },
+    description: { control: 'text', description: '補充說明' },
+    dismissible: { control: 'boolean', description: '是否顯示關閉按鈕' },
+  },
+  render: (args) => <Alert {...args} />,
 }
 
 export const ColorMatrix: Story = {
@@ -92,6 +134,48 @@ export const ColorMatrix: Story = {
   ),
 }
 
+export const PlacementMatrix: Story = {
+  name: '4. Placement(inline vs fixed)',
+  render: () => (
+    <div className="flex flex-col gap-8">
+      <div>
+        <H3>Inline(預設) — 嵌入頁面內容</H3>
+        <Desc>`rounded-md`(4px)圓角 + 邊框,像一張 card 嵌在內容區塊裡。Settings 頁的方案提示、表單內的注意事項。</Desc>
+        <Alert
+          variant="warning"
+          title="即將到期"
+          description="您的方案將在 3 天後到期"
+        />
+      </div>
+
+      <div>
+        <H3>Fixed — 頂部全域警告</H3>
+        <Desc>無圓角無邊框,頁面寬度橫條。系統維護、服務降級、全站重要公告。</Desc>
+        <Alert
+          variant="info"
+          placement="fixed"
+          title="系統維護中"
+          description="2026-04-20 02:00-04:00 進行系統升級,部分功能暫停"
+        />
+      </div>
+
+      <div>
+        <H3>Placement 對照</H3>
+        <div className="overflow-x-auto">
+          <table className="text-caption border-collapse">
+            <thead><tr><Th>Placement</Th><Th>圓角</Th><Th>Border</Th><Th>用途</Th></tr></thead>
+            <tbody>
+              <tr><Td mono>inline ★default</Td><Td mono>rounded-md(4px)</Td><Td>有</Td><Td>頁面內嵌</Td></tr>
+              <tr><Td mono>fixed</Td><Td>無(rounded-none)</Td><Td>無</Td><Td>header 底下全域警告</Td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="text-footnote text-fg-muted mt-3">Alert 是 inline 容器(不是浮層),用 `rounded-md`(4px)。Toast 是浮層用 `rounded-lg`(8px)。</p>
+      </div>
+    </div>
+  ),
+}
+
 export const StateBehavior: Story = {
   name: '5. 狀態行為',
   render: () => (
@@ -130,48 +214,6 @@ export const StateBehavior: Story = {
         <Desc>
           Alert 本身無 open/closed state——它是 inline 容器,「顯示」= consumer 把 Alert render 進 tree,「關閉」= consumer 從 tree 移除。與 Toast(有 open 動畫 + auto-dismiss timer)語意不同。
         </Desc>
-      </div>
-    </div>
-  ),
-}
-
-export const PlacementMatrix: Story = {
-  name: '4. Placement(inline vs fixed)',
-  render: () => (
-    <div className="flex flex-col gap-8">
-      <div>
-        <H3>Inline(預設) — 嵌入頁面內容</H3>
-        <Desc>`rounded-md`(4px)圓角 + 邊框,像一張 card 嵌在內容區塊裡。Settings 頁的方案提示、表單內的注意事項。</Desc>
-        <Alert
-          variant="warning"
-          title="即將到期"
-          description="您的方案將在 3 天後到期"
-        />
-      </div>
-
-      <div>
-        <H3>Fixed — 頂部全域警告</H3>
-        <Desc>無圓角無邊框,頁面寬度橫條。系統維護、服務降級、全站重要公告。</Desc>
-        <Alert
-          variant="info"
-          placement="fixed"
-          title="系統維護中"
-          description="2026-04-20 02:00-04:00 進行系統升級,部分功能暫停"
-        />
-      </div>
-
-      <div>
-        <H3>Placement 對照</H3>
-        <div className="overflow-x-auto">
-          <table className="text-caption border-collapse">
-            <thead><tr><Th>Placement</Th><Th>圓角</Th><Th>Border</Th><Th>用途</Th></tr></thead>
-            <tbody>
-              <tr><Td mono>inline ★default</Td><Td mono>rounded-md(4px)</Td><Td>有</Td><Td>頁面內嵌</Td></tr>
-              <tr><Td mono>fixed</Td><Td>無(rounded-none)</Td><Td>無</Td><Td>header 底下全域警告</Td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p className="text-footnote text-fg-muted mt-3">Alert 是 inline 容器(不是浮層),用 `rounded-md`(4px)。Toast 是浮層用 `rounded-lg`(8px)。</p>
       </div>
     </div>
   ),

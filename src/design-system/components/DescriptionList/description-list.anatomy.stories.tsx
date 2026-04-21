@@ -62,8 +62,37 @@ export const Overview: Story = {
   ),
 }
 
+export const Inspector: Story = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: { description: { story: '右側 Controls 切 props 即時 render,取代 Figma inspect。調整 `cols` / `direction` / `divided` 看 CSS grid 配置變化。' } },
+  },
+  args: {
+    cols: 2,
+    direction: 'vertical',
+    divided: false,
+  },
+  argTypes: {
+    cols: { control: 'radio', options: [1, 2, 3] },
+    direction: { control: 'radio', options: ['vertical', 'horizontal'] },
+    divided: { control: 'boolean', description: 'horizontal 模式下,每個 item 下加 border-b 對齊 rows(長列表建議開)' },
+  },
+  render: (args) => (
+    <div className="border border-border rounded-lg p-4 max-w-lg">
+      <DescriptionList {...args}>
+        <DescriptionItem label="Email">ada.chen@example.com</DescriptionItem>
+        <DescriptionItem label="團隊">Engineering</DescriptionItem>
+        <DescriptionItem label="職稱">Design Engineer</DescriptionItem>
+        <DescriptionItem label="時區">UTC+8(台北)</DescriptionItem>
+        <DescriptionItem label="建立時間">2026-04-18</DescriptionItem>
+        <DescriptionItem label="最後登入">2026-04-21 09:12</DescriptionItem>
+      </DescriptionList>
+    </div>
+  ),
+}
+
 export const ColsMatrix: Story = {
-  name: '2. cols(1 / 2 / 3)',
+  name: '3. cols(1 / 2 / 3)',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -115,7 +144,7 @@ export const ColsMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '3. 狀態行為',
+  name: '4. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>

@@ -92,8 +92,59 @@ export const Overview: Story = {
   ),
 }
 
+export const Inspector: Story = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: { description: { story: '右側 Controls 切 DialogContent props 即時 render,取代 Figma inspect。調整 `maxWidth` / `autoHeight` 看寬度 tier 與高度模式差異。Dialog 預設 open=true,直接展示內容不需 trigger。' } },
+  },
+  args: {
+    maxWidth: 512,
+    autoHeight: true,
+  },
+  argTypes: {
+    maxWidth: {
+      control: 'select',
+      options: [400, 480, 512, 560, 720],
+      description: '400=confirmation / 480=simple form / 512★default / 560=detailed / 720=rich',
+    },
+    autoHeight: {
+      control: 'boolean',
+      description: 'true=隨內容 / false=填滿 viewport(body 捲動,防內容跳動)',
+    },
+  },
+  render: (args) => (
+    <Dialog defaultOpen>
+      <DialogContent {...args}>
+        <DialogHeader>
+          <DialogTitle>建立新專案</DialogTitle>
+        </DialogHeader>
+        <DialogBody>
+          <FieldGroup>
+            <Field required>
+              <FieldLabel>專案名稱</FieldLabel>
+              <Input placeholder="例:Q1 行銷活動" />
+            </Field>
+            <Field>
+              <FieldLabel>專案描述</FieldLabel>
+              <Input placeholder="一句話介紹專案目標..." />
+            </Field>
+            <Field>
+              <FieldLabel>團隊</FieldLabel>
+              <Input placeholder="Engineering" />
+            </Field>
+          </FieldGroup>
+        </DialogBody>
+        <DialogFooter>
+          <Button variant="tertiary">取消</Button>
+          <Button variant="primary">建立</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  ),
+}
+
 export const HeightBehavior: Story = {
-  name: '2. 高度行為(預設填滿 vs autoHeight)',
+  name: '3. 高度行為(預設填滿 vs autoHeight)',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -151,7 +202,7 @@ export const HeightBehavior: Story = {
 }
 
 export const DestructiveMatrix: Story = {
-  name: '3. 破壞性動作 Dialog',
+  name: '4. 破壞性動作 Dialog',
   render: () => (
     <div className="flex flex-col gap-8 max-w-md">
       <div>
@@ -180,7 +231,7 @@ export const DestructiveMatrix: Story = {
 }
 
 export const SizeMatrix: Story = {
-  name: '4. 尺寸對照表',
+  name: '5. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -239,7 +290,7 @@ export const SizeMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '5. 狀態行為',
+  name: '6. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -338,7 +389,7 @@ export const StateBehavior: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '6. 色彩對照表',
+  name: '7. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>

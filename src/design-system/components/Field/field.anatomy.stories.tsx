@@ -83,8 +83,90 @@ export const Overview: Story = {
   ),
 }
 
+// ── Inspector ─────────────────────────────────────────────────────────────
+
+interface InspectorArgs {
+  orientation: 'vertical' | 'horizontal'
+  size: 'sm' | 'md' | 'lg'
+  mode: 'edit' | 'readonly' | 'disabled'
+  required: boolean
+  invalid: boolean
+  disabled: boolean
+  labelWidth: '100px' | '140px' | 'auto'
+}
+
+export const Inspector: Story = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '右側 Controls 切 Field props 即時 render,取代 Figma inspect。切 `orientation` 看 label 位置切換(vertical → 上方 / horizontal → 左方);切 `mode` 看 edit / readonly / disabled 的控件視覺;切 `invalid` 觀察 error border + FieldError 顯示。',
+      },
+    },
+  },
+  args: {
+    orientation: 'vertical',
+    size: 'md',
+    mode: 'edit',
+    required: true,
+    invalid: false,
+    disabled: false,
+    labelWidth: '100px',
+  },
+  argTypes: {
+    orientation: {
+      control: 'radio',
+      options: ['vertical', 'horizontal'],
+      description: 'vertical=主要表單 / horizontal=settings / 詳情頁',
+    },
+    size: {
+      control: 'radio',
+      options: ['sm', 'md', 'lg'],
+      description: '對齊 --field-height-* tier,傳給所有 Field Controls',
+    },
+    mode: {
+      control: 'radio',
+      options: ['edit', 'readonly', 'disabled'],
+      description: 'Context 傳給 Field Controls(詳見 field-controls.spec.md)',
+    },
+    required: { control: 'boolean', description: 'label 後加 * + aria-required' },
+    invalid: { control: 'boolean', description: '觸發 error border + FieldError 取代 FieldDescription' },
+    disabled: { control: 'boolean', description: 'Field disabled context 傳給 control' },
+    labelWidth: {
+      control: 'select',
+      options: ['auto', '100px', '140px'],
+      description: 'horizontal mode 下的 label 欄寬',
+    },
+  },
+  render: (args) => {
+    const { orientation, size, mode, required, invalid, disabled, labelWidth } = args as InspectorArgs
+    return (
+      <div className="border border-dashed border-divider rounded-md p-4 max-w-xl">
+        <Field
+          orientation={orientation}
+          size={size}
+          mode={mode}
+          required={required}
+          invalid={invalid}
+          disabled={disabled}
+          labelWidth={orientation === 'horizontal' ? labelWidth : undefined}
+        >
+          <FieldLabel>電子郵件</FieldLabel>
+          <Input type="email" defaultValue={invalid ? 'invalid-email@' : 'ada@example.com'} />
+          {invalid ? (
+            <FieldError>請輸入有效的電子郵件地址</FieldError>
+          ) : (
+            <FieldDescription>我們不會公開您的電子郵件</FieldDescription>
+          )}
+        </Field>
+      </div>
+    )
+  },
+}
+
 export const OrientationMatrix: Story = {
-  name: '2. Orientation × Control 矩陣',
+  name: '3. Orientation × Control 矩陣',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -154,7 +236,7 @@ export const OrientationMatrix: Story = {
 }
 
 export const SizeMatrix: Story = {
-  name: '3. 尺寸對照表',
+  name: '4. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -191,7 +273,7 @@ export const SizeMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '4. 狀態行為',
+  name: '5. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -266,7 +348,7 @@ export const StateBehavior: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '5. 色彩對照表',
+  name: '6. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>
@@ -374,7 +456,7 @@ export const ColorMatrix: Story = {
 }
 
 export const FieldGroupBehavior: Story = {
-  name: '6. FieldGroup — 多 Field 堆疊',
+  name: '7. FieldGroup — 多 Field 堆疊',
   render: () => (
     <div className="flex flex-col gap-10">
       <div>

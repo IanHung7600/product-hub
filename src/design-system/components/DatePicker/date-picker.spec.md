@@ -56,28 +56,27 @@ DatePicker 使用**本 DS 自建 DateGrid** + Popover 而非瀏覽器原生 `<in
 </Popover>
 ```
 
-### 視覺 token — 五種 cell state canonical(2026-04-21)
+### Cell state canonical(5 種語意視覺)
 
-| State | 視覺 | Token | 備註 |
-|-------|------|-------|------|
-| 正常(未 hover) | 黑字透明底 | `text-foreground` | base state |
-| **today** | 文字下方**藍色底線** | `underline decoration-primary decoration-2 underline-offset-4` | **非 ring circle**(避免與 hover 混淆,對齊 Ant / Google Calendar / macOS Calendar) |
-| **disabled** | **灰底圓圈** + 淺灰字 | `bg-neutral-2 rounded-full text-fg-disabled` | 對齊 user 附圖,與 outside month 視覺略有區隔 |
-| **selected**(single / range 端點) | **藍底白字圓** | `bg-primary text-on-emphasis rounded-full` | range_start / range_end 共用此視覺。**為什麼 primary 非 neutral**:DatePicker 的 selected 是「**最終選定日期**」強 affordance,用 primary 顯示確定性(對齊 Google Calendar / Notion Calendar / Ant DatePicker 慣例)。**對照 TimePicker 選項 selected 用 `bg-neutral-selected`**(見 time-picker.spec.md),因為 TimePicker panel 是「**列表選中**」語意(user 在時分選項間切換),跟 SelectMenu 同流派。兩者差異 codified 在各 spec,不互調。 |
-| **range track**(中間日期) | **灰底矩形橫條** | `bg-neutral-2`(day 容器層,非 button 層) | 與端點圓接縫形成連續 bar |
-| **hover**(未選中) | **藍圈 outline**,無 fill | `hover:ring-1 hover:ring-primary hover:bg-transparent` | 非 filled 避免跟 selected 混淆 |
+DateGrid cell 有 5 種語意視覺,每種用不同形狀/色彩語言避免混淆:
+
+- **正常(未 hover)** — 黑字透明底(base reading state)
+- **today** — 文字下方藍色底線(**非 ring circle**,避免與 hover 混淆,對齊 Ant / Google Calendar / macOS Calendar)
+- **disabled** — 灰底圓圈 + 淺灰字(與 outside month 視覺略有區隔)
+- **selected**(single / range 端點) — **藍底白字圓**
+- **range track**(中間日期) — 灰底矩形橫條(打在 day 容器層,非 button 層;與端點圓接縫形成連續 bar)
+- **hover**(未選中) — 藍圈 outline **無 fill**(非 filled 避免跟 selected 混淆)
+
+**為什麼 selected 用 primary 非 neutral**:DatePicker 的 selected 是「**最終選定日期**」強 affordance,用 primary 顯示確定性(對齊 Google Calendar / Notion Calendar / Ant DatePicker 慣例)。**對照 TimePicker 選項 selected 用 `bg-neutral-selected`**(見 `time-picker.spec.md`),因為 TimePicker panel 是「**列表選中**」語意(user 在時分選項間切換),跟 SelectMenu 同流派。兩者差異 codified 在各 spec,不互調。
 
 **State stacking(組合狀態處理)**:
 - today + selected → **selected 勝出**(藍底白字圓)
 - today + range-middle → track 灰底 + underline 仍可見
-- outside month → `text-fg-disabled`(不套 disabled 灰底圓,outside 只是「非當月」不是「禁選」)
+- outside month → 弱化字色(不套 disabled 灰底圓,outside 只是「非當月」不是「禁選」)
 
-其他區塊:
-| 區塊 | Token |
-|------|-------|
-| 月份 caption | `text-body font-medium` |
-| Nav 按鈕(prev/next) | `h-9 w-9 rounded-md text-fg-muted hover:bg-neutral-hover` |
-| 星期標頭 | `text-caption text-fg-muted h-8 w-9` |
+其他區塊(月份 caption / Nav 按鈕 / 星期標頭)視覺層級:月份 caption 與 SelectMenu 標題同等、Nav 按鈕走 tertiary icon button 規格、星期標頭弱化為輔助資訊。
+
+完整 class / token 對照見 anatomy `CalendarTokens` story。
 
 ### Spacing canonical(2026-04-21 對齊 user 附圖)
 
@@ -132,14 +131,13 @@ DatePicker 使用**本 DS 自建 DateGrid** + Popover 而非瀏覽器原生 `<in
 - 期間 user 可 hover 未來端點預覽 range track 視覺(Calendar 內建)
 - Clear 按鈕清空兩端點 `onChange([null, null])`
 
-### 視覺 token(range 特有)
+### Range 視覺規則
 
-| State | 視覺 | Token |
-|-------|------|-------|
-| range_start / range_end | 藍底白字圓(同 selected) | `bg-primary text-on-emphasis rounded-full` |
-| range middle(中間日期) | 灰底矩形橫條 | `bg-neutral-2`(打在 day 容器層)|
+- **range_start / range_end**:沿用 single selected 的視覺(藍底白字圓)
+- **range middle**:灰底矩形橫條(打在 day 容器層,不是 button 層)
+- **端點 ↔ 中間的接縫**:端點採半圓角(左端 `rounded-l-full` / 右端 `rounded-r-full`)讓圓弧 + 矩形無縫連接成一條連續底色帶
 
-端點與中間的接縫:端點 `rounded-l-full` / `rounded-r-full` 讓圓弧 + 矩形無縫連接成一條連續底色帶。
+完整 class 對照見 anatomy `CalendarTokens`(State canonical 表的 `selected` / `range track`)。
 
 ### 禁止
 

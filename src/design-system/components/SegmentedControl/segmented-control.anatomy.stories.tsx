@@ -71,8 +71,52 @@ export const Overview: Story = {
   ),
 }
 
+export const Inspector: Story = {
+  name: '2. 元件檢閱器',
+  parameters: {
+    docs: { description: { story: '右側 Controls 切 SegmentedControl props 即時 render,取代 Figma inspect。改 `value` 看選中狀態、切 `size` 對照 field-height tier、切 `fullWidth` 看 hug vs 等分。' } },
+  },
+  args: {
+    size: 'md',
+    value: 'week',
+    fullWidth: false,
+    iconOnly: false,
+    disabled: false,
+  },
+  argTypes: {
+    size: { control: 'radio', options: ['xs', 'sm', 'md', 'lg'] },
+    value: {
+      control: 'radio',
+      options: ['day', 'week', 'month'],
+      description: '當前選中的 item value',
+    },
+    fullWidth: { control: 'boolean', description: 'false=hug content / true=撐滿父容器等分' },
+    iconOnly: { control: 'boolean', description: 'group-level:全部 icon-only(必須整組一致)' },
+    disabled: { control: 'boolean' },
+  },
+  render: (args) => (
+    <div className="max-w-md">
+      <SegmentedControl {...args}>
+        {args.iconOnly ? (
+          <>
+            <SegmentedControlItem value="day" startIcon={AlignLeft} aria-label="日" />
+            <SegmentedControlItem value="week" startIcon={AlignCenter} aria-label="週" />
+            <SegmentedControlItem value="month" startIcon={AlignRight} aria-label="月" />
+          </>
+        ) : (
+          <>
+            <SegmentedControlItem value="day">日</SegmentedControlItem>
+            <SegmentedControlItem value="week">週</SegmentedControlItem>
+            <SegmentedControlItem value="month">月</SegmentedControlItem>
+          </>
+        )}
+      </SegmentedControl>
+    </div>
+  ),
+}
+
 export const SizeMatrix: Story = {
-  name: '2. 尺寸對照表',
+  name: '3. 尺寸對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -106,7 +150,7 @@ export const SizeMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '3. 狀態行為',
+  name: '4. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -159,7 +203,7 @@ export const StateBehavior: Story = {
 }
 
 export const FullWidthMatrix: Story = {
-  name: '4. fullWidth 行為',
+  name: '5. fullWidth 行為',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -201,7 +245,7 @@ export const FullWidthMatrix: Story = {
 }
 
 export const IconOnlyMatrix: Story = {
-  name: '5. iconOnly(group-level)',
+  name: '6. iconOnly(group-level)',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
