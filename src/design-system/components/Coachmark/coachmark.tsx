@@ -154,10 +154,10 @@ const Coachmark = React.forwardRef<HTMLDivElement, CoachmarkProps>(
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           {headerTitle && (
-            // Header title 走 `<PopoverTitle>` 共用 Popover 頭部 typography canonical
-            // (`text-body font-medium`,對齊 Popover header 樣式)。hideClose 讓 Coachmark
-            // 自管 close 流程(Skip / Done),不重複 Popover 的右上 X。
-            <PopoverHeader hideClose>
+            // Header title 走 `<PopoverTitle>` 共用 Popover typography canonical(text-body font-medium)。
+            // **不 hideClose** — 對齊 Popover / Dialog / 所有 overlay 家族 canonical:header 必有 dismiss X
+            // (user 可隨時關閉,跟 Skip / Done 是不同入口,canonical 重複不冗)
+            <PopoverHeader>
               <PopoverTitle>{headerTitle}</PopoverTitle>
             </PopoverHeader>
           )}
@@ -169,7 +169,9 @@ const Coachmark = React.forwardRef<HTMLDivElement, CoachmarkProps>(
           )}
 
           {(title || description) && (
-            <PopoverBody className="flex flex-col gap-1">
+            // 專屬 Coachmark canonical:body text-center(onboarding / feature discovery 視覺上需聚焦,
+            // 跟 Dialog / Popover 的 left-align 本文不同 — 世界級 Intercom / Pendo / Shepherd.js 同樣中置)
+            <PopoverBody className="flex flex-col items-center text-center gap-1">
               {title && (
                 <h3 className="text-body-lg font-medium text-foreground">{title}</h3>
               )}
@@ -180,10 +182,11 @@ const Coachmark = React.forwardRef<HTMLDivElement, CoachmarkProps>(
           )}
 
           {hasFooterContent && (
-            <PopoverFooter className="justify-between">
+            // 專屬 Coachmark canonical:footer 無上方分隔線(media + body + footer 視覺一氣呵成,
+            // 不像 Dialog 需要 header/footer 分隔強化結構)。override SurfaceFooter default border-t
+            <PopoverFooter className="justify-between !border-t-0">
               {stepText ? (
-                // step 文字走 text-body 跟 body content 字體一致(對齊 Dialog / Popover footer
-                // raw text canonical:footer 的純文字 = body 字體,不縮小到 caption)
+                // step 文字走 text-body 跟 body content 字體一致
                 <span className="text-body text-fg-secondary tabular-nums">
                   {stepText}
                 </span>

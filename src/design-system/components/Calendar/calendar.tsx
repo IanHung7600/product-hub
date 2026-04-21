@@ -14,6 +14,7 @@ import {
 } from 'date-fns'
 import { cn } from '@/lib/utils'
 import { Button } from '@/design-system/components/Button/button'
+import { SegmentedControl, SegmentedControlItem } from '@/design-system/components/SegmentedControl/segmented-control'
 
 /**
  * Calendar — 事件檢視 canvas(月 view MVP)
@@ -232,23 +233,19 @@ export function Calendar({
           {monthTitle}
         </h2>
 
-        {/* View switcher(MVP 只啟用 month;week/day 為視覺 placeholder) */}
-        <div className="flex items-center gap-1" role="tablist" aria-label="檢視切換">
-          {(['day', 'week', 'month'] as const).map((v) => (
-            <Button
-              key={v}
-              variant={currentView === v ? 'tertiary' : 'text'}
-              size="sm"
-              pressed={currentView === v}
-              disabled={v !== 'month'}
-              onClick={() => setView(v)}
-              role="tab"
-              aria-selected={currentView === v}
-            >
-              {v === 'day' ? '日' : v === 'week' ? '週' : '月'}
-            </Button>
-          ))}
-        </div>
+        {/* View switcher:用 SegmentedControl(互斥多選一 canonical)——
+            對齊 CLAUDE.md「互斥分類選擇走 SegmentedControl,非 checked Button group」原則。
+            Button 的 pressed 是「toggle 持續狀態」語意,不適合「單選 view 切換」 */}
+        <SegmentedControl
+          size="sm"
+          value={currentView}
+          onValueChange={(v) => setView(v as CalendarView)}
+          aria-label="檢視切換"
+        >
+          <SegmentedControlItem value="day" disabled>日</SegmentedControlItem>
+          <SegmentedControlItem value="week" disabled>週</SegmentedControlItem>
+          <SegmentedControlItem value="month">月</SegmentedControlItem>
+        </SegmentedControl>
 
         {onCreateEvent && (
           <Button variant="primary" size="sm" startIcon={Plus} onClick={onCreateEvent}>

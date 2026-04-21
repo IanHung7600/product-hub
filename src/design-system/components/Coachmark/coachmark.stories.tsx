@@ -1,5 +1,6 @@
 import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
+import type { LucideIcon } from 'lucide-react'
 import { Sparkles, Bot, Users, FolderPlus, Keyboard, MousePointer2, Command } from 'lucide-react'
 import { Coachmark } from './coachmark'
 import { Button } from '@/design-system/components/Button/button'
@@ -13,18 +14,21 @@ type Story = StoryObj
 
 // ── Media helpers (placeholder gradients — avoid external image refs) ────────
 
+// Media illustration placeholder:DS-aligned icon tier + 白色 emphasis 強對比
+// (icon 走 size=32 對應 Badge / Avatar 常見 medium tier;label 走 text-body text-on-emphasis
+// 而非半透明 white/90 — 確保對比符合 WCAG AA + DS typography tier 對齊)
 const MediaGradient = ({
   from, to, icon: Icon, label,
 }: {
-  from: string; to: string; icon: React.ComponentType<{ className?: string }>; label: string
+  from: string; to: string; icon: LucideIcon; label: string
 }) => (
   <div
     className="w-full h-full flex items-center justify-center"
     style={{ background: `linear-gradient(135deg, ${from} 0%, ${to} 100%)` }}
   >
-    <div className="flex flex-col items-center gap-2 text-white/90">
-      <Icon className="w-10 h-10" />
-      <span className="text-footnote font-medium">{label}</span>
+    <div className="flex flex-col items-center gap-2 text-on-emphasis">
+      <Icon size={32} strokeWidth={1.75} />
+      <span className="text-body font-medium">{label}</span>
     </div>
   </div>
 )
@@ -89,34 +93,46 @@ export const MultiStepTour: Story = {
     const [open, setOpen] = React.useState(true)
     const isLast = step === tourSteps.length - 1
 
+    // canonical fix(AR5):只 render 目前 active step 的 Coachmark(其他 step 用 plain Button)。
+    // **原本 bug 根因**:所有 3 個 Coachmark 同時 mount,切 step 時 step-0 Coachmark 需淡出(prop
+    // `open=false`)→ Radix 內部動畫未結束前無法相信新 Coachmark 的 open=true;step-1 Coachmark
+    // Radix 狀態 race → 直接不開,user 看到「next 之後 popover 消失」。
+    // 修法:**只 active step render Coachmark wrapper**,Radix 每 step 視為 fresh mount,無 race。
+    // 對齊 Ant Tour / Shepherd.js / Joyride 世界級多步驟 tour pattern。
     return (
       <div className="flex flex-col gap-6 min-w-[360px]">
         <div className="flex items-center gap-3 p-3 border border-border rounded-lg bg-surface">
-          {tourSteps.map((s, i) => (
-            <Coachmark
-              key={s.anchor}
-              open={open && step === i}
-              // canonical fix:只有目前 active step 才回報 tour 退出;其他 Coachmark 的
-              // 「被切換導致的關閉」不代表使用者要結束整個 tour(原本 bug:step i→i+1
-              // 切換時 i 的 Coachmark 關閉會誤觸發全局 setOpen(false),導致 next 卡住)
-              onOpenChange={(o) => { if (step === i && !o) setOpen(false) }}
-              kind="new-features"
-              image={<MediaGradient from={s.media.from} to={s.media.to} icon={s.icon} label={s.media.label} />}
-              title={s.title}
-              description={s.description}
-              step={{ current: i + 1, total: tourSteps.length }}
-              onPrev={i > 0 ? () => setStep(i - 1) : undefined}
-              onSkip={() => setOpen(false)}
-              onNext={() => (i === tourSteps.length - 1 ? setOpen(false) : setStep(i + 1))}
-              isLastStep={i === tourSteps.length - 1}
-              side="bottom"
-              align="start"
-            >
-              <Button variant={i === step ? 'primary' : 'tertiary'} size="sm" startIcon={s.icon}>
+          {tourSteps.map((s, i) => {
+            const isCurrent = step === i
+            const trigger = (
+              <Button variant={isCurrent ? 'primary' : 'tertiary'} size="sm" startIcon={s.icon}>
                 {s.anchor}
               </Button>
-            </Coachmark>
-          ))}
+            )
+            if (!isCurrent) {
+              return <React.Fragment key={s.anchor}>{trigger}</React.Fragment>
+            }
+            return (
+              <Coachmark
+                key={s.anchor}
+                open={open}
+                onOpenChange={setOpen}
+                kind="new-features"
+                image={<MediaGradient from={s.media.from} to={s.media.to} icon={s.icon} label={s.media.label} />}
+                title={s.title}
+                description={s.description}
+                step={{ current: i + 1, total: tourSteps.length }}
+                onPrev={i > 0 ? () => setStep(i - 1) : undefined}
+                onSkip={() => setOpen(false)}
+                onNext={() => (i === tourSteps.length - 1 ? setOpen(false) : setStep(i + 1))}
+                isLastStep={i === tourSteps.length - 1}
+                side="bottom"
+                align="start"
+              >
+                {trigger}
+              </Coachmark>
+            )
+          })}
         </div>
         <div className="flex gap-2">
           <Button variant="tertiary" size="sm" onClick={() => { setStep(0); setOpen(true) }}>重設 Tour</Button>
@@ -164,31 +180,41 @@ export const TipsMultiStep: Story = {
     const [step, setStep] = React.useState(0)
     const [open, setOpen] = React.useState(true)
 
+    // 同 MultiStepTour:只 active step render Coachmark(避免多 Coachmark 共存時 Radix race bug)
     return (
       <div className="flex flex-col gap-6 min-w-[360px]">
         <div className="flex items-center gap-3 p-3 border border-border rounded-lg bg-surface">
-          {tipSteps.map((s, i) => (
-            <Coachmark
-              key={s.anchor}
-              open={open && step === i}
-              onOpenChange={(o) => { if (step === i && !o) setOpen(false) }}
-              kind="tips"
-              image={<MediaGradient from={s.media.from} to={s.media.to} icon={s.icon} label={s.media.label} />}
-              title={s.title}
-              description={s.description}
-              step={{ current: i + 1, total: tipSteps.length }}
-              onPrev={i > 0 ? () => setStep(i - 1) : undefined}
-              onSkip={() => setOpen(false)}
-              onNext={() => (i === tipSteps.length - 1 ? setOpen(false) : setStep(i + 1))}
-              isLastStep={i === tipSteps.length - 1}
-              side="bottom"
-              align="start"
-            >
-              <Button variant={i === step ? 'primary' : 'tertiary'} size="sm" startIcon={s.icon}>
+          {tipSteps.map((s, i) => {
+            const isCurrent = step === i
+            const trigger = (
+              <Button variant={isCurrent ? 'primary' : 'tertiary'} size="sm" startIcon={s.icon}>
                 {s.anchor}
               </Button>
-            </Coachmark>
-          ))}
+            )
+            if (!isCurrent) {
+              return <React.Fragment key={s.anchor}>{trigger}</React.Fragment>
+            }
+            return (
+              <Coachmark
+                key={s.anchor}
+                open={open}
+                onOpenChange={setOpen}
+                kind="tips"
+                image={<MediaGradient from={s.media.from} to={s.media.to} icon={s.icon} label={s.media.label} />}
+                title={s.title}
+                description={s.description}
+                step={{ current: i + 1, total: tipSteps.length }}
+                onPrev={i > 0 ? () => setStep(i - 1) : undefined}
+                onSkip={() => setOpen(false)}
+                onNext={() => (i === tipSteps.length - 1 ? setOpen(false) : setStep(i + 1))}
+                isLastStep={i === tipSteps.length - 1}
+                side="bottom"
+                align="start"
+              >
+                {trigger}
+              </Coachmark>
+            )
+          })}
         </div>
         <div className="flex gap-2">
           <Button variant="tertiary" size="sm" onClick={() => { setStep(0); setOpen(true) }}>重設 Tips</Button>
