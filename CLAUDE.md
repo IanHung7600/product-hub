@@ -24,6 +24,7 @@
 | **M4** | **`_Group` 元件必隔離單 item 的 fieldCtx**。當 Group 元件(CheckboxGroup / RadioGroup / SwitchGroup)包在 Field 內,其 child items **不可共用 fieldCtx.id / fieldCtx.hasFieldWrapper**;Group 必建自己的 Context 告訴 items「你在 group 裡」。 | Checkbox 在 CheckboxGroup 內所有 label 抑制(bug)/ 所有 item 共用 id 點擊只 toggle 第一個 / 未來任何 Group 類相同模式 |
 | **M5** | **視覺 canonical 必 spec 聲明所有 state 疊加組合**。單一 state(today / selected / hover / disabled)有視覺定義不夠;**所有兩兩疊加、三疊加組合也要在 spec 有明文**。 | DatePicker `today + selected` bar 色隱形(藍 bar 在藍底)/ `hover + disabled` ring 仍顯示 / `range + today` 指示器重疊 / 未來任何新 state 上線 |
 | **M6** | **Stakeholder-visible 產出 → 強制進階稽核才出稿**(不是 merge 後補)。任何「有視覺可以給 stakeholder 看」的產出(新元件 / 元件新功能 / 新產品頁 / 比稿)**必過進階完整稽核**(6 維 + 全截圖視覺驗證)。日常 dev 可用高效模式,stakeholder gate 不可。 | FileViewer 初版不看 action-bar spec / button 間距錯 / dismiss 用 Button / header 沒 token / 視覺不整齊上給人看 |
+| **M7** | **新 protocol / skill / rule 寫完,必反向 cross-check 既有 Meta-Principle 是否該套用**。尤其:consistency-class 的 protocol 必走「一致性類稽核必先全掃再判」(本章節);audit skill 必加「Self-improvement capture」Phase F step;Rule 觸及「canonical」「SSOT」「rationale」keyword → 必明示 substantive vs 表達層分權。 | 2026-04-21 principle-audit-protocol.md v1 寫完未套 Phase 0 全掃到 D6b/D6c,被 user 抓到「這也是跟一致性有關」才補。典型:AI 寫新東西時套用既有原則時有盲點 |
 
 **判斷 meta-principle 是否漏寫的 test**:
 - 同類 bug 一年內被糾正 3 次 → meta-principle 漏寫或沒執行,檢討本清單
@@ -45,7 +46,7 @@
 | D3 | **元件效能** | render 次數 / memo / bundle size / unnecessary re-render | `/performance-audit`(新) |
 | D4 | **UX 行為** | keyboard nav / focus trap / a11y / animation timing / interaction canonical | `/ux-audit`(新) |
 | D5 | **視覺品質** | 對齊 / 韻律 / 對比 / 邊距 / 不貼邊 / typography hierarchy / 世界級對照 | `/visual-audit`(Layer A mechanical + Layer B AI) |
-| D6 | **設計原則自檢**(4 子維)| D6a 合理性 / D6b 一致性 / D6c 無矛盾 / D6d 完整性 — 動 canonical substantive meaning 的提議不自改 | SSOT:`.claude/skills/design-system-audit/references/principle-audit-protocol.md` |
+| D6 | **設計原則自檢**(4 子維)| D6a 合理性(per-item)/ **D6b 一致性 + D6c 無矛盾(必 Phase 0 全掃再判)** / D6d 完整性 — 動 canonical substantive 的提議不自改 | SSOT:`.claude/skills/design-system-audit/references/principle-audit-protocol.md` |
 
 ## 2 模式
 

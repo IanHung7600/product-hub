@@ -16,14 +16,56 @@
 
 ---
 
-## D6 4 子維
+## D6 4 子維(含 scan mode 分類)
 
-| # | 子維 | 掃什麼 | 怎麼掃 |
-|---|------|-------|-------|
-| **D6a** | **合理性** | 每條 canonical 是否世界級對照支持?有明文 rationale(「為什麼」)?自立論的規則應淘汰或補世界級 | 讀 spec 找「為什麼」prose + 對照 Polaris / Material / Atlassian / Ant / Apple HIG 該概念;孤立 rule 無對照 = flag |
-| **D6b** | **一致性** | 同概念跨 spec / 跨元件表達 / 術語是否一致? | (1) grep 同 token 名跨 spec 用法(fg-muted / foreground 等)檢查用對層級;(2) grep 同 prop value literal 跨元件;(3) 命名三重 test(CLAUDE.md) |
-| **D6c** | **無矛盾** | spec↔spec / CLAUDE.md↔spec / canonical 聲明衝突 | 找兩 spec 對同一 canonical 概念給出**不同規定**;找 canonical 被多處聲明但版本不一致(SSOT drift) |
-| **D6d** | **完整性** | 原則有無覆蓋所有 state / scope / edge case?scope default pointer 該有沒有? | 對照 Rule B scope defaults(Field family / dark mode / density / wrapper 類),每 spec 驗證 applicable 項目的 coverage |
+**關鍵**:4 子維依「單 item 檢」vs「跨 item 比對」分兩類。跨 item 比對的**必走 Phase 0 全掃再判**(對齊 CLAUDE.md `# 稽核 6 維 + 2 模式`「一致性類稽核必先全掃再判」),否則無法檢出矛盾 / 不一致。
+
+| # | 子維 | Scan mode | 掃什麼 | 怎麼掃 |
+|---|------|-----------|-------|-------|
+| **D6a** | **合理性** | **per-item**(單 spec 可判)| 每條 canonical 是否世界級對照支持?有明文 rationale? | 讀 spec 找「為什麼」prose + 對照 Polaris / Material / Atlassian / Ant / Apple HIG;孤立 rule 無對照 = flag |
+| **D6b** | **一致性** | **cross-inventory**(必全掃)| 同概念跨 spec / 跨元件表達 / 術語是否一致? | 必先全掃建 inventory(見下 Phase 0)→ 比對 |
+| **D6c** | **無矛盾** | **cross-inventory**(必全掃)| spec↔spec / CLAUDE.md↔spec / canonical 聲明衝突 | 必先全掃 canonical concept index(見下 Phase 0)→ 比對 |
+| **D6d** | **完整性** | **per-item + reference**(per spec 但要比 scope default canonical)| 原則有無覆蓋 applicable state / scope / edge case? | 單 spec 檢 + 對照 Rule B scope defaults(CLAUDE.md)|
+
+## Phase 0 — 全掃再判(cross-inventory 子維硬規則)
+
+**D6b / D6c 跑前必先**:
+
+### Phase 0a — 建 token / 術語 inventory(for D6b)
+```
+1. grep 所有 spec 中的 token 名(fg-muted / foreground / neutral-hover / primary-subtle 等)
+   建 {token_name: [{spec_path, line, context}]} 表
+2. grep 所有 .tsx 的 cva variants / prop literals
+   建 {literal: [{component, prop_key, context}]} 表
+3. grep 所有 spec 的 prop value 宣稱
+   建 {component.prop.value: {spec_line, literal, semantic}} 表
+```
+
+### Phase 0b — 建 canonical concept inventory(for D6c)
+```
+1. 列 CLAUDE.md + patterns/*/spec.md 所有「canonical」宣告的 concept
+   (dismiss canonical / overlay padding canonical / icon size canonical 等)
+2. 對每個 concept,grep 所有 spec 宣告該 concept 的段落
+   建 {concept: [{spec_path, line, prose, rule}]}
+3. 這是 baseline 的 concept matrix,**沒建完不能進 Phase 1 判決**
+```
+
+### Phase 0 可以 chain `/baseline-audit`
+
+`/baseline-audit` skill 本就是 scan-only full inventory builder。D6b / D6c 跑前可直接 chain 此 skill 取 matrix,不重複造輪。
+
+**為什麼 Phase 0 非走不可**:沒 inventory 就判 consistency = 盲人摸象。典型漏抓 case:
+- 只看 Tag spec 不看 item-anatomy.spec → 漏 Inline Action icon SSOT 矛盾(2026-04-21 實例)
+- 只看 Dialog spec 不看 Sheet / Popover → 漏 overlay padding 跨元件不一致
+- 只看一個 spec 判 token 用法 → 漏跨 spec 用錯層級
+
+## Phase 1 — 逐點判(per-item 子維 + cross-inventory 比對)
+
+基於 Phase 0 inventory,才進行:
+- D6a per-item:逐 spec 檢 rationale + 世界級對照
+- D6b 比對 inventory:找 token 用法不一致 / 同字 prop value 跨元件語義撞
+- D6c 比對 inventory:找 concept 兩聲明**不同規定** / canonical 有 drift
+- D6d per-item + 對照 scope default:單 spec 驗 coverage
 
 ---
 
@@ -183,6 +225,14 @@
 - **「anatomy 缺 Inspector」** → 2026-04-21 revert applicable-where-meaningful → 改回 strict-by-default。但確實 props < 2 的(Separator / Skeleton / CircularProgress)有 hard rationale 豁免。
 - **「ARIA / tabIndex 不對」** → FALSE,若 wrap Radix primitive(Radix 處理)= 豁免。grep import 確認。
 - **「7-dim 覆蓋不足」** → 多數是 scope default 豁免(Field family pointer / Internal / wrapper),flag 前驗 scope default。
+
+### Meta-lesson(AI 自我提醒)
+
+- **寫新 protocol / skill / rule 時,必反向自檢:**
+  - CLAUDE.md 既有 Meta-Principle(M1-M6)/ Mindset / Scope 預設 / 分權 canonical 有哪條適用?
+  - 若新 protocol 是 consistency-class audit → **必走 Phase 0 全掃再判**(CLAUDE.md「一致性類稽核必先全掃再判」)
+  - 若新 protocol 是 audit skill → **必加 Self-improvement capture** Phase F step
+  - **歷史**:2026-04-21 第一版 principle-audit-protocol.md 寫完未套「Phase 0 全掃」到 D6b/D6c,被 user 抓到「這也是跟一致性有關」才補。Meta-pattern:**新規則寫完,先跟既有原則 cross-check 再送出**。
 
 ### 回填格式
 
