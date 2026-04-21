@@ -132,7 +132,7 @@ export const SizeMatrix: Story = {
             <tbody>
               <tr><Td mono>sm</Td><Td mono>h-field-sm</Td><Td mono>20px</Td><Td mono>16px</Td><Td mono>text-body</Td><Td>Dense filter bar、DataTable cell edit</Td></tr>
               <tr><Td mono>md ★default</Td><Td mono>h-field-md</Td><Td mono>24px</Td><Td mono>16px</Td><Td mono>text-body</Td><Td>一般表單、assignee picker</Td></tr>
-              <tr><Td mono>lg</Td><Td mono>h-field-lg</Td><Td mono>28px</Td><Td mono>20px</Td><Td mono>text-body-lg</Td><Td>主要 CTA form、onboarding</Td></tr>
+              <tr><Td mono>lg</Td><Td mono>h-field-lg</Td><Td mono>24px</Td><Td mono>20px</Td><Td mono>text-body-lg</Td><Td>主要 CTA form、onboarding</Td></tr>
             </tbody>
           </table>
         </div>

@@ -9,24 +9,29 @@ import type { FileRendererProps } from './file-viewer-types'
 /**
  * ImageRenderer — FileViewer 的圖片 renderer。
  *
- * 世界級對照:Google Photos / Dropbox / Figma(file preview)/ macOS Preview.app
- * 共同行為:scroll-wheel zoom / drag-to-pan when zoomed / 預設 fit-to-page /
- * double-click to toggle 100%。
+ * ── 世界級 zoom semantic canonical(2026-04-21 重寫)──
+ * Figma / Preview.app / Adobe Acrobat / Google Drive 共通:
+ *   - `100%` = image natural pixel size(**非** CSS contain-scaled)
+ *   - 開圖預設 fit-to-page(image 自動 fit,zoom input 顯示 fit % 如 40%)
+ *   - `fit-to-width` = image width 填滿 container width(portrait 會 overflow 垂直)
+ *   - `fit-to-page` = image 完整可見(contain semantic)
+ *   - `+/-` preset 改 zoom 對應 natural 倍率,精準
+ *
+ * ── 實作細節 ──
+ * image 不走 CSS `object-contain`(那會 pre-scale,導致 transform.scale 解讀錯誤);
+ * 改走 **natural size + transform scale 管實際顯示**。onLoad 時算 fit-page scale
+ * 再 `onZoomChange(fitPct)` 將 UI zoom 同步到真實倍率。
  *
  * ── 為什麼消費 react-zoom-pan-pinch ──
- * Zoom + pan 是行為 primitive,視覺 chrome(toolbar / zoom input)由 shell 提供。
- * 自己寫 pinch / wheel event 正確處理會踩大量 edge case(trackpad vs mouse /
- * momentum / bounds 邊界 / CLS),react-zoom-pan-pinch 是 canonical 解法
- * (世界級產品 Figma Community / Miro embed / PhotoSwipe 同類流派)。
- *
- * ── Capability 宣告 ──
- * 透過 onCapabilitiesChange 告訴 shell:本 renderer 支援 zoom,toolbar 顯示
- * zoom input。未來 PDF renderer 會額外回報 pageNumber,shell 根據 capability
- * 動態決定 toolbar 內容。
+ * Zoom + pan 是行為 primitive;自寫 pinch / wheel 踩大量 edge case
+ * (trackpad vs mouse / momentum / bounds),library 是 canonical 解法
+ * (世界級 Figma Community / Miro embed / PhotoSwipe 同類流派)。
  */
 
 const MIN_SCALE = 0.1 // 10%
 const MAX_SCALE = 4.0 // 400%
+
+type FitMode = 'fit-width' | 'fit-page'
 
 export const ImageRenderer: React.FC<FileRendererProps> = ({
   file,
@@ -38,90 +43,90 @@ export const ImageRenderer: React.FC<FileRendererProps> = ({
   const apiRef = React.useRef<ReactZoomPanPinchRef | null>(null)
   const imgRef = React.useRef<HTMLImageElement | null>(null)
   const containerRef = React.useRef<HTMLDivElement | null>(null)
+  const [loaded, setLoaded] = React.useState(false)
 
   // 宣告 capability — shell 用此決定 toolbar 內容。
-  // 只 emit 一次(mount),後續 capability 不變。
   React.useEffect(() => {
     onCapabilitiesChange({ zoom: true })
   }, [onCapabilitiesChange])
 
-  // 外部 zoom 變動(user 打字 / 按 preset / ± 按鈕)→ 同步到 TransformWrapper。
-  // **zoom anchor 固定在 viewport center**:對齊 Figma / Photoshop / Google Slides 的 ± 按鈕
-  // 行為 — 沒 cursor 位置時,以 viewport center 為 anchor 保留視覺重心(內容不會跳飛)。
-  // 算法:保持「image 上 viewport-center 對應的那個點」在 zoom 後仍在 viewport center。
-  // (wheel zoom 不走本 useEffect,由 react-zoom-pan-pinch 內建 anchor-at-cursor 處理)
-  React.useEffect(() => {
-    const api = apiRef.current
-    const container = containerRef.current
-    if (!api || !container) return
-    const currentScale = api.state.scale
-    const targetScale = zoom / 100
-    if (Math.abs(currentScale - targetScale) < 0.01) return
-
-    const rect = container.getBoundingClientRect()
-    const cx = rect.width / 2
-    const cy = rect.height / 2
-    const ratio = targetScale / currentScale
-    // 讓「圖上當前 viewport-center 對應的點」zoom 後仍在 (cx, cy):
-    //   newPanX = cx - (cx - oldPanX) * ratio
-    const newX = cx - (cx - api.state.positionX) * ratio
-    const newY = cy - (cy - api.state.positionY) * ratio
-    api.setTransform(newX, newY, targetScale, 200)
-  }, [zoom])
-
-  // Fit-to-* 指令處理 — 算 container / image 比例,emit 回 shell
-  // 世界級對照:Figma / Google Drive / Adobe Acrobat 的 Fit to width / page 都是
-  // 基於 container 與 image 的實際尺寸計算,不是「切換到固定 100%」
-  React.useEffect(() => {
-    if (!fitRequest) return
+  // 算 fit scale(container 寬高 / image natural 寬高)
+  const computeFitScale = React.useCallback((fit: FitMode): number | null => {
     const img = imgRef.current
     const container = containerRef.current
-    if (!img || !container) return
-    // 等到 image load 才有 naturalWidth/Height
-    if (!img.naturalWidth || !img.naturalHeight) return
+    if (!img || !container) return null
+    if (!img.naturalWidth || !img.naturalHeight) return null
+    const cw = container.clientWidth
+    const ch = container.clientHeight
+    if (cw <= 0 || ch <= 0) return null
+    const widthRatio = cw / img.naturalWidth
+    const heightRatio = ch / img.naturalHeight
+    // fit-width = 寬填滿;fit-page = 完整可見(取較小 scale)
+    return fit === 'fit-width' ? widthRatio : Math.min(widthRatio, heightRatio)
+  }, [])
 
-    const containerRect = container.getBoundingClientRect()
-    const cw = containerRect.width
-    const ch = containerRect.height
-    const iw = img.naturalWidth
-    const ih = img.naturalHeight
-    if (cw <= 0 || ch <= 0 || iw <= 0 || ih <= 0) return
+  const clampToPct = React.useCallback((scale: number): number => {
+    const clamped = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale))
+    return Math.round(clamped * 100)
+  }, [])
 
-    const widthRatio = cw / iw
-    const heightRatio = ch / ih
-    const ratio = fitRequest.fit === 'fit-width'
-      ? widthRatio
-      : Math.min(widthRatio, heightRatio) // 'fit-page' = 整頁符合,取較小 scale
+  // Image onLoad → 自動 fit-to-page(世界級開圖預設)
+  const handleImageLoad = React.useCallback(() => {
+    setLoaded(true)
+    const scale = computeFitScale('fit-page')
+    if (scale == null) return
+    const pct = clampToPct(scale)
+    // 等 transform 就緒再更新(避免 initialScale=1 → fit 過程跳兩段)
+    requestAnimationFrame(() => {
+      onZoomChange(pct)
+    })
+  }, [computeFitScale, clampToPct, onZoomChange])
 
-    const nextZoomPct = Math.round(ratio * 100)
-    // Clamp to [MIN_SCALE*100, MAX_SCALE*100]
-    const clamped = Math.min(MAX_SCALE * 100, Math.max(MIN_SCALE * 100, nextZoomPct))
-    onZoomChange(clamped)
-  }, [fitRequest, onZoomChange])
+  // 外部 zoom 變動(preset / ± / 打字 / fit request)→ centerView 重定位
+  // library canonical `centerView` 同時處理 scale + 置中 + animation + bounds。
+  React.useEffect(() => {
+    const api = apiRef.current
+    if (!api || !loaded) return
+    const currentScale = api.state.scale
+    const targetScale = zoom / 100
+    if (Math.abs(currentScale - targetScale) < 0.005) return
+    api.centerView(targetScale, 200)
+  }, [zoom, loaded])
 
-  // TransformWrapper 內部 zoom 變動(wheel / pinch)→ 同步回 shell
+  // Fit request(toolbar 菜單點 fit-width / fit-page)→ 算 scale emit 回 shell
+  React.useEffect(() => {
+    if (!fitRequest || !loaded) return
+    const scale = computeFitScale(fitRequest.fit)
+    if (scale == null) return
+    onZoomChange(clampToPct(scale))
+  }, [fitRequest, loaded, computeFitScale, clampToPct, onZoomChange])
+
+  // 內部 wheel / pinch zoom → 同步回 shell
   const handleTransformed = React.useCallback(
     (_ref: ReactZoomPanPinchRef, state: { scale: number }) => {
       const nextZoom = Math.round(state.scale * 100)
-      if (nextZoom !== zoom) {
-        onZoomChange(nextZoom)
-      }
+      if (nextZoom !== zoom) onZoomChange(nextZoom)
     },
     [zoom, onZoomChange],
   )
 
   return (
-    <div ref={containerRef} className="w-full h-full">
+    <div ref={containerRef} className="w-full h-full overflow-hidden">
       <TransformWrapper
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ref={apiRef as any}
-        initialScale={zoom / 100}
+        initialScale={1}
         minScale={MIN_SCALE}
         maxScale={MAX_SCALE}
         centerOnInit
         centerZoomedOut
         limitToBounds={false}
-        wheel={{ step: 0.1 }}
+        // Wheel zoom canonical:
+        // - `step: 0.03` = 每 tick ~3% scale,對齊 Figma / Preview.app 細緻度
+        //   (原 0.1 = 10% 太粗,接近 Google Slides 離散慣例)
+        // - `smoothStep: 0.005` = trackpad 連續 zoom 不跳格
+        // - multiplicative 等距:library 內部 scale factor 乘算,log 視覺等距
+        wheel={{ step: 0.03, smoothStep: 0.005 }}
         doubleClick={{ mode: 'reset' }}
         onTransform={handleTransformed}
       >
@@ -133,8 +138,10 @@ export const ImageRenderer: React.FC<FileRendererProps> = ({
             ref={imgRef}
             src={file.url}
             alt={file.name}
+            onLoad={handleImageLoad}
             draggable={false}
-            className="max-w-full max-h-full object-contain select-none"
+            // natural size(**不走 object-contain**)— transform scale 管實際顯示大小
+            className="max-w-none max-h-none select-none"
             style={{ pointerEvents: 'none' }}
           />
         </TransformComponent>

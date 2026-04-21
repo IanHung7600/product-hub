@@ -75,6 +75,24 @@ ProgressBar 底部對齊 avatar 底部。justify-between 自動分配 gap(有 de
 | compact(預設) | 消費 item-layout 公式(py 隨 size / density 變化,padding / gap 對齊 menu item 規格) |
 | rich | py 固定(高度由 avatar 決定,不走 row 公式),padding / gap 採 rich 專屬 token(具體值見 `file-item.tsx` cva) |
 
+## 邊框 / 背景(AR15-21 canonical,2026-04-21)
+
+| Mode | 容器視覺 | Rationale |
+|------|---------|-----------|
+| **rich** | `border border-divider rounded-md bg-surface` | Rich mode 是「檔案 card」——Slack / Notion / Linear attachment 皆獨立 card 呈現;邊框讓每個 row 視覺上是自立單元 |
+| **compact + 有 progress**(上傳中) | 無背景、無邊框,只靠 progress bar 提供 affordance | 「正在發生」的動態狀態,progress 本身就是視覺焦點,不需額外邊框 |
+| **compact + 無 progress**(靜態檔案) | `bg-neutral-3 rounded-md` | 靜態清單(已上傳 / 歷史附件)背景色區隔出「檔案 row」邊界,跟純文字內容區分;hover 時 `bg-neutral-hover` 覆蓋 |
+
+**❌ 反例**:
+- Rich mode 無邊框 → 看起來像一般 list item,跟 MenuItem 混淆
+- Compact mode 靜態 item 無 bg → 純文字列,使用者不知這是「可點下載的檔案」
+- 外層 `<FileUpload list>` wrapper 加邊框 → 雙重邊框(list 邊框 + item 邊框)視覺干擾
+
+**Clickable → 下載 / 預覽 canonical**(AR15):
+- FileItem 提供 `onClick` prop,consumer 傳入即進 clickable 模式(hover + cursor + keyboard)
+- `status="completed"` 的 item 若有 `onClick` → 預設 UX 是「開啟檢視 / 下載」(FileViewer / browser download)
+- consumer 決定具體行為,元件只提供 row 可點擊能力
+
 ## ProgressBar
 
 **SSOT**:FileItem 不自 roll bar,消費 `../ProgressBar/progress-bar.spec.md` 元件(Radix Progress 包裝 + 本 DS token)。避免視覺漂移。

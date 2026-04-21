@@ -6,6 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 import { useFieldContext } from "@/design-system/components/Field/field-context"
 import { SelectionItem } from "@/design-system/components/SelectionControl/selection-item"
+import { CheckboxGroupContext } from "@/design-system/components/CheckboxGroup/checkbox-group"
 
 // ── Variants ────────────────────────────────────────────────────────────────
 // 三種尺寸（sm/md=16px, lg=20px），對齊 icon 系統與 SelectionItem。
@@ -110,15 +111,32 @@ const Checkbox = React.forwardRef<
     const iconPx = checkIconSize[sizeKey]
     const iconStrokeWidth = checkStrokeWidth[sizeKey]
 
-    // Field context：在 Field 內時忽略自己的 label/description
+    // Field context:Checkbox 單獨塞進 Field(binary toggle)時,忽略自己的 label 讓 FieldLabel 接管
+    //
+    // **例外**:Checkbox 是 CheckboxGroup 的 child 時(multi-select 情境),**每個 checkbox
+    // 的 label 是它自己的選項名**,FieldLabel 只是群組名稱 — 此時 label **必須保留**,
+    // 不能被 Field context 吞掉。AR50 的根因就是這個 branch 之前誤把 group 內的 checkbox
+    // label 全清空,導致 sheet 內 3 個 checkbox 沒 label。
     const fieldCtx = useFieldContext()
+    const checkboxGroupCtx = React.useContext(CheckboxGroupContext)
     const insideField = fieldCtx?.hasFieldWrapper === true
-    const effectiveLabel = insideField ? undefined : label
-    const effectiveDescription = insideField ? undefined : description
+    const insideGroup = checkboxGroupCtx?.inGroup === true
+    const shouldSuppressLabel = insideField && !insideGroup
+    const effectiveLabel = shouldSuppressLabel ? undefined : label
+    const effectiveDescription = shouldSuppressLabel ? undefined : description
 
     // Id 連結
+    //
+    // ── 2026-04-21 bug fix ──
+    // 原本:`idProp ?? fieldCtx?.id ?? generatedId`。
+    // 在 Field 內 fieldCtx.id 存在,CheckboxGroup 所有 children 共用同一個 id →
+    // 每個 checkbox 的 `<label htmlFor={sameId}>` 全指向第一個 checkbox →
+    // **點任何 label 都只開關第一個 checkbox(real bug)**。
+    //
+    // 修法:group 內的 checkbox 強制用 generatedId(唯一),不沿用 Field id;
+    //      solo in Field(binary toggle)才沿用 fieldCtx.id 讓 FieldLabel htmlFor 生效。
     const generatedId = React.useId()
-    const inputId = idProp ?? fieldCtx?.id ?? generatedId
+    const inputId = idProp ?? (insideGroup ? generatedId : (fieldCtx?.id ?? generatedId))
 
     const rootEl = (
       <CheckboxPrimitive.Root

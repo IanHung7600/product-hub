@@ -198,12 +198,24 @@ const FileItem = React.forwardRef<HTMLDivElement, FileItemProps>(
         }
       : {}
 
-    // ── rich（含縮圖完整呈現）──
+    // Compact 靜態背景(AR20):無進度條 → 顯示 `bg-neutral-3` 作「檔案已上傳 / 靜態列表」
+    // 視覺區隔,跟「上傳中(有 progress bar)」對照。hover 仍然用 `bg-neutral-hover` 覆蓋
+    // (higher specificity 於行內 hover class)。
+    const compactStaticBg = !progressBar ? 'bg-neutral-3' : ''
+
+    // ── rich(含縮圖完整呈現)——AR17 canonical:加邊框 + gap-2 ──
+    // Rich mode 是「檔案 card」風格,外框讓每個 row 視覺上是獨立 card
+    // (Slack / Notion / Linear attachment 慣例)
     if (isRich) {
       return (
         <div
           ref={ref}
-          className={cn('group/row flex items-start gap-3 px-3 py-2 w-full text-body transition-colors', hoverClass, className)}
+          className={cn(
+            'group/row flex items-start gap-2 px-3 py-2 w-full text-body transition-colors',
+            'border border-divider rounded-md bg-surface',
+            hoverClass,
+            className,
+          )}
           onClick={onClick}
           {...rowA11y}
           {...props}
@@ -224,7 +236,12 @@ const FileItem = React.forwardRef<HTMLDivElement, FileItemProps>(
     return (
       <div
         ref={ref}
-        className={cn('group/row relative flex items-start gap-2 px-3 py-2 w-full text-body transition-colors', hoverClass, className)}
+        className={cn(
+          'group/row relative flex items-start gap-2 px-3 py-2 w-full text-body transition-colors rounded-md',
+          compactStaticBg,
+          hoverClass,
+          className,
+        )}
         onClick={onClick}
         {...rowA11y}
         {...props}

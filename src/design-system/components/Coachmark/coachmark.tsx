@@ -169,9 +169,11 @@ const Coachmark = React.forwardRef<HTMLDivElement, CoachmarkProps>(
           )}
 
           {(title || description) && (
-            // 專屬 Coachmark canonical:body text-center(onboarding / feature discovery 視覺上需聚焦,
-            // 跟 Dialog / Popover 的 left-align 本文不同 — 世界級 Intercom / Pendo / Shepherd.js 同樣中置)
-            <PopoverBody className="flex flex-col items-center text-center gap-1">
+            // 對齊 Dialog / Popover canonical:body 左對齊(不中置)
+            // Why: Coachmark 雖是 onboarding / feature discovery,但文字可讀性 > 視覺焦點;
+            // 中文 / 長句中置會「每行起點不同」造成閱讀鋸齒,左對齊最穩。
+            // 世界級參考:Notion / Linear / Figma onboarding tour 皆左對齊;Intercom Messenger 亦如是。
+            <PopoverBody className="flex flex-col gap-1">
               {title && (
                 <h3 className="text-body-lg font-medium text-foreground">{title}</h3>
               )}

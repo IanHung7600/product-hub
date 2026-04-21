@@ -111,6 +111,28 @@ Input 有兩個 visual chrome variant,**獨立於 mode**(mode 是 state,variant 
 
 ---
 
+## Auto-width(AR46,2026-04-21)
+
+`autoWidth` prop:Input 寬度自動等於「內容寬(value / placeholder)+ startIcon + endAction + padding」,基於 CSS `field-sizing: content`(Chrome 123+ / Safari 17.4+)。
+
+| 屬性 | 行為 |
+|------|------|
+| `autoWidth={false}`(預設)| 走 Field canonical(w-full 或 Field wrapper 規則),寬度固定、跟欄位對齊 |
+| `autoWidth={true}` | wrapper 改 `inline-flex w-auto`;input 改 `field-sizing:content w-auto min-w-0`,寬度隨 value 文字變化 |
+
+**使用情境**:
+- **Inline edit**:FileViewer `ZoomInput`(輸入「100%」縮到三位數寬)、Figma toolbar number input、VS Code setting row
+- **Tag / Chip rename**:選中 chip 進入 inline edit,寬度跟 chip 內容保持視覺一致
+- **Spreadsheet-like cells**:內容寬度自動跟字數走
+
+**禁止**:
+- ❌ **表單 Field 內**——Field 欄位必須欄寬對齊,寬度隨值跳動會破壞 grid layout
+- ❌ **搭配 `variant="default"` 放在主表單區**——auto-width 預設搭 `variant="bare"`(toolbar inline 語意),default chrome 自動對齊 Field canonical
+
+**世界級對照**:VS Code settings inline input 用同 pattern;Notion property field、Airtable cell edit 皆 auto-size。
+
+---
+
 ## 相關
 
 - `../NumberInput/number-input.spec.md` — 數值資料

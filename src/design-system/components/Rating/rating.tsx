@@ -27,17 +27,25 @@ import { useFieldContext } from '@/design-system/components/Field/field-context'
  * precision="half" — 半星(0.5, 1, 1.5, 2, 2.5, ..., 5)
  */
 
-// Icon size 對齊 icon tier(xs/sm/md=16px, lg=20px):見 tokens/uiSize/uiSize.spec.md
-// 「Icon 尺寸 Tier」——field-height-xs/sm/md 的 icon tier = 16px,field-height-lg = 20px。
-// Container 高度則對齊 --field-height-*(xs=24 / sm=28 / md=32 / lg=36),讓 Rating 可與其他
-// field-height family 元件(Input / Select / Button)並排時 row height 對齊,塞入
-// <Field> 時行高一致。
+// ── Icon size canonical(2026-04-21 AR48 修正)──
+//
+// Rating 的「一顆星」視覺重量接近 **Avatar / identity icon**,不是純 inline icon。
+// 理由:
+// - 星星是 filled shape(解析整個 icon 是重量感的一部分),不像純 outline icon 靠 stroke
+// - Field 內 Rating 跟 Avatar / Tag 並排時視覺份量要對齊,否則 row height 一致但 icon 看起來比重量不對
+// - 世界級對照:Ant Rate in Form = 20px、Material MUI Rating fontSize=inherit 預設約 24、Airbnb 評分星 24px
+//
+// 因此 Field 內 Rating icon size 對齊 **item-anatomy inline Avatar sizes**:sm=20 / md=24 / lg=24。
+// 非 icon tier(16/16/20)——star 不是次要 affordance icon,它是主要資料視覺。
+//
+// Container 高度仍對齊 `--field-height-*`(sm=28 / md=32 / lg=36),讓 Rating 可與其他
+// field-height family 元件(Input / Select)並排時 row height 對齊。
 //
 // ── 使用情境 ──
-// - **Standalone**(獨立展示評分,如商品卡 / 評論)→ 建議 `xs`(24px,對齊 Avatar / Tag sm /
-//   field-height-xs;Material / iOS canonical standalone rating 常用 24)
-// - **Field 內**(表單評分欄位)→ 跟 Field 尺寸對齊(sm / md / lg,default md)
-const SIZE_PX = { xs: 16, sm: 16, md: 16, lg: 20 } as const
+// - **Standalone**(獨立展示評分,如商品卡 / 評論)→ 預設 `xs`(container 24,icon 20,
+//   對齊 Avatar sm 20px;iOS HIG / Airbnb 商品卡星星 20-24px)
+// - **Field 內**(表單評分欄位)→ 跟 Field 尺寸對齊(sm=20 / md=24 / lg=24,default md)
+const SIZE_PX = { xs: 20, sm: 20, md: 24, lg: 24 } as const
 const CONTAINER_HEIGHT: Record<'xs' | 'sm' | 'md' | 'lg', string> = {
   xs: 'h-field-xs',
   sm: 'h-field-sm',

@@ -16,7 +16,8 @@ type PrecisionKey = 'full' | 'half'
 type ModeKey = 'interactive' | 'readOnly' | 'disabled'
 
 const SIZES: SizeKey[] = ['sm', 'md', 'lg']
-const SIZE_PX: Record<SizeKey, number> = { sm: 16, md: 20, lg: 24 }
+// 對齊 item-anatomy inline Avatar(sm=20 / md=24 / lg=24),詳見 rating.spec.md「Icon 尺寸對齊 Avatar inline」
+const SIZE_PX: Record<SizeKey, number> = { sm: 20, md: 24, lg: 24 }
 
 const SIZE_USE: Record<SizeKey, string> = {
   sm: '商品列表、搜尋結果、DataTable cell',
@@ -92,7 +93,7 @@ export const Overview = {
               ['defaultValue', 'number', '0', 'uncontrolled 預設值'],
               ['onChange', '(value: number) => void', '—', '評分改變 callback'],
               ['max', 'number', '5', '滿分星數（世界級慣例 = 5，不建議超過 7）'],
-              ['size', "'sm'|'md'|'lg'", "'md'", '尺寸，對應 icon 16/20/24 px'],
+              ['size', "'sm'|'md'|'lg'", "'md'", '尺寸,對應 star icon 20/24/24 px(對齊 inline Avatar,非 icon tier)'],
               ['precision', "'full'|'half'", "'full'", '整星 / 半星'],
               ['readOnly', 'boolean', 'false', '唯讀展示（不響應 hover/click/鍵盤）'],
               ['disabled', 'boolean', 'false', '完全停用'],
@@ -339,9 +340,10 @@ export const SizeMatrix = {
       <div>
         <H3>Size 對照</H3>
         <Desc>
-          Rating 的 size 對應 icon px(16 / 16 / 20),**對齊 Checkbox / Radio 控件尺寸**——
-          常與 Checkbox / Radio 在同一 form 出現,icon 大小對齊讓控件視覺 baseline 穩定。
-          不走 field-height family(Rating 是 pure visual indicator,高度由 icon 自然撐起)。
+          Rating 的 star icon 大小 sm=20 / md=24 / lg=24,**對齊 item-anatomy inline Avatar**——
+          Rating 是 filled identity 視覺(主要資料點),跟 Avatar 同重量才能在 row 內 visual weight 對齊。
+          Container 走 `--field-height-*`(sm=28 / md=32 / lg=36)跟 Input/Select/Button 並排時 row-align;
+          star 本身不走 icon tier(16/16/20,那是次要 affordance icon 的尺寸)。詳見 rating.spec.md。
         </Desc>
       </div>
 

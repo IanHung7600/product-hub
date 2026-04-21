@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { MoreVertical, Pencil, Copy, Trash2 } from 'lucide-react'
+import { MoreVertical, Pencil, Copy, Trash2, User, Bell, Shield } from 'lucide-react'
 import { Separator } from './separator'
 import { DescriptionList, DescriptionItem } from '@/design-system/components/DescriptionList/description-list'
 import { Button } from '@/design-system/components/Button/button'
+import { MenuItem } from '@/design-system/components/Menu/menu-item'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -27,27 +28,34 @@ const meta: Meta<typeof Separator> = {
 export default meta
 type Story = StoryObj<typeof Separator>
 
-/* ── Horizontal（預設）──────────────────────────────────────────────── */
+/* ── Horizontal(預設)──────────────────────────────────────────────── */
+// Settings page / overview panel 的分段 rows。**每個 row 消費 MenuItem**(Family 1 item-anatomy
+// 正式消費者),有 icon prefix + label + description;Separator 切出 row group 之間的視覺分段。
+// 對應 iOS Settings / Notion Workspace settings / Linear user settings canonical。
 export const Horizontal: Story = {
-  name: 'Horizontal（水平分隔）',
+  name: 'Horizontal(settings row group 分段)',
   render: () => (
-    <div className="border border-border rounded-lg p-4 max-w-md">
-      <div className="flex flex-col gap-3">
-        <div>
-          <div className="text-body font-medium">一般資訊</div>
-          <div className="text-caption text-fg-muted">姓名、Email、時區等基本資料</div>
-        </div>
-        <Separator />
-        <div>
-          <div className="text-body font-medium">通知設定</div>
-          <div className="text-caption text-fg-muted">控制 email 與推播行為</div>
-        </div>
-        <Separator />
-        <div>
-          <div className="text-body font-medium">隱私權限</div>
-          <div className="text-caption text-fg-muted">資料分享範圍</div>
-        </div>
-      </div>
+    <div className="border border-border rounded-lg max-w-md overflow-hidden">
+      <MenuItem
+        startIcon={User}
+        description="Email、時區、顯示語言"
+      >
+        帳號設定
+      </MenuItem>
+      <Separator />
+      <MenuItem
+        startIcon={Bell}
+        description="Email / 推播通知規則"
+      >
+        通知
+      </MenuItem>
+      <Separator />
+      <MenuItem
+        startIcon={Shield}
+        description="資料分享範圍、權限層級"
+      >
+        隱私
+      </MenuItem>
     </div>
   ),
 }

@@ -163,11 +163,39 @@ Tailwind：`h-tab-sm` / `h-tab-md` / `h-tab-lg`。
 
 ## Chrome Header Height
 
-應用程式 chrome 區域（Sidebar header、top bar）的高度。定義在 `globals.css`（不在 uiSize.css），因為它是佈局層級的 token，不是元件層級的。
+應用程式 chrome 區域(Sidebar header、app top bar、主內容 page header)的高度。定義在 `globals.css`(不在 uiSize.css),因為它是**佈局層級**的 token,不是元件層級。
 
 | Token | md | lg | 消費者 |
 |-------|----|----|--------|
-| `--chrome-header-height` | 48px | 56px | Sidebar header/footer、`--sidebar-width-icon` |
+| `--chrome-header-height` | 48px | 56px | Sidebar header/footer、主內容 page header、app top bar、`--sidebar-width-icon` |
+
+### Canonical 意圖(AR47,2026-04-21)
+
+**任何跨整個 app 的 chrome 區域(Sidebar header/footer、全域 top bar、主內容 page header)都用同一個 token,不自訂高度**。
+
+| ❌ 反例 | ✓ canonical |
+|---------|-------------|
+| `<header className="h-16">`(64px 硬寫) | `<header className="h-[var(--chrome-header-height)]">` |
+| Sidebar 48、top bar 56、page header 64(跨元件不一致) | 全部 `--chrome-header-height`(md=48 / lg=56),density 自動聯動 |
+
+### 為什麼 48 跟 56 是「同一個 token 不同密度」不是不一致
+
+**讀者常見誤解**:「Sidebar header 48px 但 XXX 56px → 沒共用?」
+**正解**:48 / 56 都是**同一個 `--chrome-header-height` token**,只是 **density mode 不同**:
+- 在 `<html data-density="md">`(預設)下 token resolve 到 48px
+- 在 `<html data-density="lg">` 下 token resolve 到 56px
+- 切換 density 時**整個 app 所有 chrome 高度同步變化**,不會有「Sidebar 48 但 top bar 56」的狀況
+- 若同時看到 48 與 56,**兩個消費者必須在不同 density context 下渲染**(例如 app 主區 md、某個工具區 lg) — 這是刻意的 density context 切換,不是 bug
+
+**驗證法**:在 DevTools 看兩個「似乎不一致」的 header,它們祖先 `html[data-density]` 值是否相同?
+- 相同 → 真有 bug,硬寫了數字繞過 token
+- 不同 → 其中一個元件在 density-override 情境,行為正確
+
+**為什麼 48 不 56 / 64**:
+- Material App Bar 56dp(mobile)/ 64dp(desktop);Airbnb 主站 header 80px;Shopify 64px
+- 本 DS 選 **48px @ md / 56px @ lg** 取「密集工具型產品」的下限(Linear / Figma / Notion 主 chrome 40-52px),給主內容區留更多 vertical space
+- 跟 Button-lg + Field-lg 高度(40 / 36)拉出視覺 hierarchy — chrome 高於任何 row control,但不壓迫內容
+- Density lg 模式下 56px 對齊 Material 桌面 app bar 的舒適呼吸
 
 ---
 

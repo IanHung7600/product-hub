@@ -34,7 +34,9 @@ export const CreateProjectRight: Story = {
         <SheetHeader>
           <SheetTitle>建立新專案</SheetTitle>
         </SheetHeader>
-        <SheetBody className="flex flex-col gap-4">
+        {/* Field-to-field gap = `--layout-space-tight`:此 form 含 Textarea(full-width),
+            依 `layoutSpace.spec.md` 規則 3「跟 fw 相鄰 gap 一律 tight」。不用 gap-4(loose)。 */}
+        <SheetBody className="flex flex-col gap-[var(--layout-space-tight)]">
           <Field>
             <FieldLabel>專案名稱</FieldLabel>
             <Input placeholder="例:Q2 產品路線圖" />
@@ -44,12 +46,15 @@ export const CreateProjectRight: Story = {
             <Textarea placeholder="簡述此專案的目標與範圍" rows={4} />
             <FieldDescription>選填,可在建立後補上</FieldDescription>
           </Field>
+          {/* 多選場景:初始成員權限(從設計系統中組合出 Jira / Linear 專案建立流程的典型多選欄位)
+              label 明確是「多選權限」;若要做「開 / 關通知」這種 binary toggle,用 Switch 不用 CheckboxGroup。 */}
           <Field>
-            <FieldLabel>預設通知</FieldLabel>
+            <FieldLabel>初始成員權限</FieldLabel>
+            <FieldDescription>可勾選多項,所有成員預設獲得這些權限</FieldDescription>
             <CheckboxGroup>
-              <Checkbox defaultChecked label="新任務指派給我" />
-              <Checkbox defaultChecked label="我參與的任務有新評論" />
-              <Checkbox label="每日摘要" />
+              <Checkbox defaultChecked label="檢視專案內容" />
+              <Checkbox defaultChecked label="新增與編輯任務" />
+              <Checkbox label="管理成員與設定" />
             </CheckboxGroup>
           </Field>
         </SheetBody>
@@ -75,7 +80,9 @@ export const EditUserRight: Story = {
         <SheetHeader>
           <SheetTitle>Ada Chen</SheetTitle>
         </SheetHeader>
-        <SheetBody className="flex flex-col gap-4">
+        {/* Field-to-field gap = `--layout-space-tight`:此 form 含 Textarea(full-width),
+            依 `layoutSpace.spec.md` 規則 3「跟 fw 相鄰 gap 一律 tight」。不用 gap-4(loose)。 */}
+        <SheetBody className="flex flex-col gap-[var(--layout-space-tight)]">
           <Field>
             <FieldLabel>顯示名稱</FieldLabel>
             <Input defaultValue="Ada Chen" />
@@ -89,11 +96,12 @@ export const EditUserRight: Story = {
             <Input defaultValue="ada.chen@example.com" />
           </Field>
           <Field>
-            <FieldLabel>權限</FieldLabel>
+            <FieldLabel>進階權限</FieldLabel>
+            <FieldDescription>可勾選多項</FieldDescription>
             <CheckboxGroup>
-              <Checkbox defaultChecked label="可管理成員" />
-              <Checkbox defaultChecked label="可編輯設定" />
-              <Checkbox label="可刪除專案" />
+              <Checkbox defaultChecked label="管理其他成員帳號" />
+              <Checkbox defaultChecked label="編輯工作區設定" />
+              <Checkbox label="刪除專案與資料" />
             </CheckboxGroup>
           </Field>
         </SheetBody>

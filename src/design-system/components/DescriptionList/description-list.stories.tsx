@@ -87,3 +87,39 @@ export const DetailPanel: Story = {
     </div>
   ),
 }
+
+/* ── Horizontal direction(label 左 / value 右,divided=false)──────── */
+export const Horizontal: Story = {
+  name: 'Horizontal(label ↔ value 左右對齊)',
+  render: () => (
+    <div className="border border-border rounded-lg p-4 max-w-md">
+      {/* title 到第一個 item 的間距 = item 之間間距(Gestalt proximity canonical,見 spec) */}
+      <div className="text-body font-medium mb-[var(--layout-space-tight)]">檔案資訊</div>
+      <DescriptionList direction="horizontal">
+        <DescriptionItem label="檔名">Q1-roadmap.pdf</DescriptionItem>
+        <DescriptionItem label="類型">application/pdf</DescriptionItem>
+        <DescriptionItem label="大小">2.4 MB</DescriptionItem>
+        <DescriptionItem label="修改時間">2026-04-18</DescriptionItem>
+      </DescriptionList>
+    </div>
+  ),
+}
+
+/* ── Horizontal + divided(row 下分隔線,對齊格線)──────────────────── */
+export const HorizontalDivided: Story = {
+  name: 'Horizontal + divided(FileViewer / Google Drive info panel 風格)',
+  render: () => (
+    <div className="border border-border rounded-lg p-4 max-w-md">
+      {/* title 到第一個 item 的間距 = item 之間間距(Gestalt proximity canonical,見 spec) */}
+      <div className="text-body font-medium mb-[var(--layout-space-tight)]">檔案資訊</div>
+      <DescriptionList direction="horizontal" divided>
+        <DescriptionItem label="檔名">Q1-roadmap.pdf</DescriptionItem>
+        <DescriptionItem label="類型">application/pdf</DescriptionItem>
+        <DescriptionItem label="大小">2.4 MB</DescriptionItem>
+        <DescriptionItem label="修改時間">2026-04-18 10:35</DescriptionItem>
+        <DescriptionItem label="擁有者">Ada Chen</DescriptionItem>
+        <DescriptionItem label="權限">可編輯</DescriptionItem>
+      </DescriptionList>
+    </div>
+  ),
+}

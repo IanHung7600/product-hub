@@ -20,7 +20,7 @@ import { AspectRatio } from '@/design-system/components/AspectRatio/aspect-ratio
 import { Textarea } from '@/design-system/components/Textarea/textarea'
 import { Field, FieldLabel } from '@/design-system/components/Field/field'
 import { DescriptionList, DescriptionItem } from '@/design-system/components/DescriptionList/description-list'
-import { ItemInlineAction } from '@/design-system/patterns/element-anatomy/item-anatomy'
+import { ItemInlineAction, ItemInlineActionButton } from '@/design-system/patterns/element-anatomy/item-anatomy'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -186,7 +186,8 @@ const ZoomInput: React.FC<ZoomInputProps> = ({ value, onChange, onFit }) => {
   }
 
   return (
-    <div className="inline-flex items-center gap-0.5">
+    // zoom group = toolbar 按鈕群組,`gap-2`(8px)對齊本 DS 按鈕 gap canonical。
+    <div className="inline-flex items-center gap-2">
       {/* 縮小 */}
       <Button
         variant="text"
@@ -198,42 +199,46 @@ const ZoomInput: React.FC<ZoomInputProps> = ({ value, onChange, onFit }) => {
         onClick={() => onChange(nextZoomOut(value))}
       />
 
-      {/* % input + chevron dropdown trigger(Input endAction slot 承擔 chevron) */}
+      {/* % Input + chevron 內嵌為 endSlot(ItemInlineActionButton 作 DropdownMenuTrigger):
+          — Input body 可自由打字(chevron 是 Input 內部 element,body 區域 click 不觸發 menu)
+          — Chevron 是 inline action,同時是 DropdownMenuTrigger → menu 精確 anchor 在 chevron 下方
+          — 靠 Radix asChild + ItemInlineActionButton:視覺是 Input + endAction,行為是 chevron-as-trigger
+          — 完全對齊 user AR:「只有 inline action 能觸發選單,menu 對齊 inline action」 */}
       <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
-        <DropdownMenuTrigger asChild>
-          {/* DropdownMenuTrigger asChild + Input:Radix 會把 trigger 行為綁到 Input wrapper;
-              Input 本身維持 editable。chevron 由 Input endAction 額外渲染作視覺 affordance */}
-          <Input
-            variant="bare"
-            size="sm"
-            aria-label="縮放比例"
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onBlur={commitDraft}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault()
-                commitDraft()
-                ;(e.target as HTMLInputElement).blur()
-              }
-              // Space / Enter 不可用於開啟 menu(會干擾 input 編輯)
-              // 使用者靠 chevron 按鈕開選單
-            }}
-            className="w-20 text-center tabular-nums"
-            endAction={{
-              icon: ChevronDown,
-              label: '開啟縮放選單',
-              onClick: () => setMenuOpen((o) => !o),
-            }}
-          />
-        </DropdownMenuTrigger>
+        <Input
+          size="sm"
+          autoWidth
+          aria-label="縮放比例"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={commitDraft}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              commitDraft()
+              ;(e.target as HTMLInputElement).blur()
+            }
+          }}
+          className="text-center tabular-nums"
+          endSlot={
+            <DropdownMenuTrigger asChild>
+              <ItemInlineActionButton
+                icon={ChevronDown}
+                aria-label="開啟縮放選單"
+                size="sm"
+              />
+            </DropdownMenuTrigger>
+          }
+        />
         {/* data-theme="dark":DropdownMenuContent 走 Portal 到 document body 外,
             不繼承 FileViewer 外層 data-theme="dark",需顯式打 dark 讓選單跟 chrome 一致。
             **加 bg-surface-raised 強制用 dark token**(純 data-theme attr 在 Portal 不夠,
             Tailwind 條件 class + CSS variable 都要一起帶) */}
         <DropdownMenuContent
           align="end"
-          className="w-56 bg-surface-raised text-foreground border-divider"
+          sideOffset={8}
+          // minWidth 對齊 trigger(Input autoWidth),menu 寬度 fit-content 更貼近觸發點視覺中心
+          className="min-w-[9rem] w-auto bg-surface-raised text-foreground border-divider"
           data-theme="dark"
         >
           {/* 內層 data-theme 再覆蓋一次 — 確保 DropdownMenuItem children 都 resolve dark token */}
@@ -313,7 +318,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
     <div
       className={cn(
         // Surface layer = overlay chrome(non-interactive header strip)
-        'flex items-center gap-2 shrink-0 h-14 bg-surface border-b border-divider',
+        'flex items-center gap-2 shrink-0 h-[var(--chrome-header-height)] bg-surface border-b border-divider',
         'px-[var(--layout-space-loose)]',
       )}
     >
@@ -332,8 +337,13 @@ const Toolbar: React.FC<ToolbarProps> = ({
 
       {/* 按鈕順序 canonical:zoom → info → download → close(影響力遞增)
           action-bar 三分區:zoom(data op)/ info+download(action group)/ close(dismiss)
-          dismiss 前分隔線 = action-bar「dismiss 跟動作分群」canonical */}
-      <div className="flex items-center gap-1 shrink-0">
+          dismiss 前分隔線 = action-bar「dismiss 跟動作分群」canonical
+
+          ── gap-2 canonical(2026-04-21 follow-up)──
+          按鈕間距 **8px**(gap-2),對齊 Dialog footer `gap-2` / CLAUDE 按鈕間距 SSOT。
+          zoom group 內部例外 gap-0.5(見 ZoomInput) — 那是「連緊 segmented pill」語意,
+          跟這裡 action-group-to-action-group 的 gap-2 不同層級。 */}
+      <div className="flex items-center gap-2 shrink-0">
         {capabilities.zoom && (
           <>
             {/* Zoom group:-/%/+/▼ 屬同類「縮放」操作,群組並在右側加分隔線跟其他動作分群 */}
@@ -425,10 +435,10 @@ const InfoPanel: React.FC<InfoPanelProps> = ({
       )}
       aria-label="檔案詳細資訊"
     >
-      {/* Panel header — 與 Toolbar 等高(h-14),視覺一致 */}
+      {/* Panel header — 與 Toolbar 等高(h-[var(--chrome-header-height)]),視覺一致 */}
       <div
         className={cn(
-          'flex items-center justify-between gap-2 shrink-0 h-14 border-b border-divider',
+          'flex items-center justify-between gap-2 shrink-0 h-[var(--chrome-header-height)] border-b border-divider',
           'px-[var(--layout-space-loose)]',
         )}
       >
@@ -471,7 +481,8 @@ const InfoPanel: React.FC<InfoPanelProps> = ({
             - DescriptionList direction="horizontal" divided 提供 row 下底線
               對齊格線,key 長度不一也易讀
             - 不再手刻 dl/dt/dd — canonical 由 DS primitive own */}
-        <div className="flex flex-col gap-2">
+        {/* heading → first-item gap = item → item gap(Gestalt proximity,見 description-list.spec.md) */}
+        <div className="flex flex-col gap-[var(--layout-space-tight)]">
           <span className="text-body font-normal text-foreground">檔案資訊</span>
           <DescriptionList direction="horizontal" divided>
             <DescriptionItem label="檔名">{file.name}</DescriptionItem>
@@ -788,7 +799,8 @@ const FileViewer: React.FC<FileViewerProps> = ({
           // 避免 Radix 自動把焦點送進 Content 的第一個 tabbable —— 我們要留給 viewport
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
-          {/* 鎖 dark subtree — viewer chrome 永遠暗色氛圍(對齊 Tooltip pattern)*/}
+          {/* 鎖 dark subtree。Density 繼承 page(不另設 data-density)。
+              header 高度透過 `--chrome-header-height` 自動 density-aware(md=48 / lg=56)。 */}
           <div
             data-theme="dark"
             className="w-full h-full flex flex-col bg-canvas text-foreground"

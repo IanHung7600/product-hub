@@ -125,9 +125,11 @@ interface TimeColumnProps {
   disabledSet?: Set<number>
   label: string
   onSelect: (value: number) => void
+  /** 右側是否加分隔線(對齊 ref/timepicker.png 多欄之間用 border-r 分隔) */
+  withDivider?: boolean
 }
 
-function TimeColumn({ values, selected, disabledSet, label, onSelect }: TimeColumnProps) {
+function TimeColumn({ values, selected, disabledSet, label, onSelect, withDivider }: TimeColumnProps) {
   const listRef = React.useRef<HTMLUListElement>(null)
 
   // 打開時滾到 selected 位置(在 ScrollArea viewport 中置中)
@@ -144,13 +146,17 @@ function TimeColumn({ values, selected, disabledSet, label, onSelect }: TimeColu
   }, [values, selected])
 
   return (
-    // flex-1 讓三欄均分父層寬度(不再 w-14 固定);ScrollArea 跨 OS 一致 overlay 捲軸
-    <ScrollArea className="flex-1 h-[216px]">
+    // flex-1 均分 panel 寬度;withDivider 時右側加 border-r 分隔(對齊 ref 多欄樣式)
+    <ScrollArea
+      className={cn('flex-1 h-[216px]', withDivider && 'border-r border-divider')}
+    >
       <ul
         ref={listRef}
         role="listbox"
         aria-label={label}
-        className="flex flex-col px-1"
+        // `py-2` (8px 上下 padding):對齊 SelectMenu CommandGroup canonical(select-menu.tsx line 261, 296)——
+        // 無分組時整個 listbox 上下 8px 呼吸;items 填滿欄寬(無水平 padding,對齊 ref SelectMenu 風格)。
+        className="flex flex-col py-2"
       >
         {values.map((v) => {
           const isSelected = v === selected
@@ -163,9 +169,10 @@ function TimeColumn({ values, selected, disabledSet, label, onSelect }: TimeColu
                 onClick={() => onSelect(v)}
                 className={cn(
                   // h-field-sm 對齊 DatePicker date cell(28/32px 統一 field-sm,user AR11)
+                  // **無 rounded** — item 填滿欄寬(對齊 ref 圖 SelectMenu 樣式,column-wide hover/selected)
                   'w-full h-field-sm text-body tabular-nums',
                   'flex items-center justify-center',
-                  'rounded-md cursor-pointer transition-colors',
+                  'cursor-pointer transition-colors',
                   'hover:bg-neutral-hover',
                   // selected 走 bg-neutral-selected 對齊 SelectMenu canonical
                   // (TimePicker 選項是「列表選中」語意 — 跟 SelectMenu / MenuItem 一致;
@@ -383,17 +390,18 @@ const TimePicker = React.forwardRef<HTMLButtonElement, TimePickerProps>(
           </button>
         </PopoverTrigger>
         <PopoverContent className="w-auto p-0" align="start">
-          <div className="flex flex-col w-56">
-            {/* Column picker:三欄 flex-1 均分。**拿掉 `:` 分隔 element**(AR8 user 反饋:
-                對齊方式怪;Ant TimePicker 也不加 `:` 間隔 — 靠 column 自身間距即可)。
-                gap-1 輕微區隔 columns */}
-            <div className="flex items-stretch gap-1 px-[var(--layout-space-tight)] pt-[var(--layout-space-tight)]">
+          {/* Panel 對齊 ref/timepicker.png:2-3 個 SelectMenu 式欄位並排,分隔線分開,
+              欄均分 panel 寬度。Panel width 依欄數:2 欄 w-40(160px)/ 3 欄 w-60(240px) */}
+          <div className={cn('flex flex-col', showSeconds ? 'w-60' : 'w-40')}>
+            {/* Column picker:flex-1 均分,**每欄之間用 border-r 分隔線**(對齊 ref 圖) */}
+            <div className="flex items-stretch">
               <TimeColumn
                 label="hours"
                 values={hourValues}
                 selected={draft.h}
                 disabledSet={disabledSets.hours}
                 onSelect={(h) => commitDraft({ ...draft, h })}
+                withDivider
               />
               <TimeColumn
                 label="minutes"
@@ -401,6 +409,7 @@ const TimePicker = React.forwardRef<HTMLButtonElement, TimePickerProps>(
                 selected={draft.m}
                 disabledSet={disabledSets.minutes}
                 onSelect={(m) => commitDraft({ ...draft, m })}
+                withDivider={showSeconds}
               />
               {showSeconds && (
                 <TimeColumn

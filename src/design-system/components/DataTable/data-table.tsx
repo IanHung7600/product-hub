@@ -148,16 +148,25 @@ function DataTableInner<TData>(
 
   const virtualizer = useVirtualizer({
     count: useVirtual ? rows.length : 0,
-    getScrollElement: () => bodyRef.current,
+    // V scroll 現在在 centerBodyRef(不是外層 bodyRef)
+    getScrollElement: () => centerBodyRef.current,
     estimateSize: () => estimateRowHeight,
     overscan, enabled: useVirtual,
   })
 
-  // JS scroll sync: center-body scrollLeft → center-header scrollLeft
+  // JS scroll sync(AR44 user-reported UX fix):
+  // 原本 V scroll 在 body-viewport(外層),center-body H scroll 於其內部底部 = 所有 row 都 render 下方。
+  // Virtualized 1800px 內容 → H scrollbar 在 1800px 下方,user 必須 V-scroll 到底才看見 → UX bug。
+  // **現在 V scroll 移到各 region 自己(left / center / right 分別)**,三者 scrollTop JS 同步;
+  // H scroll 仍在 center-body,但因 center-body 現在有自己的 maxHeight,H scrollbar 落在 visible 視窗底部 → user 一眼看到。
+  const leftBodyRef = React.useRef<HTMLDivElement>(null)
+  const rightBodyRef = React.useRef<HTMLDivElement>(null)
   const onCenterBodyScroll = React.useCallback(() => {
-    if (centerHeaderRef.current && centerBodyRef.current) {
-      centerHeaderRef.current.scrollLeft = centerBodyRef.current.scrollLeft
-    }
+    const cb = centerBodyRef.current
+    if (!cb) return
+    if (centerHeaderRef.current) centerHeaderRef.current.scrollLeft = cb.scrollLeft
+    if (leftBodyRef.current) leftBodyRef.current.scrollTop = cb.scrollTop
+    if (rightBodyRef.current) rightBodyRef.current.scrollTop = cb.scrollTop
   }, [])
 
   // 三區域欄位
@@ -312,17 +321,27 @@ function DataTableInner<TData>(
       )
     }
 
+    // AR44 canonical(2026-04-21):virtual / non-virtual 都用 `minWidth: colsWidth` 的 wrapper,
+    // 讓兩種 rendering path 的 **水平 overflow 行為一致** — 中段 column 區塊都會因
+    // columns 實際寬度超過 centerBody 可用寬而觸發 H scrollbar。
+    // 先前 non-virtual 走 `<>...</>`(無 wrapper),依靠 row 內 cells 自然寬推擠容器,
+    // 跟 virtual 的 `minWidth: containerWidth` 行為不同,造成 story 1 / story 2 看起來水平
+    // 捲軸出現時機不一致。現在統一靠 wrapper 的 minWidth 強制 overflow。
+    const colsWidth = cols.reduce((a, c) => a + c.getSize(), 0)
+    const containerWidth = regionWidth || colsWidth
+
     if (useVirtual) {
-      const colsWidth = cols.reduce((a, c) => a + c.getSize(), 0)
-      // 用 header 量測的寬度（包含 actions 佔位），或 fallback 到 column 寬度合計
-      const containerWidth = regionWidth || colsWidth
       return (
         <div style={{ height: virtualizer.getTotalSize(), position: 'relative', minWidth: containerWidth }}>
           {virtualizer.getVirtualItems().map(vr => rowEl(rows[vr.index], vr.index, { virtual: true, start: vr.start, isLast: vr.index === rows.length - 1 }))}
         </div>
       )
     }
-    return <>{rows.map((row, i) => rowEl(row, i, { isLast: i === rows.length - 1 }))}</>
+    return (
+      <div style={{ minWidth: containerWidth }}>
+        {rows.map((row, i) => rowEl(row, i, { isLast: i === rows.length - 1 }))}
+      </div>
+    )
   }
 
   return (
@@ -340,7 +359,14 @@ function DataTableInner<TData>(
             {renderHeaderRow(leftCols, false)}
           </div>
         )}
-        <div ref={centerHeaderRef} className="flex-1 min-w-0 overflow-hidden">
+        {/* Header 的 center 區保持 overflow-hidden(非 scroll)—— body 的 center 才有 scroll,
+            header 靠 JS 同步 scrollLeft(見 onCenterBodyScroll)。這樣不會出現雙 scrollbar。
+            為了視覺對齊 body 的 scroll gutter,此處 scrollbar-gutter: stable */}
+        <div
+          ref={centerHeaderRef}
+          className="flex-1 min-w-0 overflow-hidden"
+          style={{ scrollbarGutter: 'stable' }}
+        >
           <div className="w-max min-w-full">
             {renderHeaderRow(centerCols, false)}
           </div>
@@ -352,20 +378,44 @@ function DataTableInner<TData>(
         )}
       </div>
 
-      {/* ══ BODY（唯一的垂直 scroll container）══ */}
-      <div ref={bodyRef} className="flex items-start" style={hasHeightConstraint ? { maxHeight: height, overflowY: 'auto' } : undefined}>
+      {/* ══ BODY(AG Grid 流派:各 region 自己 V scroll + JS 同步)══
+           AR44 user-reported UX fix:H scrollbar 現在落在 center-body 的 visible 底部(不是 1800px 內容底部)。
+           三個 region(left / center / right)各自 maxHeight + overflowY,JS 同步 scrollTop。
+           Pinned 區 overflow-y:hidden(看不到自己的 V scrollbar),V scroll 真正發生在 center。 */}
+      <div ref={bodyRef} className="flex items-start">
         {hasLeft && (
-          <div className="shrink-0 overflow-hidden border-r border-divider" style={leftWidth ? { width: leftWidth } : undefined}>
+          <div
+            ref={leftBodyRef}
+            className="shrink-0 overflow-hidden border-r border-divider"
+            style={{
+              width: leftWidth || undefined,
+              ...(hasHeightConstraint ? { maxHeight: height } : {}),
+            }}
+          >
             {renderBodyRows(leftCols, false, false, leftWidth)}
           </div>
         )}
-        <div ref={centerBodyRef} className="flex-1 min-w-0 overflow-x-auto overflow-y-hidden" onScroll={onCenterBodyScroll}>
+        <div
+          ref={centerBodyRef}
+          // Center body 同時擁有 H + V scroll;maxHeight 限制讓 H scrollbar 落在 visible 底部
+          data-datatable-hscroll
+          className="flex-1 min-w-0 overflow-x-scroll overflow-y-auto"
+          style={hasHeightConstraint ? { maxHeight: height } : undefined}
+          onScroll={onCenterBodyScroll}
+        >
           <div className="w-max min-w-full">
             {renderBodyRows(centerCols, true, false)}
           </div>
         </div>
         {hasRight && (
-          <div className="shrink-0 overflow-hidden border-l border-divider" style={rightWidth ? { width: rightWidth } : undefined}>
+          <div
+            ref={rightBodyRef}
+            className="shrink-0 overflow-hidden border-l border-divider"
+            style={{
+              width: rightWidth || undefined,
+              ...(hasHeightConstraint ? { maxHeight: height } : {}),
+            }}
+          >
             {renderBodyRows(rightCols, false, true, rightWidth)}
           </div>
         )}

@@ -12,11 +12,53 @@ CheckboxGroup 是**多選 Checkbox 的 layout primitive**——封裝 role="grou
 
 ## 為什麼需要此 primitive
 
-Checkbox 有 `label` prop → 內部自動包 SelectionItem(row 結構)。SelectionItem 的**垂直 padding 公式** = `(field-height - 1lh) / 2`,已經擁有 row 間距。
+Checkbox 有 `label` prop → 內部自動包 SelectionItem(row 結構)。SelectionItem 的**垂直 padding 公式** = `(field-height - 1lh) / 2` ≈ 5.5px 各邊 @ md(7.5px @ lg),讓「單行高度 = field-height」且 **row 堆疊時自然有 2×py 的視覺呼吸**。
 
-**歷史 bug**:consumer 在外層包 `<div className="flex flex-col gap-2">` → 外 gap + 內 py 雙重 padding → 超出 canonical,行與行之間過寬。此問題在本 session 反覆發生,canonical 只存在於 Checkbox spec 內,consumer 不看就錯。
+## Canonical 鐵律(2026-04-21 定版)
 
-**此 primitive codify 正確 layout**:consumer 只用 `<CheckboxGroup>` 包住 Checkbox,不需要記間距規則。
+**垂直 CheckboxGroup 的 item 之間沒有外部 gap**。
+
+```
+正確:  <CheckboxGroup>              (grid 無 gap,靠 SelectionItem py)
+         <Checkbox label="A" />      ← py 上下各 5.5-7.5px
+         <Checkbox label="B" />      ← 相鄰 row 自然呼吸
+       </CheckboxGroup>
+
+錯誤:  <CheckboxGroup className="gap-2">         ← double padding
+       <div className="space-y-2"><Checkbox />  ← 外層包裝 gap
+       consumer 外層再加 margin                    ← 違反
+```
+
+### 為什麼 zero gap
+
+SelectionItem 的 py 公式已經保證:
+1. 單行 checkbox 高度 = field-height(對齊 Input 高度,row align)
+2. 多行堆疊時相鄰 row 的 py 各自擴散 = 2×py 真實視覺呼吸空間(10-16px @ density md-lg)
+3. Density 切換時 py 公式自動跟 field-height 縮放,間距等比例變化
+
+外加 gap 會 double-padding 導致視覺斷裂。
+
+### 世界級對照
+
+- **Atlassian AkSelect / Checkbox group**:row 間距由 item 自身 py 擁有,group 無 gap
+- **Radix UI RadioGroup**:`RadioGroup.Root` 預設 `grid`,無 gap
+- **Ant Design Checkbox.Group** vertical:row 間距由 Checkbox 自身 line-height + margin 擁有
+- **Chakra UI CheckboxGroup**:spacing prop 可選(預設 0),依賴 Checkbox 自帶 line-height
+
+**流派:row 高度定義 gap,不加外部 gap** —— 本 DS 採此。
+
+### 本 session 歷史錯誤(警惕)
+
+2026-04-20 ~ 04-21 此問題在本 session 反覆 4 次:
+1. 早期 consumer 手工 `<div className="gap-2">` → double padding
+2. 引入 CheckboxGroup primitive,忘記說清楚 zero gap
+3. 誤加 `gap-y-1` 想「補呼吸」—— 根因其實是 Checkbox 在 Field context 誤吞 label(見 #2 的根因),label 消失才造成「黏在一起」錯覺
+4. 修正 Checkbox label bug + 徹底 revert gap-y-1 → 回歸 zero gap canonical
+
+**避免再犯的機制**(2026-04-21 codify):
+- CheckboxGroup / RadioGroup.tsx docblock 直接寫死「zero gap」canonical
+- Checkbox.tsx 加 CheckboxGroupContext 偵測,group 內 Checkbox 永遠保留 label
+- 此 spec 與 `radio-group.spec.md` 互相指 reciprocal pointer
 
 ---
 
@@ -41,11 +83,8 @@ Checkbox 有 `label` prop → 內部自動包 SelectionItem(row 結構)。Select
 
 | 值 | Layout | 典型場景 |
 |---|---|---|
-| `vertical`(預設) | `grid`(垂直堆疊,row 間距由 SelectionItem 公式擁有) | 篩選條件列表、偏好設定、權限組 |
+| `vertical`(預設) | `grid`(無 gap,row 間距由 SelectionItem py 公式獨家擁有) | 篩選條件列表、偏好設定、權限組 |
 | `horizontal` | `flex flex-wrap gap-4` | 短 label 並排(Email / Push / SMS、工作日勾選) |
-
-**為什麼 vertical 不需要 external gap**:
-SelectionItem 內部 `py-[calc((field-height-md - 1lh) / 2)]` ≈ 6-8px 各邊,相鄰 row 自然有 12-16px 呼吸空間,這就是 canonical。加 `gap-2` 外層會疊成 20-24px,過鬆。
 
 **為什麼 horizontal 需要 gap-4**:
 水平排列時 label 緊貼自己的 Checkbox,row 的 py 不會「擴散」到左右。`gap-4`(16px)給 Checkbox 水平視覺分隔,對齊 Material / Polaris horizontal checkbox group 慣例。

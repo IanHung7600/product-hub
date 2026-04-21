@@ -31,6 +31,11 @@
     { "id": "design-system-internal-dategrid-展示--range", "file": "dategrid-range.png" },
     { "id": "design-system-internal-dategrid-展示--single", "file": "dategrid-single.png" },
 
-    { "id": "design-system-components-badge-設計原則--placement-rule", "file": "badge-placement.png" }
+    { "id": "design-system-components-badge-設計原則--placement-rule", "file": "badge-placement.png" },
+
+    { "id": "design-system-components-datatable-展示--pinned-columns", "file": "datatable-pinned.png" },
+
+    { "id": "design-system-components-sheet-展示--create-project-right", "file": "sheet-create-project.png" },
+    { "id": "design-system-components-sheet-展示--edit-user-right", "file": "sheet-edit-user.png" }
   ]
 }

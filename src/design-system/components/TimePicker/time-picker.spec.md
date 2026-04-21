@@ -113,13 +113,38 @@ Panel 展開後的 column picker 結構:
 
 對齊 SelectMenu / MenuItem 的好處:consumer 看 TimePicker 面板知道這是「選一個項目」,跟 Select 下拉選單認知一致(Ant Design TimePicker panel 同樣採 neutral selected)。
 
-### Spacing + 結構(2026-04-21 canonical)
+### Spacing + 結構(2026-04-21 canonical,2026-04-21 window width 修正)
 
 - Panel 內 padding = `--layout-space-tight`(12px @ md density)
-- **三欄(時 / 分 / 秒)`flex-1` 均分父層寬度**(Panel `w-56` = 224px,三欄各 ~66px),**不再 w-14 / w-16 固定**。分隔「:」shrink-0 w-3 不吃 slot 空間
+- **三欄(時 / 分 / 秒)各欄 `w-12`(48px)固定,非 flex-1 均分**(對齊 Ant / Google 世界級慣例)。**分隔「:」移除**(AR8 canonical — Ant TimePicker / Google Calendar 同樣不加 `:`,靠 column 間距自明)
 - Scrollable list 用 **`<ScrollArea>`**(對齊 DS 跨 OS 一致 overlay 捲軸 canonical);不 raw `overflow-y-auto`
-- 每 item **`h-9`(36px)對齊 DatePicker date cell**(跨 picker 視覺一致)
-- List 高 `h-[216px]`(容納 6 個 item 置中)
+- 每 item **`h-field-sm`(28px @ md / 32px @ lg)對齊 DatePicker date cell**(跨 picker 視覺一致)
+- List 高 `h-[216px]`(容納約 7 個 item 置中)
+
+### Panel 寬度 content-driven(AR42 修正,2026-04-21)
+
+**每欄 w-12(48px)固定,Panel 寬度隨 showSeconds 動態變化**:
+
+| 模式 | 欄數 | Panel 寬(含 padding + gap) |
+|------|------|---------------------------|
+| HH:mm(預設)| 2 欄 | `2 × 48 + gap-1 × 1 + px × 2` ≈ 48×2 + 4 + 24 = **124px** |
+| HH:mm:ss(showSeconds=true)| 3 欄 | `3 × 48 + gap-1 × 2 + px × 2` ≈ 48×3 + 8 + 24 = **176px** |
+
+**世界級對照**:
+- Ant Design TimePicker:每欄 ~56px,3 欄 ~170px(Panel 含 footer)
+- Google Calendar Quick-Time:~150-170px
+- Material 3 TimePicker dial:~180px(含 AM/PM)
+- 本 DS:每欄 48px,2 欄 ~124px / 3 欄 ~176px,**符合世界級緊湊節奏**
+
+**為什麼每欄 48px 不 56 / 64**:
+- 48px = `h-field-sm × 1.7`,兩位數字 `tabular-nums`(約 16-18px 寬)+ 左右呼吸 ~15px。不貼邊也不浪費
+- 56-64px 會讓 column list 看起來過寬,像 Select menu 而非 picker
+- Ant 56 / 本 DS 48 差異在:Ant 的 item 有圓角 button 佔寬,本 DS 走 `rounded-md` `text-center`,視覺 48px 不擠
+
+**showSeconds 切換時 panel 寬度會跟著變**(刻意):
+- 對齊 Ant 慣例(content-driven)
+- showSeconds=false 的 panel 本就應該更窄,兩欄 + 大量留白會顯得 panel 空洞
+- Popover position 受 side / align / collisionPadding 控制,寬度變化只移動 panel 位置不影響 anchor 關係
 
 ---
 
