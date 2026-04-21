@@ -63,7 +63,8 @@ SheetOverlay.displayName = SheetPrimitive.Overlay.displayName
 const sheetVariants = cva(
   // 核心容器 — 無 padding(由 SheetBody / SheetHeader / SheetFooter 自理 padding,
   // 對齊 overlay-surface pattern + Dialog canonical)
-  "fixed z-50 flex flex-col bg-surface-raised shadow-[var(--elevation-200)] transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
+  // Animation canonical:300ms 雙向一致(D4 audit:500ms 太久 sluggish)+ motion-reduce 豁免
+  "fixed z-50 flex flex-col bg-surface-raised shadow-[var(--elevation-200)] transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-300 motion-reduce:transition-none motion-reduce:data-[state=open]:duration-0 motion-reduce:data-[state=closed]:duration-0",
   {
     variants: {
       side: {

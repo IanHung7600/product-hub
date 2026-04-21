@@ -121,22 +121,37 @@ const Carousel = React.forwardRef<
       else if (e.key === 'ArrowRight') { e.preventDefault(); scrollNext() }
     }
 
+    const contextValue = React.useMemo(
+      () => ({
+        carouselRef,
+        api,
+        opts,
+        orientation,
+        scrollPrev,
+        scrollNext,
+        scrollTo,
+        canScrollPrev,
+        canScrollNext,
+        selectedIndex,
+        scrollSnaps,
+      }),
+      [
+        carouselRef,
+        api,
+        opts,
+        orientation,
+        scrollPrev,
+        scrollNext,
+        scrollTo,
+        canScrollPrev,
+        canScrollNext,
+        selectedIndex,
+        scrollSnaps,
+      ]
+    )
+
     return (
-      <CarouselContext.Provider
-        value={{
-          carouselRef,
-          api,
-          opts,
-          orientation,
-          scrollPrev,
-          scrollNext,
-          scrollTo,
-          canScrollPrev,
-          canScrollNext,
-          selectedIndex,
-          scrollSnaps,
-        }}
-      >
+      <CarouselContext.Provider value={contextValue}>
         <div
           ref={ref}
           onKeyDownCapture={handleKeyDown}

@@ -79,8 +79,13 @@ const Tabs = React.forwardRef<
     [isControlled, onValueChange]
   )
 
+  const valueContext = React.useMemo(
+    () => ({ value: currentValue, onValueChange: handleValueChange }),
+    [currentValue, handleValueChange]
+  )
+
   return (
-    <TabsValueContext.Provider value={{ value: currentValue, onValueChange: handleValueChange }}>
+    <TabsValueContext.Provider value={valueContext}>
       <TabsPrimitive.Root
         ref={ref}
         value={currentValue}
@@ -119,9 +124,10 @@ const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
   TabsListProps
 >(({ className, size = 'md', overflow = 'none', children, ...props }, ref) => {
+  const tabsSizeContext = React.useMemo(() => ({ size }), [size])
   if (overflow === 'scroll') {
     return (
-      <TabsContext.Provider value={{ size }}>
+      <TabsContext.Provider value={tabsSizeContext}>
         <ScrollTabsList ref={ref} className={className} {...props}>
           {children}
         </ScrollTabsList>
@@ -130,7 +136,7 @@ const TabsList = React.forwardRef<
   }
   if (overflow === 'menu') {
     return (
-      <TabsContext.Provider value={{ size }}>
+      <TabsContext.Provider value={tabsSizeContext}>
         <MenuTabsList ref={ref} className={className} {...props}>
           {children}
         </MenuTabsList>
@@ -139,7 +145,7 @@ const TabsList = React.forwardRef<
   }
   // none（預設）
   return (
-    <TabsContext.Provider value={{ size }}>
+    <TabsContext.Provider value={tabsSizeContext}>
       <TabsPrimitive.List
         ref={ref}
         className={cn(TABS_LIST_BASE, 'w-fit', className)}

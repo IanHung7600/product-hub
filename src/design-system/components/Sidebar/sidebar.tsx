@@ -223,9 +223,13 @@ const SidebarProvider = React.forwardRef<
     // true:opt-in CSS `:has()` auto-detect,混用時套用、不混用零成本(school B,Notion 慣例)
     const slotStyle = getUniformPrefixSlotStyle(size)
     const slotValue = slotStyle["--item-prefix-slot" as keyof typeof slotStyle]
-    const wrapperStyle: React.CSSProperties = uniformPrefix
-      ? ({ "--mixed-prefix-slot": slotValue, ...style } as React.CSSProperties)
-      : (style ?? {})
+    const wrapperStyle = React.useMemo<React.CSSProperties>(
+      () =>
+        uniformPrefix
+          ? ({ "--mixed-prefix-slot": slotValue, ...style } as React.CSSProperties)
+          : (style ?? {}),
+      [uniformPrefix, slotValue, style]
+    )
 
     return (
       <SidebarContext.Provider value={contextValue}>
