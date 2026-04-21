@@ -48,7 +48,7 @@ export const Overview: Story = {
 }
 
 export const ColorMatrix: Story = {
-  name: '2. 色彩對照表',
+  name: '3. 色彩對照表',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
@@ -93,7 +93,7 @@ export const ColorMatrix: Story = {
 }
 
 export const StateBehavior: Story = {
-  name: '3. 狀態行為',
+  name: '5. 狀態行為',
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
