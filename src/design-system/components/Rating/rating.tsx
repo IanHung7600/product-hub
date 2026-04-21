@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Star, type LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useFieldContext } from '@/design-system/components/Field/field-context'
 
 /**
  * Rating — 星星評分元件
@@ -74,7 +75,7 @@ const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
       defaultValue = 0,
       onChange,
       max = 5,
-      size = 'md',
+      size: sizeProp,
       precision = 'full',
       readOnly = false,
       disabled = false,
@@ -84,6 +85,15 @@ const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
     },
     ref,
   ) => {
+    // Context-aware default size(AR31 canonical):
+    //   - Field 內(有 FieldContext.size) → 跟 Field size 對齊(sm / md / lg)
+    //   - Standalone(無 Field context) → default `xs`(24px,對齊 Avatar / Tag sm / iOS HIG standalone)
+    // consumer 可傳 size 顯式 override。世界級對照:Material Rating standalone 24dp、
+    // Ant Rate in Form 跟 Form.itemSize,standalone 24px。
+    const fieldCtx = useFieldContext()
+    const fieldSize = fieldCtx?.size as ('sm' | 'md' | 'lg' | undefined)
+    const size: 'xs' | 'sm' | 'md' | 'lg' =
+      sizeProp ?? fieldSize ?? 'xs'
     const [internalValue, setInternalValue] = React.useState(defaultValue)
     const [hoverValue, setHoverValue] = React.useState<number | null>(null)
     const isControlled = value !== undefined
