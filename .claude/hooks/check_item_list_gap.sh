@@ -6,7 +6,7 @@
 #   Permanent flush full-width / transparent → 0 gap 合法(靠 border-b / progress bar / separator)
 #
 #   FileItem rich    → permanent border card → standalone → 必 gap-2
-#   FileItem compact no status(Type B form attachment) → permanent bg-neutral-3 pill → 必 gap-1
+#   FileItem compact no status(Type B form attachment) → permanent bg-secondary pill → 必 gap-1
 #   FileItem compact with status(Type A upload manager) → flush + progress bar 分隔線型 → 0 gap 合法
 #
 # 檢查 patterns(scope: FileItem MVP,未來可擴其他 standalone card 類元件):
@@ -90,7 +90,7 @@ while IFS= read -r LINE || [ -n "$LINE" ]; do
 ────────────────────────────────
 [P2 list wrapper 加外框] ${FILE_PATH}:${ROW}
   > $(echo "$LINE" | sed 's/^[[:space:]]*//' | cut -c1-120)
-  修法: FileItem rich 自帶 border card、compact 自帶 bg-neutral-3(Type B)或 progress bar(Type A)。
+  修法: FileItem rich 自帶 border card、compact 自帶 bg-secondary(Type B)或 progress bar(Type A)。
         list wrapper **不應**再加 border / rounded-lg / overflow-hidden。
         (overflow-hidden 會強制邊框合併、雙重外框破壞 card 自立)
         改用:<div className=\"flex flex-col [gap-*]\">
@@ -111,7 +111,7 @@ while IFS= read -r LINE || [ -n "$LINE" ]; do
   > $(echo "$LINE" | sed 's/^[[:space:]]*//' | cut -c1-120)
   判斷: FileItem 依 mode / status 有不同 gap 需求:
           rich(任何 status)        → standalone card → 必 gap-2
-          compact + 無 status(Type B) → standalone pill(bg-neutral-3)→ 必 gap-1
+          compact + 無 status(Type B) → standalone pill(bg-secondary)→ 必 gap-1
           compact + 有 status(Type A) → flush + progress bar 分隔線 → 0 gap 合法
         若此處是 Type A(compact 上傳狀態,progress bar 作分隔)→ 合法,可忽略。
         若是 rich / Type B → 補 gap-2 / gap-1。

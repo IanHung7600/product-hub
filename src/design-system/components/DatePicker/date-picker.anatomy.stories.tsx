@@ -825,7 +825,7 @@ export const CalendarTokens = {
                   <tr>
                     <Td>disabled</Td>
                     <Td>灰底圓圈 + 淺灰字</Td>
-                    <Td mono>bg-neutral-2 · rounded-full · text-fg-disabled</Td>
+                    <Td mono>bg-disabled · rounded-full · text-fg-disabled</Td>
                     <Td>與 outside month 視覺略有區隔</Td>
                   </tr>
                   <tr>
@@ -837,7 +837,7 @@ export const CalendarTokens = {
                   <tr>
                     <Td>range track(中間日期)</Td>
                     <Td>灰底矩形橫條</Td>
-                    <Td mono>bg-neutral-2(day 容器層)</Td>
+                    <Td mono>bg-[var(--color-neutral-3)](day 容器層)</Td>
                     <Td>與端點圓接縫形成連續 bar</Td>
                   </tr>
                   <tr>

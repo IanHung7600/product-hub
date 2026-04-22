@@ -1,7 +1,9 @@
+import * as React from 'react'
 import type { Meta } from '@storybook/react'
 import { Trash2 } from 'lucide-react'
 import { FileItem } from './file-item'
 import { Button } from '@/design-system/components/Button/button'
+import { FileViewer, type FileInfo } from '@/design-system/components/FileViewer/file-viewer'
 
 // 錯誤 description 範例(含 clickable "View log"):consumer 自由 ReactNode,通常用底線 link 表 clickable
 const errorDescWithLog = (
@@ -105,22 +107,83 @@ export const HoverSwap = {
   ),
 }
 
+// ── FileViewer 真實整合 —— Clickable story 用 ──
+// onClick 打開 FileViewer,預設用 picsum 圖片模擬 preview(real-world consumer
+// 會用實際檔案 blob url / CDN url)。
+const attachmentFiles: FileInfo[] = [
+  {
+    id: 'attach-1',
+    url: 'https://picsum.photos/seed/report-pdf/1200/800',
+    name: '報告.pdf',
+    mimeType: 'application/pdf',
+    size: 2_400_000,
+    description: '2.3 MB',
+  },
+  {
+    id: 'attach-2',
+    url: 'https://picsum.photos/seed/contract-docx/1200/800',
+    name: '合約附件.docx',
+    mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    size: 1_100_000,
+    description: '1.1 MB',
+  },
+  {
+    id: 'attach-3',
+    url: 'https://picsum.photos/seed/data-csv/1200/800',
+    name: 'data.csv',
+    mimeType: 'text/csv',
+    size: 48_000,
+  },
+  {
+    id: 'attach-4',
+    url: 'https://picsum.photos/seed/backup-json/1200/800',
+    name: 'backup.json',
+    mimeType: 'application/json',
+    size: 320_000,
+  },
+]
+
 export const Clickable = {
   name: '已上傳(Type B form attachment — click 開 FileViewer)',
-  render: () => (
-    // Type B form attachment(無 status,無 progress bar,已上傳完的舊附件)
-    // 整 row clickable(consumer 決定:通常 FileViewer 開檔預覽 / 或直接下載)
-    // compact 自帶 bg-neutral-3 靜態底色 / rich 自帶 border card → list wrapper 無外框
-    // 混用 rich + compact 用 `gap-2`(取 rich 最大 gap 保守)
-    <div className="flex flex-col gap-2 max-w-md">
-      <FileItem mode="rich" name="報告.pdf" description="2.3 MB"
-        thumbnailSrc="https://i.pravatar.cc/80?u=doc" onClick={noop} actions={deleteBtn} />
-      <FileItem mode="rich" name="合約附件.docx" description="1.1 MB"
-        thumbnailSrc="https://i.pravatar.cc/80?u=contract" onClick={noop} actions={deleteBtn} />
-      <FileItem mode="compact" name="data.csv" onClick={noop} actions={deleteBtnXs} />
-      <FileItem mode="compact" name="backup.json" onClick={noop} actions={deleteBtnXs} />
-    </div>
-  ),
+  render: () => {
+    // Real FileViewer wiring:click → 打開 FileViewer at 對應 index
+    const [open, setOpen] = React.useState(false)
+    const [index, setIndex] = React.useState(0)
+    const openAt = (idx: number) => {
+      setIndex(idx)
+      setOpen(true)
+    }
+    return (
+      <>
+        <div className="flex flex-col gap-2 max-w-md">
+          {attachmentFiles.map((f, i) => {
+            const isImage = i < 2 // 前兩個 rich card(有 thumbnail)
+            const sizeLabel = f.description ?? `${(f.size / 1024 / 1024).toFixed(1)} MB`
+            return isImage ? (
+              <FileItem
+                key={f.id}
+                mode="rich"
+                name={f.name}
+                description={sizeLabel}
+                thumbnailSrc={f.url}
+                onClick={() => openAt(i)}
+                actions={deleteBtn}
+              />
+            ) : (
+              <FileItem
+                key={f.id}
+                mode="compact"
+                name={f.name}
+                onClick={() => openAt(i)}
+                actions={deleteBtn}
+              />
+            )
+          })}
+        </div>
+        <FileViewer files={attachmentFiles} open={open} onOpenChange={setOpen} index={index} onIndexChange={setIndex} />
+      </>
+    )
+  },
 }
 
 export const CompactMixed = {

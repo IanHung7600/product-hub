@@ -167,7 +167,10 @@ const FileItem = React.forwardRef<HTMLDivElement, FileItemProps>(
           // wrapper(compact ~18.2 / rich ~18.2 scanning)without pushing row height。
           // 視覺/hit area 仍 24,layout footprint 收斂到 1lh。同 overlay-surface
           // 的 SurfaceHeader dismiss canonical(2026-04-22 v5)。
-          '[&_[data-unbounded]]:my-[calc((1lh-var(--field-height-xs))/2)]',
+          // **child selector `[&>[data-unbounded]]`(非 descendant)**:只針對 suffix
+          // wrapper **直接子元素**(statusSlot span、actions Button)套 margin,
+          // 避免 status slot 內部 hover-swap Button(nested)也套造成 layout 跳動。
+          '[&>[data-unbounded]]:my-[calc((1lh-var(--field-height-xs))/2)]',
         )}
       >
         {status === 'uploading' && isRich && (
@@ -209,10 +212,14 @@ const FileItem = React.forwardRef<HTMLDivElement, FileItemProps>(
         }
       : {}
 
-    // Compact 靜態背景(AR20):無進度條 → 顯示 `bg-neutral-3` 作「檔案已上傳 / 靜態列表」
-    // 視覺區隔,跟「上傳中(有 progress bar)」對照。hover 仍然用 `bg-neutral-hover` 覆蓋
-    // (higher specificity 於行內 hover class)。
-    const compactStaticBg = !progressBar ? 'bg-neutral-3' : ''
+    // Compact 靜態背景(AR20):無進度條 → 顯示 `bg-secondary`(= neutral-3)作「檔案已上傳 /
+    // 靜態列表」視覺區隔,跟「上傳中(有 progress bar)」對照。hover 仍然用 `bg-neutral-hover`
+    // 覆蓋(higher specificity 於行內 hover class)。
+    // **為什麼 bg-secondary 不 bg-neutral-3**:`bg-neutral-3` 不是合法 Tailwind utility
+    // (primitive token `--color-neutral-3` 沒經 `@theme inline` 橋接);`bg-secondary`
+    // 是 semantic token 橋接的 utility(見 `tokens/color/semantic.css`@theme inline),
+    // 底色同樣指向 `--color-neutral-3`。對齊 Badge low / ProgressBar track SSOT。
+    const compactStaticBg = !progressBar ? 'bg-secondary' : ''
 
     // ── rich(含縮圖完整呈現)——AR17 canonical:加邊框 + gap-2 ──
     // Rich mode 是「檔案 card」風格,外框讓每個 row 視覺上是獨立 card
@@ -258,7 +265,7 @@ const FileItem = React.forwardRef<HTMLDivElement, FileItemProps>(
       <div
         ref={ref}
         className={cn(
-          'group/row relative flex items-start gap-2 px-3 py-3 w-full text-body leading-compact transition-colors rounded-md',
+          'group/row relative flex items-start gap-2 px-3 py-2 w-full text-body leading-compact transition-colors rounded-md',
           compactStaticBg,
           hoverClass,
           className,

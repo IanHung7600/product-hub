@@ -46,7 +46,7 @@ export const BulkImageUpload = {
           onUpload={(accepted) => setFiles((prev) => [...prev, ...accepted])}
         />
         {files.length > 0 && (
-          // Compact FileItem 上傳完成有 bg-neutral-3 靜態底色 → 必 `gap-1`(4px)防貼邊
+          // Compact FileItem 上傳完成有 bg-secondary 靜態底色 → 必 `gap-1`(4px)防貼邊
           // (見 file-item.spec.md「List wrapper canonical」+ item-anatomy「連續 item 貼邊合法性」)
           <div className="flex flex-col gap-1">
             {files.map((f, i) => (

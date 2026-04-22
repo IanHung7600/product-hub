@@ -755,7 +755,7 @@ const InspectorInner = () => {
             )}
 
             {/* Clamp 政策說明 */}
-            <div className="rounded-md px-3 py-2 text-[11px] bg-neutral-2 border border-divider flex flex-col gap-1">
+            <div className="rounded-md px-3 py-2 text-[11px] bg-muted border border-divider flex flex-col gap-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-bold text-fg-secondary">Clamp 政策</span>
                 <span className="text-fg-muted">由 consumer 透過 prop 決定(每個 consumer 有預設,可 per-instance override)</span>

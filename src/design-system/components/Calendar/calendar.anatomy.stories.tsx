@@ -126,7 +126,7 @@ export const ColorMatrix: Story = {
                 </tr>
                 <tr>
                   <Td>Outside day cell</Td>
-                  <Td mono>text-fg-disabled · bg-neutral-2</Td>
+                  <Td mono>text-fg-disabled · bg-muted</Td>
                   <Td>上/下月溢出日期弱化 + 背景略暗</Td>
                 </tr>
                 <tr>
@@ -136,7 +136,7 @@ export const ColorMatrix: Story = {
                 </tr>
                 <tr>
                   <Td>Weekend cell(可選)</Td>
-                  <Td mono>bg-neutral-2</Td>
+                  <Td mono>bg-muted</Td>
                   <Td>對齊 Google Calendar,可由 prop 控制,MVP 預設關閉</Td>
                 </tr>
               </tbody>

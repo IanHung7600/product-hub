@@ -28,8 +28,8 @@ import { cn } from '@/lib/utils'
  * | disabled | 灰底圓圈 + disabled 字色(跟 Button disabled 一致) | [&>button]:bg-disabled [&>button]:text-fg-disabled rounded-full |
  * | outside(非本月) | text-fg-muted(neutral-7) | [&>button]:text-fg-muted |
  * | selected / range 端點 | 藍底白字圓 | [&>button]:bg-primary [&>button]:text-on-emphasis rounded-full |
- * | range middle | 灰底矩形 track(neutral-3) | bg-neutral-3,button 透明 |
- * | range start/end 半圓 track | 左/右半圓 neutral-3 + selected 圓疊在上 | bg-neutral-3 rounded-l-full / rounded-r-full |
+ * | range middle | 灰底矩形 track(neutral-3) | bg-[var(--color-neutral-3)],button 透明 |
+ * | range start/end 半圓 track | 左/右半圓 neutral-3 + selected 圓疊在上 | bg-[var(--color-neutral-3)] rounded-l-full / rounded-r-full |
  * | hover(未選中) | 藍圈 outline | hover:ring-1 hover:ring-primary |
  *
  * ── 為什麼 neutral-3 不 neutral-2(AR 新版 canonical)──

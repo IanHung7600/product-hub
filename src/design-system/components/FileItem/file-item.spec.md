@@ -118,7 +118,7 @@ Avatar **固定 48px square**,不隨 content 高度變化。content(label + desc
 |------|---------|-----------|
 | **rich**(所有 status) | `border border-divider rounded-md bg-surface` | Rich mode **永遠是「檔案 card」**,不因 status 改變——Slack / Notion / Linear attachment 皆獨立 card;邊框讓每個 row 視覺上是自立單元 |
 | **compact + 有 progress**(上傳中 / 類 Upload manager 完成態) | 無背景、無邊框,只靠 progress bar 提供 affordance | 「正在發生」/「剛發生」的動態 narrative,progress 本身就是視覺焦點 |
-| **compact + 無 progress**(form attachment 靜態態) | `bg-neutral-3 rounded-md` | 靜態清單(form / 訊息附件)背景色區隔出「檔案 row」邊界,跟純文字內容區分;hover 時 `bg-neutral-hover` 覆蓋 |
+| **compact + 無 progress**(form attachment 靜態態) | `bg-secondary rounded-md`(= neutral-3 色) | 靜態清單(form / 訊息附件)背景色區隔出「檔案 row」邊界,跟純文字內容區分;hover 時 `bg-neutral-hover` 覆蓋。**為何 `bg-secondary` 不 `bg-neutral-3`**:`--secondary` 是 semantic token 經 `@theme inline` 橋接成合法 Tailwind utility,`--color-neutral-3` 是 primitive token(僅 `:root` CSS var)不生成 utility,寫 `bg-neutral-3` 會 silent 失效。對齊 Badge low / ProgressBar track SSOT(同色) |
 
 **❌ 反例**:
 - Rich mode 無邊框 → 與一般 list item 無法區分,跟 MenuItem 混淆
@@ -168,7 +168,7 @@ Avatar **固定 48px square**,不隨 content 高度變化。content(label + desc
 | hover 行為 | 整 row `hover:bg-neutral-hover` + cursor-pointer |
 | Row-click | **`onClick` 為主要 affordance** → **預設 FileViewer 開啟**(consumer 決定,也可下載) |
 | Rich 背景 | `border card`(永遠) |
-| Compact 背景 | `bg-neutral-3`(區隔「這是檔案 row」) |
+| Compact 背景 | `bg-secondary`(區隔「這是檔案 row」;primitive `--color-neutral-3` 的 semantic 橋接名,見邊框 / 背景章節) |
 | 刪除按鈕 | optional(業務權限) |
 
 ```tsx
@@ -242,7 +242,7 @@ Description 是 ReactNode,**不限純文字**。常見場景:
 | List 內容 | 永久視覺層分類 | gap | 為什麼 |
 |----------|--------------|-----|--------|
 | 全 rich | standalone card(`border + bg-surface + rounded-md + inset`) | **`gap-2`**(8px) | Card 邊框融合 |
-| 全 compact Type B(無 status,`bg-neutral-3`) | standalone pill(`bg + rounded + inset`) | **`gap-1`**(4px) | bg 塊融合 |
+| 全 compact Type B(無 status,`bg-secondary`) | standalone pill(`bg + rounded + inset`) | **`gap-1`**(4px) | bg 塊融合 |
 | 全 compact Type A(有 status,有 progress bar) | flush + 底部 progress bar 分隔線 | **0 gap 合法** | progress bar = 分隔線型 affordance |
 
 ### 混合類型 list(real-world:email 草稿 / 多步驟 upload flow)
@@ -252,12 +252,12 @@ Description 是 ReactNode,**不限純文字**。常見場景:
 | Mixed 組合 | gap 決策 | rationale |
 |-----------|---------|-----------|
 | Rich + Compact 任意混用 | **`gap-2`** | rich 永遠必 gap-2,取 max |
-| Compact Type A(分隔線型)+ Type B(standalone pill)混用 | **`gap-1`** | 兩類視覺語言不同 —— Type A 底部 progress bar 緊貼 Type B `bg-neutral-3` 時,progress bar 被 pill bg 吸收失去分隔 affordance;反之 Type B pill 貼 Type A 時下緣 progress bar 看似 pill 的一部分 |
+| Compact Type A(分隔線型)+ Type B(standalone pill)混用 | **`gap-1`** | 兩類視覺語言不同 —— Type A 底部 progress bar 緊貼 Type B `bg-secondary` 時,progress bar 被 pill bg 吸收失去分隔 affordance;反之 Type B pill 貼 Type A 時下緣 progress bar 看似 pill 的一部分 |
 | Compact Type A only(可確定全 progress bar) | 0 gap 合法 | 同「全 Type A」,視覺語言一致 |
 
 **判斷流程**(consumer 寫 list 時):
 1. 若 list 只有 compact 且**所有 item 保證有 status**(e.g., Google Drive upload box)→ 0 gap
-2. 若 list 可能混合 Type A + Type B / 可能包含 Type B(`bg-neutral-3` 靜態 item,如表單附件、留言附件、email 草稿)→ `gap-1`
+2. 若 list 可能混合 Type A + Type B / 可能包含 Type B(`bg-secondary` 靜態 item,如表單附件、留言附件、email 草稿)→ `gap-1`
 3. 若 list 含 rich → `gap-2`
 
 ### List wrapper 本身不加視覺
@@ -301,7 +301,7 @@ Description 是 ReactNode,**不限純文字**。常見場景:
   {files.map(f => <FileItem key={f.id} mode="rich" {...f} />)}
 </div>
 
-// ✅ Compact form attachment list(靜態,有 bg-neutral-3)
+// ✅ Compact form attachment list(靜態,有 bg-secondary)
 <div className="flex flex-col gap-1">
   {files.map(f => <FileItem key={f.id} mode="compact" {...f} />)}
 </div>

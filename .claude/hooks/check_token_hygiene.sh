@@ -56,7 +56,21 @@ if [ -n "$SHADOW_HITS" ]; then
   VIOLATIONS="${VIOLATIONS}\n⚠️ Tailwind default shadow found (禁用,必須用 elevation token):\n${SHADOW_HITS}\n  修法:shadow-sm→shadow-[var(--elevation-100)] / shadow-md→shadow-[var(--elevation-200)] / shadow-lg→shadow-[var(--elevation-300)]"
 fi
 
-# ── Check 4: native overflow-{auto,scroll} without ScrollArea ─────────────────
+# ── Check 4: primitive color name used as Tailwind utility (silent fail) ─────
+# Primitive tokens (`--color-neutral-N` / `--color-blue-N` 等) 只在 :root 宣告,
+# 沒經 semantic.css 的 `@theme inline` 橋接 → 寫 `bg-neutral-3` / `text-blue-6`
+# 當 Tailwind utility 會 silent 失效(class 編譯後不生成任何規則)。
+# 正確:用 semantic utility(bg-secondary / bg-muted)或 arbitrary value
+# `bg-[var(--color-neutral-3)]`(Tag categorical 色常用)。
+# 歷史 bug:2026-04-22 FileItem compact static bg 用 `bg-neutral-3` 完全沒底色,
+# user 對照 Badge low 可見才發現;spec layer + 本 hook 同步修。
+PRIMITIVE_PATTERN='\b(bg|text|border|ring|fill|stroke|shadow|outline|decoration|divide|placeholder|caret|accent)-(neutral|blue|red|green|yellow|orange|purple|pink|cyan|teal|indigo|violet|deep-orange)-[0-9]+\b'
+PRIMITIVE_HITS=$(grep -nE "$PRIMITIVE_PATTERN" "$FILE_PATH" 2>/dev/null | head -5)
+if [ -n "$PRIMITIVE_HITS" ]; then
+  VIOLATIONS="${VIOLATIONS}\n⚠️ Primitive color name used as Tailwind utility (silent fail):\n${PRIMITIVE_HITS}\n  修法:改用 semantic utility(bg-secondary / bg-muted / bg-surface / text-fg-muted 等)或 arbitrary value(bg-[var(--color-neutral-3)] 給 Tag categorical 色用)。理由:primitive token 沒經 @theme inline 橋接,bg-neutral-3 等會 silent 失效。"
+fi
+
+# ── Check 5: native overflow-{auto,scroll} without ScrollArea ─────────────────
 # 在 component / pattern .tsx 裡 raw overflow-auto / overflow-scroll =
 # 跨 OS scrollbar 不一致(macOS overlay / Windows always-visible 吃 17px)。
 # 應改用 ScrollArea(Components/ScrollArea/)。
