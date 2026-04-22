@@ -88,9 +88,9 @@ const PopoverHeader = React.forwardRef<HTMLDivElement, PopoverHeaderProps>(
       <div className="flex-1 min-w-0">{children}</div>
       {!hideClose && (
         <PopoverPrimitive.Close asChild>
-          {/* Popover 特化(2026-04-22):chrome close X 用 xs(非 sm)— non-modal 輕量浮層
-              的 header chrome 按鈕一律 xs,跟 density md 鎖定同源(見 popover.spec.md) */}
-          <Button data-dismiss iconOnly dismiss size="xs" startIcon={XIcon} aria-label="關閉" />
+          {/* Chrome close X = sm(overlay family canonical,統一 Dialog / Sheet / Popover / Coachmark)—
+              overlay-surface SurfaceHeader 用 min-h-chrome-header-height(48/56),sm button 28/32 自動置中 */}
+          <Button data-dismiss iconOnly dismiss size="sm" startIcon={XIcon} aria-label="關閉" />
         </PopoverPrimitive.Close>
       )}
     </SurfaceHeader>
@@ -111,17 +111,17 @@ const PopoverFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTML
 )
 PopoverFooter.displayName = "PopoverFooter"
 
-// PopoverTitle(2026-04-22 revise):用 `text-body font-medium`(14px)而非 body-lg。
-// Rationale:Popover 是 non-modal 輕量浮層,跟 density md 鎖定、chrome 按鈕 xs 同源 —
-// 整個 header chrome 視覺都是「輕量」,title 用 14px 跟 Dialog(body-lg)區別「modal 重量級 vs overlay 輕量」。
-// 避免 overlay chrome 字級一刀切反而失去 Popover 的輕量感。
+// PopoverTitle(2026-04-22 v3:overlay family canonical 統一):`text-body-lg font-medium`
+// 跟 Dialog / Sheet 對齊 — overlay chrome title typography 一致,避免跨 overlay primitive 漂移。
+// density 鎖 md 仍成立(popover.spec.md),但跟 title 字級獨立 — title 字級是 overlay family 共通
+// canonical,不以 modal/non-modal 區分。
 const PopoverTitle = React.forwardRef<
   HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
   <h2
     ref={ref}
-    className={cn("text-body font-medium truncate", className)}
+    className={cn("text-body-lg font-medium truncate", className)}
     {...props}
   />
 ))
