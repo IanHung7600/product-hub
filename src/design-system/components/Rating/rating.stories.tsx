@@ -153,7 +153,7 @@ export const DisabledState: Story = {
       <div className="flex items-center gap-3 p-3 border border-border rounded-md bg-surface">
         <div className="flex-1">
           <div className="text-body font-medium">訂單 #A-2025-11-03</div>
-          <div className="text-caption text-fg-muted mt-0.5">評分期限已過</div>
+          <div className="text-caption text-fg-muted mt-[var(--item-gap-label-desc-scanning)]">評分期限已過</div>
         </div>
         <Rating value={4} disabled aria-label="此訂單已完成評分 4 星，無法修改" />
       </div>

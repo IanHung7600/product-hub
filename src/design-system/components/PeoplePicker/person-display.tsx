@@ -125,7 +125,9 @@ function MultiPersonDisplay({
               key={person.name + i}
               variant="neutral"
               size="sm"
-              avatar={{ alt: person.name, src: person.avatarUrl }}
+              // Tag.avatar 是 ReactNode(非 AvatarData object)——傳 <Avatar> 元素。
+              // Tag 內部用 `w-4 h-4 rounded-full` 容器 slot,Avatar 填滿 object-cover。
+              avatar={<Avatar src={person.avatarUrl} alt={person.name} size={16} />}
               onDismiss={onRemove ? () => onRemove(value![resolvedMax + i]) : undefined}
             >
               {person.name}
