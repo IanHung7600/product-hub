@@ -8,6 +8,7 @@ import { Field, FieldLabel, FieldDescription } from '@/design-system/components/
 import { Input } from '@/design-system/components/Input/input'
 import { Avatar } from '@/design-system/components/Avatar/avatar'
 import { Switch } from '@/design-system/components/Switch/switch'
+import { MenuItem } from '@/design-system/components/Menu/menu-item'
 
 /**
  * 通知設定 — variant="list" 中 item(title + desc + right-side Switch)
@@ -333,13 +334,13 @@ export const ListBody = {
           <DialogBody variant="list">
             <div className="flex flex-col">
               {['Bug', 'Feature', 'Improvement', 'Research', 'Documentation', 'Refactor', 'Test'].map((t) => (
-                // variant="list" canonical v4(Image #30):item `px-loose rounded-md` → text 對齊 header + breathing 在 hover bg 內 + hover bg flush chrome
-                <button
-                  key={t}
-                  className="flex py-1.5 px-[var(--layout-space-loose)] rounded-md hover:bg-neutral-hover focus-visible:bg-neutral-hover focus-visible:outline-none text-left text-body"
-                >
+                // 小 item 純文字 label → 用 **MenuItem** primitive(世界級 Linear Cmd+K / Polaris OptionList
+                // / Atlassian Modal+Menu 共通 pattern:menu-like 內容在 dialog 內用 menu primitive)
+                // className 覆蓋 px-3 為 px-loose → 對齊 dialog header/footer(tailwind-merge 吃掉預設 px-3)
+                // dialog body variant="list" 已 py-2 = menu no-group wrap 的 8px breathing,MenuItem 不需再外包 py-2
+                <MenuItem key={t} className="px-[var(--layout-space-loose)]">
                   {t}
-                </button>
+                </MenuItem>
               ))}
             </div>
           </DialogBody>
