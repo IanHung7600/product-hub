@@ -233,7 +233,7 @@ Q3. Badge 自己獨立呈現狀態嗎?(無宿主元件)
 - **世界級對照**：Material BadgedBox / iOS App Icon / Ant Design Badge — 全部 wrap 視覺重心(icon / avatar),不 wrap interactive chrome(button padding)
 - **aria**：parent 元件的 `aria-label` 包含 badge 資訊（見「無障礙」）
 
-#### Overlay 適用元件 canonical(2026-04-20)
+### Overlay 適用元件 canonical(2026-04-20)
 
 **Overlay 只疊在「單一視覺重心」元件上**:
 - ✅ **iconOnly Button**(按鈕本身 = icon,badge 疊 icon 角落語義清楚)

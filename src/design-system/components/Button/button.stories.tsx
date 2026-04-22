@@ -70,23 +70,23 @@ type Story = StoryObj<typeof Button>
 // ── 基本 variants ──────────────────────────────────────────────
 
 export const Primary: Story = {
-  args: { variant: 'primary', children: 'Primary' },
+  args: { variant: 'primary', children: '新增' },
 }
 
 export const Secondary: Story = {
-  args: { variant: 'secondary', children: 'Secondary' },
+  args: { variant: 'secondary', children: '儲存草稿' },
 }
 
 export const Tertiary: Story = {
-  args: { variant: 'tertiary', children: 'Tertiary' },
+  args: { variant: 'tertiary', children: '取消' },
 }
 
 export const Text: Story = {
-  args: { variant: 'text', children: 'Text' },
+  args: { variant: 'text', children: '查看更多' },
 }
 
 export const Link: Story = {
-  args: { variant: 'link', children: 'Link' },
+  args: { variant: 'link', children: '前往設定' },
 }
 
 export const Pressed: Story = {

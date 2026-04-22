@@ -120,7 +120,7 @@ export const DivisionOfLaborRule: Story = {
             }
           />
           {files.length > 0 && (
-            <div className="flex flex-col border border-divider rounded-lg overflow-hidden">
+            <div className="flex flex-col gap-1">
               {files.map((f, i) => (
                 <FileItem
                   key={`${f.name}-${i}`}
