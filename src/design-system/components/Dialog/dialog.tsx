@@ -101,7 +101,7 @@ const DialogContent = React.forwardRef<
         // canonical 衝突(md page dialog header 期望 48,強設 lg 會變 56)。
         // 世界級對照:Polaris Modal horizontal padding 16 / Material M3 24 / Atlassian 24 — 16 是
         // 合理 lower bound;md page 用 16 loose body padding 可接受,lg page 自動 24。
-        // 詳 overlay-surface.spec.md「Chrome dismiss size canonical v5」
+        // 詳 overlay-surface.spec.md「Chrome dismiss size canonical」
         onOpenAutoFocus={handleOpenAutoFocus}
         className={cn(
           "fixed left-1/2 top-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2",
@@ -144,7 +144,7 @@ const DialogHeader = React.forwardRef<
       {/* Dismiss X(chrome-slot canonical,v5):Button 本身 native sm(28 md / 32 lg,touch target 亦同),
           但 `data-dismiss` attribute 讓 SurfaceHeader CSS rule 套負 my 讓 layout 佔位 = 24,
           header = 24 + 2×tight = 48 / 56 chrome-header-height ✓。
-          詳 overlay-surface.spec.md「Chrome dismiss size canonical v5」*/}
+          詳 overlay-surface.spec.md「Chrome dismiss size canonical」*/}
       <Button data-dismiss iconOnly dismiss size="sm" startIcon={XIcon} aria-label="關閉" />
     </DialogPrimitive.Close>
   </SurfaceHeader>

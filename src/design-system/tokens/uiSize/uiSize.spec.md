@@ -285,7 +285,7 @@ Padding-based 套用在 overlay family 時,配合 **v5 data-unbounded layout-slo
 - Header 只有 unbounded control 時高度 = 24 + 2×tight = 48 md / 56 lg = `--chrome-header-height` ✓
 - Header 塞 bounded control(primary / tertiary,無 `data-unbounded`)→ 自然長高(bounded 的視覺邊界讓 padding 看起來合理)
 
-**完整細節 + 震盪歷史備忘**:`patterns/overlay-surface/overlay-surface.spec.md`「Chrome dismiss size canonical v5」
+**完整細節 + 震盪歷史備忘**:`patterns/overlay-surface/overlay-surface.spec.md`「Chrome dismiss size canonical」
 
 ---
 

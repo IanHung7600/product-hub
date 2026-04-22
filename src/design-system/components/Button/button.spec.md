@@ -299,7 +299,7 @@ Button 自動加 **`data-unbounded="true"`** attribute 當 **`variant === 'text'
 → md: my=-2px / lg: my=-4px
 → 效果:Button native size 不變(sm 28/32,touch target 亦同),**layout 佔位縮到 24**(等效 xs 幾何),header = 24 + 2×tight = 48/56 = `--chrome-header-height` ✓
 
-**詳**:`patterns/overlay-surface/overlay-surface.spec.md`「Chrome dismiss size canonical v5」+ `tokens/uiSize/uiSize.spec.md`「Chrome header 選型 canonical」。
+**詳**:`patterns/overlay-surface/overlay-surface.spec.md`「Chrome dismiss size canonical」+ `tokens/uiSize/uiSize.spec.md`「Chrome header 選型 canonical」。
 
 **Consumer 無需手動加**:Button 自動設。若 consumer 自刻非 Button 的 unbounded control(罕見),可手動加 `data-unbounded="true"` 加入 canonical。
 

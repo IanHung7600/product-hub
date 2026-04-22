@@ -181,7 +181,7 @@ export const ForbiddenRule: Story = {
         note="同一個 row 裡一半顯示真實資料、一半顯示 skeleton,視覺上會像「半載入」狀態,使用者不知道這筆資料到底算不算讀完。Row 是原子單位,要嘛全 skeleton 要嘛全真實"
       >
         <div className="flex items-center gap-3 border border-border rounded-lg p-3 w-72">
-          <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary text-primary-foreground text-body font-medium">陳</div>
+          <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary text-on-emphasis text-body font-medium">陳</div>
           <div className="flex flex-col gap-2 flex-1">
             <span className="text-body">陳小明</span>
             <Skeleton className="h-3 w-24" />

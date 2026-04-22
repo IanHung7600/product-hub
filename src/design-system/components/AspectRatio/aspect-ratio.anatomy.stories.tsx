@@ -89,7 +89,7 @@ const InspectorDemo = () => {
             className={`px-3 py-1.5 rounded-md text-caption font-mono border ${
               preset === r.label
                 ? 'bg-foreground text-background border-foreground'
-                : 'bg-background text-foreground border-border hover:bg-neutral-hover'
+                : 'bg-canvas text-foreground border-border hover:bg-neutral-hover'
             }`}
           >
             {r.label}

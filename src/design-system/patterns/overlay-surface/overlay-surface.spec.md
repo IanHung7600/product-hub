@@ -307,7 +307,7 @@ Overlay family 的 header title typography 依「modal vs non-modal」分級,**�
 
 ---
 
-## Chrome dismiss size canonical(2026-04-22 v5 最終:layout-slot 技巧,button native size 保留)
+## Chrome dismiss size canonical
 
 **User 設計 insight**:header 的 padding-based sizing 在 **unbounded button**(text variant / dismiss,無 bg/border)場景視覺 padding 過大;在 **bounded button** 則剛好。解法 = **保持 button native size 不變(touch target / 視覺 render 都是 sm 原尺寸),但 layout 佔位縮回 xs(24)** via 負 margin。
 
