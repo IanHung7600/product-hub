@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 import { Checkbox } from '@/design-system/components/Checkbox/checkbox'
 import { Avatar, type AvatarData } from '@/design-system/components/Avatar/avatar'
 // Row primitive 共用常數——統一從 item-layout pattern module 引入
-import { ICON_SIZE, AVATAR_SIZE, itemPrefixAlignVariants } from '@/design-system/patterns/element-anatomy/item-anatomy'
+import { ICON_SIZE, AVATAR_SIZE, ItemContent, itemPrefixAlignVariants } from '@/design-system/patterns/element-anatomy/item-anatomy'
 
 /**
  * MenuItem — 所有 menu 類元件的共用視覺佈局層
@@ -231,29 +231,18 @@ const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
           </div>
         )}
 
-        {/* Content */}
-        <div className="flex flex-col min-w-0 flex-1">
-          <span className={cn(
-            labelClampClass || 'break-words',
-            disabled && 'text-fg-disabled',
-          )}>
-            {children}
-          </span>
-          {description && (
-            <span
-              className={cn(
-                'mt-[var(--item-gap-label-desc)] leading-compact',
-                descClampClass || 'break-words',
-                disabled ? 'text-fg-disabled' : 'text-fg-secondary',
-              )}
-              style={{
-                fontSize: sizeKey === 'lg' ? 'var(--font-body-size)' : 'var(--font-caption-size)',
-              }}
-            >
-              {description}
-            </span>
-          )}
-        </div>
+        {/* Content — 消費 ItemContent primitive(SSOT)。
+            scanning mode 跟隨 size:sm/md = caption,lg = body(desc 比 label lg 16 小 1 tier)。
+            labelClampClass / descClampClass 透過 className escape hatch 傳入(MenuItem 特化 labelMaxLines / descMaxLines 語意)。 */}
+        <ItemContent
+          label={children}
+          description={description}
+          mode={sizeKey === 'lg' ? 'scanning-lg' : 'scanning'}
+          descriptionTone={disabled ? 'disabled' : 'secondary'}
+          labelTruncate={false}
+          labelClassName={cn(labelClampClass || 'break-words', disabled && 'text-fg-disabled')}
+          descriptionClassName={cn(descClampClass || 'break-words')}
+        />
 
         {(tag || endContent) && (
           <div className={cn(

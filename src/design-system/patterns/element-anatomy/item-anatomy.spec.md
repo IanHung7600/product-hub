@@ -764,15 +764,18 @@ Block 模式時 checkbox 不在 label 第一行——它跟 avatar 在同一高�
 | **FileItem**(rich + compact) | ✅ ItemContent + ItemPrefix + ItemInlineActionButton | 純 row-item layout,完美 fit |
 | **Notice / Alert / Toast** | ✅ ItemContent + ItemPrefix | title+desc 標準 row-item 結構 |
 | **NameCard** | ✅ ItemContent(+ `labelTruncate=false` + `labelClassName` escape hatch) | 偏離 rationale:card context 用 `text-body-lg font-medium`,非一般 body label |
+| **MenuItem** | ✅ ItemContent(`mode="scanning"\|"scanning-lg"`)+ `itemPrefixAlignVariants` cva SSOT | Content 用 ItemContent 配合 size-aware scanning mode(sm/md = caption / lg = body-compact);label+desc clamp 透過 className escape hatch(MenuItem 特化 labelMaxLines / descMaxLines 語意) |
+| **Sidebar / TreeView** | ✅ ItemPrefix(+ 其他 primitives) | Label-only(無 description),不需 ItemContent |
 | **Empty** | ❌ token-direct only | **結構限制**:centered stack pattern(icon → title → desc → action 垂直居中),非 row-item 佈局。保持手刻 |
-| **Dialog(DialogTitle / DialogDescription)** | ❌ token-direct only | **結構限制**:title 跟 desc 是獨立 Radix `<DialogTitle>` / `<DialogDescription>` component(aria-labelledby / aria-describedby 語義),非同層 span 配對 |
+| **Dialog**(DialogTitle / DialogDescription) | ❌ token-direct only | **結構限制**:title 跟 desc 是獨立 Radix `<DialogTitle>` / `<DialogDescription>` component(aria-labelledby / aria-describedby 語義),非同層 span 配對 |
 | **DescriptionList** | ❌ token-direct only | **語義限制**:用 `<dl>/<dt>/<dd>` HTML semantic elements,非 div+span |
-| **SelectionItem** | ❌ token-direct only | **a11y 限制**:label 必為 `<label htmlFor={id}>` 表單 control 關聯;ItemContent 渲染 `<span>` 會破壞 form a11y |
-| **MenuItem** | ❌ token-direct only | **Typography 限制**:description 使用 size-aware font(sm/md `text-caption` / lg `text-body`),超出 ItemContent `mode="scanning"` 固定 caption 的能力;descClampClass + disabled 色狀態 cva 內部管 |
-| **Steps**(`StepDescription`) | ❌ token-direct only | **API 限制**:public forwardRef sub-component,遷移 = breaking change |
-| **Switch** | ❌ token-direct only(用 `gap-[var(--item-gap-label-desc)]` flex-col) | **結構差異**:Switch 用 flex-col gap 而非 mt,含 control slot + 複雜 label/desc className props;改用 ItemContent 無淨效 |
+| **SelectionItem** | ❌ token-direct only | **a11y 限制**:label 必為 `<label htmlFor={id}>` 表單 control 關聯(form association);ItemContent 渲染 `<span>` 會破壞 form a11y |
+| **Switch**(standalone mode with label+desc) | ❌ token-direct only | **a11y 限制(同 SelectionItem)**:standalone mode 用 `<label htmlFor={inputId}>` 包 label+desc+switch,form control 關聯必要。Control-only mode(放 MenuItem suffix 等)不涉及 label+desc,不在 ItemContent scope |
+| **Steps**(`StepDescription`) | ❌ token-direct only | **API 限制**:StepLabel 跟 StepDescription 是獨立 public forwardRef subcomponent,consumer 分開寫;遷 ItemContent(single-component API)= breaking API |
 
-**共 3 consumer 消費 primitive,7 consumer 保 token-direct 各有明文 rationale**。Token 層 SSOT 100% 覆蓋(改 `--item-gap-label-desc` 全 DS 同步);primitive 層覆蓋結構能 fit 的 consumer。
+**共 5 consumer 消費 primitive(FileItem / Notice / NameCard / MenuItem / TreeView・Sidebar),5 consumer 保 token-direct 各有 a11y / semantic / API 結構限制**。Token 層 SSOT 100% 覆蓋(改 `--item-gap-label-desc` 全 DS 同步);primitive 層覆蓋結構能 fit 的 consumer。
+
+**Switch 跟 SelectionItem 同 blocker**(2026-04-23 user 糾正):兩者都是 `<label htmlFor>` 表單 control 關聯結構,ItemContent 用 `<span>` 渲染 label 會破壞 form a11y。這類結構**只能 token-level SSOT**(實際已做)。
 
 ### `<ItemContent mode>` prop(2026-04-23 擴充)
 
