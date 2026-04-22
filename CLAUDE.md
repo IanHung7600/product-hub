@@ -221,6 +221,7 @@ mindset #2 的**機械化執行清單**。寫任何視覺 code 前,對照本表*
 | **Row / item 結構**(prefix / content / suffix slot)| `patterns/element-anatomy/item-anatomy.spec.md`(Family 1+2 SSOT) |
 | **連續 item list wrapper gap**(多 item `.map()` 是否要 gap?)| `patterns/element-anatomy/item-anatomy.spec.md`「連續 item 貼邊合法性」— **公式**:permanent standalone card/pill(bg + radius + inset)→ 必 gap;permanent flush / transparent → 0 gap 合法。元件專屬 gap 值 + **mixed 混合情境決策表**(e.g. FileItem Type A+B 同 list)查該元件 spec「List wrapper canonical」節(例 `components/FileItem/file-item.spec.md`) |
 | **視覺容器 breathing**(自建或 override 帶 bg/border/shadow 的 div)| `patterns/element-anatomy/element-anatomy.spec.md`「視覺容器 breathing invariant」— 有視覺邊界的容器(bg/border/shadow 三擇一)**必有 inner padding**(rule),具體值建議 `--layout-space-*` / `px-3` 等(guide)。責任在父容器,子元件 w-full responsive 不變 |
+| **Label ↔ Description gap**(item 類元件的 label + desc 之間 2px 間距)| Token `--item-gap-label-desc`(2px,`tokens/layoutSpace/layoutSpace.css`)+ Primitive `<ItemContent>`(`patterns/element-anatomy/item-anatomy.tsx`)— **改 token 一處 → 全 DS 同步**。Consumer 2 擇 1:(a)用 token:`mt-[var(--item-gap-label-desc)]`(b)用 primitive:`<ItemContent label description descriptionTone>`。偏離必在元件 spec 明文 rationale |
 | **Dismiss / inline action / overflow menu**| `patterns/element-anatomy/item-anatomy.spec.md`「Dismiss 按鈕 canonical」+「Inline Action 設計規格」+「常用 icon canonical」 |
 | **按鈕排列 / 群組 / 分隔**| `patterns/action-bar/action-bar.spec.md` |
 | **Header 高度 / chrome padding**| `tokens/uiSize/uiSize.spec.md`(`--chrome-header-height`)+ `tokens/layoutSpace/layoutSpace.spec.md` |
@@ -344,7 +345,7 @@ mindset #2 的**機械化執行清單**。寫任何視覺 code 前,對照本表*
 | 7 | Hook(`.claude/hooks/*.sh`) | 可機械化的 pre/post tool 自動檢查 |
 | 8 | Slash Command(`.claude/commands/*.md`) | 一次性單步 action(目前無 commands) |
 
-當前 9 skills:`/design-system-audit` / `/product-ui-audit` / `/prototype` / `/delivery-handoff` / `/component-quality-gate` / `/story-writing` / `/visual-audit` / `/performance-audit` / `/ux-audit`。當前 16 hooks:`pre_edit_spec_check` / `pre_new_component_spec` / `enforce_home_charter` / `check_ssot_consultation` / `check_story_anatomy` / `check_third_party_dom_verified` / `check_sync_update` / `check_token_hygiene` / `check_cva_default_sync` / `check_anatomy_section_numbering` / `check_sideoffset_canonical` / `check_avatar_hovercard` / `check_item_list_gap` / `check_container_breathing` / `block_prototype_imports` / `stop_tsc_sanity`。
+當前 9 skills:`/design-system-audit` / `/product-ui-audit` / `/prototype` / `/delivery-handoff` / `/component-quality-gate` / `/story-writing` / `/visual-audit` / `/performance-audit` / `/ux-audit`。當前 17 hooks:`pre_edit_spec_check` / `pre_new_component_spec` / `enforce_home_charter` / `check_ssot_consultation` / `check_story_anatomy` / `check_third_party_dom_verified` / `check_sync_update` / `check_token_hygiene` / `check_cva_default_sync` / `check_anatomy_section_numbering` / `check_sideoffset_canonical` / `check_avatar_hovercard` / `check_item_list_gap` / `check_container_breathing` / `check_item_content_primitive` / `block_prototype_imports` / `stop_tsc_sanity`。
 
 各 home 完整 scope / 「收什麼、不收什麼」細節 / 未採納能力(sub-agent / MCP / output-style)評估 → `.claude/skills/design-system-audit/references/rule-placement.md`。
 
