@@ -35,12 +35,12 @@ DialogContent (fixed, centered)
 ├── DialogHeader (SurfaceHeader + Close X)
 │   ├── DialogTitle
 │   └── Close button (<Button iconOnly dismiss size="sm" startIcon={X} />)
-├── DialogBody (SurfaceBody + flex-1 overflow-y-auto + pb-bottom)
+├── DialogBody (flex-1 ScrollArea wrap + inner padding div,pb-bottom)
 └── DialogFooter (SurfaceFooter alias)
     └── Action buttons
 ```
 
-**Padding SSOT**：Header / Body / Footer 的 padding + 分隔線由 `patterns/overlay-surface/overlay-surface.spec.md` own——Dialog 與 Popover 共用同一套 primitive，避免 token 漂移。Dialog 特有行為：Header 的 Close 按鈕、Body 的 `flex-1 overflow-y-auto pb-bottom`（viewport-fill 專用）。
+**Padding SSOT**：Header / Body / Footer 的 padding + 分隔線由 `patterns/overlay-surface/overlay-surface.spec.md` own——Dialog 與 Popover 共用同一套 primitive，避免 token 漂移。Dialog 特有行為:Header 的 Close 按鈕;Body 用 `<ScrollArea>` wrap(viewport-fill 專用,SSOT 見 overlay-surface.spec.md 「Body overflow canonical」節 + `components/ScrollArea/scroll-area.spec.md`)。
 
 ## Density
 

@@ -4,7 +4,8 @@ import { X as XIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/design-system/components/Button/button"
-import { SurfaceHeader, SurfaceBody, SurfaceFooter } from "@/design-system/patterns/overlay-surface/overlay-surface"
+import { SurfaceHeader, SurfaceFooter } from "@/design-system/patterns/overlay-surface/overlay-surface"
+import { ScrollArea } from "@/design-system/components/ScrollArea/scroll-area"
 
 /**
  * Dialog (Modal) — Radix Dialog + 設計系統 token
@@ -70,12 +71,30 @@ const DialogContent = React.forwardRef<
     ? { maxHeight: viewportH }
     : { height: viewportH }
 
+  // AutoFocus canonical(對齊 Material / Polaris / Atlassian)—
+  // 開啟時 focus 落在 body 第一個有意義互動元素(input / button),不是 chrome close X。
+  // 預設 Radix 會 focus first tabbable = close X → Button iconOnly 的 focus-triggered
+  // tooltip 會立即顯示「關閉」,user-hostile。此 callback 攔截:先找 body 第一個
+  // input/textarea/select/button(排除 data-dismiss)focus;找不到就 focus container(不 focus X)。
+  const handleOpenAutoFocus = (e: Event) => {
+    e.preventDefault()
+    const content = e.currentTarget as HTMLElement
+    const firstBodyTarget = content.querySelector<HTMLElement>(
+      '[data-dialog-body] input:not([disabled]),[data-dialog-body] textarea:not([disabled]),[data-dialog-body] select:not([disabled]),[data-dialog-body] button:not([disabled]):not([data-dismiss])'
+    )
+    const firstFooterButton = content.querySelector<HTMLElement>(
+      '[data-dialog-footer] button:not([disabled]):not([data-dismiss])'
+    )
+    ;(firstBodyTarget ?? firstFooterButton ?? content).focus({ preventScroll: true })
+  }
+
   return (
     <DialogPortal>
       <DialogOverlay />
       <DialogPrimitive.Content
         ref={ref}
         data-density="lg"
+        onOpenAutoFocus={handleOpenAutoFocus}
         className={cn(
           "fixed left-1/2 top-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2",
           "flex flex-col bg-surface-raised rounded-lg border border-border",
@@ -114,32 +133,34 @@ const DialogHeader = React.forwardRef<
   >
     <div className="flex-1 min-w-0">{children}</div>
     <DialogPrimitive.Close asChild>
-      <Button iconOnly dismiss size="sm" startIcon={XIcon} aria-label="關閉" />
+      <Button data-dismiss iconOnly dismiss size="sm" startIcon={XIcon} aria-label="關閉" />
     </DialogPrimitive.Close>
   </SurfaceHeader>
 ))
 DialogHeader.displayName = "DialogHeader"
 
-// DialogBody: SurfaceBody + viewport-fill 行為(Dialog 特有)
-// flex-1 + overflow-y-auto 撐滿 viewport 高度;pb-bottom 覆寫 SurfaceBody 預設對稱 padding,
-// 讓 Dialog body 底部多一拍呼吸(符合 Dialog 「大容器」語感)。
+// DialogBody: flex-1 ScrollArea + inner padding(對齊 overlay-surface SSOT + ScrollArea canonical)
+// 捲軸必用 ScrollArea(跨 OS 一致、不吃寬度)— 不自寫 overflow-y-auto。
+// padding 搬進 viewport inner div:px-loose / pt-tight / pb-bottom(Dialog 「大容器」底部多一拍呼吸)。
+// data-dialog-body:讓 DialogContent onOpenAutoFocus 找得到 body 第一個有意義互動元素(避免 focus 到 close X)
 const DialogBody = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <SurfaceBody
-    ref={ref}
-    className={cn(
-      "flex-1 overflow-y-auto pb-[var(--layout-space-bottom)]",
-      className,
-    )}
-    {...props}
-  />
+>(({ className, children, ...props }, ref) => (
+  <ScrollArea ref={ref} data-dialog-body className={cn("flex-1 min-h-0", className)} {...props}>
+    <div className="px-[var(--layout-space-loose)] pt-[var(--layout-space-tight)] pb-[var(--layout-space-bottom)]">
+      {children}
+    </div>
+  </ScrollArea>
 ))
 DialogBody.displayName = "DialogBody"
 
-// DialogFooter: SurfaceFooter 直接 re-export alias(無 Dialog 特有行為)
-const DialogFooter = SurfaceFooter
+// DialogFooter: SurfaceFooter wrap 加 data-dialog-footer(autoFocus fallback target)
+const DialogFooter = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ ...props }, ref) => <SurfaceFooter ref={ref} data-dialog-footer {...props} />)
+DialogFooter.displayName = "DialogFooter"
 
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,

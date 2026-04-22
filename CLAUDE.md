@@ -12,9 +12,9 @@
 每條規則展開請讀後面對應章節(`# Spec 規則`、`# UI 開發規則`、`# Story`、`# 命名與語言一致性` 等)。
 
 
-# Meta-Pattern 預警(9 條大原則)
+# Meta-Pattern 預警(10 條大原則)
 
-**mindset #6 的具體化**。每條能吸收數十個具體 bug,是失敗記憶索引的上游。接到任務先過這 9 條,再跑 `# 任務導航表`。
+**mindset #6 的具體化**。每條能吸收數十個具體 bug,是失敗記憶索引的上游。接到任務先過這 10 條,再跑 `# 任務導航表`。
 
 | # | Meta-Principle | 能吸收的 bug 類型(舉例,非窮舉) |
 |---|---|---|
@@ -27,10 +27,11 @@
 | **M7** | **新 protocol / skill / rule 寫完,必反向 cross-check 既有 Meta-Principle 是否該套用**。尤其:consistency-class 的 protocol 必走「一致性類稽核必先全掃再判」(本章節);audit skill 必加「Self-improvement capture」Phase F step;Rule 觸及「canonical」「SSOT」「rationale」keyword → 必明示 substantive vs 表達層分權。 | 2026-04-21 principle-audit-protocol.md v1 寫完未套 Phase 0 全掃到 D6b/D6c,被 user 抓到「這也是跟一致性有關」才補。典型:AI 寫新東西時套用既有原則時有盲點 |
 | **M8** | **訂立 / 修改 cross-component canonical 前必 world-class benchmark**。任何 predicate / decision tree / taxonomy 類 spec,**必先 grep 至少 3 家世界級 DS**(Polaris / Material / Atlassian / Ant Design / Carbon / Apple HIG / VS Code / Figma 等)列對照表,再訂 rule。**絕對禁止**憑直覺開場寫 predicate,user 問才補對照。每個 category / variant / case 必附世界級 reference(實作名或 API 指向),沒有對照的 rule 視同未成熟,走 Checkpoint 3。 | 2026-04-22 item-anatomy Inline Action vs Button predicate 疊代 4 次(position-based → density 分界 → fixed-small → chrome corner exception),每次 user 拉回才補世界級對照。若 M8 存在,第一次就該先 benchmark Material IconButton / Polaris Button plain / Atlassian IconButton / Ant Button type=text 的位置規則再訂 rule |
 | **M9** | **Predicate / decision tree 寫完,present 前必 4 題自測**,防 membership drift。(a) **每 example 回跑決策樹**:把 real case 表 / 範例清單的每一個 item 丟回 Q1/Q2/Q3,確認它真的落在 claim 的 category,不是憑印象塞。(b) **cap / constraint cross-check**:spec 若有「絕對值 ≤ X」/「必 size Y」類 constraint,grep 表內所有 value 驗沒 violation。(c) **每 example 對 ≥3 家 world-class DS**:不是整個 predicate 對,是**每個 real case** 對(e.g. Dialog corner close 對 Material/Polaris/Atlassian 各一家怎麼做)。(d) **每 category ≥1 example**:空 category = 概念未收斂。任一題失敗 → 重收斂,**禁止 present**。 | 2026-04-22 本 session:AI 自己列的 Cat 1 IA 範例塞「DatePicker endAction」(含裝飾 Calendar,該走 decorative indicator)+「Chrome corner close」(該走 Cat 3 Button);FileItem rich 列 Button sm(違反同 session 訂的 ≤ 24 cap);DataTable 初版列 Inline Action(世界級全用 Button)。四個錯分每一個都是 user 抓到才修。M9 若 pre-session 存在,四題自測可一次抓光 |
+| **M10** | **Proactive exhaustive scan:canonical migration 完成前禁止只改「直覺相關」元件;final report 前禁止省略「我知道但沒講」的 tech debt**。流程:(a) 訂 / 改 canonical → `grep -r` **所有** `.tsx / .stories.tsx / .spec.md` 找 pattern,不是憑印象列 N 個元件改完就收工;(b) Phase 4 final report 必 proactive 自問 3 題 —「還有哪些消費者沒跟上 canonical?」「本 session 動過的 code 有無 known issue 沒講?」「有無明顯 UX / a11y / visual 瑕疵我注意到但沒 flag?」;(c) 回覆 user「做完了」前強制 pause,自問「還有什麼我知道但沒主動講?」— 有必誠實列出 present,等 user 決策。**Silent tech debt = 違反本條**。 | 2026-04-22 dismiss canonical migration 只改 Dialog/Sheet/Popover/Alert/Notice/Coachmark,漏 FileViewer 2 處 + action-bar stories 4 處,user 抓出來;同時 Dialog autoFocus tooltip 洩漏 / body 未用 ScrollArea / layoutSpace uiSize 耦合 / list-in-dialog padding 大 — AI 全程知道或該察覺但沒主動講,user 7 個問題一次炸出來。根因:AI「做完」的標準太鬆(只改 explicit 要的事),缺 proactive self-scan |
 
 **判斷 meta-principle 是否漏寫的 test**:
 - 同類 bug 一年內被糾正 3 次 → meta-principle 漏寫或沒執行,檢討本清單
-- 某 bug 跟 9 條中任一條對不上 → 可能要新增第 10 條(跟 user 討論)
+- 某 bug 跟 10 條中任一條對不上 → 可能要新增第 11 條(跟 user 討論)
 
 **與失敗記憶索引的關係**:Meta-principle 是**上游**(預防)、失敗記憶索引是**下游**(事後記帳)。具體 bug 的歷史詳解移到 `.claude/skills/design-system-audit/references/historical-bugs.md`;CLAUDE.md 只留 meta-principle + 極高 signal 的 one-liner anchor。
 

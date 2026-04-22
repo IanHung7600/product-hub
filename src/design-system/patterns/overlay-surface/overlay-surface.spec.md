@@ -21,7 +21,36 @@ Dialog 和 Popover 的**結構化 sub-components 共用 primitive**——提供 
 - `px-[var(--layout-space-loose)] py-[var(--layout-space-tight)]`
 - **無額外 flex 屬性**——consumer 依浮層類型決定:
   - **Popover**:多數 bare consume,padding 即是總 padding
-  - **Dialog**:consumer 外層疊 `flex-1 overflow-y-auto pb-[var(--layout-space-bottom)]`(viewport-fill 專用)
+  - **Dialog / Sheet**:consumer **不直接 wrap SurfaceBody**——走 ScrollArea canonical(下節),padding 搬到 ScrollArea viewport 內層 div
+
+---
+
+## Body overflow canonical(Dialog / Sheet 必用 ScrollArea)
+
+**規則**:Dialog / Sheet 的 body 會 viewport-fill + 長內容需捲動時,**必須用 `<ScrollArea>` wrap**,禁止自寫 `overflow-y-auto` / `overflow-auto`。
+
+**Rationale**:
+- Native scrollbar 跨 OS 不一致(macOS overlay / Windows 永遠吃 ~17px 寬度)——Dialog / Sheet 內容會因 OS 不同跑版
+- ScrollArea(Radix primitive)用自建 overlay 捲軸 → **跨 OS 一致不吃寬度**,捲動時浮現
+- SSOT 見 `components/ScrollArea/scroll-area.spec.md`「何時用」已列明「Sheet / Dialog body 太長」
+
+**實作模板**:
+```tsx
+// DialogBody / SheetBody 內部:
+<ScrollArea className="flex-1 min-h-0">
+  <div className="px-[var(--layout-space-loose)] pt-[var(--layout-space-tight)] pb-[var(--layout-space-bottom)]">
+    {children}
+  </div>
+</ScrollArea>
+```
+
+- `flex-1 min-h-0` → 撐滿 Content 剩餘高度(min-h-0 防止 flex child 撐破 container)
+- Padding 搬進 ScrollArea viewport 內的 inner div(因 ScrollArea Root 自己是 `overflow-hidden`,padding 應在捲動內容上)
+- `pb-bottom` 保留 Dialog / Sheet「大容器底部多一拍」的 canonical
+
+**Popover 例外**:Popover 無 viewport-fill、內容預期短,PopoverBody 直接消費 SurfaceBody bare;若未來有長內容 Popover consumer,同樣應 wrap ScrollArea。
+
+**Coachmark 例外**:Coachmark 內容短(media + 2 行 title/description),不設計 body 捲動;不適用本規則。
 
 ### SurfaceFooter
 - `border-t border-divider`

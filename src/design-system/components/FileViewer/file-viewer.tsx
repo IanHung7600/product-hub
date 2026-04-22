@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import {
-  X,
+  X as XIcon,
   Download,
   Info,
   ChevronLeft,
@@ -20,7 +20,7 @@ import { AspectRatio } from '@/design-system/components/AspectRatio/aspect-ratio
 import { Textarea } from '@/design-system/components/Textarea/textarea'
 import { Field, FieldLabel } from '@/design-system/components/Field/field'
 import { DescriptionList, DescriptionItem } from '@/design-system/components/DescriptionList/description-list'
-import { ItemInlineAction, ItemInlineActionButton } from '@/design-system/patterns/element-anatomy/item-anatomy'
+import { ItemInlineActionButton } from '@/design-system/patterns/element-anatomy/item-anatomy'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -373,16 +373,16 @@ const Toolbar: React.FC<ToolbarProps> = ({
         )}
         {/* action-bar canonical:dismiss 前加分隔線跟其他動作分群(info/download = action group,close = dismiss group) */}
         <div className="h-6 w-px bg-divider mx-1" aria-hidden />
-        {/* Close X 走 dismiss canonical(`ItemInlineActionButton`)——對齊 CLAUDE.md
-            `patterns/element-anatomy/item-anatomy.spec.md`「Dismiss 按鈕 canonical」:
-            dismiss overlay session 必用 Inline Action,不用 label Button。 */}
-        <ItemInlineAction
+        {/* Close X 走 dismiss canonical(`<Button iconOnly dismiss />`)——對齊 CLAUDE.md
+            `button.spec.md`「Dismiss 視覺類」+ `patterns/element-anatomy/item-anatomy.spec.md`
+            「Dismiss canonical」:chrome corner close X = Button dismiss,不是 Inline Action。 */}
+        <Button
+          iconOnly
+          dismiss
           size="sm"
-          action={{
-            icon: X,
-            label: '關閉檢視器',
-            onClick: onClose,
-          }}
+          startIcon={XIcon}
+          aria-label="關閉檢視器"
+          onClick={onClose}
         />
       </div>
     </div>
@@ -443,14 +443,15 @@ const InfoPanel: React.FC<InfoPanelProps> = ({
         )}
       >
         <h3 className="text-body-lg font-medium text-foreground">詳細資訊</h3>
-        {/* InfoPanel close 走 dismiss canonical ItemInlineAction,對齊 item-anatomy 規則 */}
-        <ItemInlineAction
+        {/* InfoPanel close 走 dismiss canonical `<Button iconOnly dismiss />`,對齊 button.spec.md
+            「Dismiss 視覺類」+ item-anatomy.spec.md「Dismiss canonical」。 */}
+        <Button
+          iconOnly
+          dismiss
           size="sm"
-          action={{
-            icon: X,
-            label: '關閉詳細資訊',
-            onClick: onClose,
-          }}
+          startIcon={XIcon}
+          aria-label="關閉詳細資訊"
+          onClick={onClose}
         />
       </div>
 

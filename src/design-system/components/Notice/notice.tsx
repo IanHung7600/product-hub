@@ -112,6 +112,7 @@ const Notice = React.forwardRef<HTMLDivElement, NoticeProps>(
             {endContent}
             {dismissible && (
               <Button
+                data-dismiss
                 iconOnly
                 dismiss
                 size="sm"

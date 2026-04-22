@@ -6,10 +6,10 @@ import { X as XIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 import {
   SurfaceHeader,
-  SurfaceBody,
   SurfaceFooter,
 } from "@/design-system/patterns/overlay-surface/overlay-surface"
 import { Button } from "@/design-system/components/Button/button"
+import { ScrollArea } from "@/design-system/components/ScrollArea/scroll-area"
 
 /**
  * Sheet — **右側 Dialog primitive**(給消費者的 canonical)。
@@ -86,6 +86,19 @@ interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content>,
     VariantProps<typeof sheetVariants> {}
 
+// AutoFocus canonical(對齊 Dialog / Material / Polaris)— 見 dialog.tsx handleOpenAutoFocus 註解
+const handleSheetOpenAutoFocus = (e: Event) => {
+  e.preventDefault()
+  const content = e.currentTarget as HTMLElement
+  const firstBodyTarget = content.querySelector<HTMLElement>(
+    '[data-sheet-body] input:not([disabled]),[data-sheet-body] textarea:not([disabled]),[data-sheet-body] select:not([disabled]),[data-sheet-body] button:not([disabled]):not([data-dismiss])'
+  )
+  const firstFooterButton = content.querySelector<HTMLElement>(
+    '[data-sheet-footer] button:not([disabled]):not([data-dismiss])'
+  )
+  ;(firstBodyTarget ?? firstFooterButton ?? content).focus({ preventScroll: true })
+}
+
 const SheetContent = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Content>,
   SheetContentProps
@@ -94,6 +107,7 @@ const SheetContent = React.forwardRef<
     <SheetOverlay />
     <SheetPrimitive.Content
       ref={ref}
+      onOpenAutoFocus={handleSheetOpenAutoFocus}
       // Sheet 不自設 density,繼承 page 層級的 `html[data-density]`(2026-04-21 canonical 定案)
       className={cn(sheetVariants({ side }), className)}
       {...props}
@@ -116,30 +130,34 @@ const SheetHeader = React.forwardRef<
   >
     <div className="flex-1 min-w-0">{children}</div>
     <SheetPrimitive.Close asChild>
-      <Button iconOnly dismiss size="sm" startIcon={XIcon} aria-label="關閉" />
+      <Button data-dismiss iconOnly dismiss size="sm" startIcon={XIcon} aria-label="關閉" />
     </SheetPrimitive.Close>
   </SurfaceHeader>
 ))
 SheetHeader.displayName = "SheetHeader"
 
-// ── SheetBody:flex-1 + overflow-y-auto(對齊 DialogBody) ─────────────────────
+// ── SheetBody:flex-1 ScrollArea + inner padding(對齊 DialogBody + ScrollArea canonical) ──
+// 捲軸必用 ScrollArea(跨 OS 一致、不吃寬度)— 不自寫 overflow-y-auto。
+// padding 搬進 viewport inner div:px-loose / pt-tight / pb-bottom。
+// data-sheet-body:讓 SheetContent onOpenAutoFocus 找得到 body 第一個互動元素
 const SheetBody = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <SurfaceBody
-    ref={ref}
-    className={cn(
-      "flex-1 overflow-y-auto pb-[var(--layout-space-bottom)]",
-      className,
-    )}
-    {...props}
-  />
+>(({ className, children, ...props }, ref) => (
+  <ScrollArea ref={ref} data-sheet-body className={cn("flex-1 min-h-0", className)} {...props}>
+    <div className="px-[var(--layout-space-loose)] pt-[var(--layout-space-tight)] pb-[var(--layout-space-bottom)]">
+      {children}
+    </div>
+  </ScrollArea>
 ))
 SheetBody.displayName = "SheetBody"
 
-// ── SheetFooter:SurfaceFooter 直接 re-export ─────────────────────────────────
-const SheetFooter = SurfaceFooter
+// ── SheetFooter:SurfaceFooter wrap 加 data-sheet-footer(autoFocus fallback target)──
+const SheetFooter = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ ...props }, ref) => <SurfaceFooter ref={ref} data-sheet-footer {...props} />)
+SheetFooter.displayName = "SheetFooter"
 
 const SheetTitle = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Title>,

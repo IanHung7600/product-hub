@@ -29,10 +29,24 @@ const Popover = PopoverPrimitive.Root
 const PopoverTrigger = PopoverPrimitive.Trigger
 const PopoverClose = PopoverPrimitive.Close
 
+// AutoFocus canonical(對齊 Dialog / Sheet / Material / Polaris)—
+// 開啟時 focus 落在 body 第一個有意義互動元素,避免 focus 到 close X 觸發 tooltip leak
+const handlePopoverOpenAutoFocus = (e: Event) => {
+  e.preventDefault()
+  const content = e.currentTarget as HTMLElement
+  const firstBodyTarget = content.querySelector<HTMLElement>(
+    '[data-popover-body] input:not([disabled]),[data-popover-body] textarea:not([disabled]),[data-popover-body] select:not([disabled]),[data-popover-body] button:not([disabled]):not([data-dismiss]),input:not([disabled]),textarea:not([disabled]),button:not([disabled]):not([data-dismiss])'
+  )
+  const firstFooterButton = content.querySelector<HTMLElement>(
+    '[data-popover-footer] button:not([disabled]):not([data-dismiss])'
+  )
+  ;(firstBodyTarget ?? firstFooterButton ?? content).focus({ preventScroll: true })
+}
+
 const PopoverContent = React.forwardRef<
   React.ElementRef<typeof PopoverPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof PopoverPrimitive.Content>
->(({ className, align = "center", sideOffset = 8, collisionPadding = 8, ...props }, ref) => (
+>(({ className, align = "center", sideOffset = 8, collisionPadding = 8, onOpenAutoFocus, ...props }, ref) => (
   <PopoverPrimitive.Portal>
     <PopoverPrimitive.Content
       ref={ref}
@@ -40,6 +54,7 @@ const PopoverContent = React.forwardRef<
       sideOffset={sideOffset}
       collisionPadding={collisionPadding}
       data-density="md"
+      onOpenAutoFocus={onOpenAutoFocus ?? handlePopoverOpenAutoFocus}
       className={cn(
         "z-50 w-72 rounded-lg border border-border bg-surface-raised text-foreground shadow-[var(--elevation-200)] outline-none",
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
@@ -73,7 +88,7 @@ const PopoverHeader = React.forwardRef<HTMLDivElement, PopoverHeaderProps>(
       <div className="flex-1 min-w-0">{children}</div>
       {!hideClose && (
         <PopoverPrimitive.Close asChild>
-          <Button iconOnly dismiss size="sm" startIcon={XIcon} aria-label="關閉" />
+          <Button data-dismiss iconOnly dismiss size="sm" startIcon={XIcon} aria-label="關閉" />
         </PopoverPrimitive.Close>
       )}
     </SurfaceHeader>
