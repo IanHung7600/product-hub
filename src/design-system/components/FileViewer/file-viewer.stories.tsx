@@ -382,3 +382,26 @@ export const FallbackUnknownType: Story = {
     )
   },
 }
+
+/**
+ * OpenSnapshot — visual-audit 專用 story。
+ * 初始 `open={true}` 讓 FileViewer render 時已打開,Playwright 截圖抓完整
+ * toolbar + image renderer + action-bar。對齊 Dialog / Sheet / Popover OpenSnapshot canonical。
+ */
+export const OpenSnapshot: Story = {
+  name: '開啟狀態(視覺稽核用)',
+  tags: ['!autodocs'],
+  render: () => {
+    const [open, setOpen] = React.useState(true)
+    const [index, setIndex] = React.useState(0)
+    return (
+      <FileViewer
+        files={jiraScreenshots}
+        open={open}
+        onOpenChange={setOpen}
+        index={index}
+        onIndexChange={setIndex}
+      />
+    )
+  },
+}

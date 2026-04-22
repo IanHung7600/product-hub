@@ -17,6 +17,7 @@
     { "id": "design-system-components-fileviewer-展示--figma-design-review", "file": "fileviewer-figma.png" },
     { "id": "design-system-components-fileviewer-展示--jira-attachments", "file": "fileviewer-jira.png" },
     { "id": "design-system-components-fileviewer-展示--gmail-attachment-preview", "file": "fileviewer-gmail.png" },
+    { "id": "design-system-components-fileviewer-展示--open-snapshot", "file": "fileviewer-open-snapshot.png", "rationale": "visual-audit canonical open state — full toolbar + renderer + action-bar;對齊 Dialog / Sheet / Popover OpenSnapshot pattern" },
 
     { "id": "design-system-components-rating-展示--interactive-review", "file": "rating-interactive.png" },
     { "id": "design-system-components-rating-展示--in-field", "file": "rating-in-field.png" },
@@ -37,6 +38,7 @@
 
     { "id": "design-system-components-sheet-展示--create-project-right", "file": "sheet-create-project.png" },
     { "id": "design-system-components-sheet-展示--edit-user-right", "file": "sheet-edit-user.png" },
+    { "id": "design-system-components-sheet-展示--open-snapshot", "file": "sheet-open-snapshot.png", "rationale": "visual-audit canonical open state — Sheet chrome(Header / Body / Footer)完整;對齊 Dialog OpenSnapshot pattern" },
 
     { "id": "design-system-components-button-展示--icon-only", "file": "button-icon-only.png" },
     { "id": "design-system-components-button-展示--all-sizes", "file": "button-sizes.png" },

@@ -119,3 +119,45 @@ export const EditUserRight: Story = {
 // LeftNavigation 範例移除(AR35):消費者 Sheet API **只能用 side="right"**。
 // 左側 / 頂部 / 底部為 DS 內部基建用(如 Sidebar 在 narrow viewport 時切 left 滑入),
 // 需 user 明示授權。本 stories 檔不提供未授權用法示範。
+
+/**
+ * OpenSnapshot — visual-audit 專用 story(對齊 Dialog OpenSnapshot canonical)。
+ * `defaultOpen` 讓 Sheet render 即開著,Playwright 截圖抓得到 chrome(Header / Body / Footer)。
+ * 世界級 Polaris / Atlassian chromatic 稽核共通 pattern。
+ */
+export const OpenSnapshot: Story = {
+  name: '開啟狀態(視覺稽核用)',
+  tags: ['!autodocs'],
+  render: () => (
+    <Sheet defaultOpen>
+      <SheetTrigger asChild>
+        <Button>打開 Sheet</Button>
+      </SheetTrigger>
+      <SheetContent className="flex flex-col sm:max-w-lg">
+        <SheetHeader>
+          <SheetTitle>編輯使用者 profile</SheetTitle>
+        </SheetHeader>
+        <SheetBody className="flex flex-col gap-[var(--layout-space-tight)]">
+          <Field>
+            <FieldLabel>顯示名稱</FieldLabel>
+            <Input defaultValue="Alan Chen" />
+          </Field>
+          <Field>
+            <FieldLabel>職稱</FieldLabel>
+            <Input defaultValue="Senior Designer" />
+          </Field>
+          <Field>
+            <FieldLabel>自我介紹</FieldLabel>
+            <Textarea defaultValue="設計師,專注於 DS + tooling。" rows={3} />
+          </Field>
+        </SheetBody>
+        <SheetFooter>
+          <SheetClose asChild>
+            <Button variant="tertiary">取消</Button>
+          </SheetClose>
+          <Button variant="primary">儲存</Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  ),
+}
