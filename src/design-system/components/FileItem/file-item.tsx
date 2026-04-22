@@ -40,7 +40,7 @@ const PROGRESS_STATUS_MAP = {
   error: 'error',
 } as const
 
-const AVATAR_SIZE = 56
+const AVATAR_SIZE = 48
 const ICON_PX = 16
 
 export interface FileItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
@@ -233,10 +233,20 @@ const FileItem = React.forwardRef<HTMLDivElement, FileItemProps>(
           {...props}
         >
           <Avatar src={thumbnailSrc} alt={name} size={AVATAR_SIZE} shape="square" className="shrink-0" />
-          {/* content ↔ progress bar gap-2 (8px) 對齊 item-anatomy canonical,兩 mode 一致。
-              Avatar 固定 56,content 自然高度(可超過 avatar);row `items-start` 由 avatar 作
-              視覺引導(upload manager box tight-stack 情境明文例外,avatar 邊界分隔 item)。 */}
-          <div className="flex flex-col flex-1 min-w-0 gap-2">
+          {/* Rich layout invariant(2026-04-23 user 校準):
+              - content col minHeight = AVATAR_SIZE(48),確保 1-line desc 時內容 ≥ avatar 高
+              - `justify-between`(有 bar)/`justify-center`(無 bar):
+                * 1-line desc:label 頂 + progress bar 底 **自動對齊 avatar 頂/底**
+                * 無 bar:content 垂直 center 對齊 avatar 中
+              - `gap-2`:desc ↔ progress bar **至少 8px gap**(multi-line desc 時 bar 溢出仍保 8px)
+              - row `items-start`:avatar top-align 作視覺引導(tight-stack box 內 item 邊界) */}
+          <div
+            className={cn(
+              'flex flex-col flex-1 min-w-0 gap-2',
+              progressBar ? 'justify-between' : 'justify-center',
+            )}
+            style={{ minHeight: AVATAR_SIZE }}
+          >
             {contentRow}
             {progressBar}
           </div>

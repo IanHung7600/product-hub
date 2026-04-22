@@ -4,6 +4,16 @@ import { FileItem } from './file-item'
 import { Button } from '@/design-system/components/Button/button'
 import { ItemInlineActionButton } from '@/design-system/patterns/element-anatomy/item-anatomy'
 
+// 錯誤 description 範例(含 clickable "View log"):consumer 自由 ReactNode,通常用底線 link 表 clickable
+const errorDescWithLog = (
+  <>
+    There&rsquo;s something wrong.{' '}
+    <a href="#" className="underline hover:text-error-hover" onClick={(e) => e.preventDefault()}>
+      View log
+    </a>
+  </>
+)
+
 const meta: Meta<typeof FileItem> = {
   title: 'Design System/Components/FileItem/展示',
   component: FileItem,
@@ -25,30 +35,34 @@ const deleteBtn = <Button size="xs" iconOnly variant="text" startIcon={Trash2} a
 const deleteBtnXs = <ItemInlineActionButton icon={Trash2} size="sm" aria-label="刪除" onClick={noop} />
 
 export const Rich = {
-  name: 'Rich（上傳狀態）',
+  name: 'Rich(Type A upload manager)',
   render: () => (
-    // Rich 永遠 border card → list wrapper `gap-2` 防邊框相黏(item-anatomy「連續 item 貼邊合法性」)
+    // Type A upload manager:所有 item 都有 status + progress bar(含 completed 100%)
+    // 也可傳 onClick/onDownload 讓整 row 點開(預設 FileViewer,consumer 決定)
+    // Rich 永遠 border card → list wrapper `gap-2` 防邊框相黏
     <div className="flex flex-col gap-2 max-w-md">
       <FileItem mode="rich" name="Alan Profile.png" status="uploading" progress={40}
         description="5.7 MB of 7.5MB" thumbnailSrc="https://i.pravatar.cc/80?u=alan" actions={deleteBtn} />
       <FileItem mode="rich" name="Alan Profile.png" status="completed"
-        description="5.7 MB" thumbnailSrc="https://i.pravatar.cc/80?u=alan" actions={deleteBtn} />
+        description="5.7 MB" thumbnailSrc="https://i.pravatar.cc/80?u=alan"
+        onClick={noop} onDownload={noop} actions={deleteBtn} />
       <FileItem mode="rich" name="Alan Profile.png" status="error" progress={65}
-        description="There's something wrong" thumbnailSrc="https://i.pravatar.cc/80?u=alan" actions={deleteBtn} />
+        description={errorDescWithLog} thumbnailSrc="https://i.pravatar.cc/80?u=alan"
+        onRetry={noop} actions={deleteBtn} />
     </div>
   ),
 }
 
 export const Compact = {
-  name: 'Compact（上傳狀態 · Type A upload manager）',
+  name: 'Compact(Type A upload manager)',
   render: () => (
     // Compact + status(永遠有 progress bar)= Type A upload manager
-    // 永久視覺:flush 透明 row + 底部 progress bar(分隔線型 affordance 同 DataTable border-b)
-    // → 0 gap 合法(item-anatomy v2「連續 item 貼邊合法性」),progress bar 自身作 separator
-    <div className="flex flex-col max-w-md">
+    // list wrapper `gap-1`(4px)簡化 canonical — compact list 統一 gap-1,不論純/混合(2026-04-23)
+    <div className="flex flex-col gap-1 max-w-md">
       <FileItem mode="compact" name="UXP T-Phone.csv" status="uploading" progress={60} actions={deleteBtnXs} />
-      <FileItem mode="compact" name="UXP T-Phone.csv" status="error" description="There's something wrong" actions={deleteBtnXs} />
-      <FileItem mode="compact" name="UXP T-Phone.csv" status="completed" actions={deleteBtnXs} />
+      <FileItem mode="compact" name="UXP T-Phone.csv" status="error" description={errorDescWithLog} actions={deleteBtnXs} />
+      <FileItem mode="compact" name="UXP T-Phone.csv" status="completed"
+        onClick={noop} onDownload={noop} actions={deleteBtnXs} />
     </div>
   ),
 }
@@ -76,12 +90,13 @@ export const HoverSwap = {
         <div className="text-caption text-fg-muted mb-2">
           同樣 pattern 在 compact mode:status slot 幾何與 Inline Action(16×16 icon)一致,center 自動對齊
         </div>
-        {/* Compact + status = Type A(flush + progress bar 分隔線型 affordance)→ 0 gap 合法 */}
-        <div className="flex flex-col">
+        {/* Compact list 統一 gap-1(canonical 簡化) */}
+        <div className="flex flex-col gap-1">
           <FileItem mode="compact" name="data-2024-q1.csv" status="completed"
             onDownload={noop} actions={deleteBtnXs} />
           <FileItem mode="compact" name="backup-failed.json" status="error"
-            description="Network timeout. View log" onRetry={noop} actions={deleteBtnXs} />
+            description={<>Network timeout. <a href="#" className="underline hover:text-error-hover" onClick={(e) => e.preventDefault()}>View log</a></>}
+            onRetry={noop} actions={deleteBtnXs} />
         </div>
       </div>
     </div>
@@ -89,10 +104,12 @@ export const HoverSwap = {
 }
 
 export const Clickable = {
-  name: '已上傳（點擊下載,Type B form attachment）',
+  name: '已上傳(Type B form attachment — click 開 FileViewer)',
   render: () => (
-    // Type B form attachment(無 status)—— rich card + compact bg-neutral-3 混場景,list wrapper 無外框
-    // rich 必 gap-2 / compact bg 必 gap-1 → 混用取最大 `gap-2` 保守(file-item.spec「List wrapper canonical」)
+    // Type B form attachment(無 status,無 progress bar,已上傳完的舊附件)
+    // 整 row clickable(consumer 決定:通常 FileViewer 開檔預覽 / 或直接下載)
+    // compact 自帶 bg-neutral-3 靜態底色 / rich 自帶 border card → list wrapper 無外框
+    // 混用 rich + compact 用 `gap-2`(取 rich 最大 gap 保守)
     <div className="flex flex-col gap-2 max-w-md">
       <FileItem mode="rich" name="報告.pdf" description="2.3 MB"
         thumbnailSrc="https://i.pravatar.cc/80?u=doc" onClick={noop} actions={deleteBtn} />
@@ -105,16 +122,19 @@ export const Clickable = {
 }
 
 export const CompactMixed = {
-  name: 'Compact 混合(Type A 上傳中 + Type B 已上傳)',
+  name: 'Compact 混合(上傳中 Type A + 已存附件 Type B)',
   render: () => (
-    // Real-world:email 草稿 / 多步驟 upload flow —— 上傳中(Type A)+ 舊附件(Type B)混在同 list
-    // Type A(分隔線型:progress bar 作底線)+ Type B(standalone pill:bg-neutral-3)= 視覺語言不同
-    // 0 gap 時 progress bar 緊貼 bg pill 會被 bg 邊界吸收,分隔線 affordance 失效
-    // → 必 gap-1 讓各類保留自己的 affordance(spec「混合視覺語言 list」公式 3)
+    // Real-world:email 草稿 — 新上傳中(Type A active)+ 舊已存附件(Type B 靜態)混在同 list
+    // **重要 invariant**:Type A **completed**(bar 100% + ✓)跟 Type B(無 bar)不共存
+    // —— Type A completed 是「剛完成的 upload session」,Type B 是「已存 attachment」,
+    //    業務語義互斥(完成後 consumer 會把 item 轉成 Type B)。
+    // 這 mixed 情境只含:Type A active(uploading/error)+ Type B(saved attachments)
     <div className="flex flex-col gap-1 max-w-md">
       <FileItem mode="compact" name="圖片草稿.png" status="uploading" progress={40} actions={deleteBtnXs} />
       <FileItem mode="compact" name="回覆範本.docx" onClick={noop} actions={deleteBtnXs} />
-      <FileItem mode="compact" name="data-2024.csv" status="completed" onDownload={noop} actions={deleteBtnXs} />
+      <FileItem mode="compact" name="backup-failed.json" status="error"
+        description={<>Network timeout. <a href="#" className="underline hover:text-error-hover" onClick={(e) => e.preventDefault()}>View log</a></>}
+        onRetry={noop} actions={deleteBtnXs} />
       <FileItem mode="compact" name="附件封面.pdf" onClick={noop} actions={deleteBtnXs} />
     </div>
   ),
