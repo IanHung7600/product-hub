@@ -164,17 +164,17 @@ ProgressBar 底部對齊 avatar 底部。justify-between 自動分配 gap(有 de
 
 ### 混合類型 list(real-world:email 草稿 / 多步驟 upload flow)
 
-取**最保守(最大)gap**,因為任意相鄰組合一定不出事:
+取**最保守(最大)gap**,因為**不同視覺語言相鄰時 affordance 會互相吸收**(詳 item-anatomy「公式 3:混合視覺語言 list」):
 
 | Mixed 組合 | gap 決策 | rationale |
 |-----------|---------|-----------|
 | Rich + Compact 任意混用 | **`gap-2`** | rich 永遠必 gap-2,取 max |
-| Compact Type A + Type B 混用 | **`gap-1`** | 兩個 Type B 相鄰時會 bg 融合 → 必防 |
-| Compact Type A only(可確定全 progress bar) | 0 gap 合法 | 同「全 Type A」 |
+| Compact Type A(分隔線型)+ Type B(standalone pill)混用 | **`gap-1`** | 兩類視覺語言不同 —— Type A 底部 progress bar 緊貼 Type B `bg-neutral-3` 時,progress bar 被 pill bg 吸收失去分隔 affordance;反之 Type B pill 貼 Type A 時下緣 progress bar 看似 pill 的一部分 |
+| Compact Type A only(可確定全 progress bar) | 0 gap 合法 | 同「全 Type A」,視覺語言一致 |
 
 **判斷流程**(consumer 寫 list 時):
-1. 若 list 只有 compact 且**所有 item 保證有 status**(e.g., Google Drive upload box 只顯示上傳中 / 剛完成的檔案)→ 0 gap
-2. 若 list 可能包含 compact Type B(`bg-neutral-3` 靜態 item,如表單附件、留言附件)→ `gap-1`
+1. 若 list 只有 compact 且**所有 item 保證有 status**(e.g., Google Drive upload box)→ 0 gap
+2. 若 list 可能混合 Type A + Type B / 可能包含 Type B(`bg-neutral-3` 靜態 item,如表單附件、留言附件、email 草稿)→ `gap-1`
 3. 若 list 含 rich → `gap-2`
 
 ### List wrapper 本身不加視覺

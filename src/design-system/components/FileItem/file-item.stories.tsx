@@ -108,8 +108,9 @@ export const CompactMixed = {
   name: 'Compact 混合(Type A 上傳中 + Type B 已上傳)',
   render: () => (
     // Real-world:email 草稿 / 多步驟 upload flow —— 上傳中(Type A)+ 舊附件(Type B)混在同 list
-    // 相鄰組合:A↔A / A↔B 兩邊至少一邊無 bg,OK;B↔B 兩 bg 相連融合 → 必防
-    // 決策:取最保守 `gap-1`(4px)不論實際順序,避免 B↔B 融合(spec「Mixed 類型 list」)
+    // Type A(分隔線型:progress bar 作底線)+ Type B(standalone pill:bg-neutral-3)= 視覺語言不同
+    // 0 gap 時 progress bar 緊貼 bg pill 會被 bg 邊界吸收,分隔線 affordance 失效
+    // → 必 gap-1 讓各類保留自己的 affordance(spec「混合視覺語言 list」公式 3)
     <div className="flex flex-col gap-1 max-w-md">
       <FileItem mode="compact" name="圖片草稿.png" status="uploading" progress={40} actions={deleteBtnXs} />
       <FileItem mode="compact" name="回覆範本.docx" onClick={noop} actions={deleteBtnXs} />
