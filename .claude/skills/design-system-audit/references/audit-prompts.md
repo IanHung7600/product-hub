@@ -76,12 +76,13 @@ End: `N components checked, M mismatches.` Under 400 words. Don't fix.
 ## 2. SSOT dead link
 
 **Type**: Absolute
-**Canonical source**: CLAUDE.md `# Spec 規則` SSOT anchors list; every pointer must resolve to an actual `##`/`###` heading
+**Canonical source**: CLAUDE.md `# Spec 規則` SSOT anchors list; every pointer must resolve to an actual `##`/`###` heading OR actual filesystem path
 **Rationale home**: N/A — dead link is never acceptable
 
 ```
-Your job: verify all SSOT pointers in .spec.md / .tsx files resolve to real headings.
+Your job: verify all SSOT pointers in .spec.md / .tsx files resolve (1) to real headings AND (2) to real filesystem paths.
 
+## Part A — Heading anchor checks
 Grep patterns to collect:
 - `\.spec\.md「[^」]+」`
 - `\.spec\.md\s*的「[^」]+」`
@@ -91,7 +92,32 @@ For each `xxx.spec.md「HEADING」`:
 2. Verify a `##` or `###` heading matching HEADING exactly exists
 3. Report mismatches with `file:line — pointer — actual closest heading`
 
-End: `N pointers checked, M dead, K soft-matches.` Under 300 words. Don't fix.
+## Part B — File path existence checks(2026-04-22 補盲點)
+
+先前盲點:只檢 heading anchor「」,未檢 bare file-path reference。例如 item-anatomy.spec.md 曾寫
+`→ src/design-system/ELEMENT-ANATOMY.md`(此 file 從未存在),agent 視為 legitimate 因為
+無「」anchor 落在檢測外。
+
+Grep patterns:
+- `src/[a-zA-Z0-9/_.-]+\.(md|tsx|ts)` 作為 pointer 出現在 .md / .tsx 文件內(非 import)
+- 尤其 ALL-CAPS filename convention(`ELEMENT-ANATOMY.md` / `CLAUDE.md` / `README.md` 等)
+- 注意排除 code comments 講路徑但實為 illustration 的(e.g. `// 見 src/...`)
+
+For each file-path reference:
+1. `test -f <path>` 檢查 file 實際存在
+2. 若 pointer 指向不存在的 file → P0 dead pointer
+3. 若 pointer 指向 file 但 file 已 rename / moved → suggest correct path
+
+## Part C — Spec self-placement consistency(2026-04-22 新增)
+
+檢查 spec 是否自稱在某個位置但實際 location 不符(doc drift):
+
+- Grep spec.md 開頭段落中「放/住/位於」等 location claim
+- 例:「本檔放頂層 `src/design-system/`」但檔案實際在 `patterns/element-anatomy/`
+- Cross-check with `src/design-system/README.md` 的 home governance 決策
+- 若 claim 不符實際 → Flag「self-placement drift」
+
+End: `N pointers checked, M heading-dead, K path-dead, L self-placement drift.` Under 400 words. Don't fix.
 ```
 
 ## 3. SSOT reciprocal
