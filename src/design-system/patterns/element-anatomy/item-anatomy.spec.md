@@ -555,7 +555,7 @@ Canonical 對齊模式判斷:`MenuItem` 的 `isBlockAlign = avatarPx > 24 && !!d
 
 硬寫會造成兩種漂移,兩種都是**真實發生過的 bug**:
 
-1. **跨 size 漂移**:寫死 24 看起來在 md 對,但 sm 應該是 20、硬寫讓 sm 變 24——Row size 變體 story 三欄並排時,sm 欄的 avatar 比規格大 4px,視覺上破功。
+1. **跨 size 漂移**:寫死 24 僅與 md 規格相符;sm 應為 20、lg 為 24,硬寫讓 sm 渲染出 24(比規格大 4px),Row size 變體 story 三欄並排時 sm 欄的 avatar 尺寸違反 canonical。
 2. **跨 consumer 漂移**:每個 asChild consumer 各自硬寫,未來改 inline sm 從 20→18 就要全域搜改,漏一個就漂移。
 
 **這條規則跟 `ICON_SIZE` 的程式化邏輯一致**——icon / avatar / inline action hover bg 都從 `item-layout` module 單一來源 import,row primitive 的任何尺寸常數永遠不在 consumer 側重新定義。

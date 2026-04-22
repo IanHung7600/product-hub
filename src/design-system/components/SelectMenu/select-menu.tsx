@@ -99,7 +99,11 @@ export interface SelectMenuProps {
   className?: string
 }
 
-export function SelectMenu({
+// shadcn canonical:forwardRef + displayName 統一。SelectMenu 是 Popover + Command
+// composite,自身無 DOM host(trigger 由 consumer 以 asChild children 提供),ref 簽名
+// 保留但不附著(consumer 想取 trigger DOM 直接在 children 上自己 ref)。className 合併到
+// PopoverContent(contextually 最接近 user-facing surface)。
+const SelectMenu = React.forwardRef<HTMLElement, SelectMenuProps>(function SelectMenu({
   options,
   groups,
   value,
@@ -121,7 +125,7 @@ export function SelectMenu({
   renderLabel,
   onOpenAutoFocus,
   className,
-}: SelectMenuProps) {
+}, _ref) {
   // ── State ──
   const [internalOpen, setInternalOpen] = React.useState(false)
   const open = controlledOpen ?? internalOpen
@@ -331,6 +335,8 @@ export function SelectMenu({
       </RowSizeProvider>
     </Popover>
   )
-}
+})
 
 SelectMenu.displayName = 'SelectMenu'
+
+export { SelectMenu }

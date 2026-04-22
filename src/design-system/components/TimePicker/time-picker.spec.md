@@ -138,7 +138,7 @@ Panel 展開後的 column picker 結構:
 
 **為什麼每欄 48px 不 56 / 64**:
 - 48px = `h-field-sm × 1.7`,兩位數字 `tabular-nums`(約 16-18px 寬)+ 左右呼吸 ~15px。不貼邊也不浪費
-- 56-64px 會讓 column list 看起來過寬,像 Select menu 而非 picker
+- 56-64px 寬度逼近 Select menu 語境;picker column 超過此寬度會模糊 picker vs menu 的視覺界線
 - Ant 56 / 本 DS 48 差異在:Ant 的 item 有圓角 button 佔寬,本 DS 走 `rounded-md` `text-center`,視覺 48px 不擠
 
 **showSeconds 切換時 panel 寬度會跟著變**(刻意):

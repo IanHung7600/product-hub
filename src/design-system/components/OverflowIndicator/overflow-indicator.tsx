@@ -26,7 +26,8 @@ const triggerText: Record<string, string> = {
   lg: 'text-caption',
 }
 
-export interface OverflowIndicatorProps {
+export interface OverflowIndicatorProps
+  extends Omit<React.HTMLAttributes<HTMLSpanElement>, 'children'> {
   count: number
   shape?: 'circle' | 'tag'
   size?: 'sm' | 'md' | 'lg'
@@ -75,38 +76,49 @@ function ShrinkWrapList({ children }: { children: React.ReactNode }) {
   )
 }
 
-function OverflowIndicator({ count, shape = 'circle', size = 'md', children, className }: OverflowIndicatorProps) {
-  if (count <= 0) return null
+const OverflowIndicator = React.forwardRef<HTMLSpanElement, OverflowIndicatorProps>(
+  function OverflowIndicator(
+    { count, shape = 'circle', size = 'md', children, className, ...props },
+    ref,
+  ) {
+    if (count <= 0) return null
 
-  const trigger = shape === 'tag' ? (
-    <span className={cn(tagVariants({ variant: 'neutral', size }), 'cursor-default', className)}>
-      <span className="px-1">+{count}</span>
-    </span>
-  ) : (
-    <span
-      className={cn(
-        'shrink-0 rounded-full inline-grid place-content-center',
-        'bg-muted text-foreground font-medium leading-none cursor-default',
-        triggerSize[size],
-        triggerText[size],
-        className,
-      )}
-    >
-      +{count}
-    </span>
-  )
+    const trigger = shape === 'tag' ? (
+      <span
+        ref={ref}
+        className={cn(tagVariants({ variant: 'neutral', size }), 'cursor-default', className)}
+        {...props}
+      >
+        <span className="px-1">+{count}</span>
+      </span>
+    ) : (
+      <span
+        ref={ref}
+        className={cn(
+          'shrink-0 rounded-full inline-grid place-content-center',
+          'bg-muted text-foreground font-medium leading-none cursor-default',
+          triggerSize[size],
+          triggerText[size],
+          className,
+        )}
+        {...props}
+      >
+        +{count}
+      </span>
+    )
 
-  return (
-    <HoverCard openDelay={200} closeDelay={300}>
-      <HoverCardTrigger asChild>
-        {trigger}
-      </HoverCardTrigger>
-      <HoverCardContent className="bg-tooltip rounded-lg" data-theme="dark">
-        <ShrinkWrapList>{children}</ShrinkWrapList>
-      </HoverCardContent>
-    </HoverCard>
-  )
-}
+    return (
+      <HoverCard openDelay={200} closeDelay={300}>
+        <HoverCardTrigger asChild>
+          {trigger}
+        </HoverCardTrigger>
+        <HoverCardContent className="bg-tooltip rounded-lg" data-theme="dark">
+          <ShrinkWrapList>{children}</ShrinkWrapList>
+        </HoverCardContent>
+      </HoverCard>
+    )
+  },
+)
 OverflowIndicator.displayName = 'OverflowIndicator'
 
 export { OverflowIndicator }

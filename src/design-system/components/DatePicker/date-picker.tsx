@@ -62,7 +62,12 @@ DatePickerDisplay.displayName = 'DatePickerDisplay'
 
 // ── Component ───────────────────────────────────────────────────────────────
 
-export interface DatePickerProps extends DateFormatOptions {
+export interface DatePickerProps
+  extends DateFormatOptions,
+    Omit<
+      React.ButtonHTMLAttributes<HTMLButtonElement>,
+      'value' | 'onChange' | 'placeholder' | 'disabled'
+    > {
   mode?: FieldMode
   error?: boolean
   size?: 'sm' | 'md' | 'lg'
@@ -90,6 +95,7 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
       clearable = false,
       formatOptions,
       locale,
+      ...props
     },
     ref
   ) => {
@@ -106,6 +112,7 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
         <div
           className={cn(fieldWrapperStyles({ mode: resolvedMode, size }), className)}
           data-field-mode={resolvedMode}
+          {...(props as React.HTMLAttributes<HTMLDivElement>)}
         >
           <span className={cn('flex-1 min-w-0', resolvedMode === 'disabled' && 'text-fg-disabled')}>
             {value
@@ -144,6 +151,7 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
               ],
               className,
             )}
+            {...props}
           >
             <span className={cn(bareInputStyles, 'truncate', !value && 'text-fg-muted')}>
               {displayText}
@@ -186,7 +194,12 @@ DatePicker.displayName = 'DatePicker'
 // Ant-style range picker:single wrapper containing [start input] → [end input] [📅]
 // Click anywhere → opens Popover with Calendar mode="range" showing two months side-by-side.
 
-export interface DatePickerRangeProps extends DateFormatOptions {
+export interface DatePickerRangeProps
+  extends DateFormatOptions,
+    Omit<
+      React.ButtonHTMLAttributes<HTMLButtonElement>,
+      'value' | 'onChange' | 'placeholder' | 'disabled'
+    > {
   mode?: FieldMode
   error?: boolean
   size?: 'sm' | 'md' | 'lg'
@@ -214,6 +227,7 @@ const DatePickerRange = React.forwardRef<HTMLButtonElement, DatePickerRangeProps
       clearable = false,
       formatOptions,
       locale,
+      ...props
     },
     ref,
   ) => {
@@ -242,6 +256,7 @@ const DatePickerRange = React.forwardRef<HTMLButtonElement, DatePickerRangeProps
         <div
           className={cn(fieldWrapperStyles({ mode: resolvedMode, size }), className)}
           data-field-mode={resolvedMode}
+          {...(props as React.HTMLAttributes<HTMLDivElement>)}
         >
           <span className={cn('flex-1 min-w-0 truncate', !startIso && 'text-fg-muted', resolvedMode === 'disabled' && 'text-fg-disabled')}>
             {startIso ? formatDate(startIso, { formatOptions, locale }) : placeholder[0]}
@@ -277,6 +292,7 @@ const DatePickerRange = React.forwardRef<HTMLButtonElement, DatePickerRangeProps
               ],
               className,
             )}
+            {...props}
           >
             <span className={cn(bareInputStyles, 'truncate', !startIso && 'text-fg-muted')}>
               {startText}

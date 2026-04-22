@@ -371,7 +371,7 @@ const CHROME_UNBOUNDED_SLOT =
 - Popover header 同 pattern:48 md / 56 lg
 
 **為什麼這樣合理**:
-- **Unbounded** 無視覺邊界:若用 sm/md(28/32),配合 2×tight 的 padding(12/16)會讓整個 header 看起來「空」(padding 大、button 沒框)。縮小佔位到 xs(24)+ padding = 48/56 = chrome-header-height,視覺 tight compact。
+- **Unbounded** 無視覺邊界:若用 sm/md(28/32),配合 2×tight 的 padding(12/16)會讓 header 產生過多負空間(padding 比 button 還大、button 自身無 chrome 填充)。縮小佔位到 xs(24)+ padding = 48/56 = chrome-header-height,視覺 tight compact。
 - **Bounded** 有視覺邊界:button 本身 bg/border 佔視覺重量,padding 自然包住 button,header 長到 52+ 不顯得空。這也跟 footer 保持一致 — footer 通常放 primary/tertiary,自然高度。
 - **幾何閉合**:只有 header 全是 unbounded(Dialog 只有 title + close X 典型場景)時,header = chrome-header-height canonical,跟 Sidebar / page header / top bar 完美對齊。
 

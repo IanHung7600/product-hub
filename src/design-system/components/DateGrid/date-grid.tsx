@@ -43,12 +43,17 @@ import { cn } from '@/lib/utils'
 
 export type DateGridProps = React.ComponentProps<typeof DayPicker>
 
-export function DateGrid({
-  className,
-  classNames,
-  showOutsideDays = true,
-  ...props
-}: DateGridProps) {
+const DateGrid = React.forwardRef<HTMLDivElement, DateGridProps>(function DateGrid(
+  {
+    className,
+    classNames,
+    showOutsideDays = true,
+    ...props
+  },
+  _ref,
+) {
+  // Note: react-day-picker v9 DayPicker 未對外 forward ref 到單一 DOM 節點(內部有多 div),
+  // 故 ref 簽名保留但不附著(符合 DS 統一 forwardRef 慣例;真要取 DOM 用 wrapper 包)。
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -166,5 +171,7 @@ export function DateGrid({
       {...props}
     />
   )
-}
+})
 DateGrid.displayName = 'DateGrid'
+
+export { DateGrid }

@@ -70,6 +70,13 @@ export interface RatingProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   readOnly?: boolean
   /** 完全停用 */
   disabled?: boolean
+  /**
+   * Loading 狀態 — 正在取得既有評分 / 正在儲存。
+   * 視覺同 disabled(composite 整塊 opacity-disabled)但 semantic 不同:
+   * loading = 暫時性等待(aria-busy),disabled = 永久業務規則(aria-disabled)。
+   * 詳 rating.spec.md「Interactive vs ReadOnly」+「Loading canonical」
+   */
+  loading?: boolean
   /** 自訂 icon(預設 Star);傳 LucideIcon */
   icon?: LucideIcon
   /** a11y label(readOnly 時必填,interactive 時建議填) */
@@ -87,6 +94,7 @@ const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
       precision = 'full',
       readOnly = false,
       disabled = false,
+      loading = false,
       icon: Icon = Star,
       className,
       ...props
@@ -108,7 +116,7 @@ const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
     const currentValue = isControlled ? value : internalValue
     const displayValue = hoverValue ?? currentValue
     const iconPx = SIZE_PX[size]
-    const isInteractive = !readOnly && !disabled
+    const isInteractive = !readOnly && !disabled && !loading
 
     const setValue = (v: number) => {
       if (!isControlled) setInternalValue(v)
@@ -144,6 +152,7 @@ const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
         aria-valuetext={isInteractive ? `${currentValue} of ${max} stars` : undefined}
         aria-disabled={disabled || undefined}
         aria-readonly={readOnly || undefined}
+        aria-busy={loading || undefined}
         tabIndex={isInteractive ? 0 : undefined}
         onKeyDown={handleKeyDown}
         onMouseLeave={() => setHoverValue(null)}
@@ -152,7 +161,8 @@ const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
           // Container 對齊 field-height family,讓 Rating 可與 Input/Select/Button 並排 row-align
           CONTAINER_HEIGHT[size],
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md',
-          disabled && 'opacity-disabled pointer-events-none',
+          // disabled 跟 loading 視覺相同(composite uniform dim),semantic 由 aria-disabled / aria-busy 區分
+          (disabled || loading) && 'opacity-disabled pointer-events-none',
           className,
         )}
         {...props}

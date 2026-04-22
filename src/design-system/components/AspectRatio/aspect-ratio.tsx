@@ -1,3 +1,4 @@
+import * as React from 'react'
 import * as AspectRatioPrimitive from '@radix-ui/react-aspect-ratio'
 
 /**
@@ -25,6 +26,13 @@ import * as AspectRatioPrimitive from '@radix-ui/react-aspect-ratio'
 
 export type AspectRatioProps = React.ComponentPropsWithoutRef<typeof AspectRatioPrimitive.Root>
 
-const AspectRatio = AspectRatioPrimitive.Root
+// shadcn canonical:顯式 forwardRef + displayName(雖 Radix primitive 已 forwardRef,
+// 此 wrapper 確保本 DS 每個 named export 在 Inspector 顯示正確 displayName,
+// 且 props passthrough + ref 行為在 code 層面明確可見)
+const AspectRatio = React.forwardRef<
+  React.ElementRef<typeof AspectRatioPrimitive.Root>,
+  AspectRatioProps
+>((props, ref) => <AspectRatioPrimitive.Root ref={ref} {...props} />)
+AspectRatio.displayName = 'AspectRatio'
 
 export { AspectRatio }

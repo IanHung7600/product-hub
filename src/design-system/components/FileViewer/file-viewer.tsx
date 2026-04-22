@@ -616,7 +616,11 @@ const Filmstrip: React.FC<FilmstripProps> = ({ files, activeIndex, onSelect }) =
 
 // ─── FileViewer (shell) ───────────────────────────────────────────────────────
 
-export interface FileViewerProps {
+export interface FileViewerProps
+  extends Omit<
+    React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>,
+    'onOpenChange'
+  > {
   files: FileInfo[]
   initialIndex?: number
   open: boolean
@@ -636,7 +640,7 @@ export interface FileViewerProps {
   onDownload?: (file: FileInfo) => void
 }
 
-const FileViewer: React.FC<FileViewerProps> = ({
+const FileViewer = React.forwardRef<HTMLDivElement, FileViewerProps>(function FileViewer({
   files,
   initialIndex = 0,
   open,
@@ -648,7 +652,8 @@ const FileViewer: React.FC<FileViewerProps> = ({
   showFilmstrip = false,
   allowDownload = true,
   onDownload,
-}) => {
+  ...props
+}, ref) {
   // Index:uncontrolled fallback
   const [internalIndex, setInternalIndex] = React.useState(initialIndex)
   const activeIndex = indexProp ?? internalIndex
@@ -793,6 +798,7 @@ const FileViewer: React.FC<FileViewerProps> = ({
           )}
         />
         <DialogPrimitive.Content
+          ref={ref}
           className={cn(
             // Edge-to-edge fullscreen,無 inset / 無 radius(與一般 Dialog 差別的所在)
             'fixed inset-0 z-50 outline-none',
@@ -801,6 +807,7 @@ const FileViewer: React.FC<FileViewerProps> = ({
           )}
           // 避免 Radix 自動把焦點送進 Content 的第一個 tabbable —— 我們要留給 viewport
           onOpenAutoFocus={(e) => e.preventDefault()}
+          {...props}
         >
           {/* 鎖 dark subtree。Density 繼承 page(不另設 data-density)。
               header 高度透過 `--chrome-header-height` 自動 density-aware(md=48 / lg=56)。 */}
@@ -906,7 +913,7 @@ const FileViewer: React.FC<FileViewerProps> = ({
       </DialogPrimitive.Portal>
     </DialogPrimitive.Root>
   )
-}
+})
 FileViewer.displayName = 'FileViewer'
 
 export { FileViewer }

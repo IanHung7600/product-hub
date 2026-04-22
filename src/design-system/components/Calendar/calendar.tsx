@@ -54,7 +54,7 @@ export interface CalendarEvent {
 
 export type CalendarView = 'month' | 'week' | 'day'
 
-export interface CalendarProps {
+export interface CalendarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSelect'> {
   /** 當前 view(MVP 只 'month',其餘 view tech debt) */
   view?: CalendarView
   defaultView?: CalendarView
@@ -123,7 +123,7 @@ function eventsOnDate(events: CalendarEvent[], date: Date): CalendarEvent[] {
 
 const MAX_TILES_PER_CELL = 3
 
-export function Calendar({
+const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(function Calendar({
   view: viewProp,
   defaultView = 'month',
   onViewChange,
@@ -139,7 +139,8 @@ export function Calendar({
   size = 'md',
   className,
   locale = 'en-US',
-}: CalendarProps) {
+  ...props
+}, ref) {
   // Controlled / uncontrolled refDate
   const [internalRef, setInternalRef] = React.useState<Date>(
     defaultReferenceDate ?? new Date(),
@@ -193,12 +194,14 @@ export function Calendar({
 
   return (
     <div
+      ref={ref}
       className={cn(
         'flex flex-col w-full h-full bg-surface rounded-md border border-divider overflow-hidden',
         className,
       )}
       data-view={currentView}
       data-size={size}
+      {...props}
     >
       {/* Toolbar:[◀] [今天] [▶]  title  [view tabs]  [+ new] */}
       <div
@@ -367,5 +370,7 @@ export function Calendar({
       </div>
     </div>
   )
-}
+})
 Calendar.displayName = "Calendar"
+
+export { Calendar }

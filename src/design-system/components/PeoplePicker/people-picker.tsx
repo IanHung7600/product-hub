@@ -44,7 +44,8 @@ function personToMenuOption(person: PersonValue): SelectMenuOption {
 // edit mode：Popover + Command 搜尋選人（使用 SelectMenu）。
 // readonly / disabled：靜態顯示。
 
-export interface PeoplePickerProps {
+export interface PeoplePickerProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   mode?: FieldMode
   size?: 'sm' | 'md' | 'lg'
   /** 當前已選的人（單選 PersonValue，多選 PersonValue[]） */
@@ -61,7 +62,7 @@ export interface PeoplePickerProps {
   disabled?: boolean
 }
 
-function PeoplePicker({
+const PeoplePicker = React.forwardRef<HTMLDivElement, PeoplePickerProps>(function PeoplePicker({
   mode = 'edit',
   size = 'md',
   value,
@@ -71,7 +72,8 @@ function PeoplePicker({
   emptyText = '沒有符合的人員',
   className,
   disabled,
-}: PeoplePickerProps) {
+  ...props
+}, ref) {
   const resolvedMode = disabled ? 'disabled' : mode
   const isEditable = resolvedMode === 'edit'
   const iconSize = size === 'lg' ? 20 : 16
@@ -82,8 +84,10 @@ function PeoplePicker({
   if (!isEditable) {
     return (
       <div
+        ref={ref}
         className={cn(fieldWrapperStyles({ mode: resolvedMode, size }), className)}
         data-field-mode={resolvedMode}
+        {...props}
       >
         <span className={cn('flex-1 min-w-0 inline-flex items-center', resolvedMode === 'disabled' && 'text-fg-disabled')}>
           {isEmpty
@@ -129,6 +133,7 @@ function PeoplePicker({
   // (controlled open 容易跟 Radix Popover 衝突)
   const trigger = (
     <div
+      ref={ref}
       role="combobox"
       aria-haspopup="listbox"
       tabIndex={0}
@@ -139,6 +144,7 @@ function PeoplePicker({
         className,
       )}
       data-field-mode="edit"
+      {...props}
     >
       <span className="flex-1 min-w-0 inline-flex items-center">
         {isEmpty
@@ -177,7 +183,7 @@ function PeoplePicker({
       {trigger}
     </SelectMenu>
   )
-}
+})
 PeoplePicker.displayName = 'PeoplePicker'
 
 export { PeoplePicker }

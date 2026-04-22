@@ -476,7 +476,7 @@ Dark mode 覆寫：hover/active 方向反轉（hover → step-7，active → ste
 | Tag/Avatar 的 dismiss hover bg | semantic `--blue-hover` |
 | Tag/Avatar 的 dismiss active bg | semantic `--blue-active` |
 
-**為什麼故意不加 base/subtle/text？** 那些不需要 mode 翻轉知識（primitives 已處理），加 semantic alias 只會污染命名空間、看起來像 categorical 復辟。只有 hover/active 真的需要 semantic 層處理 mode swap。
+**為什麼故意不加 base/subtle/text？** 那些不需要 mode 翻轉知識（primitives 已處理），加 semantic alias 只會污染命名空間、讓 semantic 層重新引入色相維度(backslide 到廢除的 categorical token layer)。只有 hover/active 真的需要 semantic 層處理 mode swap。
 
 #### 新增非語意色相 hue 互動 token 的步驟
 

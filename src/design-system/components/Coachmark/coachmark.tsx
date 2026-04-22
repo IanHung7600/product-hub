@@ -46,7 +46,7 @@ interface CoachmarkStep {
   total: number
 }
 
-export interface CoachmarkProps {
+export interface CoachmarkProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'children' | 'title'> {
   /** 控制顯示 */
   open?: boolean
   onOpenChange?: (open: boolean) => void
@@ -122,6 +122,8 @@ const Coachmark = React.forwardRef<HTMLDivElement, CoachmarkProps>(
       side = 'bottom',
       align = 'center',
       sideOffset = 8,
+      className,
+      ...props
     },
     ref,
   ) => {
@@ -147,11 +149,12 @@ const Coachmark = React.forwardRef<HTMLDivElement, CoachmarkProps>(
           side={side}
           align={align}
           sideOffset={sideOffset}
-          className={cn('w-80 p-0 overflow-hidden')}
+          className={cn('w-80 p-0 overflow-hidden', className)}
           // 禁止 Radix 開啟時自動 focus 第一個 focusable(預設會 focus Prev / Skip / Next),
           // Coachmark 的 CTA 不該被 auto-focus 偷觸發(user 可能還在讀 body,按 Enter 就推進)。
           // 想推進的 user 自己 tab 到 CTA 即可。
           onOpenAutoFocus={(e) => e.preventDefault()}
+          {...props}
         >
           {headerTitle && (
             // Header title 走 `<PopoverTitle>` 共用 Popover typography canonical(text-body font-medium)。

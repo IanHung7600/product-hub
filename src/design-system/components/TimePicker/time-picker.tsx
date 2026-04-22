@@ -201,7 +201,12 @@ export interface DisabledTimeResult {
 
 // ── Component props ─────────────────────────────────────────────────────────
 
-export interface TimePickerProps extends TimeFormatOptions {
+export interface TimePickerProps
+  extends TimeFormatOptions,
+    Omit<
+      React.ButtonHTMLAttributes<HTMLButtonElement>,
+      'value' | 'onChange' | 'placeholder' | 'disabled'
+    > {
   mode?: FieldMode
   error?: boolean
   size?: 'sm' | 'md' | 'lg'
@@ -247,6 +252,7 @@ const TimePicker = React.forwardRef<HTMLButtonElement, TimePickerProps>(
       startIcon,
       formatOptions,
       locale,
+      ...props
     },
     ref,
   ) => {
@@ -311,6 +317,7 @@ const TimePicker = React.forwardRef<HTMLButtonElement, TimePickerProps>(
         <div
           className={cn(fieldWrapperStyles({ mode: resolvedMode, size }), className)}
           data-field-mode={resolvedMode}
+          {...(props as React.HTMLAttributes<HTMLDivElement>)}
         >
           {StartIconCmp && (
             <StartIconCmp
@@ -363,6 +370,7 @@ const TimePicker = React.forwardRef<HTMLButtonElement, TimePickerProps>(
               ],
               className,
             )}
+            {...props}
           >
             {StartIconCmp && (
               <StartIconCmp

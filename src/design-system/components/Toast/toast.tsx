@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { Toaster as SonnerToaster, toast as sonnerToast } from 'sonner'
 import { Notice, useInverseTheme, type NoticeVariant } from '@/design-system/components/Notice/notice'
 import { Button } from '@/design-system/components/Button/button'
@@ -78,11 +79,21 @@ export interface ToasterProps {
   position?: 'top-left' | 'top-right' | 'top-center' | 'bottom-left' | 'bottom-right' | 'bottom-center'
 }
 
-export function Toaster({ position = 'bottom-right' }: ToasterProps) {
-  return (
-    <SonnerToaster
-      position={position}
-      toastOptions={{ unstyled: true, className: 'w-[360px]' }}
-    />
-  )
-}
+// shadcn canonical:forwardRef + displayName 統一。Sonner Toaster portal-renders
+// 到 document body,ref 對 Toaster 本身無實際 DOM 節點可接(portal 逃逸),
+// 但保留 forwardRef 簽名以符合 DS 統一 API(consumer 可 typecheck 傳 ref,
+// 與其他 DS 元件一致)。
+const Toaster = React.forwardRef<HTMLDivElement, ToasterProps>(
+  ({ position = 'bottom-right', ...props }, _ref) => {
+    return (
+      <SonnerToaster
+        position={position}
+        toastOptions={{ unstyled: true, className: 'w-[360px]' }}
+        {...props}
+      />
+    )
+  },
+)
+Toaster.displayName = 'Toaster'
+
+export { Toaster }
