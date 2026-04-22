@@ -47,9 +47,9 @@ const AVATAR_PX = AVATAR_SIZE
 // ── Block 對齊容器 ──
 // reading mode: desc 永遠 14px (var(--font-body-size) * 1.5)
 const blockAlignClass: Record<SizeKey, string> = {
-  sm: 'h-[calc(1lh+2px+var(--font-body-size)*1.5)]',
-  md: 'h-[calc(1lh+2px+var(--font-body-size)*1.5)]',
-  lg: 'h-[calc(1lh+2px+var(--font-body-size)*1.5)]',
+  sm: 'h-[calc(1lh+var(--item-gap-label-desc)+var(--font-body-size)*1.5)]',
+  md: 'h-[calc(1lh+var(--item-gap-label-desc)+var(--font-body-size)*1.5)]',
+  lg: 'h-[calc(1lh+var(--item-gap-label-desc)+var(--font-body-size)*1.5)]',
 }
 
 // ── Selection Item ──────────────────────────────────────────────────────────

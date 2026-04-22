@@ -200,17 +200,28 @@ ItemLabel.displayName = "ItemLabel"
  * ── Props ──
  * - `label`:label 內容(ReactNode,必填)
  * - `description`:description 內容(ReactNode,optional)
+ * - `mode`:typography tier(scanning vs reading,世界級對齊 Material `dense` / Carbon `size` / Ant `size`)
+ *   - `"reading"`(預設):繼承 parent `text-body`(14px / 1.5 leading),舒適閱讀(Family 2 / Material body-large 派)
+ *   - `"scanning"`:desc 縮為 `text-caption`(12px)+ `leading-compact`(1.3),緊湊掃視
+ *     (Family 1 Menu item / Material body-medium dense 派)
  * - `descriptionTone`:desc 顏色語意
  *   - `"secondary"`(預設):`text-fg-secondary`
  *   - `"error"`:`text-error-text`
  *   - `"muted"`:`text-fg-muted`
  * - `descriptionWrap`:desc 多行 wrap(預設 true)/ false = truncate
  * - `labelClassName` / `descriptionClassName`:escape hatches(明文 rationale 才用)
+ *
+ * ── World-class benchmark ──
+ * 6 家 DS(Material / Polaris / Atlassian / Apple HIG / Carbon / Ant)一致用
+ * 14/20 vs 16/24 兩擋 body 表達 scanning vs reading。API 兩派:(A)密度 prop
+ * Material `dense` / Carbon `size` / Ant `size`(本 DS 採 A 派);(B)typography
+ * token 手選 Polaris / Atlassian / Apple。
  */
 
 export interface ItemContentProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   label: React.ReactNode
   description?: React.ReactNode
+  mode?: "scanning" | "reading"
   descriptionTone?: "secondary" | "error" | "muted"
   descriptionWrap?: boolean
   labelClassName?: string
@@ -222,6 +233,7 @@ export const ItemContent = React.forwardRef<HTMLDivElement, ItemContentProps>(
     {
       label,
       description,
+      mode = "reading",
       descriptionTone = "secondary",
       descriptionWrap = true,
       labelClassName,
@@ -237,6 +249,10 @@ export const ItemContent = React.forwardRef<HTMLDivElement, ItemContentProps>(
       muted: "text-fg-muted",
     }[descriptionTone]
 
+    // Typography mode — scanning 縮 desc 為 caption tier,reading 繼承 parent text-body
+    const modeClass =
+      mode === "scanning" ? "text-[length:var(--font-caption-size)] leading-compact" : ""
+
     return (
       <div
         ref={ref}
@@ -248,6 +264,7 @@ export const ItemContent = React.forwardRef<HTMLDivElement, ItemContentProps>(
           <span
             className={cn(
               "mt-[var(--item-gap-label-desc)]",
+              modeClass,
               toneClass,
               !descriptionWrap && "truncate",
               descriptionClassName,

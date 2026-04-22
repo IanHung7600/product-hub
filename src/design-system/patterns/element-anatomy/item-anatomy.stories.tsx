@@ -257,7 +257,7 @@ const ListItemPreview = ({ size, startIcon: StartIcon, avatar, label, descriptio
   const iconPx = size === 'lg' ? 20 : 16
   const hasBlockPrefix = !!avatar && !!description
   const alignClass = hasBlockPrefix
-    ? (size === 'lg' ? 'h-[calc(1lh+2px+var(--font-body-size)*1.5)]' : 'h-[calc(1lh+2px+var(--font-body-size)*1.5)]')
+    ? (size === 'lg' ? 'h-[calc(1lh+var(--item-gap-label-desc)+var(--font-body-size)*1.5)]' : 'h-[calc(1lh+var(--item-gap-label-desc)+var(--font-body-size)*1.5)]')
     : 'h-[1lh]'
 
   return (

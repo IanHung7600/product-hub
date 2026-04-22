@@ -19,7 +19,7 @@ import { ICON_SIZE, AVATAR_SIZE } from '@/design-system/patterns/element-anatomy
  *
  * ── Prefix 對齊規則（24px 閾值）──
  *   prefix ≤ 24px  → h-[1lh]，對齊第一行 label
- *   prefix > 24px  → h-[calc(1lh+2px+desc_1lh)]，對齊文字區塊
+ *   prefix > 24px  → h-[calc(1lh+var(--item-gap-label-desc)+desc_1lh)]，對齊文字區塊
  *   無 description → prefix 上限 24px
  *
  * ── Size ──
@@ -62,9 +62,9 @@ const prefixAlignVariants = cva(
         inline: 'h-[1lh]',
         // sm/md desc = text-caption (12px * 1.3 = 15.6px)
         // lg desc = text-body leading-compact (14px * 1.3 = 18.2px)
-        'block-sm': 'h-[calc(1lh+2px+var(--font-caption-size)*1.3)]',
-        'block-md': 'h-[calc(1lh+2px+var(--font-caption-size)*1.3)]',
-        'block-lg': 'h-[calc(1lh+2px+var(--font-body-size)*1.3)]',
+        'block-sm': 'h-[calc(1lh+var(--item-gap-label-desc)+var(--font-caption-size)*1.3)]',
+        'block-md': 'h-[calc(1lh+var(--item-gap-label-desc)+var(--font-caption-size)*1.3)]',
+        'block-lg': 'h-[calc(1lh+var(--item-gap-label-desc)+var(--font-body-size)*1.3)]',
       },
     },
     defaultVariants: {
