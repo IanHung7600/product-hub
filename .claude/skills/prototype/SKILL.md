@@ -239,6 +239,10 @@ Storybook title 慣例(不與 Components/ 衝突):
 
 #### 執行順序
 
+0. **Flow snapshot coverage 前置檢查(M15,Phase 3.5 gate 前必過)**:exploration 必含 OpenSnapshot 類 stories
+   涵蓋**所有 UI flow state**(initial / open / confirm / success / error / empty 等)。Pattern:
+   `defaultOpen` / `useState(true)` / play() interaction 讓 Playwright 能截圖。未提供 = block audit
+   (無法 visual proof 的 stakeholder artifact 屬 M6 違反)
 1. `npm run visual-audit -- --scope=component:{topic-slug}` 先跑(D5 Layer A,產出 snapshots)
 2. Chain `/product-ui-audit`(D1)scope 到 `src/explorations/{topic-slug}/`
 3. Chain `/performance-audit`(D3)scope 到該 exploration
