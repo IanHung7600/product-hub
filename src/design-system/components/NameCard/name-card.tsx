@@ -112,13 +112,13 @@ const NameCard = React.forwardRef<HTMLDivElement, NameCardProps>(
             status={status}
             className="shrink-0"
           />
-          {/* NameCard typography 組合 = reading-lg mode:label body-lg(16/1.5) + desc body(14/1.5)。
-              label 用 text-body-lg font-medium(card context 語意),labelClassName escape hatch + labelTruncate=false 允許 wrap。
-              mode="reading-lg" 讓 gap 拿對應 token(`--item-gap-label-desc-reading-lg`)+ desc 顯式 body(不被 parent body-lg 污染)。 */}
+          {/* NameCard typography:label body-lg(16/1.5) + desc body(14/1.5) = reading mode + size="lg"。
+              labelClassName escape hatch 加 font-medium(card context 語意)+ labelTruncate=false 允許 wrap。 */}
           <ItemContent
             label={name}
             description={subtitle}
-            mode="reading-lg"
+            mode="reading"
+            size="lg"
             labelTruncate={false}
             labelClassName="text-body-lg font-medium text-foreground"
             className="justify-center"

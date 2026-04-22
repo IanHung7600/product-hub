@@ -237,7 +237,8 @@ const MenuItem = React.forwardRef<HTMLDivElement, MenuItemProps>(
         <ItemContent
           label={children}
           description={description}
-          mode={sizeKey === 'lg' ? 'scanning-lg' : 'scanning'}
+          mode="scanning"
+          size={sizeKey === 'lg' ? 'lg' : 'md'}
           descriptionTone={disabled ? 'disabled' : 'secondary'}
           labelTruncate={false}
           labelClassName={cn(labelClampClass || 'break-words', disabled && 'text-fg-disabled')}

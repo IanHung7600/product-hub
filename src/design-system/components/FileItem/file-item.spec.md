@@ -37,12 +37,18 @@
 
 compact 為預設——多數 upload 清單是「快速掃視多檔」場景，只有需要縮圖預覽才升級為 rich。
 
-## Typography（對齊 item-layout 兩種閱讀模式）
+## Typography（兩 mode 都 scanning typography · 2026-04-23 user 指示）
 
-| | compact（掃描模式，預設） | rich（閱讀模式，完整呈現） |
+**兩 mode 統一 scanning typography**(row 帶 `leading-compact`,對齊 MenuItem / Steps 的 Family 1 scanning idiom):
+
+| | compact | rich |
 |---|---|---|
-| label | text-body (14px) leading-compact (1.3) | text-body (14px) 預設行高 (1.5), font-medium |
-| description | text-caption (12px) leading-compact, fg-secondary | text-body (14px) 預設行高 (1.5), fg-secondary |
+| label | text-body (14px) + `leading-compact` (1.3) | text-body (14px) + `leading-compact` (1.3) |
+| description | text-caption (12px) + `leading-compact` | text-caption (12px) + `leading-compact` |
+| ItemContent `mode` | `"scanning"` | `"scanning"` |
+| Gap token | `--item-gap-label-desc-scanning` | `--item-gap-label-desc-scanning` |
+
+**為什麼兩 mode 都 scanning**:FileItem 是檔案列表 row — 使用者需快速掃視多檔(Gmail attachment / Google Drive 清單),掃描 typography 視覺緊湊符合語義。Rich mode 保留 Avatar 56 thumbnail 作視覺引導(尺寸不變),但文字層採 scanning idiom。
 
 ## 結構(2026-04-23 修正對齊 item-anatomy canonical)
 

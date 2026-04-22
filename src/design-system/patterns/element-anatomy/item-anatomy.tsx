@@ -270,13 +270,23 @@ export interface ItemContentProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   label: React.ReactNode
   description?: React.ReactNode
   /**
-   * Typography mode(4 種組合,對應 token `--item-gap-label-desc-{mode}`):
-   * - `"reading"`(預設):body(14/1.5) + body(14/1.5)—— FileItem / SelectionItem sm-md 等
-   * - `"reading-lg"`:body-lg(16/1.5) + body(14/1.5)—— NameCard / SelectionItem lg / Switch lg
-   * - `"scanning"`:body(14/1.3) + caption(12/1.3)—— MenuItem sm-md(row 帶 leading-compact)
-   * - `"scanning-lg"`:body-lg(16/1.3) + body(14/1.3)—— MenuItem lg
+   * Typography mode — **leading 行為**(跟 size 正交的另一維):
+   * - `"reading"`(預設):default leading(1.5)— Family 2 List item 舒適閱讀
+   * - `"scanning"`:`leading-compact`(1.3)+ desc 降一 tier —— Menu item / Step 掃視
    */
-  mode?: "reading" | "reading-lg" | "scanning" | "scanning-lg"
+  mode?: "reading" | "scanning"
+  /**
+   * Size tier — **label 字級**(跟 mode 正交的另一維):
+   * - `"md"`(預設):label `text-body`(14)
+   * - `"lg"`:label `text-body-lg`(16)— desc 永遠比 label 小一 tier(body)
+   *
+   * 2 × 2 = 4 typography 組合,對應 4 tokens:
+   * - md + reading  → body(14/1.5) + body(14/1.5)
+   * - md + scanning → body(14/1.3) + caption(12/1.3)
+   * - lg + reading  → body-lg(16/1.5) + body(14/1.5)
+   * - lg + scanning → body-lg(16/1.3) + body(14/1.3)
+   */
+  size?: "md" | "lg"
   descriptionTone?: "secondary" | "error" | "muted" | "disabled"
   descriptionWrap?: boolean
   /**
@@ -305,6 +315,7 @@ export const ItemContent = React.forwardRef<HTMLDivElement, ItemContentProps>(
       label,
       description,
       mode = "reading",
+      size = "md",
       descriptionTone = "secondary",
       descriptionWrap = true,
       descriptionClamp,
@@ -324,19 +335,22 @@ export const ItemContent = React.forwardRef<HTMLDivElement, ItemContentProps>(
       disabled: "text-fg-disabled",
     }[descriptionTone]
 
-    // Typography mode:
-    // - scanning:caption(12)+ leading-compact — sm/md menu idiom
-    // - scanning-lg:body(14)+ leading-compact — lg menu(desc 比 label 小 1 tier)
-    // - reading-lg:body(14)+ default leading — NameCard / SelectionItem lg(label 是 body-lg,desc 小 1 tier)
-    // - reading:繼承 parent text-body(14/1.5)— Family 2 List item 大宗
+    // Typography desc class — 2 維 cross-product (mode × size):
+    // ┌───────────┬────────────────────────────┬────────────────────────────┐
+    // │           │ size="md"(body label 14) │ size="lg"(body-lg label 16)│
+    // ├───────────┼────────────────────────────┼────────────────────────────┤
+    // │ reading   │ 繼承 body(14/1.5)         │ body(14)default leading    │
+    // │ scanning  │ caption(12)+ compact      │ body(14)+ compact          │
+    // └───────────┴────────────────────────────┴────────────────────────────┘
+    const isLg = size === "lg"
     const modeClass =
       mode === "scanning"
-        ? "text-[length:var(--font-caption-size)] leading-compact"
-        : mode === "scanning-lg"
+        ? isLg
           ? "text-[length:var(--font-body-size)] leading-compact"
-          : mode === "reading-lg"
-            ? "text-[length:var(--font-body-size)]"
-            : ""
+          : "text-[length:var(--font-caption-size)] leading-compact"
+        : isLg
+          ? "text-[length:var(--font-body-size)]"
+          : ""
 
     const clampClass = descriptionClamp ? `line-clamp-${descriptionClamp}` : ""
 
@@ -351,15 +365,14 @@ export const ItemContent = React.forwardRef<HTMLDivElement, ItemContentProps>(
           <span
             className={cn(
               // Typography-mode-aware gap token(2026-04-23):
-              // 同 mode(= label+desc typography 組合)永遠同 gap,不同 mode 可獨立調整。
-              // 備註:本 DS「配對」專指元件 size 配對(Tag↔Field 等,uiSize.spec.md),非此 concept
+              // (mode, size)2 維正交 → 4 token 對應 4 typography 組合
               mode === "scanning"
-                ? "mt-[var(--item-gap-label-desc-scanning)]"
-                : mode === "scanning-lg"
+                ? isLg
                   ? "mt-[var(--item-gap-label-desc-scanning-lg)]"
-                  : mode === "reading-lg"
-                    ? "mt-[var(--item-gap-label-desc-reading-lg)]"
-                    : "mt-[var(--item-gap-label-desc-reading)]",
+                  : "mt-[var(--item-gap-label-desc-scanning)]"
+                : isLg
+                  ? "mt-[var(--item-gap-label-desc-reading-lg)]"
+                  : "mt-[var(--item-gap-label-desc-reading)]",
               modeClass,
               toneClass,
               clampClass,

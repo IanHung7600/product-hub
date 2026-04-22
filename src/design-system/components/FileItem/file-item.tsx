@@ -179,13 +179,16 @@ const FileItem = React.forwardRef<HTMLDivElement, FileItemProps>(
       </div>
     )
 
-    // content row — 消費 ItemContent primitive(封裝 label + desc + mt-gap token SSOT)
-    // 兩 mode 共用:primitive 改 → 兩 mode 同步,不需 grep
+    // content row — 消費 ItemContent primitive(封裝 label + desc + mt-gap token SSOT)。
+    // 兩 mode 共用:primitive 改 → 兩 mode 同步,不需 grep。
+    // typography:scanning mode(2026-04-23 user 指示)—— label body(14/1.3) + desc caption(12/1.3);
+    // row 本身加 `leading-compact` 配合 scanning idiom(同 MenuItem row)。
     const contentRow = (
       <div className="flex items-start gap-2">
         <ItemContent
           label={name}
           description={showDesc ? description : undefined}
+          mode="scanning"
           descriptionTone={status === 'error' ? 'error' : 'secondary'}
         />
         {suffix}
@@ -220,7 +223,7 @@ const FileItem = React.forwardRef<HTMLDivElement, FileItemProps>(
         <div
           ref={ref}
           className={cn(
-            'group/row flex items-start gap-2 px-3 py-2 w-full text-body transition-colors',
+            'group/row flex items-start gap-2 px-3 py-2 w-full text-body leading-compact transition-colors',
             'border border-divider rounded-md bg-surface',
             hoverClass,
             className,
@@ -246,7 +249,7 @@ const FileItem = React.forwardRef<HTMLDivElement, FileItemProps>(
       <div
         ref={ref}
         className={cn(
-          'group/row relative flex items-start gap-2 px-3 py-2 w-full text-body transition-colors rounded-md',
+          'group/row relative flex items-start gap-2 px-3 py-2 w-full text-body leading-compact transition-colors rounded-md',
           compactStaticBg,
           hoverClass,
           className,
