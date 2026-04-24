@@ -1,9 +1,9 @@
 ---
 name: design-system-audit
-description: Systematic audit of this design system for world-class quality. Runs 22 audits covering spec hygiene / code correctness / a11y / naming / tokens / patterns / CLAUDE.md consistency / Layout Family compliance / prop value collisions / shadcn alias leakage / home-name-vs-scope fit / spec hardcoded-values, and surfaces actionable fix lists. Has explicit checkpoints where the skill MUST stop and ask user. Invoke via /design-system-audit when asked to audit, re-audit, check quality, or verify design system health.
+description: Systematic audit of this design system for world-class quality. Runs 27 audits covering spec hygiene / code correctness / a11y / naming / tokens / patterns / CLAUDE.md consistency / Layout Family compliance / prop value collisions / shadcn alias leakage / home-name-vs-scope fit / spec hardcoded-values, and surfaces actionable fix lists. Has explicit checkpoints where the skill MUST stop and ask user. Invoke via /design-system-audit when asked to audit, re-audit, check quality, or verify design system health.
 ---
 
-# Design System Audit (20 dimensions, world-class)
+# Design System Audit (27 audits, Groups A–K, world-class)
 
 Purpose: catch every bug class this project has shipped historically PLUS structural gaps relative to Polaris / Material / Atlassian / Ant / Carbon / Apple HIG. Each audit has a clear rubric tied to CLAUDE.md rules. The skill reports findings and **explicitly stops at checkpoints** for user decisions before large-scope fixes.
 
@@ -20,11 +20,11 @@ Purpose: catch every bug class this project has shipped historically PLUS struct
 
 ## 對齊 CLAUDE.md `# 稽核 canonical` — 本 skill 是 6 維的 D1 + D2 home
 
-CLAUDE.md 定義 6 維:D1 設計語言 / D2 程式語言 / D3 效能 / D4 UX / D5 視覺 / D6 原則自檢。本 skill 的 22 audits 覆蓋 **D1 + D2**(spec hygiene / code correctness / SSOT / cva / naming / tokens / patterns)。**D3-D5 由對應 skill 處理**:
+CLAUDE.md 定義 6 維:D1 設計語言 / D2 程式語言 / D3 效能 / D4 UX / D5 視覺 / D6 原則自檢。本 skill 的 27 audits 覆蓋 **D1 + D2**(spec hygiene / code correctness / SSOT / cva / naming / tokens / patterns)。**D3-D5 由對應 skill 處理**:
 
 | 維度 | 對應 skill |
 |------|-----------|
-| D1 設計語言 | 本 skill Audits 1-20 |
+| D1 設計語言 | 本 skill Audits 1-27(Groups A–K)|
 | D2 程式語言 | 本 skill(cva / types / imports 部分)+ tsc / lint |
 | D3 元件效能 | `/performance-audit`(render / memo / bundle) |
 | D4 UX 行為 | `/ux-audit`(keyboard / focus / ARIA / animation) |
@@ -49,7 +49,7 @@ CLAUDE.md 定義 6 維:D1 設計語言 / D2 程式語言 / D3 效能 / D4 UX / D
 
 ---
 
-## The 22 audits
+## The 27 audits
 
 Grouped by theme. Each runs as an independent subagent; many can parallelize.
 
@@ -153,7 +153,7 @@ Grouped by theme. Each runs as an independent subagent; many can parallelize.
 
 ### Phase 1 — Parallel audit execution
 
-Launch all 22 audits as background subagents (single message, multiple `Agent` tool calls with `run_in_background: true`). Use prompts in [references/audit-prompts.md](references/audit-prompts.md).
+Launch all 27 audits as background subagents (single message, multiple `Agent` tool calls with `run_in_background: true`). Use prompts in [references/audit-prompts.md](references/audit-prompts.md).
 
 **Every audit prompt declares three metadata lines at top**:
 - **Type**: `Absolute` or `Consistency` (per CLAUDE.md「Consistency Audit 原則」)
@@ -251,13 +251,7 @@ When audit finds spec.md describes behavior different from tsx actual, STOP — 
 
 ### ⚠️ Naming proposal — RUN 3-test BEFORE Checkpoint 2 approval
 
-Per CLAUDE.md `## 命名必過三重 test`, when proposing ANY new naming (variant / mode / prop value / token):
-
-1. **Existing design language test**: aligned with project's existing naming patterns?
-2. **World-class idiom test**: at least 2 world-class DS use this term?
-3. **Cross-component cognitive collision test**: does the string literal collide semantically with any existing prop value elsewhere?
-
-**If any test fails → iterate naming, don't propose**. Historical: `text/picture` (Ant Design idiom ✓) failed test 3 (collides with Button `variant="text"`), changed to `compact/rich`.
+Any new naming proposal MUST pass CLAUDE.md `## 命名必過三重 test` before Checkpoint 2. Tests defined in CLAUDE.md (SSOT) — **do not re-spec here**. Historical example:`text/picture` failed test 3(collides with Button `variant="text"`)→ changed to `compact/rich`。
 
 ### Phase 3.5 — 進階 6 維稽核 D3-D5(scope 依稽核模式)
 
@@ -377,6 +371,6 @@ After all commits:
 
 ## References
 
-- [references/audit-prompts.md](references/audit-prompts.md) — Exact subagent prompts for all 22 audits
+- [references/audit-prompts.md](references/audit-prompts.md) — Exact subagent prompts for all 27 audits
 - [references/historical-bugs.md](references/historical-bugs.md) — Bug classes indexed by audit
 - [references/checkpoints.md](references/checkpoints.md) — Detailed examples of each MUST-ASK scenario

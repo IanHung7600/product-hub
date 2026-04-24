@@ -92,7 +92,7 @@ Curated from the `# 失敗記憶索引` in CLAUDE.md plus audit runs. Each entry
 
 ---
 
-## Chart of audit → bug class（對齊 current 18-audit numbering in audit-prompts.md）
+## Chart of audit → bug class（對齊 current 27-audit numbering,Groups A–K,in audit-prompts.md）
 
 ### Group A — Correctness (P0)
 | Audit | Primary bug class | Secondary |
