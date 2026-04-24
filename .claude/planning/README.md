@@ -14,9 +14,11 @@ Spec + scope + execution plan 已寫完但未執行的工作。AI session 間持
 
 ## 歷史完成檔(archived)
 
-| Plan | 完成日 | 檔名 |
-|------|-------|------|
-| DS Devmode Addon | 2026-04-24 | `ds-devmode.md.completed.20260424.md` |
+| Plan | 完成 / 放棄日 | 檔名 | 狀態 |
+|------|-------|------|------|
+| DS Devmode Addon | 2026-04-24 | `ds-devmode.md.completed.20260424.md` | ✅ 完成 |
+| DS i18n Refactor | 2026-04-24 | `ds-i18n-refactor.md.completed.20260424.md` | ✅ 完成 |
+| Row Primitive Consolidation | 2026-04-24 | `row-primitive-consolidation.md.rejected.20260424.md` | ❌ Phase 1 declined |
 
 ## 這裡**不收**(反例 + 正確去處)
 
