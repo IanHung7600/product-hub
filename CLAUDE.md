@@ -207,7 +207,8 @@ mindset #2 的**機械化執行清單**。寫任何視覺 code 前,對照本表*
 | **跑 D6 設計原則稽核** | `.claude/skills/design-system-audit/references/principle-audit-protocol.md`(4 子維 scan + 判斷表 + FP 記憶) |
 | **User 糾正 AI 後** | `# 資訊治理 canonical`(判斷 home + 寫到 memory / CLAUDE.md / skill reference) |
 | **spec 跟 code 結論衝突** | `# Spec 規則`(主動提出討論,不默默改) |
-| **在 classification-sensitive dir 建新檔** | **先 Read 該 dir 的 `README.md` charter**(硬規則,見 `# 規則分層`) |
+| **在 classification-sensitive dir 建新檔** | **先 Read 該 dir 的 `README.md` charter`**(硬規則,見 `# 規則分層`) |
+| **稽核缺口 / 覆蓋盤點 / 補洞決策** | `.claude/planning/audit-coverage-vs-24-checklist.md`(業界 24 節 vs 我們 / Dim 9 framework multiplier / 刻意不補清單) |
 
 **找不到對應的任務類型** → 進 `# 遇不確定時的協議`，不要自己決定讀什麼。
 

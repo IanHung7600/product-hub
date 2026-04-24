@@ -74,12 +74,22 @@ description: UX behavior audit for design-system components and product UI. Chec
 4. **Hover delay**:tooltip / hover-card 的 open delay(700ms for tooltip, 500ms for hover-card per DS canonical)
 5. **Drag / pan**:pointer capture 正確;release on blur
 
-### Phase 5 — Empty / loading / error 三態
+### Phase 5 — Data / state coverage 五態(2026-04-24 擴充,補 24-checklist #23 edge case gap)
 
-查 3 項:
-1. **Empty**:顯示 `<Empty>` 或對應 placeholder,非 blank
-2. **Loading**:視語境用 CircularProgress / Skeleton / ProgressBar;aria-busy 宣告;**不阻斷可編輯狀態**(Input loading 仍可打字 per spec)
-3. **Error**:用 DS `<Notice>` 或 inline `<FieldError>`;配合 aria-live 通知 AT
+查 5 項 + null-safety + rapid-interaction:
+
+1. **Null-safety**:`null / undefined` label/value/children 不 crash(e.g. `{label}` 為 undefined render 空字串,不 `Cannot read properties of undefined`);空 array `.map()` 不 crash;emoji / 超長單字 / RTL 字元不爆版
+2. **Empty**:顯示 `<Empty>` 或對應 placeholder,非 blank;empty 有 CTA 讓使用者知道下步
+3. **Loading**:視語境用 CircularProgress / Skeleton / ProgressBar;aria-busy 宣告;**不阻斷可編輯狀態**(Input loading 仍可打字 per spec);**rapid-click / double-submit 有防護**(button loading 期間 disabled OR 靠上游 idempotent)
+4. **Error**:用 DS `<Notice>` 或 inline `<FieldError>`;配合 aria-live 通知 AT;error message 不吞(e.g. async rejection 有 fallback UI 非 silent swallow)
+5. **Success**(新加):成功 state 有視覺確認(toast / inline checkmark / state transition),讓使用者知道動作 landed,非 silent success
+
+**Edge case corollary**(現實髒資料):
+- Children 為 `null` / 為空 array / 元素數量極大(超 50 筆)
+- Option 重複 id / selected option 被移除後仍保留 value(stale selection)
+- disabled 時仍收到外部 value 更新(controlled forced update)
+- 從 uncontrolled 中途變 controlled(React warning 必出,或元件明文不支援)
+- Modal 關閉瞬間 async 回調仍 setState(unmount 後 setState warning)
 
 ### Phase F — Report(必 STOP,對齊分權 canonical)
 

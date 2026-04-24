@@ -123,6 +123,12 @@ Grouped by theme. Each runs as an independent subagent; many can parallelize.
 | 24 | **Story 範例重複性**(manual stories 不該彼此 scenario 重疊) | 對每元件,跨 3 個 stories 檔(展示 / anatomy / principles)列所有 manual story 的 scenario。若兩 story 呈現同 variant × size × state × 業務情境 → 重複 = noise。以「**可舉一反三**」為 unique-teaching test:每個 manual story 必**教讀者一條別 story 沒教的原則**。重複 → retire 候選。AI judgement dim,sub-agent 讀 spec + stories 判斷 |
 | 25 | **Story 必要性 grounding**(manual story 補足模糊原則的具象化)| 每個 manual story 過 2 test:(a) 是否 tied 到 spec 某條抽象原則,讓「人」透過範例看懂原則?(b) 移除後 spec 理解是否 degrade?兩題皆 NO → story 不 earn its existence,retire 候選。核心 philosophy:「**manual 範例補充模糊原則讓其具象化,給人看得懂為主**」— 不是秀肌肉不是湊數。AI judgement dim |
 
+### Group J — Form & state integrity(2026-04-24 新增,補 24-checklist #3+#12 gap)
+
+| # | Audit | What it catches |
+|---|-------|-----------------|
+| 26 | **Controlled / Uncontrolled dual-mode coherence**(Absolute)| form-like(Input / Select / Combobox / Checkbox / Switch / DatePicker / RadioGroup / Tabs / Accordion)+ overlay-like(Dialog / Sheet / Popover / DropdownMenu / HoverCard / FileViewer)的 dual-mode prop pair 完整性。V1 missing uncontrolled fallback / V2 missing controlled / V3 no callback / V4 internal state shadows prop。Radix wrapper 必 forward `open / defaultOpen / onOpenChange` 3 個。刻意單一模式須 spec.md rationale |
+
 ---
 
 ## Workflow

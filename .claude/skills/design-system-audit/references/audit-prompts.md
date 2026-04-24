@@ -859,3 +859,60 @@ Report format:
 
 End: `N containers scanned, M violations, top 3: [list]`. Under 300 words. Don't fix.
 ```
+
+---
+
+# Group I — Form & State integrity(2026-04-24 新增,補 24-checklist #3+#12 gap)
+
+## 23. Controlled / Uncontrolled dual-mode coherence
+
+**Type**: Absolute
+**Canonical source**: React docs + `components/Field/field-controls.spec.md` + 每元件自己 spec 的「controlled / uncontrolled」節(若適用)
+**Rationale home**: 該元件 spec.md(若刻意只支援單一模式須註明)
+
+掃所有 form-like + overlay-like 元件的 dual-mode prop 配對,確認不會混用造成 undefined behaviour。
+
+**Scan 對象**(`src/design-system/components/**/*.tsx`):
+1. Form controls:`Input / Textarea / Select / Combobox / Checkbox / Radio / Switch / DatePicker / Slider / RadioGroup / CheckboxGroup`
+2. Overlay:`Dialog / Sheet / Popover / DropdownMenu / Tooltip / HoverCard / FileViewer`
+3. Tab-like:`Tabs / Accordion / Collapsible`
+
+**Pair 對照表**(每 pair 必同時支援 controlled + uncontrolled,且互斥):
+
+| 元件類 | controlled prop | uncontrolled prop | onChange prop |
+|---|---|---|---|
+| text input | `value` | `defaultValue` | `onChange` / `onValueChange` |
+| select / combobox | `value` | `defaultValue` | `onValueChange` |
+| checkbox / switch | `checked` | `defaultChecked` | `onCheckedChange` |
+| radio group | `value` | `defaultValue` | `onValueChange` |
+| overlay open | `open` | `defaultOpen` | `onOpenChange` |
+| tabs / accordion | `value` | `defaultValue` | `onValueChange` |
+
+**Violation 定義**:
+- **V1 — missing uncontrolled fallback**:只吃 `value` 不吃 `defaultValue`(forces consumer 必 controlled)
+- **V2 — missing controlled**:只吃 `defaultValue` 不吃 `value`(forces uncontrolled)
+- **V3 — no callback**:有 `value` 但無 `onChange` / `onValueChange`(controlled 模式下狀態無法同步)
+- **V4 — internal state shadows prop**:元件內 `useState(value ?? defaultValue)` 然後忽略後續 `value` 更新(silent bug)
+
+**排除 / 例外**(需 spec 明文 rationale):
+- 刻意只支援單一模式:spec.md 該元件節有「Controlled-only rationale」 或「Uncontrolled-only rationale」段
+- Readonly display component(非互動,僅讀 value prop):spec 第一段聲明「display only」
+
+**Radix primitive 元件(DropdownMenu / Popover / Dialog 等)**:Radix 內建支援 dual-mode,我們 wrap 時必 forward `open / defaultOpen / onOpenChange` 3 個 prop — 漏任何一個 = V1/V2/V3。
+
+**檢查法**(per file):
+1. Grep tsx interface / type for `value / defaultValue / open / defaultOpen / checked / defaultChecked`
+2. Cross-check 對應 pair 是否都在
+3. 檢查 internal `useState` 有無正確 mirror controlled prop(`useControllableState` pattern or manual sync)
+4. 若缺 pair → check spec.md 有無 rationale → 無 = violation
+
+Report format:
+```
+[P0 Controlled/Uncontrolled V{n}] {component}({file:line})
+  missing: {prop pair}
+  spec rationale: {有 / 無}
+  fix: 加 {prop} + pair + `onXChange` 並 forward 到 Radix primitive / internal state
+```
+
+End: `N components scanned, M violations, by type: V1=X V2=Y V3=Z V4=W`. Under 400 words. Don't fix.
+
