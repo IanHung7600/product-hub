@@ -19,12 +19,12 @@ export const States: Story = {
       <div>
         <p className="text-caption text-fg-muted mb-2">md（16px，預設）</p>
         <div className="flex items-center gap-4">
-          <Checkbox />
-          <Checkbox defaultChecked />
-          <Checkbox checked="indeterminate" />
-          <Checkbox disabled />
-          <Checkbox disabled defaultChecked />
-          <Checkbox disabled checked="indeterminate" />
+          <Checkbox aria-label="off" />
+          <Checkbox defaultChecked aria-label="on" />
+          <Checkbox checked="indeterminate" aria-label="indeterminate" />
+          <Checkbox disabled aria-label="disabled off" />
+          <Checkbox disabled defaultChecked aria-label="disabled on" />
+          <Checkbox disabled checked="indeterminate" aria-label="disabled indeterminate" />
         </div>
         <div className="flex items-center gap-4 mt-1 text-[10px] text-fg-muted">
           <span className="w-4 text-center">off</span>
@@ -38,12 +38,12 @@ export const States: Story = {
       <div>
         <p className="text-caption text-fg-muted mb-2">lg（20px）</p>
         <div className="flex items-center gap-4">
-          <Checkbox size="lg" />
-          <Checkbox size="lg" defaultChecked />
-          <Checkbox size="lg" checked="indeterminate" />
-          <Checkbox size="lg" disabled />
-          <Checkbox size="lg" disabled defaultChecked />
-          <Checkbox size="lg" disabled checked="indeterminate" />
+          <Checkbox size="lg" aria-label="off" />
+          <Checkbox size="lg" defaultChecked aria-label="on" />
+          <Checkbox size="lg" checked="indeterminate" aria-label="indeterminate" />
+          <Checkbox size="lg" disabled aria-label="disabled off" />
+          <Checkbox size="lg" disabled defaultChecked aria-label="disabled on" />
+          <Checkbox size="lg" disabled checked="indeterminate" aria-label="disabled indeterminate" />
         </div>
       </div>
     </div>

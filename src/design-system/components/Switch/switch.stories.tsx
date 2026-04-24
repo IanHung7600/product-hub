@@ -18,10 +18,10 @@ export const States: Story = {
       <div>
         <p className="text-caption text-fg-muted mb-2">md（預設）</p>
         <div className="flex items-center gap-6">
-          <Switch />
-          <Switch defaultChecked />
-          <Switch disabled />
-          <Switch disabled defaultChecked />
+          <Switch aria-label="off" />
+          <Switch defaultChecked aria-label="on" />
+          <Switch disabled aria-label="disabled off" />
+          <Switch disabled defaultChecked aria-label="disabled on" />
         </div>
         <div className="flex items-center gap-6 mt-1 text-[10px] text-fg-muted">
           <span className="w-10 text-center">off</span>
@@ -33,10 +33,10 @@ export const States: Story = {
       <div>
         <p className="text-caption text-fg-muted mb-2">lg</p>
         <div className="flex items-center gap-6">
-          <Switch size="lg" />
-          <Switch size="lg" defaultChecked />
-          <Switch size="lg" disabled />
-          <Switch size="lg" disabled defaultChecked />
+          <Switch size="lg" aria-label="off" />
+          <Switch size="lg" defaultChecked aria-label="on" />
+          <Switch size="lg" disabled aria-label="disabled off" />
+          <Switch size="lg" disabled defaultChecked aria-label="disabled on" />
         </div>
       </div>
     </div>

@@ -18,18 +18,18 @@ export const States: Story = {
     <div className="flex flex-col gap-4">
       <div>
         <p className="text-caption text-fg-muted mb-2">md（16px，預設）</p>
-        <RadioGroup defaultValue="a" className="flex items-center gap-4">
-          <RadioGroupItem value="a" />
-          <RadioGroupItem value="b" />
-          <RadioGroupItem value="c" disabled />
+        <RadioGroup defaultValue="a" className="flex items-center gap-4" aria-label="md radio state demo">
+          <RadioGroupItem value="a" aria-label="option a" />
+          <RadioGroupItem value="b" aria-label="option b" />
+          <RadioGroupItem value="c" disabled aria-label="option c disabled" />
         </RadioGroup>
       </div>
       <div>
         <p className="text-caption text-fg-muted mb-2">lg（20px）</p>
-        <RadioGroup defaultValue="a" className="flex items-center gap-4">
-          <RadioGroupItem value="a" size="lg" />
-          <RadioGroupItem value="b" size="lg" />
-          <RadioGroupItem value="c" size="lg" disabled />
+        <RadioGroup defaultValue="a" className="flex items-center gap-4" aria-label="lg radio state demo">
+          <RadioGroupItem value="a" size="lg" aria-label="option a" />
+          <RadioGroupItem value="b" size="lg" aria-label="option b" />
+          <RadioGroupItem value="c" size="lg" disabled aria-label="option c disabled" />
         </RadioGroup>
       </div>
     </div>
