@@ -1,86 +1,415 @@
 {
   "$schema-note": "scripts/visual-audit.mjs 消費此檔。每個 scenario 含:id(Storybook id)或 url(外部) / file(輸出 png 檔名) / 可選 assertions[](DOM 幾何測量陣列) / 可選 rationale(scenario-level 合理偏離說明,對齊 CLAUDE.md 稽核 canonical 優先順序 ladder)。assertion 內也可加 rationale 欄位讓個別檢查宣告合理偏離。id 從 curl http://localhost:6006/index.json 取得真實值。",
   "scenarios": [
-    { "id": "design-system-components-datepicker-展示--basic", "file": "datepicker-basic.png" },
-    { "id": "design-system-components-datepicker-展示--range-picker", "file": "datepicker-range.png" },
-    { "id": "design-system-components-datepicker-展示--size-alignment", "file": "datepicker-sizes.png" },
-
-    { "id": "design-system-components-calendar-展示--團隊行事曆", "file": "calendar-event-team.png" },
-    { "id": "design-system-components-calendar-展示--內容發佈月曆", "file": "calendar-event-publishing.png" },
-    { "id": "design-system-components-calendar-展示--空行事曆", "file": "calendar-event-empty.png" },
-
-    { "id": "design-system-components-timepicker-展示--會議時段", "file": "timepicker-meeting.png" },
-    { "id": "design-system-components-timepicker-展示--店家營業時間", "file": "timepicker-shop-hours.png" },
-    { "id": "design-system-components-timepicker-展示--航班起飛時間", "file": "timepicker-flight.png" },
-    { "id": "design-system-components-timepicker-設計規格--mode-matrix", "file": "timepicker-modes.png" },
-
-    { "id": "design-system-components-fileviewer-展示--figma-design-review", "file": "fileviewer-figma.png" },
-    { "id": "design-system-components-fileviewer-展示--jira-attachments", "file": "fileviewer-jira.png" },
-    { "id": "design-system-components-fileviewer-展示--gmail-attachment-preview", "file": "fileviewer-gmail.png" },
-    { "id": "design-system-components-fileviewer-展示--open-snapshot", "file": "fileviewer-open-snapshot.png", "rationale": "visual-audit canonical open state — full toolbar + renderer + action-bar;對齊 Dialog / Sheet / Popover OpenSnapshot pattern" },
-
-    { "id": "design-system-components-rating-展示--interactive-review", "file": "rating-interactive.png" },
-    { "id": "design-system-components-rating-展示--in-field", "file": "rating-in-field.png" },
-    { "id": "design-system-components-rating-展示--size-variants", "file": "rating-sizes.png" },
-
-    { "id": "design-system-components-carousel-展示--homepage-hero-banner", "file": "carousel-hero.png" },
-    { "id": "design-system-components-carousel-展示--product-image-gallery", "file": "carousel-gallery.png" },
-
-    { "id": "design-system-components-coachmark-展示--tips-multi-step", "file": "coachmark-tips-multistep.png" },
-    { "id": "design-system-components-coachmark-展示--multi-step-tour", "file": "coachmark-new-features.png" },
-
-    { "id": "design-system-internal-dategrid-展示--range", "file": "dategrid-range.png" },
-    { "id": "design-system-internal-dategrid-展示--single", "file": "dategrid-single.png" },
-
-    { "id": "design-system-components-badge-設計原則--placement-rule", "file": "badge-placement.png" },
-
-    { "id": "design-system-components-datatable-展示--pinned-columns", "file": "datatable-pinned.png" },
-
-    { "id": "design-system-components-sheet-展示--create-project-right", "file": "sheet-create-project.png" },
-    { "id": "design-system-components-sheet-展示--edit-user-right", "file": "sheet-edit-user.png" },
-    { "id": "design-system-components-sheet-展示--open-snapshot", "file": "sheet-open-snapshot.png", "rationale": "visual-audit canonical open state — Sheet chrome(Header / Body / Footer)完整;對齊 Dialog OpenSnapshot pattern" },
-
-    { "id": "design-system-components-button-展示--icon-only", "file": "button-icon-only.png" },
-    { "id": "design-system-components-button-展示--all-sizes", "file": "button-sizes.png" },
-    { "id": "design-system-components-button-設計規格--color-matrix", "file": "button-color-matrix.png" },
-    { "id": "design-system-components-button-設計規格--size-matrix", "file": "button-size-matrix.png" },
-    { "id": "design-system-components-button-設計規格--state-behavior", "file": "button-state-behavior.png" },
-    { "id": "design-system-components-button-展示--hover-focus-state", "file": "button-hover-focus-state.png", "rationale": "Interactive state capture — play() 觸發 userEvent.hover() + element.focus() 讓 Layer A 抓到 hover bg / focus-visible ring post-interaction 視覺,補靜態 snapshot gap(見 SKILL.md「Layer A interactive state coverage」)" },
-    { "id": "design-system-components-button-展示--tooltip-visible", "file": "button-tooltip-visible.png", "rationale": "Interactive state capture — play() focus 觸發 iconOnly Button 自動 tooltip(Radix warm-up + content render 需 ~1000ms),補靜態 snapshot 看不到 tooltip 的 gap" },
-
-    { "id": "design-system-components-dialog-展示--basic", "file": "dialog-basic.png" },
-    { "id": "design-system-components-dialog-展示--with-form", "file": "dialog-form.png" },
-    { "id": "design-system-components-dialog-展示--destructive", "file": "dialog-destructive.png" },
-    { "id": "design-system-components-dialog-展示--list-body", "file": "dialog-list-body.png", "rationale": "Body 放 list canonical — variant='list' 保留 px-loose(list item 左右對齊 header/footer),移除 pt/pb(item 自己 py)。對齊 Material M3 / Polaris / Linear Cmd+K 共識;3 item 尺寸 tier 示範(大 avatar+desc / 中 icon+desc / 小 text-only)" },
-    { "id": "design-system-components-dialog-展示--long-content", "file": "dialog-long-content.png", "rationale": "長內容 body 捲動 canonical — 30 item list 示範 ScrollArea + variant='list' 組合(user Image 7 情境)。border-divider 分隔,item py-2(Family 2 reading 節奏)" },
-    { "id": "design-system-components-dialog-展示--open-snapshot", "file": "dialog-open-snapshot.png", "rationale": "開啟狀態 snapshot — visual-audit 專用,用 defaultOpen 讓 Playwright 抓到 Dialog chrome(Header/Body/Footer),補 Layer A/B 先前只抓到 trigger 按鈕的 MINOR gap" },
-
-    { "id": "design-system-components-popover-展示--filter-panel", "file": "popover-filter-panel.png" },
-    { "id": "design-system-components-popover-展示--open-snapshot", "file": "popover-open-snapshot.png", "rationale": "開啟狀態 snapshot — visual-audit 專用,用 defaultOpen 讓 Playwright 抓到 Popover chrome(Header+X / Body / Footer),補 Layer A/B 先前只抓到 trigger 按鈕的 MINOR gap" },
-    { "id": "design-system-components-popover-設計規格--color-matrix", "file": "popover-color-matrix.png" },
-
-    { "id": "design-system-components-alert-展示--corner-action-group", "file": "alert-corner-action-group.png" },
-    { "id": "design-system-components-alert-展示--subtle-with-description", "file": "alert-subtle.png" },
-    { "id": "design-system-components-alert-設計規格--color-matrix", "file": "alert-color-matrix.png" },
-
-    { "id": "design-system-internal-notice-展示--inline-variants", "file": "notice-inline-variants.png" },
-    { "id": "design-system-internal-notice-展示--deployment-success", "file": "notice-deployment.png" },
-
-    { "id": "design-system-components-fileitem-展示--rich", "file": "fileitem-rich.png" },
-    { "id": "design-system-components-fileitem-展示--compact", "file": "fileitem-compact.png" },
-    { "id": "design-system-components-fileitem-展示--hover-swap", "file": "fileitem-hover-swap.png" },
-    { "id": "design-system-components-fileitem-設計規格--color-matrix", "file": "fileitem-color-matrix.png" },
-    { "id": "design-system-components-fileitem-設計規格--state-behavior", "file": "fileitem-state-behavior.png" },
-
-    { "id": "design-system-components-dropdownmenu-展示--basic", "file": "dropdownmenu-basic.png" },
-    { "id": "design-system-components-dropdownmenu-展示--groups", "file": "dropdownmenu-groups.png" },
-    { "id": "design-system-components-dropdownmenu-展示--open-snapshot", "file": "dropdownmenu-open-snapshot.png", "rationale": "開啟狀態 snapshot — visual-audit 專用,用 defaultOpen 讓 Playwright 抓到 Dropdown chrome(item / icon / shortcut / separator),補 Layer A/B 先前只抓到 trigger 按鈕的 MINOR gap" },
-    { "id": "design-system-components-dropdownmenu-展示--item-hover", "file": "dropdownmenu-item-hover.png", "rationale": "Interactive state capture — defaultOpen + play() hover 第一個 item 讓 Playwright 抓到 hover highlight(bg-neutral-hover);Radix Portal 外 DOM 需 document.querySelector 找(見 SKILL.md「Layer A interactive state coverage」)" },
-
-    { "id": "design-system-patterns-item-anatomy--icon-action-primitive-decision", "file": "item-anatomy-icon-action-decision.png" },
-    { "id": "design-system-patterns-item-anatomy--inspector", "file": "item-anatomy-inspector.png" },
-
-    { "id": "design-system-components-combobox-展示--modes", "file": "combobox-modes.png" },
-    { "id": "design-system-components-combobox-展示--searchable", "file": "combobox-searchable.png" }
+    {
+      "id": "design-system-components-datepicker-展示--basic",
+      "file": "datepicker-basic.png"
+    },
+    {
+      "id": "design-system-components-datepicker-展示--range-picker",
+      "file": "datepicker-range.png"
+    },
+    {
+      "id": "design-system-components-datepicker-展示--size-alignment",
+      "file": "datepicker-sizes.png"
+    },
+    {
+      "id": "design-system-components-calendar-展示--團隊行事曆",
+      "file": "calendar-event-team.png"
+    },
+    {
+      "id": "design-system-components-calendar-展示--內容發佈月曆",
+      "file": "calendar-event-publishing.png"
+    },
+    {
+      "id": "design-system-components-calendar-展示--空行事曆",
+      "file": "calendar-event-empty.png"
+    },
+    {
+      "id": "design-system-components-timepicker-展示--會議時段",
+      "file": "timepicker-meeting.png"
+    },
+    {
+      "id": "design-system-components-timepicker-展示--店家營業時間",
+      "file": "timepicker-shop-hours.png"
+    },
+    {
+      "id": "design-system-components-timepicker-展示--航班起飛時間",
+      "file": "timepicker-flight.png"
+    },
+    {
+      "id": "design-system-components-timepicker-設計規格--mode-matrix",
+      "file": "timepicker-modes.png"
+    },
+    {
+      "id": "design-system-components-fileviewer-展示--figma-design-review",
+      "file": "fileviewer-figma.png"
+    },
+    {
+      "id": "design-system-components-fileviewer-展示--jira-attachments",
+      "file": "fileviewer-jira.png"
+    },
+    {
+      "id": "design-system-components-fileviewer-展示--gmail-attachment-preview",
+      "file": "fileviewer-gmail.png"
+    },
+    {
+      "id": "design-system-components-fileviewer-展示--open-snapshot",
+      "file": "fileviewer-open-snapshot.png",
+      "rationale": "visual-audit canonical open state — full toolbar + renderer + action-bar;對齊 Dialog / Sheet / Popover OpenSnapshot pattern"
+    },
+    {
+      "id": "design-system-components-rating-展示--interactive-review",
+      "file": "rating-interactive.png"
+    },
+    {
+      "id": "design-system-components-rating-展示--in-field",
+      "file": "rating-in-field.png"
+    },
+    {
+      "id": "design-system-components-rating-展示--size-variants",
+      "file": "rating-sizes.png"
+    },
+    {
+      "id": "design-system-components-carousel-展示--homepage-hero-banner",
+      "file": "carousel-hero.png"
+    },
+    {
+      "id": "design-system-components-carousel-展示--product-image-gallery",
+      "file": "carousel-gallery.png"
+    },
+    {
+      "id": "design-system-components-coachmark-展示--tips-multi-step",
+      "file": "coachmark-tips-multistep.png"
+    },
+    {
+      "id": "design-system-components-coachmark-展示--multi-step-tour",
+      "file": "coachmark-new-features.png"
+    },
+    {
+      "id": "design-system-internal-dategrid-展示--range",
+      "file": "dategrid-range.png"
+    },
+    {
+      "id": "design-system-internal-dategrid-展示--single",
+      "file": "dategrid-single.png"
+    },
+    {
+      "id": "design-system-components-badge-設計原則--placement-rule",
+      "file": "badge-placement.png"
+    },
+    {
+      "id": "design-system-components-datatable-展示--pinned-columns",
+      "file": "datatable-pinned.png"
+    },
+    {
+      "id": "design-system-components-sheet-展示--create-project-right",
+      "file": "sheet-create-project.png"
+    },
+    {
+      "id": "design-system-components-sheet-展示--edit-user-right",
+      "file": "sheet-edit-user.png"
+    },
+    {
+      "id": "design-system-components-sheet-展示--open-snapshot",
+      "file": "sheet-open-snapshot.png",
+      "rationale": "visual-audit canonical open state — Sheet chrome(Header / Body / Footer)完整;對齊 Dialog OpenSnapshot pattern"
+    },
+    {
+      "id": "design-system-components-button-展示--icon-only",
+      "file": "button-icon-only.png"
+    },
+    {
+      "id": "design-system-components-button-展示--all-sizes",
+      "file": "button-sizes.png"
+    },
+    {
+      "id": "design-system-components-button-設計規格--color-matrix",
+      "file": "button-color-matrix.png"
+    },
+    {
+      "id": "design-system-components-button-設計規格--size-matrix",
+      "file": "button-size-matrix.png"
+    },
+    {
+      "id": "design-system-components-button-設計規格--state-behavior",
+      "file": "button-state-behavior.png"
+    },
+    {
+      "id": "design-system-components-button-展示--hover-focus-state",
+      "file": "button-hover-focus-state.png",
+      "rationale": "Interactive state capture — play() 觸發 userEvent.hover() + element.focus() 讓 Layer A 抓到 hover bg / focus-visible ring post-interaction 視覺,補靜態 snapshot gap(見 SKILL.md「Layer A interactive state coverage」)"
+    },
+    {
+      "id": "design-system-components-button-展示--tooltip-visible",
+      "file": "button-tooltip-visible.png",
+      "rationale": "Interactive state capture — play() focus 觸發 iconOnly Button 自動 tooltip(Radix warm-up + content render 需 ~1000ms),補靜態 snapshot 看不到 tooltip 的 gap"
+    },
+    {
+      "id": "design-system-components-dialog-展示--basic",
+      "file": "dialog-basic.png"
+    },
+    {
+      "id": "design-system-components-dialog-展示--with-form",
+      "file": "dialog-form.png"
+    },
+    {
+      "id": "design-system-components-dialog-展示--destructive",
+      "file": "dialog-destructive.png"
+    },
+    {
+      "id": "design-system-components-dialog-展示--list-body",
+      "file": "dialog-list-body.png",
+      "rationale": "Body 放 list canonical — variant='list' 保留 px-loose(list item 左右對齊 header/footer),移除 pt/pb(item 自己 py)。對齊 Material M3 / Polaris / Linear Cmd+K 共識;3 item 尺寸 tier 示範(大 avatar+desc / 中 icon+desc / 小 text-only)"
+    },
+    {
+      "id": "design-system-components-dialog-展示--long-content",
+      "file": "dialog-long-content.png",
+      "rationale": "長內容 body 捲動 canonical — 30 item list 示範 ScrollArea + variant='list' 組合(user Image 7 情境)。border-divider 分隔,item py-2(Family 2 reading 節奏)"
+    },
+    {
+      "id": "design-system-components-dialog-展示--open-snapshot",
+      "file": "dialog-open-snapshot.png",
+      "rationale": "開啟狀態 snapshot — visual-audit 專用,用 defaultOpen 讓 Playwright 抓到 Dialog chrome(Header/Body/Footer),補 Layer A/B 先前只抓到 trigger 按鈕的 MINOR gap"
+    },
+    {
+      "id": "design-system-components-popover-展示--filter-panel",
+      "file": "popover-filter-panel.png"
+    },
+    {
+      "id": "design-system-components-popover-展示--open-snapshot",
+      "file": "popover-open-snapshot.png",
+      "rationale": "開啟狀態 snapshot — visual-audit 專用,用 defaultOpen 讓 Playwright 抓到 Popover chrome(Header+X / Body / Footer),補 Layer A/B 先前只抓到 trigger 按鈕的 MINOR gap"
+    },
+    {
+      "id": "design-system-components-popover-設計規格--color-matrix",
+      "file": "popover-color-matrix.png"
+    },
+    {
+      "id": "design-system-components-alert-展示--corner-action-group",
+      "file": "alert-corner-action-group.png"
+    },
+    {
+      "id": "design-system-components-alert-展示--subtle-with-description",
+      "file": "alert-subtle.png"
+    },
+    {
+      "id": "design-system-components-alert-設計規格--color-matrix",
+      "file": "alert-color-matrix.png"
+    },
+    {
+      "id": "design-system-internal-notice-展示--inline-variants",
+      "file": "notice-inline-variants.png"
+    },
+    {
+      "id": "design-system-internal-notice-展示--deployment-success",
+      "file": "notice-deployment.png"
+    },
+    {
+      "id": "design-system-components-fileitem-展示--rich",
+      "file": "fileitem-rich.png"
+    },
+    {
+      "id": "design-system-components-fileitem-展示--compact",
+      "file": "fileitem-compact.png"
+    },
+    {
+      "id": "design-system-components-fileitem-展示--hover-swap",
+      "file": "fileitem-hover-swap.png"
+    },
+    {
+      "id": "design-system-components-fileitem-設計規格--color-matrix",
+      "file": "fileitem-color-matrix.png"
+    },
+    {
+      "id": "design-system-components-fileitem-設計規格--state-behavior",
+      "file": "fileitem-state-behavior.png"
+    },
+    {
+      "id": "design-system-components-dropdownmenu-展示--basic",
+      "file": "dropdownmenu-basic.png"
+    },
+    {
+      "id": "design-system-components-dropdownmenu-展示--groups",
+      "file": "dropdownmenu-groups.png"
+    },
+    {
+      "id": "design-system-components-dropdownmenu-展示--open-snapshot",
+      "file": "dropdownmenu-open-snapshot.png",
+      "rationale": "開啟狀態 snapshot — visual-audit 專用,用 defaultOpen 讓 Playwright 抓到 Dropdown chrome(item / icon / shortcut / separator),補 Layer A/B 先前只抓到 trigger 按鈕的 MINOR gap"
+    },
+    {
+      "id": "design-system-components-dropdownmenu-展示--item-hover",
+      "file": "dropdownmenu-item-hover.png",
+      "rationale": "Interactive state capture — defaultOpen + play() hover 第一個 item 讓 Playwright 抓到 hover highlight(bg-neutral-hover);Radix Portal 外 DOM 需 document.querySelector 找(見 SKILL.md「Layer A interactive state coverage」)"
+    },
+    {
+      "id": "design-system-patterns-item-anatomy--icon-action-primitive-decision",
+      "file": "item-anatomy-icon-action-decision.png"
+    },
+    {
+      "id": "design-system-patterns-item-anatomy--inspector",
+      "file": "item-anatomy-inspector.png"
+    },
+    {
+      "id": "design-system-components-combobox-展示--modes",
+      "file": "combobox-modes.png"
+    },
+    {
+      "id": "design-system-components-combobox-展示--searchable",
+      "file": "combobox-searchable.png"
+    },
+    {
+      "id": "design-system-components-accordion-展示--faq",
+      "file": "accordion-faq.png"
+    },
+    {
+      "id": "design-system-components-aspectratio-展示--hero-banner16x9",
+      "file": "aspectratio-hero-banner16x9.png"
+    },
+    {
+      "id": "design-system-components-avatar-展示--modes",
+      "file": "avatar-modes.png"
+    },
+    {
+      "id": "design-system-components-breadcrumb-展示--default",
+      "file": "breadcrumb-default.png"
+    },
+    {
+      "id": "design-system-components-chart-展示--bar-chart-revenue",
+      "file": "chart-bar-chart-revenue.png"
+    },
+    {
+      "id": "design-system-components-checkbox-展示--states",
+      "file": "checkbox-states.png"
+    },
+    {
+      "id": "design-system-components-chip-展示--default",
+      "file": "chip-default.png"
+    },
+    {
+      "id": "design-system-components-circularprogress-展示--default",
+      "file": "circularprogress-default.png"
+    },
+    {
+      "id": "design-system-internal-command-展示--command-palette",
+      "file": "command-command-palette.png"
+    },
+    {
+      "id": "design-system-components-descriptionlist-展示--user-profile",
+      "file": "descriptionlist-user-profile.png"
+    },
+    {
+      "id": "design-system-components-empty-展示--search-no-results",
+      "file": "empty-search-no-results.png"
+    },
+    {
+      "id": "design-system-components-field-展示--vertical",
+      "file": "field-vertical.png"
+    },
+    {
+      "id": "design-system-components-fileupload-展示--resume-upload",
+      "file": "fileupload-resume-upload.png"
+    },
+    {
+      "id": "design-system-internal-hovercard-展示--person-name-card",
+      "file": "hovercard-person-name-card.png"
+    },
+    {
+      "id": "design-system-components-input-展示--modes",
+      "file": "input-modes.png"
+    },
+    {
+      "id": "design-system-components-linkinput-展示--basic",
+      "file": "linkinput-basic.png"
+    },
+    {
+      "id": "design-system-components-namecard-展示--basic",
+      "file": "namecard-basic.png"
+    },
+    {
+      "id": "design-system-components-numberinput-展示--modes",
+      "file": "numberinput-modes.png"
+    },
+    {
+      "id": "design-system-internal-overflowindicator-展示--combobox-tag-overflow",
+      "file": "overflowindicator-combobox-tag-overflow.png"
+    },
+    {
+      "id": "design-system-components-peoplepicker-展示--single",
+      "file": "peoplepicker-single.png"
+    },
+    {
+      "id": "design-system-components-progressbar-展示--default",
+      "file": "progressbar-default.png"
+    },
+    {
+      "id": "design-system-components-radiogroup-展示--states",
+      "file": "radiogroup-states.png"
+    },
+    {
+      "id": "design-system-components-scrollarea-展示--vertical-issue-list",
+      "file": "scrollarea-vertical-issue-list.png"
+    },
+    {
+      "id": "design-system-components-segmentedcontrol-展示--default",
+      "file": "segmentedcontrol-default.png"
+    },
+    {
+      "id": "design-system-components-select-展示--modes",
+      "file": "select-modes.png"
+    },
+    {
+      "id": "design-system-internal-selectmenu-展示--single-select",
+      "file": "selectmenu-single-select.png"
+    },
+    {
+      "id": "design-system-components-separator-展示--horizontal",
+      "file": "separator-horizontal.png"
+    },
+    {
+      "id": "design-system-components-sidebar-展示--icon-collapse",
+      "file": "sidebar-icon-collapse.png"
+    },
+    {
+      "id": "design-system-components-skeleton-展示--default",
+      "file": "skeleton-default.png"
+    },
+    {
+      "id": "design-system-components-slider-展示--default",
+      "file": "slider-default.png"
+    },
+    {
+      "id": "design-system-components-steps-展示--default",
+      "file": "steps-default.png"
+    },
+    {
+      "id": "design-system-components-switch-展示--states",
+      "file": "switch-states.png"
+    },
+    {
+      "id": "design-system-components-tabs-展示--default",
+      "file": "tabs-default.png"
+    },
+    {
+      "id": "design-system-components-tag-展示--all-variants",
+      "file": "tag-all-variants.png"
+    },
+    {
+      "id": "design-system-components-textarea-展示--default",
+      "file": "textarea-default.png"
+    },
+    {
+      "id": "design-system-components-toast-展示--all-variants",
+      "file": "toast-all-variants.png"
+    },
+    {
+      "id": "design-system-components-tooltip-展示--default",
+      "file": "tooltip-default.png"
+    },
+    {
+      "id": "design-system-components-treeview-展示--file-browser",
+      "file": "treeview-file-browser.png"
+    }
   ]
 }
