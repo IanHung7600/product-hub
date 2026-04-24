@@ -221,11 +221,11 @@ mindset #2 的**機械化執行清單**。寫任何視覺 code 前,對照本表*
 | **Tailwind / CSS 出怪事** | `# Tailwind 使用規則` + `# 失敗記憶索引` 技術陷阱 anchor |
 | **寫任何視覺 code 前** | `# SSOT 消費 canonical` 對照表列出查過的家 |
 | **Stakeholder-visible 產出**(新元件 / 新功能 / 新產品頁 / 比稿) | `# 稽核 canonical` → Tier 1 強制 |
-| **稽核結論 = 修實作 or 改原則?** | `# 稽核 vs 執行 分權 canonical`(auto vs STOP 判斷公式 + 表) |
+| **稽核結論 = 修實作 or 改原則?** | `# 稽核 canonical`「稽核 vs 執行 分權」節(auto vs STOP 公式 + 表)|
 | **跑 D6 設計原則稽核** | `.claude/skills/design-system-audit/references/principle-audit-protocol.md`(4 子維 scan + 判斷表 + FP 記憶) |
 | **User 糾正 AI 後** | `# 資訊治理 canonical`(判斷 home + 寫到 memory / CLAUDE.md / skill reference) |
 | **spec 跟 code 結論衝突** | `# Spec 規則`(主動提出討論,不默默改) |
-| **在 classification-sensitive dir 建新檔** | **先 Read 該 dir 的 `README.md` charter`**(硬規則,見 `# 規則分層`) |
+| **在 classification-sensitive dir 建新檔** | **先 Read 該 dir 的 `README.md` charter`**(硬規則,見 `# 資訊治理 canonical`「8 home」)|
 | **稽核缺口 / 覆蓋盤點 / 補洞決策** | `.claude/references/audit-coverage-vs-24-checklist.md`(業界 24 節 vs 我們 / Dim 9 framework multiplier / 刻意不補清單) |
 
 **找不到對應的任務類型** → 進 `# 遇不確定時的協議`，不要自己決定讀什麼。
@@ -328,7 +328,7 @@ src/
 └── explorations/           ← 未定案 prototype 比稿
 ```
 
-**目錄以實際檔案系統為準**。查看元件 / pattern / token 清單前先 `ls` 對應 dir。各子 dir 的 charter(收什麼 / 不收什麼)寫在該 dir 的 `README.md`——建立新檔前必讀(見 `# 規則分層` 硬規則)。
+**目錄以實際檔案系統為準**。查看元件 / pattern / token 清單前先 `ls` 對應 dir。各子 dir 的 charter(收什麼 / 不收什麼)寫在該 dir 的 `README.md`——建立新檔前必讀(見 `# 資訊治理 canonical` 硬規則)。
 
 Internal primitive vs public-facing 元件的分類 test 見 `components/README.md` 及 Storybook title 命名(`# Story` 章節)。
 
@@ -503,20 +503,9 @@ Tailwind 預設間距 / 尺寸 class 可用;對應 token 時用 `className="p-[v
 - **L2 config-based 比 ReactNode slot 更 opinionated**(防 consumer drift),新 host 元件優先 config
 - **新 L1 primitive 要經 Checkpoint 3**(classification ambiguity);L2 / L3 可 AUTO
 
-## 世界級對照
+**世界級對照**:結構對齊 Radix / Headless UI / Ariakit compound pattern(L1 wrapper + L3 primitives);L2 config-based 比 Polaris / Material 的 ReactNode slot 更 opinionated(防 consumer drift,有 rationale 的 slight deviation)。
 
-本 taxonomy 是 DS 原創,但結構對齊:
-- **Radix / Headless UI / Ariakit**:compound component 模式(L1 wrapper + L3 primitives 給 composition)
-- **Polaris / Material / Atlassian**:host 元件 slot 吃 ReactNode(相當於 L2 但無 config-based opinionation)
-- **我們的 L2 config-based** 比世界級 slot 更 opinionated(防 consumer drift),是 slight deviation 有 rationale
-
-## Icon action primitive 的 3 層分佈(範例)
-
-- **L1**:`<Button iconOnly />` — 獨立 action(toolbar / chrome corner / standalone)
-- **L2**:`Input.endAction` / `MenuItem.inlineActions` / 未來 `FileItem.actions / DataTable.rowActions`(config API,host 內部渲染 L3 primitive)
-- **L3**:`ItemInlineAction`(config wrapper)/ `ItemInlineActionButton`(raw button)— 不直接暴露給 app
-
-完整 Inline Action vs Button predicate 見 `patterns/element-anatomy/item-anatomy.spec.md`「Predicate」。
+**Icon action 範例**:L1 `<Button iconOnly />`(獨立 action)/ L2 `Input.endAction` / `MenuItem.inlineActions`(config API)/ L3 `ItemInlineAction`(composition primitive)。完整 predicate → `patterns/element-anatomy/item-anatomy.spec.md`。
 
 
 # 系統內部 Layout — 4-Family Model
@@ -564,27 +553,20 @@ Tailwind 預設間距 / 尺寸 class 可用;對應 token 時用 `className="p-[v
 
 三層「看→查→判斷」閱讀深度遞進,職責不重複。
 
-## Title 命名 + Internal vs Components
+## Title + Internal vs Components
 
-Title path:`Design System/{Tokens|Patterns|Components|Internal}/...`;第一層英文、元件 PascalCase、子頁中文;子頁前不加元件名(❌ `MenuItem 展示` → ✅ `展示`)。
+Title path `Design System/{Tokens|Patterns|Components|Internal}/...`;第一層英文 / 元件 PascalCase / 子頁中文 / 子頁前不加元件名(❌ `MenuItem 展示` → ✅ `展示`)。
 
-**Internal vs Components 三題 test**:(1) 元件有預設視覺(bg/border/shadow/padding/rounded)?(2) 直接 `<X>` 放頁面有視覺?(3) 所有消費者都包 wrapper?三題都傾向 Internal → `Internal/`;任一明確傾向 Components → `Components/`。**看行為不看名字**(HoverCard 名字 public 但純行為 → Internal/)。
-
-現有分類:Components/(Button / Input / Select / Dialog / Popover / Sheet)/ Internal/(Menu / SelectMenu / Notice / SelectionControl / OverflowIndicator / HoverCard / Command)。
+**Internal vs Components 三題 test**:(1) 有預設視覺(bg/border/shadow/padding/rounded)?(2) 直接 `<X>` 有視覺?(3) 所有消費者都包 wrapper?三題傾向 Internal → `Internal/`;任一傾向 Components → `Components/`。**看行為不看名字**(HoverCard 名字 public 但純行為 → Internal/)。
 
 ## 範例最高準則
 
-**精簡幹練、0 重複、每 story earn its existence**。Story 的唯一任務是教學:讓讀者推得出自己產品怎麼用,或把模糊原則具象化給人看懂。
+**精簡幹練、0 重複、每 story earn its existence**。Story 教學任務:讓讀者推得出自己產品怎麼用,或把模糊原則具象化。
 
-**核心 philosophy**(2026-04-24):
-- **以「可舉一反三」範例為主** — 一個 story 教一條原則,讀者能類推到其他情境
-- **Manual 範例補充模糊原則,讓抽象具象化** — 若 spec rule 模糊(如「真實場景」),manual story 用具體 Jira/Stripe/Notion 劇情把它釘下來讓「人」看懂
-- **禁止湊數 / 重複 / 秀肌肉** — 跟別 story 重疊 = noise,造成 drift + 維護成本 + 讀者噪音。audit Dim 24/25 會抓
+**Philosophy**:舉一反三為主(1 story 1 原則,讀者類推)/ manual 範例補抽象原則具象化(Jira/Stripe/Notion 劇情釘「真實場景」)/ 禁湊數重複秀肌肉(audit Dim 24/25 會抓)。
 
-**兩 earn-existence test**:(a) 教一條別 story 沒教的原則?(b) 移除後 spec 理解會 degrade?兩題皆 NO → retire。
+**Earn-existence 雙 test**(兩題皆 NO → retire):(a) 教一條別 story 沒教的原則?(b) 移除後 spec 理解會 degrade?
 
-❌ 禁止:佔位符(`Option A/B/C` / Lorem / foo)/ 抽象代號(「按鈕一」/ `Variant X`)/ 極端不現實 / 視覺符號 / spec 內部代號
+**驗收 2 test**:「人 test」遮標題 5 秒懂?/「舉一反三 test」讀者推得出自己產品怎麼用?
 
-**兩驗收 test**:「人 test」遮標題 5 秒懂情境?/「舉一反三 test」讀者推得出自己產品怎麼用?
-
-詳細合法場景(Jira / Stripe / Notion / Figma...)/ anatomy 5-story / Rule note / 連動 cva defaultVariants 漂移 → `/story-writing` skill。
+❌ 禁止:佔位符(`Option A/B/C` / Lorem / foo)/ 抽象代號(「按鈕一」/ `Variant X`)/ 極端不現實 / 視覺符號 / spec 內部代號。詳細合法場景 + anatomy 5-story + Rule note + cva defaultVariants 漂移 → `/story-writing` skill。
