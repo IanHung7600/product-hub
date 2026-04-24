@@ -1,6 +1,6 @@
 # Audit Subagent Prompts (22 audits)
 
-Each prompt is self-contained — designed to paste into an `Agent` call with `run_in_background: true` and `subagent_type: general-purpose`.
+Each prompt is self-contained — designed to paste into an `Agent` call with `run_in_background: true` and `subagent_type: ds-dim-auditor`(registered agent since 2026-04-24;scoped Read/Grep/Glob only;fallback to `general-purpose` if agent not available)。
 
 All prompts start with:
 ```
