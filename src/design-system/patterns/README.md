@@ -18,6 +18,7 @@
 | `action-bar/` | `action-bar.tsx` + `action-bar.spec.md` — toolbar / action row 排列公式 | 任何有按鈕列的頁面 |
 | `horizontal-overflow/` | `useOverflowItems` hook + fade-mask 樣式 | Tabs / ChipGroup |
 | `overlay-surface/` | `SurfaceHeader/Body/Footer` sub-components + padding SSOT | Dialog / Popover / Sheet |
+| `i18n/` | `I18nProvider` + `useI18n()` hook(cross-cutting context primitive,additive 與 Route A prop API 並存) | 全 DS 元件 opt-in consumer(未來逐步 migrate) |
 
 ## 命名鐵律:element-level「anatomy」 vs page-level「layout」
 

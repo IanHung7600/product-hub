@@ -231,7 +231,7 @@ Switch.displayName = SwitchPrimitives.Root.displayName
 // Phase 2 fill needed: purpose descriptions + when rationale + world-class refs
 export const switchMeta = {
   component: 'Switch',
-  family: null, // TODO: Phase 2 — declare Layout Family(1/2/3/4 或 non-family)
+  family: 4,
   variants: {
 
   },

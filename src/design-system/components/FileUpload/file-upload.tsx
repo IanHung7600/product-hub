@@ -303,7 +303,7 @@ function matchAccept(file: File, accept: string): boolean {
 // Phase 2 fill needed: purpose descriptions + when rationale + world-class refs
 export const fileUploadMeta = {
   component: 'FileUpload',
-  family: null, // TODO: Phase 2 — declare Layout Family(1/2/3/4 或 non-family)
+  family: null, // non-family composite / overlay / layout
   variants: {
 
   },

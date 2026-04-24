@@ -333,7 +333,7 @@ MenuChipGroup.displayName = 'MenuChipGroup'
 // Phase 2 fill needed: purpose descriptions + when rationale + world-class refs
 export const chipMeta = {
   component: 'Chip',
-  family: null, // TODO: Phase 2 — declare Layout Family(1/2/3/4 或 non-family)
+  family: 3,
   variants: {
 
   },

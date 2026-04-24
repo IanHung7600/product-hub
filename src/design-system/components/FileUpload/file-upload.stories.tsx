@@ -128,6 +128,43 @@ export const WithUploadedList = {
   },
 }
 
+// New 2026-04-24:內建 `files` prop — FileUpload own success state display(DS canonical)
+export const WithFileList = {
+  name: '內建 files prop(DS canonical success state)',
+  render: () => {
+    type UploadItem = { id: string; name: string; size?: number; status?: 'uploading' | 'completed' | 'error'; progress?: number; description?: string }
+    const [items, setItems] = useState<UploadItem[]>([
+      { id: '1', name: '2026-Q1-report.pdf', size: 2_500_000, status: 'completed' },
+      { id: '2', name: 'cover-image.png', size: 1_200_000, status: 'uploading', progress: 68 },
+      { id: '3', name: 'malware.exe', status: 'error', description: '檔案類型不允許' },
+    ])
+    return (
+      <div className="max-w-lg">
+        <FileUpload
+          multiple
+          title="上傳附件"
+          description="最多 20 MB / 檔"
+          maxSize={20_000_000}
+          files={items}
+          fileListMode="compact"
+          onRemove={(id) => setItems((prev) => prev.filter((i) => i.id !== id))}
+          onUpload={(accepted) =>
+            setItems((prev) => [
+              ...prev,
+              ...accepted.map((f, i) => ({
+                id: `new-${Date.now()}-${i}`,
+                name: f.name,
+                size: f.size,
+                status: 'completed' as const,
+              })),
+            ])
+          }
+        />
+      </div>
+    )
+  },
+}
+
 // children 覆寫:Figma 匯入資產客製文案 / 品牌 logo
 export const CustomChildren = {
   name: 'Custom children(完全客製)',

@@ -1,7 +1,7 @@
 ---
 # Phase 1 auto-migrated(2026-04-24). TODO: Phase 2 fill world-class refs + when rationale.
 component: Badge
-family: null
+family: 3
 variants:
   critical:
     when: "TODO: Phase 2 fill"

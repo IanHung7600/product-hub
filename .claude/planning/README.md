@@ -9,7 +9,7 @@ Spec + scope + execution plan 已寫完但未執行的工作。AI session 間持
 | Plan | 狀態 | 開工 trigger(user 說) |
 |------|------|----------------------|
 | `story-auto-compile.md` | Phase 1-3 POC + Phase 4 infra done;**58 / 59 元件 migration 未跑**(目前 1 元件 canonical aligned) | 「做 migration / phase 4」(也 auto-chain by audit Dim 23)|
-| `row-primitive-consolidation.md` | Phase 0 GO/NO-GO 評估 done;**Phase 1 SidebarMenuButton refactor + Phase 2 TreeItem visual base 未跑**(ROW_PADDING_BY_SIZE token 已抽,但 cva consume 未做) | 「開工 row primitive consolidation / 消除 SidebarMenuButton 獨立實作 risk」 |
+| `row-primitive-consolidation.md` | **Phase 0 done / Phase 1 declined**(2026-04-24 二次評估判 over-engineering)— ROW_PADDING_BY_SIZE token 已抽是 real value 共享,cva 進一步 consume 無 value | 「若未來 cva 重大改版需重評」 |
 | `ds-i18n-refactor.md` | ~~40 locations 未修~~ → **2026-04-24 shipped(commit 3e64129)Route A 全清**。保留檔案當 future Route B(i18n Provider)的 rationale 記錄 | 「升級 Route B i18n Provider / DS 要發 npm」 |
 
 ## 歷史完成檔(archived)
