@@ -10,6 +10,10 @@ export type FieldControlLayout = 'inline' | 'block'
 // ── Context ──
 export interface FieldContextValue {
   id: string
+  /** a11y(2026-04-25):FieldLabel 渲染時若元素為 div-based role(combobox/slider
+   * 等非 native form control),`<label for>` 無效,需 aria-labelledby 指向 labelId。
+   * FieldLabel 自動設 id={labelId},下游 control 可讀此值寫入 aria-labelledby。 */
+  labelId: string
   descriptionId: string
   errorId: string
   mode: FieldMode

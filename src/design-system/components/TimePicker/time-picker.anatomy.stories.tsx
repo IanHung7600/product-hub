@@ -173,12 +173,12 @@ export const ModeMatrix: Story = {
   name: '6. 模式對照',
   render: () => (
     <div className="flex flex-col gap-3 w-60">
-      <TimePicker value="09:00" onChange={() => {}} placeholder="edit(預設)" />
-      <TimePicker value="09:00" onChange={() => {}} mode="readonly" />
-      <TimePicker value="09:00" onChange={() => {}} disabled />
-      <TimePicker value="" onChange={() => {}} placeholder="空值 → placeholder" />
-      <TimePicker value="09:00" onChange={() => {}} error />
-      <TimePicker value="09:00" onChange={() => {}} clearable />
+      <TimePicker value="09:00" onChange={() => {}} placeholder="edit(預設)" aria-label="edit mode demo" />
+      <TimePicker value="09:00" onChange={() => {}} mode="readonly" aria-label="readonly mode demo" />
+      <TimePicker value="09:00" onChange={() => {}} disabled aria-label="disabled mode demo" />
+      <TimePicker value="" onChange={() => {}} placeholder="空值 → placeholder" aria-label="empty value demo" />
+      <TimePicker value="09:00" onChange={() => {}} error aria-label="error state demo" />
+      <TimePicker value="09:00" onChange={() => {}} clearable aria-label="clearable demo" />
     </div>
   ),
 }

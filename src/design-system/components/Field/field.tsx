@@ -160,6 +160,7 @@ const Field = React.forwardRef<HTMLDivElement, FieldProps>(
   ) => {
     const generatedId = React.useId()
     const id = idProp ?? generatedId
+    const labelId = `${id}-label`
     const descriptionId = `${id}-description`
     const errorId = `${id}-error`
 
@@ -191,6 +192,7 @@ const Field = React.forwardRef<HTMLDivElement, FieldProps>(
     const contextValue = React.useMemo<FieldContextValue>(
       () => ({
         id,
+        labelId,
         descriptionId,
         errorId,
         mode,
@@ -202,7 +204,7 @@ const Field = React.forwardRef<HTMLDivElement, FieldProps>(
         controlLayout,
         hasFieldWrapper: true,
       }),
-      [id, descriptionId, errorId, mode, disabled, required, invalid, size, orientation, controlLayout]
+      [id, labelId, descriptionId, errorId, mode, disabled, required, invalid, size, orientation, controlLayout]
     )
 
     // Control area：兩種佈局模型,「第一行內容中線」都錨在 field-height/2,
@@ -359,6 +361,7 @@ const FieldLabel = React.forwardRef<HTMLLabelElement, FieldLabelProps>(
     return (
       <label
         ref={ref}
+        id={ctx?.labelId}
         htmlFor={htmlFor}
         className={cn(
           FIELD_TEXT_CLASS,
