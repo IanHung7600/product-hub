@@ -88,7 +88,7 @@ Governance 自身遵循 SSOT + anti-bloat。3 層 pipeline 確保知識可壓縮
 
 | Layer | 觸發 | Artifact |
 |-------|------|---------|
-| **L1 — Pre-write** | PreToolUse hook | `pre_write_subsumption_check.sh` / `check_file_size_budget.sh` |
+| **L1 — Pre-write** | PreToolUse hook | `pre_write_subsumption_check.sh` / `check_file_size_budget.sh` / `check_governance_compliance.sh`(7 題 self-audit — 防 M7 violation) |
 | **L2 — Per-commit** | PostToolUse | `log_governance_fires.sh` → `.claude/logs/hook-fires.jsonl` |
 | **L3 — Periodic deep**(季度 / audit --deep) | `/knowledge-prune` skill(retire ≥ 5%)| Phase F report |
 
