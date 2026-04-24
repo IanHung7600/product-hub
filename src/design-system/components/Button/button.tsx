@@ -413,4 +413,39 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 )
 Button.displayName = 'Button'
 
+/**
+ * componentMeta — Story Auto-Compile 系統消費的結構化 canonical
+ * (見 .claude/planning/story-auto-compile.md Phase 1)
+ *
+ * compile-stories.mjs 讀本 export + spec.md frontmatter 產出
+ * anatomy.stories.tsx 的 variant/size/state/token 矩陣 canonical section。
+ *
+ * Keys 必跟 buttonVariants cva + spec frontmatter 對齊(compile-time 驗證)。
+ */
+export const buttonMeta = {
+  component: 'Button',
+  family: 3, // Pill Layout
+  variants: {
+    primary: { purpose: '主要 action / CTA' },
+    secondary: { purpose: '次要 action(陪襯 primary)' },
+    tertiary: { purpose: '第三級 action(tool-like)' },
+    text: { purpose: '文字樣式 action(low emphasis / toolbar)' },
+    link: { purpose: '內文連結(inline reading)' },
+  },
+  sizes: {
+    xs: { fieldHeight: 24, iconSize: 16, typography: 'body' },
+    sm: { fieldHeight: 28, iconSize: 16, typography: 'body' },
+    md: { fieldHeight: 32, iconSize: 16, typography: 'body' },
+    lg: { fieldHeight: 40, iconSize: 20, typography: 'body-lg' },
+  },
+  states: ['default', 'hover', 'active', 'focus-visible', 'disabled'],
+  tokens: {
+    bg: ['--primary', '--primary-hover', '--primary-active', '--bg-disabled'],
+    fg: ['--on-emphasis', '--fg-disabled'],
+    ring: ['--ring'],
+  },
+  defaultVariant: 'primary',
+  defaultSize: 'md',
+} as const
+
 export { Button, buttonVariants, ButtonGroupContext }

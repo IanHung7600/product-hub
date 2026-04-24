@@ -1,3 +1,44 @@
+---
+# Story Auto-Compile 結構化 canonical(見 .claude/planning/story-auto-compile.md Phase 2)
+# Keys 必跟 button.tsx buttonMeta + cva buttonVariants 對齊(compile-time 驗)。
+component: Button
+family: 3  # Pill Layout
+variants:
+  primary:
+    when: "主要 action / CTA"
+    world-class: ["Polaris Button primary", "Material Filled Button", "Atlassian Primary"]
+  secondary:
+    when: "陪襯 primary 的次要 action"
+    world-class: ["Polaris Button default", "Material Tonal Button"]
+  tertiary:
+    when: "第三級 action(tool-like / icon-heavy)"
+    world-class: ["Material Outlined Button"]
+  text:
+    when: "文字樣式 — low emphasis / toolbar embedded"
+    world-class: ["Ant Button type=text", "Material Text Button"]
+  link:
+    when: "內文連結 — inline reading context"
+    world-class: ["Polaris Link", "Ant Button type=link"]
+sizes:
+  xs: { when: "row-embedded inline(FileItem rich action / DataTable row action)" }
+  sm: { when: "form field-height 28 / compact chrome" }
+  md: { when: "default general UI" }
+  lg: { when: "touch / prominent CTA / stakeholder-facing surface" }
+禁止事項:
+  - rule: "iconOnly 必傳 aria-label"
+    reason: "a11y 硬性要求 — 無 label 盲人讀不到"
+    反例: "<Button iconOnly startIcon={X} />"
+  - rule: "不自加 embedded=true / dense 類維度"
+    reason: "Embedded 情境走 L2 host slot(如 Input.endAction)不擴 Button"
+    反例: "Button 加 embedded=true 繞過 L2 分層"
+  - rule: "dismiss 走 dismiss prop 不用 destructive"
+    reason: "Dismiss 是功能弱化 fg-muted,非破壞性"
+    反例: "<Button iconOnly variant=destructive startIcon={X} />"
+related:
+  近親: [SegmentedControl, IconButton, Link]
+  SSOT-anchor: "button.spec.md → Pill Layout(Family 3 SSOT)"
+---
+
 # Button 設計原則
 
 ## 定位
