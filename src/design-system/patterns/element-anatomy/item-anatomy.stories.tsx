@@ -236,9 +236,11 @@ const Z = {
   },
 }
 
-/** Menu container */
+/** Menu container — role=listbox 滿足內部 MenuItem role=option 的 parent(axe aria-required-parent)。 */
 const MenuFrame = ({ children, width = 320 }: { children: React.ReactNode; width?: number }) => (
   <div
+    role="listbox"
+    aria-label="Anatomy inspector menu preview"
     className="rounded-lg bg-surface-raised border border-border overflow-hidden py-2"
     style={{ width, boxShadow: 'var(--elevation-200)' }}
   >

@@ -32,9 +32,9 @@ const meta: Meta<typeof MenuItem> = {
 export default meta
 type Story = StoryObj<typeof MenuItem>
 
-/** Menu 容器 — 模擬浮層外觀 */
+/** Menu 容器 — 模擬浮層外觀。demo 用 role='listbox' 滿足 MenuItem role='option' 的 parent 要求(axe aria-required-parent)。 */
 const MenuContainer = ({ children, width = 320 }: { children: React.ReactNode; width?: number }) => (
-  <div className="rounded-lg bg-surface-raised border border-border overflow-hidden"
+  <div role="listbox" aria-label="Menu demo items" className="rounded-lg bg-surface-raised border border-border overflow-hidden"
     style={{ boxShadow: 'var(--elevation-200)', width }}>
     {children}
   </div>

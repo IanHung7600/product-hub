@@ -279,25 +279,28 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(function Calend
         ))}
       </div>
 
-      {/* Month grid:7 cols, ~5-6 rows */}
+      {/* Month grid:7 cols, ~5-6 rows。a11y(2026-04-25):WAI-ARIA grid 要求 row > gridcell
+          階層,chunk days 7 一組,wrap 成 role='row'(display:contents 保 CSS grid 佈局)。 */}
       <div
         className="grid grid-cols-7 flex-1 min-h-0"
         role="grid"
         aria-label={`月行事曆,${monthTitle}`}
       >
-        {days.map((date) => {
-          const inMonth = isSameMonth(date, refDate)
-          const isToday = isSameDay(date, today)
-          const dayEvents = eventsOnDate(events, date)
-          const visibleEvents = dayEvents.slice(0, MAX_TILES_PER_CELL)
-          const overflowCount = dayEvents.length - visibleEvents.length
+        {Array.from({ length: Math.ceil(days.length / 7) }, (_, rowIdx) => (
+          <div key={rowIdx} role="row" style={{ display: 'contents' }}>
+            {days.slice(rowIdx * 7, rowIdx * 7 + 7).map((date) => {
+              const inMonth = isSameMonth(date, refDate)
+              const isToday = isSameDay(date, today)
+              const dayEvents = eventsOnDate(events, date)
+              const visibleEvents = dayEvents.slice(0, MAX_TILES_PER_CELL)
+              const overflowCount = dayEvents.length - visibleEvents.length
 
-          return (
-            <button
-              key={date.toISOString()}
-              type="button"
-              role="gridcell"
-              aria-label={`${format(date, 'yyyy-MM-dd')},${dayEvents.length} 個事件`}
+              return (
+                <button
+                  key={date.toISOString()}
+                  type="button"
+                  role="gridcell"
+                  aria-label={`${format(date, 'yyyy-MM-dd')},${dayEvents.length} 個事件`}
               onClick={() => onDateClick?.(date)}
               className={cn(
                 'flex flex-col gap-1 min-h-28 p-1.5 text-left',
@@ -375,8 +378,10 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(function Calend
                 )}
               </div>
             </button>
-          )
-        })}
+              )
+            })}
+          </div>
+        ))}
       </div>
     </div>
   )

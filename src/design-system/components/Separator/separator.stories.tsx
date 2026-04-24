@@ -35,7 +35,7 @@ type Story = StoryObj<typeof Separator>
 export const Horizontal: Story = {
   name: 'Horizontal(settings row group 分段)',
   render: () => (
-    <div className="border border-border rounded-lg max-w-md overflow-hidden">
+    <div role="listbox" aria-label="settings sections demo" className="border border-border rounded-lg max-w-md overflow-hidden">
       <MenuItem
         startIcon={User}
         description="Email、時區、顯示語言"
