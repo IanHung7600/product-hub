@@ -143,6 +143,26 @@ See also:
 
 **實作**:`compile-stories.mjs` 自動在每個 story 的 docs meta 注入此 section;consumer 不手寫。
 
+## Story earn-existence philosophy(2026-04-24 新增 — audit Dim 24/25 對應)
+
+每個 manual story(非 auto-compiled 的部分)必 earn its existence。理由:多餘 story = noise,增加維護成本 + drift 風險 + 讀者(人 + AI)認知負擔。
+
+**核心 philosophy**:
+1. **以「可舉一反三」為主** — 一個 story 教一條原則,讀者能類推到其他情境
+2. **Manual 補充模糊原則,讓抽象具象化** — spec 有模糊 rule 時,manual story 用具體 Jira/Stripe/Notion 劇情把原則釘下來。給「人」看得懂為主
+3. **禁止湊數 / 重複 / 秀肌肉**
+
+**每 manual story 必過 2 earn test**:
+- (a) **unique teaching** — 這個 story 教一條其他 story 沒教的原則?
+- (b) **grounding necessity** — 移除後,spec 某條抽象原則會 degrade 為難懂?
+
+兩題皆 NO → retire 候選(audit Dim 24/25 會抓)。兩題任一 YES → 合法保留。
+
+**範例(illustrative)**:
+- ✅ OK:`DialogWithForm` — 教 Dialog 內 form field-wrapper canonical(grounds 抽象「form gap」rule)
+- ❌ redundant:`DialogWithFormAndCancelButton` — 跟 `DialogWithForm` 只差 cancel button,不新教任何原則
+- ❌ showing-off:`DialogHugeSize1000px` — 極端 size 不教原則,只秀技術
+
 ## 設計規格品質規則
 
 - **Token-first**:所有數值以 token name 為主(如 `h-field-sm`),resolved px 值為輔助灰字。開發者只需確認 token 正確——theme / density 的值解析由系統處理

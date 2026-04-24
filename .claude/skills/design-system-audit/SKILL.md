@@ -120,6 +120,8 @@ Grouped by theme. Each runs as an independent subagent; many can parallelize.
 | # | Audit | What it catches |
 |---|-------|-----------------|
 | 23 | **Story canonical-drift + Migration coverage**(spec/tsx vs stories) | 跑 `node scripts/compile-stories.mjs --all --check` — 兩類 finding:(a) 已 migration 元件 key 不齊 = **P0 drift**(立即修);(b) 未 migration 元件(無 `componentMeta` export / 無 spec frontmatter)= **P2 migration pending**(必 Checkpoint 1 提報 user,Phase 3 chain `/story-auto-compile-migrate` 批次處理,不 silent skip)。進階模式 `--deep` 必跑本 Dim 直到全 DS 元件都 migrated + 0 drift |
+| 24 | **Story 範例重複性**(manual stories 不該彼此 scenario 重疊) | 對每元件,跨 3 個 stories 檔(展示 / anatomy / principles)列所有 manual story 的 scenario。若兩 story 呈現同 variant × size × state × 業務情境 → 重複 = noise。以「**可舉一反三**」為 unique-teaching test:每個 manual story 必**教讀者一條別 story 沒教的原則**。重複 → retire 候選。AI judgement dim,sub-agent 讀 spec + stories 判斷 |
+| 25 | **Story 必要性 grounding**(manual story 補足模糊原則的具象化)| 每個 manual story 過 2 test:(a) 是否 tied 到 spec 某條抽象原則,讓「人」透過範例看懂原則?(b) 移除後 spec 理解是否 degrade?兩題皆 NO → story 不 earn its existence,retire 候選。核心 philosophy:「**manual 範例補充模糊原則讓其具象化,給人看得懂為主**」— 不是秀肌肉不是湊數。AI judgement dim |
 
 ---
 
