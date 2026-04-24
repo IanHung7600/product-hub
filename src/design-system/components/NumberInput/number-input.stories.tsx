@@ -24,15 +24,15 @@ export const Modes: Story = {
       <div className="flex flex-col gap-6 max-w-xs">
         <div>
           <h3 className="text-body font-bold text-foreground mb-2">edit</h3>
-          <NumberInput value={value} onChange={setValue} prefix="$" />
+          <NumberInput value={value} onChange={setValue} prefix="$" aria-label="價格(edit mode demo)" />
         </div>
         <div>
           <h3 className="text-body font-bold text-foreground mb-2">readonly</h3>
-          <NumberInput mode="readonly" value={value} prefix="$" />
+          <NumberInput mode="readonly" value={value} prefix="$" aria-label="價格(readonly mode demo)" />
         </div>
         <div>
           <h3 className="text-body font-bold text-foreground mb-2">disabled</h3>
-          <NumberInput mode="disabled" value={value} prefix="$" />
+          <NumberInput mode="disabled" value={value} prefix="$" aria-label="價格(disabled mode demo)" />
         </div>
       </div>
     )

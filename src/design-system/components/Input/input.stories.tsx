@@ -22,12 +22,12 @@ export const Modes: Story = {
       <div>
         <h3 className="text-body font-bold text-foreground mb-2">edit</h3>
         <p className="text-caption text-fg-muted mb-3">Focus 時邊框變 primary</p>
-        <Input defaultValue="Wireless Bluetooth Headphones" placeholder="輸入商品名稱" />
+        <Input defaultValue="Wireless Bluetooth Headphones" placeholder="輸入商品名稱" aria-label="商品名稱(edit mode demo)" />
       </div>
       <div>
         <h3 className="text-body font-bold text-foreground mb-2">readonly</h3>
         <p className="text-caption text-fg-muted mb-3">neutral-2 底色、無邊框、文字正常色</p>
-        <Input mode="readonly" defaultValue="Wireless Bluetooth Headphones" />
+        <Input mode="readonly" defaultValue="Wireless Bluetooth Headphones" aria-label="商品名稱(readonly mode demo)" />
       </div>
       <div>
         <h3 className="text-body font-bold text-foreground mb-2">disabled</h3>
@@ -35,7 +35,7 @@ export const Modes: Story = {
         <Tooltip>
           <TooltipTrigger asChild>
             <div>
-              <Input mode="disabled" defaultValue="Wireless Bluetooth Headphones" />
+              <Input mode="disabled" defaultValue="Wireless Bluetooth Headphones" aria-label="商品名稱(disabled mode demo)" />
             </div>
           </TooltipTrigger>
           <TooltipContent>此欄位在免費方案中不可用</TooltipContent>
