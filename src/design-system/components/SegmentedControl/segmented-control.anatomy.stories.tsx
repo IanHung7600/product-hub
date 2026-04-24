@@ -1,15 +1,16 @@
+import * as React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { AlignLeft, AlignCenter, AlignRight, List, LayoutGrid, Calendar } from 'lucide-react'
 import { SegmentedControl, SegmentedControlItem } from './segmented-control'
 import { Badge } from '@/design-system/components/Badge/badge'
 import { H3, Desc, Td, Th, TokenCell } from '@/design-system/stories-helpers/anatomy/anatomy-utils'
 
-const meta: Meta = {
+const meta: Meta<React.ComponentProps<typeof SegmentedControl> & { iconOnly?: boolean }> = {
   title: 'Design System/Components/SegmentedControl/設計規格',
   parameters: { layout: 'padded' },
 }
 export default meta
-type Story = StoryObj
+type Story = StoryObj<typeof meta>
 
 export const Overview: Story = {
   name: '1. 元件總覽',

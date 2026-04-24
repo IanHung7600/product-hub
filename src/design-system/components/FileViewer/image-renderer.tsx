@@ -132,9 +132,10 @@ export const ImageRenderer: React.FC<FileRendererProps> = ({
         // Wheel zoom canonical:
         // - `step: 0.03` = 每 tick ~3% scale,對齊 Figma / Preview.app 細緻度
         //   (原 0.1 = 10% 太粗,接近 Google Slides 離散慣例)
-        // - `smoothStep: 0.005` = trackpad 連續 zoom 不跳格
         // - multiplicative 等距:library 內部 scale factor 乘算,log 視覺等距
-        wheel={{ step: 0.03, smoothStep: 0.005 }}
+        // 註:原本用 `smoothStep: 0.005` 但當前 lib type 不含該 key;若需 trackpad 細緻,
+        // 升級 react-zoom-pan-pinch 到有此 prop 的版本或切到 `smoothScroll` API
+        wheel={{ step: 0.03 }}
         doubleClick={{ mode: 'reset' }}
         onTransform={handleTransformed}
       >

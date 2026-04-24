@@ -158,7 +158,7 @@ export const Clickable = {
         <div className="flex flex-col gap-2 max-w-md">
           {attachmentFiles.map((f, i) => {
             const isImage = i < 2 // 前兩個 rich card(有 thumbnail)
-            const sizeLabel = f.description ?? `${(f.size / 1024 / 1024).toFixed(1)} MB`
+            const sizeLabel = f.description ?? (f.size != null ? `${(f.size / 1024 / 1024).toFixed(1)} MB` : '—')
             return isImage ? (
               <FileItem
                 key={f.id}

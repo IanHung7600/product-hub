@@ -319,7 +319,7 @@ const LinearVsNonlinear = () => {
       <div className="flex flex-col gap-2 min-w-[240px]">
         <span className="text-[11px] text-fg-muted font-mono">linear={'{false}'}(自由跳轉)</span>
         <div className="border border-border rounded-lg p-4">
-          <Steps value="shipping" completedValues={['cart']} reachableValues={['cart', 'shipping', 'payment', 'review']} linear={false} orientation="vertical">
+          <Steps value="shipping" completedValues={['cart']} linear={false} orientation="vertical">
             {CHECKOUT_STEPS.slice(0, 4).map((s) => (
               <StepItem key={s.value} value={s.value}>
                 <StepLabel>{s.label}</StepLabel>

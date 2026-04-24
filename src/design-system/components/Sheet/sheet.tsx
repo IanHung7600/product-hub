@@ -143,7 +143,7 @@ SheetHeader.displayName = "SheetHeader"
 // data-sheet-body:讓 SheetContent onOpenAutoFocus 找得到 body 第一個互動元素
 // `variant="list"`:body 放 list — 移除 pt/pb,保留 `px-loose` 讓 list item 對齊 header/footer
 // (對齊 DialogBody canonical — Material/Polaris/Atlassian list-in-overlay 共識)
-interface SheetBodyProps extends React.HTMLAttributes<HTMLDivElement> {
+interface SheetBodyProps extends React.ComponentPropsWithoutRef<typeof ScrollArea> {
   /**
    * Body 佈局模式。
    * - `default`(預設):`px-loose / pt-tight / pb-bottom`,form / 一般內容

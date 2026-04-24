@@ -161,7 +161,7 @@ DialogHeader.displayName = "DialogHeader"
 // 邊距仍對齊 header title 與 footer button 的 left),list item 自己的 py 是節奏來源。
 // 這樣 list item content 跟 header title 垂直對齊 — 世界級 Material M3 / Polaris
 // ResourceList / Atlassian OptionList 都是這個 pattern(body horizontal gutter 保留,vertical 移除)。
-interface DialogBodyProps extends React.HTMLAttributes<HTMLDivElement> {
+interface DialogBodyProps extends React.ComponentPropsWithoutRef<typeof ScrollArea> {
   /**
    * Body 佈局模式。
    * - `default`(預設):body 有 px-loose / pt-tight / pb-bottom,適合 form 或一般內容

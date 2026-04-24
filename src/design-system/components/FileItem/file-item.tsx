@@ -53,8 +53,8 @@ export interface FileItemProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   mode?: 'compact' | 'rich'
   status?: 'uploading' | 'completed' | 'error'
   progress?: number
-  /** rich mode: 檔案大小、狀態訊息。compact: 只有 error 才顯示。 */
-  description?: string
+  /** rich mode: 檔案大小、狀態訊息。compact: 只有 error 才顯示。 ReactNode 支援 inline clickable link(如「View log」)。 */
+  description?: React.ReactNode
   thumbnailSrc?: string
   actions?: React.ReactNode
   onClick?: () => void

@@ -566,7 +566,7 @@ export const StateBehavior: Story = {
           SidebarProvider 內建 Cmd+B (Mac) / Ctrl+B (Win) 全域快捷鍵,同時 SidebarTrigger iconOnly Button 作為視覺 toggle。open state 寫入 cookie(7 天),跨 session 還原。
         </Desc>
         <div className="border border-divider rounded-lg overflow-hidden bg-surface" style={{ width: 480, height: 280 }}>
-          <SidebarProvider collapsible="icon" style={{ minHeight: 'auto', height: '100%' }}>
+          <SidebarProvider style={{ minHeight: 'auto', height: '100%' }}>
             <div className="flex w-full h-full">
               <Sidebar side="left" collapsible="icon">
                 <SidebarHeader>

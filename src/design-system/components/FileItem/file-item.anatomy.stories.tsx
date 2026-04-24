@@ -5,12 +5,13 @@ import { FileItem } from './file-item'
 import { Button } from '@/design-system/components/Button/button'
 import { H3, Desc, Td, Th, Swatch } from '@/design-system/stories-helpers/anatomy/anatomy-utils'
 
-const meta: Meta = {
+const meta: Meta<typeof FileItem> = {
   title: 'Design System/Components/FileItem/設計規格',
+  component: FileItem,
   parameters: { layout: 'padded' },
 }
 export default meta
-type Story = StoryObj
+type Story = StoryObj<typeof FileItem>
 
 export const Overview: Story = {
   name: '1. 元件總覽',
