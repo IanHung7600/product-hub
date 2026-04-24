@@ -152,7 +152,8 @@ const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
         aria-valuemax={isInteractive ? max : undefined}
         aria-valuetext={isInteractive ? `${currentValue} of ${max} stars` : undefined}
         aria-disabled={disabled || undefined}
-        aria-readonly={readOnly || undefined}
+        // a11y: aria-readonly 只允許於 slider role(非 img)— axe aria-allowed-attr 2026-04-25
+        aria-readonly={isInteractive && readOnly ? true : undefined}
         aria-busy={loading || undefined}
         tabIndex={isInteractive ? 0 : undefined}
         onKeyDown={handleKeyDown}
