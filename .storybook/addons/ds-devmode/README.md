@@ -139,8 +139,14 @@ padding-inline: calc((var(--field-height-sm) - 16px - 2px) / 2)  → 5px
 | **Purple dashed outline** | Immediate parent bounds |
 | **Blue 45° hatching** | Computed padding(drawn inside 4 edges) |
 | **Red 2px line + T-cap stubs + extension lines** | Distance from element edge to target edge,T-cap 兩端標位 unambiguous |
-| **Red label with halo** | Distance value(px) |
-| **Purple top badge** | Element selector |
+| **Red label with halo** | Distance value(px,< 12px 自動隱藏只留線 + T-cap)|
+| **Purple top badge** | Element selector(< 18×12 元件自動隱藏)|
+
+**Occlusion canonical**(2026-04-25,對齊 Chrome `tool_highlight.ts`):
+- Canvas 是 visual hint,允許粗糙;**Panel 是 canonical**,任何 value 都查得到
+- Per-side padding 數字**不畫於 canvas**,只在 Panel anatomy box(對齊 Chrome)
+- Distance label / property badge 過小時自動 suppress(避免遮元件)
+- 按 `H` 暫清全 label 看視覺對齊(對齊 Chrome `Ctrl+hold` idiom)
 
 ## Performance
 
