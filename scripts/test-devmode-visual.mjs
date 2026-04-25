@@ -146,6 +146,29 @@ for (const t of tests) {
     await page.waitForTimeout(500)
   }
 
+  // Capture panel scrolled down to see list/code sections
+  // Find the addon panel scrollable container
+  const panelScrollResult = await page.evaluate(() => {
+    // The DS Devmode panel root is inside [role="tabpanel"] — find scrollable parent
+    const heads = Array.from(document.querySelectorAll('div')).filter(d =>
+      d.textContent?.startsWith('DS Devmode') && d.children.length >= 2
+    )
+    if (heads.length === 0) return { ok: false, reason: 'no DS Devmode heading' }
+    const head = heads[heads.length - 1]
+    let cur = head
+    while (cur && cur.scrollHeight <= cur.clientHeight + 5) {
+      cur = cur.parentElement
+    }
+    if (!cur) return { ok: false, reason: 'no scrollable parent' }
+    const rect = cur.getBoundingClientRect()
+    return { ok: true, rect: { x: rect.left, y: rect.top, w: rect.width, h: rect.height }, scrollHeight: cur.scrollHeight }
+  })
+  console.log(`  Panel scroll info: ${JSON.stringify(panelScrollResult)}`)
+
+  // Resize viewport tall to capture full panel(panel can be long with code section)
+  await page.setViewportSize({ width: 1600, height: 1500 })
+  await page.waitForTimeout(300)
+
   // Screenshot full
   const fullPath = `tmp/visual-${t.name}-full.png`
   await page.screenshot({ path: fullPath, fullPage: false })

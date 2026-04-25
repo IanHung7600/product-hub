@@ -592,11 +592,29 @@ export const DsDevmodePanel: React.FC<{ active: boolean }> = ({ active }) => {
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
             <span style={styles.badge}>{payload.tag}</span>
             {payload.id && <code style={{ fontSize: 11 }}>#{payload.id}</code>}
-            {payload.className && (
-              <code style={{ fontSize: 11, color: 'var(--sb-fg-muted, #65727F)', wordBreak: 'break-all' }}>
-                .{String(payload.className).split(/\s+/).filter(Boolean).join(' .')}
-              </code>
-            )}
+            {payload.className && (() => {
+              const classes = String(payload.className).split(/\s+/).filter(Boolean)
+              // Truncate long class lists(button 常 50+ class)— first 5 + count,
+              // <details> let user 展開看全。對齊 Chrome Styles panel 同 idiom。
+              if (classes.length <= 5) {
+                return (
+                  <code style={{ fontSize: 11, color: 'var(--sb-fg-muted, #65727F)', wordBreak: 'break-all' }}>
+                    .{classes.join(' .')}
+                  </code>
+                )
+              }
+              return (
+                <details style={{ fontSize: 11, color: 'var(--sb-fg-muted, #65727F)', flex: 1, minWidth: 0 }}>
+                  <summary style={{ cursor: 'pointer', listStyle: 'none', wordBreak: 'break-all' }}>
+                    <code>.{classes.slice(0, 5).join(' .')}</code>
+                    <span style={{ color: 'var(--sb-fg-muted, #888)', marginLeft: 4 }}>(+{classes.length - 5} more)</span>
+                  </summary>
+                  <code style={{ display: 'block', wordBreak: 'break-all', marginTop: 4, paddingLeft: 4, borderLeft: '2px solid rgba(128,128,128,0.2)' }}>
+                    .{classes.slice(5).join(' .')}
+                  </code>
+                </details>
+              )
+            })()}
             <button
               style={{ ...styles.copy, marginLeft: 'auto' }}
               onClick={() => {
