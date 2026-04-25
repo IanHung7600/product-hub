@@ -8,13 +8,75 @@ import { measureElement } from './utils/dom-geometry'
 import { extractComputed } from './utils/computed-style'
 import { annotateWithTokens, extractSourceVars } from './utils/token-reverse-lookup'
 import { drawOverlay, clearOverlay } from './utils/overlay'
-import { EVENTS, type DevmodeMode, type InspectPayload } from './constants'
+import { EVENTS, type DevmodeMode, type ForceState, type InspectPayload } from './constants'
 
 let mode: DevmodeMode = 'off'
 let pinnedEl: Element | null = null
 let hoverEl: Element | null = null
 /** pin 模式下的 sibling hover target(Figma-style distance measurement) */
 let siblingHoverEl: Element | null = null
+
+/**
+ * Pseudo-class force-state(2026-04-25):對齊 Chrome / Firefox / Safari Inspector
+ * 「force element state」idiom。實作 trick:對 pinned element 加 inline style
+ * 直接 mimic 該 state(無法真 force browser pseudo-class,但 visual approximation 足)。
+ * 限制:只 mimic 可被 JS 讀取的 state class declarations(:hover / :focus / :active
+ * 在 stylesheet 中的 visible properties)。
+ */
+let forceState: ForceState = 'none'
+
+const findStateRules = (el: Element, state: 'hover' | 'focus' | 'active'): string => {
+  // 走 matched stylesheet rules,找 selector 含 :hover / :focus / :active 的 rules
+  // 把 pseudo-class 從 selector 拿掉檢查 base selector 是否 match,然後 collect declarations
+  const collected: string[] = []
+  const pseudo = `:${state}`
+  function walk(rules: CSSRuleList | undefined) {
+    if (!rules) return
+    for (const rule of Array.from(rules)) {
+      const nested = (rule as { cssRules?: CSSRuleList }).cssRules
+      if (nested) walk(nested)
+      if (!(rule instanceof CSSStyleRule)) continue
+      const sel = rule.selectorText
+      if (!sel?.includes(pseudo)) continue
+      // 把 :hover 拿掉檢查 base selector 是否 match el
+      const baseSelector = sel.replaceAll(pseudo, '').replaceAll(`:not(${pseudo})`, '').trim()
+      if (!baseSelector) continue
+      try {
+        if (el.matches(baseSelector)) {
+          for (let i = 0; i < rule.style.length; i++) {
+            const prop = rule.style.item(i)
+            const val = rule.style.getPropertyValue(prop)
+            collected.push(`${prop}: ${val}${rule.style.getPropertyPriority(prop) ? ' !important' : ''}`)
+          }
+        }
+      } catch {
+        // invalid selector after pseudo strip, skip
+      }
+    }
+  }
+  for (const sheet of Array.from(document.styleSheets)) {
+    try { walk(sheet.cssRules) } catch { /* CORS */ }
+  }
+  return collected.join('; ')
+}
+
+const applyForceState = (state: ForceState) => {
+  if (!pinnedEl || !(pinnedEl instanceof HTMLElement)) return
+  // Clear previous force-state inline styles
+  pinnedEl.removeAttribute('data-ds-devmode-forced')
+  if (state === 'none') {
+    pinnedEl.style.cssText = pinnedEl.dataset.dsDevmodePrevStyle ?? ''
+    delete pinnedEl.dataset.dsDevmodePrevStyle
+    return
+  }
+  // Backup original inline style first time
+  if (!('dsDevmodePrevStyle' in pinnedEl.dataset)) {
+    pinnedEl.dataset.dsDevmodePrevStyle = pinnedEl.style.cssText || ''
+  }
+  const rules = findStateRules(pinnedEl, state)
+  pinnedEl.style.cssText = (pinnedEl.dataset.dsDevmodePrevStyle ?? '') + ';' + rules
+  pinnedEl.setAttribute('data-ds-devmode-forced', state)
+}
 
 /**
  * Touch device detection(2026-04-25 mobile 支援):
@@ -74,6 +136,34 @@ const build = (el: Element): InspectPayload => {
     return null
   }).filter((x): x is NonNullable<typeof x> => x !== null)
 
+  // Auto-layout context(2026-04-25):flex / grid container 才填
+  const csForLayout = getComputedStyle(el)
+  const display = csForLayout.display
+  let autoLayout: InspectPayload['autoLayout'] = null
+  if (display === 'flex' || display === 'inline-flex') {
+    autoLayout = {
+      display: 'flex',
+      flexDirection: csForLayout.flexDirection,
+      gap: csForLayout.gap,
+      rowGap: csForLayout.rowGap,
+      columnGap: csForLayout.columnGap,
+      justifyContent: csForLayout.justifyContent,
+      alignItems: csForLayout.alignItems,
+      flexWrap: csForLayout.flexWrap,
+    }
+  } else if (display === 'grid' || display === 'inline-grid') {
+    autoLayout = {
+      display: 'grid',
+      gap: csForLayout.gap,
+      rowGap: csForLayout.rowGap,
+      columnGap: csForLayout.columnGap,
+      justifyContent: csForLayout.justifyContent,
+      alignItems: csForLayout.alignItems,
+      gridTemplateColumns: csForLayout.gridTemplateColumns,
+      gridTemplateRows: csForLayout.gridTemplateRows,
+    }
+  }
+
   // Element breadcrumb chain(2026-04-25):從 storybook-root 父鏈到 element
   const breadcrumb: InspectPayload['breadcrumb'] = []
   let cur: Element | null = el
@@ -91,6 +181,7 @@ const build = (el: Element): InspectPayload => {
     computed: merged,
     tokenUsage,
     breadcrumb,
+    autoLayout,
   }
 }
 
@@ -223,10 +314,18 @@ channel.on(EVENTS.TOGGLE, (next: DevmodeMode) => {
 })
 
 channel.on(EVENTS.CLEAR, () => {
+  if (pinnedEl) applyForceState('none')  // restore inline style before unpin
   pinnedEl = null
   hoverEl = null
   siblingHoverEl = null
+  forceState = 'none'
   clearOverlay()
+})
+
+channel.on(EVENTS.FORCE_STATE, (state: ForceState) => {
+  forceState = state
+  applyForceState(state)
+  if (pinnedEl) emit(pinnedEl, siblingHoverEl)  // re-emit to reflect new computed
 })
 
 // Keep overlay accurate on scroll / resize(含 sibling distance 同步)

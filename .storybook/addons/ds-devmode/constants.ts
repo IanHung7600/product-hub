@@ -7,9 +7,14 @@ export const EVENTS = {
   TOGGLE: `${ADDON_ID}/toggle`,
   INSPECT: `${ADDON_ID}/inspect`,
   CLEAR: `${ADDON_ID}/clear`,
+  /** Panel → preview:set forced pseudo-class state on pinned element */
+  FORCE_STATE: `${ADDON_ID}/force-state`,
 } as const
 
 export type DevmodeMode = 'off' | 'live' | 'pin'
+
+/** Pseudo-class force-state(對齊 Chrome / Firefox / Safari Inspector idiom) */
+export type ForceState = 'none' | 'hover' | 'focus' | 'active'
 
 export interface InspectPayload {
   tag: string
@@ -36,4 +41,17 @@ export interface InspectPayload {
     id: string
     className: string
   }>
+  /** Auto-layout context — element 是 flex / grid container 時填,讓 inspector 顯示 layout intent(對齊 Figma Inspect / Chrome layout panel idiom)。 */
+  autoLayout: {
+    display: 'flex' | 'grid' | null
+    flexDirection?: string
+    gap?: string
+    rowGap?: string
+    columnGap?: string
+    justifyContent?: string
+    alignItems?: string
+    flexWrap?: string
+    gridTemplateColumns?: string
+    gridTemplateRows?: string
+  } | null
 }

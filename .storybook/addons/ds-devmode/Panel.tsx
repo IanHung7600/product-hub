@@ -1,6 +1,6 @@
 import React from 'react'
 import { useChannel } from '@storybook/manager-api'
-import { EVENTS, type InspectPayload, type DevmodeMode } from './constants'
+import { EVENTS, type InspectPayload, type DevmodeMode, type ForceState } from './constants'
 
 const styles: Record<string, React.CSSProperties> = {
   root: {
@@ -318,44 +318,115 @@ const Section: React.FC<{
 }
 
 const AnatomyBox: React.FC<{ payload: InspectPayload }> = ({ payload }) => {
-  const { distancesToParent, padding, rect } = payload
+  const { distancesToParent, padding, margin, rect } = payload
   const w = Math.round(rect.width)
   const h = Math.round(rect.height)
   const iw = Math.max(0, w - padding.left - padding.right)
   const ih = Math.max(0, h - padding.top - padding.bottom)
+  // Margin layer container — Chrome 4-rect box model:margin → border → padding → content
+  const marginOuter: React.CSSProperties = {
+    position: 'relative',
+    border: '1px dashed rgba(155, 99, 0, 0.45)',
+    padding: 14,
+    background: 'repeating-linear-gradient(45deg, rgba(247, 142, 30, 0.08) 0 3px, transparent 3px 6px)',
+    marginTop: 4,
+  }
   return (
-    <div style={styles.anatomy}>
-      {distancesToParent && (
-        <>
-          <div style={{ ...styles.distance, top: 6, left: '50%', transform: 'translateX(-50%)' }}>
-            {distancesToParent.top}
+    <div style={marginOuter}>
+      <span style={{ ...styles.edgeLabel, position: 'absolute', top: -9, left: 8, background: 'var(--sb-bg, #fff)', padding: '0 4px', color: '#A36100' }}>
+        Margin {margin.top}/{margin.right}/{margin.bottom}/{margin.left}
+      </span>
+      <div style={styles.anatomy}>
+        {distancesToParent && (
+          <>
+            <div style={{ ...styles.distance, top: 6, left: '50%', transform: 'translateX(-50%)' }}>
+              {distancesToParent.top}
+            </div>
+            <div style={{ ...styles.distance, bottom: 6, left: '50%', transform: 'translateX(-50%)' }}>
+              {distancesToParent.bottom}
+            </div>
+            <div style={{ ...styles.distance, left: 6, top: '50%', transform: 'translateY(-50%)' }}>
+              {distancesToParent.left}
+            </div>
+            <div style={{ ...styles.distance, right: 6, top: '50%', transform: 'translateY(-50%)' }}>
+              {distancesToParent.right}
+            </div>
+          </>
+        )}
+        <div style={styles.borderBox}>
+          <span style={{ ...styles.edgeLabel, position: 'absolute', top: -9, left: 8, background: 'var(--sb-bg, #fff)', padding: '0 4px' }}>Border</span>
+          <span style={styles.edgeLabel}>{padding.left}</span>
+          <div style={styles.paddingBox}>
+            <span style={{ ...styles.edgeLabel, position: 'absolute', top: -9, left: 8, background: 'var(--sb-bg, #fff)', padding: '0 4px', color: '#0065EA' }}>
+              Padding
+            </span>
+            <span style={{ color: 'var(--sb-fg, #1F2532)', fontWeight: 500 }}>{`${iw} × ${ih}`}</span>
           </div>
-          <div style={{ ...styles.distance, bottom: 6, left: '50%', transform: 'translateX(-50%)' }}>
-            {distancesToParent.bottom}
-          </div>
-          <div style={{ ...styles.distance, left: 6, top: '50%', transform: 'translateY(-50%)' }}>
-            {distancesToParent.left}
-          </div>
-          <div style={{ ...styles.distance, right: 6, top: '50%', transform: 'translateY(-50%)' }}>
-            {distancesToParent.right}
-          </div>
-        </>
-      )}
-      <div style={styles.borderBox}>
-        <span style={{ ...styles.edgeLabel, position: 'absolute', top: -9, left: 8, background: 'var(--sb-bg, #fff)', padding: '0 4px' }}>Border</span>
-        <span style={styles.edgeLabel}>{padding.left}</span>
-        <div style={styles.paddingBox}>
-          <span style={{ ...styles.edgeLabel, position: 'absolute', top: -9, left: 8, background: 'var(--sb-bg, #fff)', padding: '0 4px', color: '#0065EA' }}>
-            Padding
-          </span>
-          <span style={{ color: 'var(--sb-fg, #1F2532)', fontWeight: 500 }}>{`${iw} × ${ih}`}</span>
+          <span style={styles.edgeLabel}>{padding.right}</span>
         </div>
-        <span style={styles.edgeLabel}>{padding.right}</span>
-      </div>
-      <div style={{ position: 'absolute', bottom: 6, right: 10, fontSize: 10, color: 'var(--sb-fg-muted, #65727F)' }}>
-        border-box
+        <div style={{ position: 'absolute', bottom: 6, right: 10, fontSize: 10, color: 'var(--sb-fg-muted, #65727F)' }}>
+          border-box
+        </div>
       </div>
     </div>
+  )
+}
+
+const AutoLayoutSection: React.FC<{ autoLayout: NonNullable<InspectPayload['autoLayout']> }> = ({ autoLayout }) => {
+  const isFlex = autoLayout.display === 'flex'
+  return (
+    <>
+      <div style={styles.sectionHead}>
+        <span>Auto-layout</span>
+        <span style={{ ...styles.badge, background: isFlex ? 'rgba(0,168,179,0.12)' : 'rgba(123,68,196,0.12)', color: isFlex ? '#00A8B3' : '#7B44C4' }}>
+          {autoLayout.display}
+        </span>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '80px 1fr', gap: '4px 12px', fontSize: 11, padding: '6px 0' }}>
+        {isFlex && autoLayout.flexDirection && (
+          <>
+            <span style={{ color: 'var(--sb-fg-muted, #65727F)' }}>direction</span>
+            <code>{autoLayout.flexDirection}</code>
+          </>
+        )}
+        {autoLayout.gap && autoLayout.gap !== 'normal' && autoLayout.gap !== '0px' && (
+          <>
+            <span style={{ color: 'var(--sb-fg-muted, #65727F)' }}>gap</span>
+            <code>{autoLayout.gap}</code>
+          </>
+        )}
+        {autoLayout.justifyContent && autoLayout.justifyContent !== 'normal' && (
+          <>
+            <span style={{ color: 'var(--sb-fg-muted, #65727F)' }}>justify</span>
+            <code>{autoLayout.justifyContent}</code>
+          </>
+        )}
+        {autoLayout.alignItems && autoLayout.alignItems !== 'normal' && (
+          <>
+            <span style={{ color: 'var(--sb-fg-muted, #65727F)' }}>align</span>
+            <code>{autoLayout.alignItems}</code>
+          </>
+        )}
+        {isFlex && autoLayout.flexWrap && autoLayout.flexWrap !== 'nowrap' && (
+          <>
+            <span style={{ color: 'var(--sb-fg-muted, #65727F)' }}>wrap</span>
+            <code>{autoLayout.flexWrap}</code>
+          </>
+        )}
+        {!isFlex && autoLayout.gridTemplateColumns && autoLayout.gridTemplateColumns !== 'none' && (
+          <>
+            <span style={{ color: 'var(--sb-fg-muted, #65727F)' }}>columns</span>
+            <code style={{ wordBreak: 'break-all' }}>{autoLayout.gridTemplateColumns}</code>
+          </>
+        )}
+        {!isFlex && autoLayout.gridTemplateRows && autoLayout.gridTemplateRows !== 'none' && (
+          <>
+            <span style={{ color: 'var(--sb-fg-muted, #65727F)' }}>rows</span>
+            <code style={{ wordBreak: 'break-all' }}>{autoLayout.gridTemplateRows}</code>
+          </>
+        )}
+      </div>
+    </>
   )
 }
 
@@ -363,11 +434,12 @@ export const DsDevmodePanel: React.FC<{ active: boolean }> = ({ active }) => {
   const [payload, setPayload] = React.useState<InspectPayload | null>(null)
   const [view, setView] = React.useState<ViewMode>('list')
   const [mode, setMode] = React.useState<DevmodeMode>('off')
+  const [forceState, setForceState] = React.useState<ForceState>('none')
 
   const emit = useChannel({
     [EVENTS.INSPECT]: (p: InspectPayload) => setPayload(p),
     [EVENTS.TOGGLE]: (m: DevmodeMode) => setMode(m),
-    [EVENTS.CLEAR]: () => setPayload(null),
+    [EVENTS.CLEAR]: () => { setPayload(null); setForceState('none') },
   })
 
   if (!active) return null
@@ -380,6 +452,11 @@ export const DsDevmodePanel: React.FC<{ active: boolean }> = ({ active }) => {
     setMode(next)
     emit(EVENTS.TOGGLE, next)
     if (next === 'off') emit(EVENTS.CLEAR)
+  }
+
+  const setForceStateAndBroadcast = (next: ForceState) => {
+    setForceState(next)
+    emit(EVENTS.FORCE_STATE, next)
   }
 
   return (
@@ -453,10 +530,25 @@ export const DsDevmodePanel: React.FC<{ active: boolean }> = ({ active }) => {
             </button>
           </div>
 
+          {/* Force pseudo-class state(Chrome 「:hov」force state idiom) */}
+          {mode === 'pin' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
+              <span style={{ fontSize: 10, color: 'var(--sb-fg-muted, #65727F)' }}>:state</span>
+              <div style={styles.toggle} role="group" aria-label="Force pseudo-class state">
+                <button style={styles.toggleBtn(forceState === 'none')} onClick={() => setForceStateAndBroadcast('none')}>none</button>
+                <button style={styles.toggleBtn(forceState === 'hover')} onClick={() => setForceStateAndBroadcast('hover')}>:hover</button>
+                <button style={styles.toggleBtn(forceState === 'focus')} onClick={() => setForceStateAndBroadcast('focus')}>:focus</button>
+                <button style={styles.toggleBtn(forceState === 'active')} onClick={() => setForceStateAndBroadcast('active')}>:active</button>
+              </div>
+            </div>
+          )}
+
           <div style={styles.sectionHead}>
             <span>Layer properties</span>
           </div>
           <AnatomyBox payload={payload} />
+
+          {payload.autoLayout && <AutoLayoutSection autoLayout={payload.autoLayout} />}
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 14 }}>
             <div style={styles.toggle} role="group" aria-label="View">
