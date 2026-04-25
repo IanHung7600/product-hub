@@ -421,10 +421,7 @@ const AnatomyBox: React.FC<{ payload: InspectPayload }> = ({ payload }) => {
             <span style={{ ...styles.edgeLabel, position: 'absolute', top: 4, left: '50%', transform: 'translateX(-50%)', color: '#0065EA' }}>
               {padding.top}
             </span>
-            <span style={{ color: 'var(--sb-fg, #1F2532)', fontWeight: 500, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-              <span>{`${iw} × ${ih}`}</span>
-              <span style={{ fontSize: 9, color: 'var(--sb-fg-muted, #65727F)', fontWeight: 400 }}>content</span>
-            </span>
+            <span style={{ color: 'var(--sb-fg, #1F2532)', fontWeight: 500 }}>{`${iw} × ${ih}`}</span>
             {/* Padding bottom — center 下方 */}
             <span style={{ ...styles.edgeLabel, position: 'absolute', bottom: 4, left: '50%', transform: 'translateX(-50%)', color: '#0065EA' }}>
               {padding.bottom}
@@ -433,7 +430,7 @@ const AnatomyBox: React.FC<{ payload: InspectPayload }> = ({ payload }) => {
           <span style={{ ...styles.edgeLabel, color: '#0065EA' }}>{padding.right}</span>
         </div>
         <div style={{ position: 'absolute', bottom: 6, right: 10, fontSize: 10, color: 'var(--sb-fg-muted, #65727F)' }}>
-          {w} × {h} <span style={{ opacity: 0.7 }}>(border-box)</span>
+          border-box
         </div>
       </div>
     </div>
@@ -617,6 +614,9 @@ export const DsDevmodePanel: React.FC<{ active: boolean }> = ({ active }) => {
 
           <div style={styles.sectionHead}>
             <span>Layer properties</span>
+            <span style={{ fontSize: 11, color: 'var(--sb-fg-muted, #65727F)', fontWeight: 400 }}>
+              {Math.round(payload.rect.width)} × {Math.round(payload.rect.height)}
+            </span>
           </div>
           <AnatomyBox payload={payload} />
 
