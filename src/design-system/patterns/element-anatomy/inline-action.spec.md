@@ -299,11 +299,12 @@ hook `check_story_anatomy.sh` 規則 B 已在 stories 層攔 label Button 作 di
 - 視覺一致性 by consumer — 但 **app-code 不可直接 import L3 primitive**(`ItemInlineActionButton` / `ItemInlineAction` / `RowSizeProvider`),由 `check_l3_primitive_import.sh` 攔截。需要視覺一致 inline-action button 時,(a) 用 host 自帶 slot(此 escape hatch)、(b) 用 `<Button iconOnly variant="text" />`、(c) 走 spec rationale 例外申請
 
 **現況清單**(2026-04-25 補完):
-- ✅ Input.endSlot
-- ✅ NumberInput.endSlot(2026-04-25 add)
-- ✅ TreeView.TreeItem.inlineActionsSlot(2026-04-25 add)
-- ✅ SidebarMenuButton.inlineActionsSlot(2026-04-25 add)
-- 待加(按需):DatePicker / Combobox / LinkInput / TimePicker / Select.endSlot — canonical 已就緒,首次 consumer 需求時加
+- ✅ `Input.endSlot`
+- ✅ `NumberInput.endSlot`
+- ✅ `TreeView.TreeItem.inlineActionsSlot`
+- ✅ `SidebarMenuButton.inlineActionsSlot`
+
+**不適用清單**:DatePicker / Combobox / Select / TimePicker / LinkInput 右側由元件自帶 chrome 獨佔(Calendar / ChevronDown / Clock / ExternalLink 等 intrinsic affordance),不開放 consumer 放置 endAction/endSlot — 這些元件的 inline-action 需求走**內建 clear X**(consumer 透過 `clearable` prop opt-in)或 `<Button iconOnly />` 放在 Field 外側。Escape hatch canonical 不涵蓋此類 host(本質上非 consumer-facing slot)。
 
 **世界級對照**:
 - Material UI:`InputAdornment` ReactNode slot(無 config,純 escape hatch 派 — 我們的 90/10 比 Material 更有結構)

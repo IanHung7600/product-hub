@@ -9,7 +9,23 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/design-system/components/Tooltip/tooltip"
-import type { InlineActionConfig } from "@/design-system/components/Field/field-types"
+
+// ── InlineActionConfig ─────────────────────────────────────────────────────
+// 宣告式 API:consumer 只宣告 intent,host 根據 size tier 自動渲染。
+// 跨 Family 消費(Field family + Row family),SSOT 住 patterns/element-anatomy/
+// 對齊 inline-action.spec.md「API 設計」節。
+//
+// Canonical 實作:`ItemInlineAction`(本檔內)。
+export interface InlineActionConfig {
+  icon: LucideIcon
+  /** aria-label,同時作為 tooltip 來源 */
+  label: string
+  /**
+   * 點擊 handler。可選接收 React 事件物件——有需要時可呼叫 `stopPropagation()` 避免
+   * 事件冒泡到父層(例如 Select 清除按鈕在 popover trigger 內,不想觸發 popover open)。
+   */
+  onClick: (e?: React.MouseEvent<HTMLButtonElement>) => void
+}
 
 /**
  * Item Layout — 共用工具與常數
@@ -524,8 +540,6 @@ ItemAvatar.displayName = "ItemAvatar"
 // - Icon 顏色:fg-muted → foreground on hover/active
 // - 必須 <button type="button">,aria-label = label,Tooltip(同 label)
 // - cursor-pointer
-
-export type { InlineActionConfig }
 
 // ── Low-level:ItemInlineActionButton ──
 //
