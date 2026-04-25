@@ -321,63 +321,65 @@ Padding-based 套用在 overlay family 時,配合 **v5 data-unbounded layout-slo
 
 ---
 
-## Icon-only 元件的 padding 原則
+## Icon-only 元件的 padding canonical(2026-04-25 重訂)
 
-所有互動元件的 icon-only 模式（Button、SegmentedControl 等）共用同一套 calc-based padding 公式，取代舊的 `aspect-square p-0` 做法。
+**Idiom**:`aspect-square + p-0 + flex justify-center items-center`(Polaris / Atlassian 派)。
+**禁用**:padding-formula `(field-height - icon)/2` 派(magic numbers + 易漏扣 border)。
 
-### 公式
-
-```
-padding-inline = (field-height - icon-size) / 2
-```
-
-### calc 不用 aspect-square
-
-**讓形狀由內容自然決定,不強制正方形**:
-
-- **純 icon**:`width = 2 * padding + icon = field-height` → 自然正方形,不需要 `aspect-square`
-- **Icon + suffix**(badge、endIcon):`width = 2 * padding + icon + gap + suffix > field-height` → 自然長方形,startIcon 到左邊距離不變
-- `aspect-square` 會強制正方形,加 suffix 時必須放棄或另寫覆蓋邏輯;calc padding 讓形狀由內容自然決定
-
-### Density-aware
-
-公式使用 CSS variable（`var(--field-height-sm)` 等），density 切換時 field-height 值改變，padding 自動重新計算，不需要 JavaScript。
-
-### 各 size 的 icon-size 與 gap
-
-| Size | Icon size | gap | 備註 |
-|------|-----------|-----|------|
-| xs | 16px（Button）/ 14px（SegmentedControl） | gap-1 | xs 空間極小，SegmentedControl 用 14px 更平衡 |
-| sm | 16px | gap-1 | |
-| md | 16px | gap-1 | |
-| lg | 20px | gap-1 | lg 切換到大 icon tier |
-
-**gap-1（4px）用於所有 iconOnly size**——正常模式的 label `<span className="px-1">` 自帶 4px 隱性間距，icon-only 移除 label 後需要顯式 gap 補回 icon 與 suffix 之間的呼吸空間。
-
-### 實作模式
-
-每個元件定義自己的 `ICON_ONLY_PX` 查表，在 render 時用 `cn()` 條件套用：
+### Canonical 配方
 
 ```tsx
-const ICON_ONLY_PX: Record<string, string> = {
-  xs: 'px-[calc((var(--field-height-xs)-16px)/2)]',
-  sm: 'px-[calc((var(--field-height-sm)-16px)/2)]',
-  md: 'px-[calc((var(--field-height-md)-16px)/2)]',
-  lg: 'px-[calc((var(--field-height-lg)-20px)/2)]',
-}
+const ICON_ONLY_BASE = 'aspect-square p-0 min-w-0 gap-0'
 
 // render
 className={cn(
-  baseVariants({ size }),
-  iconOnly && cn(ICON_ONLY_PX[resolvedSize], 'min-w-0 gap-1'),
+  baseVariants({ size }),    // 已含 h-field-X + flex items-center justify-center
+  iconOnly && ICON_ONLY_BASE,
 )}
 ```
 
-`min-w-0` 確保 flex 子元素不會被 min-content 撐寬。
+`aspect-square` 鎖 width=height(從 `h-field-X` 來)。`p-0` override base 的 `px-3`。SVG flex-center 自動視覺置中。**0 magic number / 0 公式 / 0 border-deduction** — 任何 size / icon 都自然正方形。
+
+### 為什麼選 padding-free 派(2026-04-25 從 padding-formula 派切換)
+
+**舊 padding-formula 派的問題**:
+- `(field-height - icon)/2` 沒扣 `border 2px` → SVG 被 flex `min-w-0` 擠成 width<intrinsic 的不對稱(2026-04-25 user 在 Safari mobile 從 DS Devmode 抓到 14×16 bug)
+- 4 個 size 各自 hard-code icon-size magic number(16/20)與 border 2px → M17 SSOT violation
+- 公式須在每 host 重複(Button + SegmentedControl + 任何新 host)→ Rule-of-3 風險
+
+**Padding-free 派的優勢**:
+- `aspect-square` 從 `h-field-X` 計算 width,無 magic number
+- `p-0` + flex-center → SVG 自動置中,無公式
+- Border 厚度由 `border-box` 自然吸收(width 不被影響)
+- 對齊 **Polaris / Atlassian** 的 iconOnly idiom(2/4 家世界級派,另 2 家 Material/Ant 用 padding-based 屬不同設計取捨)
+
+### 各 size 的 icon-size
+
+| Size | Icon size | 備註 |
+|------|-----------|------|
+| xs | 16px(Button)/ 14px(SegmentedControl) | xs 空間極小,SegmentedControl 用 14px 更平衡 |
+| sm | 16px | |
+| md | 16px | |
+| lg | 20px | lg 切換到大 icon tier |
+
+icon-size 仍由 host(JS 常數 `ICON_SIZE` 或元件自管)透過 Lucide `size={iconSize}` prop 控,不走 CSS。
 
 ### 適用元件
 
-目前已套用此公式的元件：Button、SegmentedControl。任何新增的互動元件若有 icon-only 模式，必須使用同一套公式。
+目前已套用 padding-free idiom:**Button**、**SegmentedControl**。任何新增 iconOnly 互動元件必須使用 `ICON_ONLY_BASE` 配方,**禁用** padding-formula。
+
+### 反例(常見 anti-pattern)
+
+```tsx
+// ❌ 禁:magic-number padding 公式(舊 idiom,易漏扣 border)
+const ICON_ONLY_PX = {
+  sm: 'px-[calc((var(--field-height-sm)-16px)/2)]',  // 沒扣 border 2px → SVG 14×16
+  md: 'px-[calc((var(--field-height-md)-16px-2px)/2)]', // 即使扣了 still magic number
+}
+
+// ✅ 對:padding-free
+const ICON_ONLY_BASE = 'aspect-square p-0 min-w-0 gap-0'
+```
 
 ---
 

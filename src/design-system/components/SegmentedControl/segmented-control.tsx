@@ -139,20 +139,18 @@ SegmentedControl.displayName = 'SegmentedControl'
 // ── Item ──
 
 /**
- * Icon-only padding — calc `(field-height - icon-size) / 2` per size。
+ * Icon-only base — Polaris/Atlassian idiom:`aspect-square + p-0 + flex-center`。
+ * 0 magic-number、0 公式、0 border-deduction;flex centering(已在 itemVariants base)
+ * 自動將 SVG 視覺置中,任何 size / icon 都自然正方形。
  *
- * 與 Button 共用同一套公式（見 uiSize.spec.md「Icon-only 元件的 padding 原則」）。
- * 純 icon-only → 自然正方形；icon + suffix → 自然長方形。
- * CSS var 讓 density 切換時 padding 自動跟著算。
+ * 對齊 `Button.tsx` 的 `ICON_ONLY_BASE`(2026-04-25 從 padding-formula 派改 padding-free)。
+ * Rule-of-3:目前 2 處 consumer(Button + SegmentedControl),尚未抽 utility/token;
+ * 第 3 個 host 加入時抽到 `src/design-system/utils/`。
  *
- * xs icon 為 14px（SegmentedControl 專用——按鈕空間極小，14px 比 16px 更平衡）。
+ * 舊公式 `(field-height - icon)/2` 沒扣 border 2px,造成 SegmentedControl item 從
+ * 設計 spec「自然正方形」漂移為 34×32 長方形(2026-04-25 audit 發現)。
  */
-const ICON_ONLY_PX: Record<string, string> = {
-  xs: 'px-[calc((var(--field-height-xs)-14px)/2)]',
-  sm: 'px-[calc((var(--field-height-sm)-16px)/2)]',
-  md: 'px-[calc((var(--field-height-md)-16px)/2)]',
-  lg: 'px-[calc((var(--field-height-lg)-20px)/2)]',
-}
+const ICON_ONLY_BASE = 'aspect-square p-0 min-w-0 gap-0'
 
 const itemVariants = cva(
   [
@@ -245,7 +243,7 @@ const SegmentedControlItem = React.forwardRef<
       ref={ref}
       className={cn(
         itemVariants({ size, fullWidth }),
-        effectiveIconOnly && cn(ICON_ONLY_PX[size], 'min-w-0 gap-1'),
+        effectiveIconOnly && ICON_ONLY_BASE,
         className,
       )}
       aria-label={ariaLabel}

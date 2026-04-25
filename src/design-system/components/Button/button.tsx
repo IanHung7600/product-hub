@@ -251,17 +251,16 @@ export interface ButtonProps
  *
  * 用 CSS var 讓 density 切換時 padding 自動跟著算(field-height 會變)。
  */
-// 公式扣 2px border(Button base 有 `border border-transparent`,box-sizing border-box):
-//   inner-width = field-height - 2px(border)- 2*padding-x = icon-size
-//   ⟹ padding-x = (field-height - icon-size - 2px) / 2
-// 不扣 border 會讓 inner area 比 icon 小 2px,SVG 被 flex `min-w-0` 擠成
-// width=14×height=16(垂直無 padding 不受擠)。詳 button.spec.md「iconOnly 鐵律」。
-const ICON_ONLY_PX: Record<string, string> = {
-  xs: 'px-[calc((var(--field-height-xs)-16px-2px)/2)]',
-  sm: 'px-[calc((var(--field-height-sm)-16px-2px)/2)]',
-  md: 'px-[calc((var(--field-height-md)-16px-2px)/2)]',
-  lg: 'px-[calc((var(--field-height-lg)-20px-2px)/2)]',
-}
+// IconOnly 用 padding-free + aspect-square + flex-center 的 Polaris/Atlassian idiom
+// (M17 SSOT 必可傳播 — 取代 4 個 size 的 magic-number 公式):
+//   - aspect-square 鎖 width=height(來自 h-field-X)
+//   - p-0 移除 px-3 (label 模式) override
+//   - flex justify-center items-center(base 已有)→ SVG 自動視覺置中
+// 結果:0 magic number,0 公式,0 border-deduction,任何 size / icon size 都自然正方形。
+// World-class 對照:Polaris + Atlassian iconOnly 走 padding-free 派(Material/Ant 走
+// padding-based)。我們選 padding-free 因 SSOT 性更強(SegmentedControl / Tag dismiss
+// 等 host 全可共用同 utility class,無需各自抄公式)。詳 button.spec.md「iconOnly 鐵律」。
+const ICON_ONLY_BASE = 'aspect-square p-0 min-w-0 gap-0'
 
 // code-quality-allow: long-function — foundational composite main body — 拆 sub-fn 會複雜化 local state / ref / context binding
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -353,10 +352,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         className={cn(
           buttonVariants({ variant: resolvedVariant, danger: resolvedDanger, size: resolvedSize, className }),
-          // iconOnly 鐵律:width === height(即使 children / badge / loading 被誤傳,
-          // aspect-square 仍強制方形)。padding 用 calc 保 icon 在正中心,aspect-square
-          // 只是雙重保險,不影響 padding 計算。
-          resolvedIconOnly && cn(ICON_ONLY_PX[resolvedSize], 'aspect-square min-w-0 gap-0'),
+          // iconOnly 鐵律:padding-free + aspect-square + flex-center (Polaris idiom)
+          // 0 magic-number 0 公式自動正方形。詳 ICON_ONLY_BASE rationale。
+          resolvedIconOnly && ICON_ONLY_BASE,
           // Dismiss 視覺弱化:override Button text variant 預設 foreground 為 fg-muted → hover foreground
           // 跟 Inline Action dismiss 視覺一致(cross-implementation dimming canonical)
           dismiss && 'text-fg-muted hover:text-foreground',
