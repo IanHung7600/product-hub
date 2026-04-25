@@ -142,7 +142,7 @@ export const ContentTypeChoice: Story = {
               <SidebarHeader>
                 <div className="flex items-center gap-2">
                   <ItemAvatar alt="Acme" shape="square" color="blue" solid />
-                  <span className="text-sm font-medium">Acme Inc</span>
+                  <span className="text-body font-medium">Acme Inc</span>
                 </div>
               </SidebarHeader>
               <SidebarContent>

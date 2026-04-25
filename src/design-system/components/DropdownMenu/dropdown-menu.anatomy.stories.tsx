@@ -793,7 +793,7 @@ const AnimationFrame = ({
           開啟
         </Button>
         <div
-          className="absolute bg-surface-raised border border-border rounded-lg shadow-md text-caption"
+          className="absolute bg-surface-raised border border-border rounded-lg shadow-[var(--elevation-200)] text-caption"
           style={{
             top: 48,
             left: 12,
