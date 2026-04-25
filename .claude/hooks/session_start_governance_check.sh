@@ -94,6 +94,29 @@ if [ -d "$BENCH_DIR" ]; then
   fi
 fi
 
+# Check 5: Fire-weighted test gap(G7)— hooks with fires > 100 but no test
+FIRES_LOG="$PROJECT_DIR/.claude/logs/hook-fires-per-hook.jsonl"
+TESTS_DIR="$PROJECT_DIR/.claude/hooks/tests"
+if [ -f "$FIRES_LOG" ] && [ -d "$TESTS_DIR" ]; then
+  # Top hot hooks by fire count(讀近 10000 lines 防 log 太長跑太久)
+  HOT_HOOKS=$(tail -10000 "$FIRES_LOG" 2>/dev/null \
+    | jq -r '.hook // empty' 2>/dev/null \
+    | sort | uniq -c | sort -rn \
+    | awk '$1 > 100 { sub(/\.sh$|\.py$/, "", $2); print $1, $2 }')
+  HOT_GAPS=""
+  while IFS= read -r line; do
+    [ -z "$line" ] && continue
+    COUNT=$(echo "$line" | awk '{print $1}')
+    NAME=$(echo "$line" | awk '{print $2}')
+    if [ ! -f "$TESTS_DIR/test_${NAME}.sh" ]; then
+      HOT_GAPS="${HOT_GAPS}\n  - ${NAME}(${COUNT} fires,無 test)"
+    fi
+  done <<< "$HOT_HOOKS"
+  if [ -n "$HOT_GAPS" ]; then
+    REMINDERS="${REMINDERS}\n- Fire-weighted test gap(hook > 100 fires 仍無 test):${HOT_GAPS}\n  推力:寫 \`.claude/hooks/tests/test_<name>.sh\`,參考 test_check_story_anatomy.sh。"
+  fi
+fi
+
 [ -z "$REMINDERS" ] && [ -z "$BLOCKERS" ] && exit 0
 
 if [ -n "$BLOCKERS" ]; then
