@@ -12,9 +12,9 @@
 每條規則展開請讀後面對應章節(`# Spec 規則`、`# UI 開發規則`、`# Story`、`# 命名與語言一致性` 等)。
 
 
-# Meta-Pattern 預警(19 條大原則)
+# Meta-Pattern 預警(20 條大原則)
 
-**mindset #6 的具體化**。每條吸收數十個具體 bug,是失敗記憶索引上游。任務前先過這 19 條,再跑 `# 任務導航表`。
+**mindset #6 的具體化**。每條吸收數十個具體 bug,是失敗記憶索引上游。任務前先過這 20 條,再跑 `# 任務導航表`。
 
 | # | Meta-Principle | 能吸收的 bug 類型(舉例,非窮舉) |
 |---|---|---|
@@ -37,6 +37,7 @@
 | **M17** | **SSOT 必可傳播**(非僅 markdown 文字)。Canonical 只存 markdown 文字 ≠ 真 SSOT — consumer 各自 hard-code 就算今天全 compliant,改值仍需手動 grep N 檔。真 SSOT 必是**可執行 value**,consumer 被動消費:(a) **Token**(CSS 變數,如 `--item-gap-label-desc`)/ (b) **Primitive**(封裝結構的元件,如 `<ItemContent>`)/ (c) **Utility class**(註冊到 tailwind-merge)三擇一或組合。**違反 trigger**:同值 / 同公式 hard-code 在 **3+ consumer** = 必抽成 token / primitive。**兩層 SSOT 架構**(2026-04-23 本 DS 實踐):底層 token(值可調)+ primitive(結構封裝 + 消費 token),consumer 2 擇 1 消費;偏離需 spec 明文 rationale。**實作**:token 定義 → primitive 消費 token → consumer 消費 primitive (OR token);hook 偵測新 code 硬寫原值 → warn 改 primitive / token。**世界級對照**:Material `dense` prop(boolean 切密度)/ Carbon `size` enum / Ant `size` enum / Polaris token 手選 — 6 家皆透過 token + primitive 組合達到「改一處全同步」。本 DS 採 density-prop 派(self-documenting 比 `dense` 更明確,如 FileItem `mode="compact\|rich"`、ItemContent `mode="scanning\|reading"`)。 | mt-0.5 canonical 13 consumer hard-code 假 SSOT(詳 historical-bugs.md) |
 | **M18** | **Propose-time 4 題自檢 gate**。列任何 option / 建議給 user **前**必 inline 跑 4 題:Q1 M8 benchmark / Q2 M17 SSOT / Q3 Rule-of-3 / Q4 M10 下游吸收。Reject 不列出,通過寫 4-Q 證據表。**vs M12/M13 scope**:M12 = canonical rule 形成階段、M13 = user 第 2 次提 trigger、M18 = 任何 propose 階段(廣)。三者共存。**世界級對照**:Anthropic / OpenAI / Cursor / GitHub Copilot 4 家 AI eng「verify-before-propose」共識。**SSOT + 詳 workflow + 反例**:`.claude/skills/propose-options/SKILL.md`。 | c hook + d M18-inner-area propose-time 沒 4-Q,user sign-off 前撤回(本 conv 2026-04-25) |
 | **M19** | **Trigger phrase auto-pipeline**。User 說「確保 X 一定要 / 不可繞過 / 不准 silent / 永不漂移 / ensure X always / 一定 Y」keyword 出現 → **自動觸發 M14 5-layer pipeline + M8 benchmark + M17 SSOT + M10 下游**,規劃完整 defense-in-depth(至少 3 層落地)。**不可只加 1 層**(e.g. 只 hook 沒 skill)→ 違反 M14。**substantive 動議**走 STOP / sign-off。**SSOT + 詳 workflow**:`.claude/skills/ensure-canonical/SKILL.md`。**世界級對照**:Spotify Backstage / Material 「rule + lint + test + doc」4-layer / Polaris contribution gate;Claude Code defense-in-depth idiom。 | story splitting principle 2026-04-26 user 第 N 次強調才落地 4 層,前面只口頭 canonical 漂移 |
+| **M20** | **AI 自問 best-practice + 自動 self-improve(不靠 user 提醒)**。Stop hook `stop_meta_self_audit.sh` 每 turn 跑 8-dim score(`scripts/score-infra-best-practice.mjs`):CLAUDE.md size / SKILL sizes / Memory entries / Hook test coverage / CI / Self-audit hooks / Codify-principle / Build state。Score < 80 OR regression ≥ 5 → inject MAXIMUM-strength self-improve prompt → AI 看到 inject **must** 採取 corrective action 在 user reply 之前,不 silent skip。Score log `.claude/logs/infra-best-practice-score.jsonl` 提供 trend。**取代 user 7 次問同題**(2026-04-26)的 mechanical 落地 — markdown 規則 M14/M19 都靠 AI 記得,M20 是真自動 self-questioning hook。**世界級對照**:GitHub repo health metric / Spotify Backstage Tech Radar score / Sourcegraph code health。 | user 7 次問「整個 infra 是 best-practice 嗎」直到 M20 mechanical hook 落地才不需再問 |
 
 **判斷 meta-principle 是否漏寫的 test**:
 - 同類 bug 一年內被糾正 3 次 → meta-principle 漏寫或沒執行,檢討本清單
