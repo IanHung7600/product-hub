@@ -86,7 +86,14 @@ for deprecated in "${DEPRECATED_NAMES[@]}"; do
   echo "$STORY_EXPORTS" | grep -qE "^${deprecated}" && HAS_WHEN_NOT_TO_USE=1
 done
 
+# v3 integrated canonical (2026-04-26):UsageGuidance 單一 export 即合 Polaris/Material/Ant 共識
+# 整合「何時用 + 何時不用 + vs 近親」為 ONE story,等同 ≥ 2 universal core
+HAS_USAGE_GUIDANCE=0
+echo "$STORY_EXPORTS" | grep -qE "^UsageGuidance$" && HAS_USAGE_GUIDANCE=1
+
 CORE_COUNT=$((HAS_WHEN_TO_USE + HAS_WHEN_NOT_TO_USE + HAS_VS_RULE + HAS_CONTENT_GUIDELINES))
+# UsageGuidance 視為 ≥ 2 core(整合 WhenToUse + WhenNotToUse + Vs*)
+[ "$HAS_USAGE_GUIDANCE" -eq 1 ] && CORE_COUNT=2
 
 if [ "$CORE_COUNT" -lt 2 ]; then
   if [ -z "$EXISTING_CONTENT" ]; then
