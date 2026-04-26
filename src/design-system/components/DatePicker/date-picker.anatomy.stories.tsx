@@ -179,8 +179,8 @@ export const Overview = {
             <span className="text-[11px] text-fg-muted font-medium">edit</span>
             <div className="inline-flex items-center border-2 border-dashed border-primary/30 rounded-md px-3 py-2.5 gap-2">
               {[
-                { name: 'button trigger text (flex-1)', color: 'success' },
-                { name: 'Calendar icon', color: 'info' },
+                { name: '7. button trigger text (flex-1)', color: 'success' },
+                { name: '8. Calendar icon', color: 'info' },
               ].map((s) => (
                 <span key={s.name} className="rounded px-2 py-1 text-[11px] font-mono border border-dashed"
                   style={{ borderColor: `var(--${s.color})`, backgroundColor: `var(--${s.color}-subtle)`, color: `var(--${s.color})` }}>{s.name}</span>
@@ -193,9 +193,9 @@ export const Overview = {
             <span className="text-[11px] text-fg-muted font-medium">edit + clearable（有值）</span>
             <div className="inline-flex items-center border-2 border-dashed border-primary/30 rounded-md px-3 py-2.5 gap-2">
               {[
-                { name: 'button trigger text (flex-1)', color: 'success' },
-                { name: 'X clear', color: 'error' },
-                { name: 'Calendar icon', color: 'info' },
+                { name: '9. button trigger text (flex-1)', color: 'success' },
+                { name: '10. X clear', color: 'error' },
+                { name: '11. Calendar icon', color: 'info' },
               ].map((s) => (
                 <span key={s.name} className="rounded px-2 py-1 text-[11px] font-mono border border-dashed"
                   style={{ borderColor: `var(--${s.color})`, backgroundColor: `var(--${s.color}-subtle)`, color: `var(--${s.color})` }}>{s.name}</span>

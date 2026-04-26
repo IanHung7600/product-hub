@@ -207,8 +207,8 @@ export const Overview = {
             <span className="text-[11px] text-fg-muted font-medium">edit — link 狀態</span>
             <div className="inline-flex items-center border-2 border-dashed border-primary/30 rounded-md px-3 py-2.5 gap-2">
               {[
-                { name: 'link text', color: 'info' },
-                { name: 'Pencil action', color: 'error' },
+                { name: '5. link text', color: 'info' },
+                { name: '6. Pencil action', color: 'error' },
               ].map((s) => (
                 <span key={s.name} className="rounded px-2 py-1 text-[11px] font-mono border border-dashed"
                   style={{ borderColor: `var(--${s.color})`, backgroundColor: `var(--${s.color}-subtle)`, color: `var(--${s.color})` }}>{s.name}</span>
@@ -222,7 +222,7 @@ export const Overview = {
             <span className="text-[11px] text-fg-muted font-medium">edit — input 狀態</span>
             <div className="inline-flex items-center border-2 border-dashed border-primary/30 rounded-md px-3 py-2.5 gap-2">
               {[
-                { name: 'bareInput', color: 'success' },
+                { name: '7. bareInput', color: 'success' },
               ].map((s) => (
                 <span key={s.name} className="rounded px-2 py-1 text-[11px] font-mono border border-dashed"
                   style={{ borderColor: `var(--${s.color})`, backgroundColor: `var(--${s.color}-subtle)`, color: `var(--${s.color})` }}>{s.name}</span>

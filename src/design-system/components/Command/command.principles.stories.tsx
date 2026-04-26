@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import LinkTo from '@storybook/addon-links/react'
 
 const meta: Meta = {
   title: 'Design System/Internal/Command/設計原則',
@@ -7,18 +8,28 @@ const meta: Meta = {
 export default meta
 type Story = StoryObj
 
+// ── WhenToUse — 何時使用 Command ──────────────────────
+
 export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>Command 是 cmdk 的薄 wrapper,用於 keyboard-first 的命令搜尋面板。</p>
-      <p>適用情境(對照「展示」頁):</p>
-      <ul>
-        <li><strong>CommandPalette</strong> — 全域 ⌘K 快速跳轉(Linear/Raycast/Slack idiom)</li>
-        <li><strong>InlineCommand</strong> — embed 在 inline UI 的指令選擇</li>
-        <li><strong>ThemeSwitcher</strong> — 設定面板的命令式切換</li>
+      <p>適合 Command 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Internal/Command/展示" name="全域指令面板"><span className="text-primary hover:underline font-medium cursor-pointer">全域指令面板</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/Command/展示" name="Inline 搜尋清單"><span className="text-primary hover:underline font-medium cursor-pointer">Inline 搜尋清單</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/Command/展示" name="外觀切換器"><span className="text-primary hover:underline font-medium cursor-pointer">外觀切換器</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/Command/展示" name="無結果狀態"><span className="text-primary hover:underline font-medium cursor-pointer">無結果狀態</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">非 Command 適用:單純 select dropdown(改 SelectMenu)/ 結構性 menu(改 DropdownMenu)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

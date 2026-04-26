@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import LinkTo from '@storybook/addon-links/react'
 
 const meta: Meta = {
   title: 'Design System/Internal/OverflowIndicator/設計原則',
@@ -7,19 +8,31 @@ const meta: Meta = {
 export default meta
 type Story = StoryObj
 
+// ── WhenToUse — 何時使用 OverflowIndicator ──────────────────────
+
 export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>OverflowIndicator 是 collapse-overflow 的 visual primitive — 顯示「+N」表示有未顯示的 overflow items。</p>
-      <p>適用情境(對照「展示」頁):</p>
-      <ul>
-        <li><strong>ComboboxTagOverflow</strong> — Combobox 多選 tag 太多時 collapse</li>
-        <li><strong>AvatarStackOverflow</strong> — Avatar stack 「+5」表 5 個未顯示</li>
-        <li><strong>BreadcrumbCollapse</strong> — Breadcrumb 中段 collapse</li>
-        <li><strong>TableRowAssignees</strong> — 表格 row 多 assignee 收合</li>
+      <p>適合 OverflowIndicator 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Internal/OverflowIndicator/展示" name="Combobox 標籤溢出"><span className="text-primary hover:underline font-medium cursor-pointer">Combobox 標籤溢出</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/OverflowIndicator/展示" name="人員頭像 stack +N"><span className="text-primary hover:underline font-medium cursor-pointer">人員頭像 stack +N</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/OverflowIndicator/展示" name="形狀對照"><span className="text-primary hover:underline font-medium cursor-pointer">形狀對照</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/OverflowIndicator/展示" name="Breadcrumb 中段收合"><span className="text-primary hover:underline font-medium cursor-pointer">Breadcrumb 中段收合</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/OverflowIndicator/展示" name="DataTable 人員欄位"><span className="text-primary hover:underline font-medium cursor-pointer">DataTable 人員欄位</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">非 OverflowIndicator 適用:單純截斷文字 → CSS truncate;不知道總數的展開 → ScrollArea。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

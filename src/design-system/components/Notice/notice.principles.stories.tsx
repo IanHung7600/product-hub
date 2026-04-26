@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import LinkTo from '@storybook/addon-links/react'
 
 const meta: Meta = {
   title: 'Design System/Internal/Notice/設計原則',
@@ -7,19 +8,31 @@ const meta: Meta = {
 export default meta
 type Story = StoryObj
 
+// ── WhenToUse — 何時使用 Notice ──────────────────────
+
 export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>Notice 是 announcement primitive — 給 Alert / Toast 等 announcement 元件作為 row primitive。</p>
-      <p>適用情境(對照「展示」頁):</p>
-      <ul>
-        <li><strong>DeploymentSuccess / BillingFailed</strong> — inline 系統通知</li>
-        <li><strong>InlineVariants</strong> — variant 對照</li>
-        <li><strong>ToastLikeSolid</strong> — solid 強調 announcement</li>
-        <li><strong>NeutralTitleOnly</strong> — 極簡 title-only 模式</li>
+      <p>適合 Notice 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Internal/Notice/展示" name="部署成功 banner"><span className="text-primary hover:underline font-medium cursor-pointer">部署成功 banner</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/Notice/展示" name="Workspace 付款失敗"><span className="text-primary hover:underline font-medium cursor-pointer">Workspace 付款失敗</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/Notice/展示" name="Inline 通知變體對照"><span className="text-primary hover:underline font-medium cursor-pointer">Inline 通知變體對照</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/Notice/展示" name="Toast 樣式"><span className="text-primary hover:underline font-medium cursor-pointer">Toast 樣式</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/Notice/展示" name="Neutral 純文字"><span className="text-primary hover:underline font-medium cursor-pointer">Neutral 純文字</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">consumer 通常不直接用 Notice,而是用 Alert / Toast(消費 Notice)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

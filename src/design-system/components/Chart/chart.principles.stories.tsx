@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import LinkTo from '@storybook/addon-links/react'
 import {
   Bar,
   BarChart,
@@ -139,14 +140,22 @@ export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>本元件適用的真實業務場景(對照「展示」頁 detail):</p>
-      <ul>
-        <li><strong>BarChartRevenue</strong> — Bar Chart Revenue 場景</li>
-        <li><strong>LineChartResponseTime</strong> — Line Chart Response Time 場景</li>
-        <li><strong>DonutChartTrafficSource</strong> — Donut Chart Traffic Source 場景</li>
-        <li><strong>StackedAreaChartExpenses</strong> — Stacked Area Chart Expenses 場景</li>
+      <p>適合 Chart 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Components/Chart/展示" name="Bar Chart — 月營收"><span className="text-primary hover:underline font-medium cursor-pointer">Bar Chart — 月營收</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Chart/展示" name="Line Chart — 伺服器回應時間"><span className="text-primary hover:underline font-medium cursor-pointer">Line Chart — 伺服器回應時間</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Chart/展示" name="Donut Chart — 流量來源分布"><span className="text-primary hover:underline font-medium cursor-pointer">Donut Chart — 流量來源分布</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Chart/展示" name="Stacked Area — 部門支出"><span className="text-primary hover:underline font-medium cursor-pointer">Stacked Area — 部門支出</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">判斷時對照 spec.md「何時用 / 何時不用」段;不符 → 改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

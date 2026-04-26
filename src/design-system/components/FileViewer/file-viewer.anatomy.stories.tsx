@@ -28,7 +28,7 @@ const sampleFiles: FileInfo[] = [
   {
     id: 'doc-1',
     url: img('spec-hero', 1600, 1000),
-    name: 'dashboard-spec-cover.png',
+    name: '7. dashboard-spec-cover.png',
     mimeType: 'image/png',
     size: 612_000,
     description: 'Dashboard v2 spec 封面圖 — 設計 review 用。',
@@ -41,7 +41,7 @@ const sampleFiles: FileInfo[] = [
   {
     id: 'doc-2',
     url: img('spec-flow', 1600, 1000),
-    name: 'user-onboarding-flow.jpg',
+    name: '8. user-onboarding-flow.jpg',
     mimeType: 'image/jpeg',
     size: 484_000,
     description: '使用者首次引導流程圖 — 含 5 個決策點。',
@@ -49,7 +49,7 @@ const sampleFiles: FileInfo[] = [
   {
     id: 'doc-3',
     url: img('spec-token', 1600, 1000),
-    name: 'token-sync-checklist.jpg',
+    name: '9. token-sync-checklist.jpg',
     mimeType: 'image/jpeg',
     size: 392_000,
     description: 'Design token 同步 checklist — 與 engineering 對齊。',

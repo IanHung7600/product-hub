@@ -1,4 +1,5 @@
 import React from 'react'
+import LinkTo from '@storybook/addon-links/react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { ExternalLink } from 'lucide-react'
 import { HoverCard, HoverCardTrigger, HoverCardContent } from './hover-card'
@@ -34,14 +35,25 @@ export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>本元件適用的真實業務場景(對照「展示」頁 detail):</p>
-      <ul>
-        <li><strong>PersonNameCard</strong> — Person Name Card 場景</li>
-        <li><strong>LinkPreview</strong> — Link Preview 場景</li>
-        <li><strong>OverflowList</strong> — Overflow List 場景</li>
-        <li><strong>RepoCard</strong> — Repo Card 場景</li>
+      <p>適合 HoverCard 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Internal/HoverCard/展示" name="人員頭像 NameCard"><span className="text-primary hover:underline font-medium cursor-pointer">人員頭像 NameCard</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/HoverCard/展示" name="連結預覽卡"><span className="text-primary hover:underline font-medium cursor-pointer">連結預覽卡</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/HoverCard/展示" name="溢出清單"><span className="text-primary hover:underline font-medium cursor-pointer">溢出清單</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/HoverCard/展示" name="Repository 資訊卡"><span className="text-primary hover:underline font-medium cursor-pointer">Repository 資訊卡</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/HoverCard/展示" name="Trigger 類型與 delay"><span className="text-primary hover:underline font-medium cursor-pointer">Trigger 類型與 delay</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">判斷時對照 spec.md「何時用 / 何時不用」段;不符 → 改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

@@ -209,11 +209,11 @@ export const Overview = {
             <span className="text-[11px] text-fg-muted font-medium">完整結構</span>
             <div className="inline-flex items-center border-2 border-dashed border-primary/30 rounded-md px-3 py-2.5 gap-2">
               {[
-                { name: 'checkbox', color: 'warning' },
-                { name: 'startIcon | avatar', color: 'info' },
-                { name: 'label', color: 'success' },
-                { name: 'description', color: 'magenta' },
-                { name: 'tag', color: 'warning' },
+                { name: '5. checkbox', color: 'warning' },
+                { name: '6. startIcon | avatar', color: 'info' },
+                { name: '7. label', color: 'success' },
+                { name: '8. description', color: 'magenta' },
+                { name: '9. tag', color: 'warning' },
               ].map((s) => (
                 <span key={s.name} className="rounded px-2 py-1 text-[11px] font-mono border border-dashed"
                   style={{ borderColor: `var(--${s.color})`, backgroundColor: `var(--${s.color}-subtle)`, color: `var(--${s.color})` }}>{s.name}</span>

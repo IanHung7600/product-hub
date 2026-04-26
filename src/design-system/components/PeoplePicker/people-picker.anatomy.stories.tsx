@@ -10,10 +10,10 @@ export default meta
 type Story = StoryObj
 
 const SAMPLE_PEOPLE = [
-  { name: 'Ada Chen', avatarUrl: 'https://i.pravatar.cc/80?img=1' },
-  { name: 'Alice Wang', avatarUrl: 'https://i.pravatar.cc/80?img=5' },
-  { name: 'Bob Chen', avatarUrl: 'https://i.pravatar.cc/80?img=12' },
-  { name: 'Diana Lin', avatarUrl: 'https://i.pravatar.cc/80?img=20' },
+  { name: '8. Ada Chen', avatarUrl: 'https://i.pravatar.cc/80?img=1' },
+  { name: '9. Alice Wang', avatarUrl: 'https://i.pravatar.cc/80?img=5' },
+  { name: '10. Bob Chen', avatarUrl: 'https://i.pravatar.cc/80?img=12' },
+  { name: '11. Diana Lin', avatarUrl: 'https://i.pravatar.cc/80?img=20' },
 ]
 
 export const Overview: Story = {

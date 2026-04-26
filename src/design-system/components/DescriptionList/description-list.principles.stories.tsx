@@ -1,4 +1,5 @@
 import React from 'react'
+import LinkTo from '@storybook/addon-links/react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { DescriptionList, DescriptionItem } from './description-list'
 import { Input } from '@/design-system/components/Input/input'
@@ -43,14 +44,25 @@ export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>本元件適用的真實業務場景(對照「展示」頁 detail):</p>
-      <ul>
-        <li><strong>UserProfile</strong> — User Profile 場景</li>
-        <li><strong>ProductSpec</strong> — Product Spec 場景</li>
-        <li><strong>OrderSummary</strong> — Order Summary 場景</li>
-        <li><strong>DetailPanel</strong> — Detail Panel 場景</li>
+      <p>適合 DescriptionList 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Components/DescriptionList/展示" name="User profile"><span className="text-primary hover:underline font-medium cursor-pointer">User profile</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/DescriptionList/展示" name="Product spec"><span className="text-primary hover:underline font-medium cursor-pointer">Product spec</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/DescriptionList/展示" name="訂單明細"><span className="text-primary hover:underline font-medium cursor-pointer">訂單明細</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/DescriptionList/展示" name="Detail panel"><span className="text-primary hover:underline font-medium cursor-pointer">Detail panel</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/DescriptionList/展示" name="Horizontal"><span className="text-primary hover:underline font-medium cursor-pointer">Horizontal</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">判斷時對照 spec.md「何時用 / 何時不用」段;不符 → 改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

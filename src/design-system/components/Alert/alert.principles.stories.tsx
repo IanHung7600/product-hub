@@ -1,4 +1,5 @@
 import React from 'react'
+import LinkTo from '@storybook/addon-links/react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Alert } from './alert'
 
@@ -31,14 +32,25 @@ export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>本元件適用的真實業務場景(對照「展示」頁 detail):</p>
-      <ul>
-        <li><strong>SubtleSingleLine</strong> — Subtle Single Line 場景</li>
-        <li><strong>SolidSingleLine</strong> — Solid Single Line 場景</li>
-        <li><strong>SubtleWithDescription</strong> — Subtle With Description 場景</li>
-        <li><strong>SolidWithDescription</strong> — Solid With Description 場景</li>
+      <p>適合 Alert 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Components/Alert/展示" name="Subtle 單行"><span className="text-primary hover:underline font-medium cursor-pointer">Subtle 單行</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Alert/展示" name="Solid 單行"><span className="text-primary hover:underline font-medium cursor-pointer">Solid 單行</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Alert/展示" name="Subtle + Description"><span className="text-primary hover:underline font-medium cursor-pointer">Subtle + Description</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Alert/展示" name="Solid + Description"><span className="text-primary hover:underline font-medium cursor-pointer">Solid + Description</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Alert/展示" name="Chrome corner action group"><span className="text-primary hover:underline font-medium cursor-pointer">Chrome corner action group</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">判斷時對照 spec.md「何時用 / 何時不用」段;不符 → 改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

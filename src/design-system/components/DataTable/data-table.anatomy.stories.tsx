@@ -23,11 +23,11 @@ interface Product {
 }
 
 const SAMPLE_DATA: Product[] = [
-  { name: 'Wireless Headphones', category: 'electronics', stock: 'in_stock', price: 2490, available: true, launchDate: '2026-01-15' },
-  { name: 'Office Chair', category: 'furniture', stock: 'low_stock', price: 8900, available: true, launchDate: '2025-11-02' },
-  { name: 'Green Tea 100 Bags', category: 'food', stock: 'in_stock', price: 350, available: true, launchDate: '2026-03-20' },
-  { name: 'USB-C Hub', category: 'electronics', stock: 'out_of_stock', price: 1290, available: false, launchDate: '2025-12-01' },
-  { name: 'Linen Shirt', category: 'clothing', stock: 'in_stock', price: 1580, available: true, launchDate: '2026-02-14' },
+  { name: '12. Wireless Headphones', category: 'electronics', stock: 'in_stock', price: 2490, available: true, launchDate: '2026-01-15' },
+  { name: '13. Office Chair', category: 'furniture', stock: 'low_stock', price: 8900, available: true, launchDate: '2025-11-02' },
+  { name: '14. Green Tea 100 Bags', category: 'food', stock: 'in_stock', price: 350, available: true, launchDate: '2026-03-20' },
+  { name: '15. USB-C Hub', category: 'electronics', stock: 'out_of_stock', price: 1290, available: false, launchDate: '2025-12-01' },
+  { name: '16. Linen Shirt', category: 'clothing', stock: 'in_stock', price: 1580, available: true, launchDate: '2026-02-14' },
 ]
 
 const STATUS_OPTIONS = [

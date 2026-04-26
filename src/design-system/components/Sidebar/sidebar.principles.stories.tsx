@@ -1,4 +1,5 @@
 import * as React from 'react'
+import LinkTo from '@storybook/addon-links/react'
 import type { Meta, StoryObj } from '@storybook/react'
 import {
   LayoutDashboard, Inbox, Users, Settings, Bell, Folder, FileText, FileCode,
@@ -129,14 +130,22 @@ export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>本元件適用的真實業務場景(對照「展示」頁 detail):</p>
-      <ul>
-        <li><strong>IconCollapse</strong> — Icon Collapse 場景</li>
-        <li><strong>MixedContent</strong> — Mixed Content 場景</li>
-        <li><strong>Offcanvas</strong> — Offcanvas 場景</li>
-        <li><strong>IntegrationSidebar</strong> — Integration Sidebar 場景</li>
+      <p>適合 Sidebar 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Components/Sidebar/展示" name="完整佈局"><span className="text-primary hover:underline font-medium cursor-pointer">完整佈局</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Sidebar/展示" name="混合內容"><span className="text-primary hover:underline font-medium cursor-pointer">混合內容</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Sidebar/展示" name="Offcanvas 收合"><span className="text-primary hover:underline font-medium cursor-pointer">Offcanvas 收合</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Sidebar/展示" name="Mixed prefix"><span className="text-primary hover:underline font-medium cursor-pointer">Mixed prefix</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">判斷時對照 spec.md「何時用 / 何時不用」段;不符 → 改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

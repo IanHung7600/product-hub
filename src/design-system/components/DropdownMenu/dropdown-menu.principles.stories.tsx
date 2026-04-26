@@ -1,4 +1,5 @@
 import React from 'react'
+import LinkTo from '@storybook/addon-links/react'
 import type { Meta, StoryObj } from '@storybook/react'
 import {
   MoreVertical, Copy, Trash2, Share2, Download,
@@ -48,14 +49,25 @@ export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>本元件適用的真實業務場景(對照「展示」頁 detail):</p>
-      <ul>
-        <li><strong>Groups</strong> — Groups 場景</li>
-        <li><strong>WithSuffix</strong> — With Suffix 場景</li>
-        <li><strong>SubMenu</strong> — Sub Menu 場景</li>
-        <li><strong>CheckboxItems</strong> — Checkbox Items 場景</li>
+      <p>適合 DropdownMenu 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Components/DropdownMenu/展示" name="群組"><span className="text-primary hover:underline font-medium cursor-pointer">群組</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/DropdownMenu/展示" name="後綴"><span className="text-primary hover:underline font-medium cursor-pointer">後綴</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/DropdownMenu/展示" name="子選單"><span className="text-primary hover:underline font-medium cursor-pointer">子選單</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/DropdownMenu/展示" name="Checkbox"><span className="text-primary hover:underline font-medium cursor-pointer">Checkbox</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/DropdownMenu/展示" name="單選"><span className="text-primary hover:underline font-medium cursor-pointer">單選</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">判斷時對照 spec.md「何時用 / 何時不用」段;不符 → 改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

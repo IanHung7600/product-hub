@@ -1,4 +1,5 @@
 import React from 'react'
+import LinkTo from '@storybook/addon-links/react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { DataTable } from './data-table'
@@ -61,14 +62,25 @@ export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>本元件適用的真實業務場景(對照「展示」頁 detail):</p>
-      <ul>
-        <li><strong>ColumnTypes</strong> — Column Types 場景</li>
-        <li><strong>NumberAlignment</strong> — Number Alignment 場景</li>
-        <li><strong>RowHeightModes</strong> — Row Height Modes 場景</li>
-        <li><strong>EmptyState</strong> — Empty State 場景</li>
+      <p>適合 DataTable 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Components/DataTable/展示" name="Column Types"><span className="text-primary hover:underline font-medium cursor-pointer">Column Types</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/DataTable/展示" name="數字靠右對齊"><span className="text-primary hover:underline font-medium cursor-pointer">數字靠右對齊</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/DataTable/展示" name="行高模式"><span className="text-primary hover:underline font-medium cursor-pointer">行高模式</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/DataTable/展示" name="空狀態"><span className="text-primary hover:underline font-medium cursor-pointer">空狀態</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/DataTable/展示" name="外框"><span className="text-primary hover:underline font-medium cursor-pointer">外框</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">判斷時對照 spec.md「何時用 / 何時不用」段;不符 → 改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

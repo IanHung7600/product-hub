@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import LinkTo from '@storybook/addon-links/react'
 
 const meta: Meta = {
   title: 'Design System/Components/SelectionControl/設計原則',
@@ -7,18 +8,28 @@ const meta: Meta = {
 export default meta
 type Story = StoryObj
 
+// ── WhenToUse — 何時使用 SelectionControl ──────────────────────
+
 export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>SelectionControl(SelectionItem)是 row-style 選擇器,用於 list / settings panel 多選或單選 row(對齊 Notion / Linear / Slack settings idiom)。</p>
-      <p>適用情境(對照「展示」頁):</p>
-      <ul>
-        <li><strong>NotificationPreferences</strong> — Slack-style 通知設定 row</li>
-        <li><strong>PlanPicker</strong> — 訂閱方案 selectable list</li>
-        <li><strong>WithPrefixIcon / WithPrefixAvatarBlock</strong> — 含 icon / avatar prefix 的 row</li>
+      <p>適合 SelectionControl 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Components/SelectionControl/展示" name="通知偏好"><span className="text-primary hover:underline font-medium cursor-pointer">通知偏好</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/SelectionControl/展示" name="方案選擇"><span className="text-primary hover:underline font-medium cursor-pointer">方案選擇</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/SelectionControl/展示" name="Prefix icon"><span className="text-primary hover:underline font-medium cursor-pointer">Prefix icon</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/SelectionControl/展示" name="Prefix avatar"><span className="text-primary hover:underline font-medium cursor-pointer">Prefix avatar</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">非 SelectionControl 適用:form 欄位多選(用 Checkbox + Field)/ menu 內 toggle(用 DropdownMenu CheckboxItem)/ overlay 多選(用 SelectMenu MultiSelect)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

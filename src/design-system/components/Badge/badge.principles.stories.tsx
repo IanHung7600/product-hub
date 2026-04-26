@@ -1,4 +1,5 @@
 import React from 'react'
+import LinkTo from '@storybook/addon-links/react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Bell, Inbox, Archive, FileText, MessageSquare, Settings } from 'lucide-react'
 import { Badge } from './badge'
@@ -35,13 +36,19 @@ export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>本元件適用的真實業務場景(對照「展示」頁 detail):</p>
-      <ul>
-        <li><strong>Shape</strong> — Shape 場景</li>
-        <li><strong>Dot</strong> — Dot 場景</li>
-        <li><strong>MaxCount</strong> — Max Count 場景</li>
+      <p>適合 Badge 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Components/Badge/展示" name="正圓 vs 膠囊"><span className="text-primary hover:underline font-medium cursor-pointer">正圓 vs 膠囊</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Badge/展示" name="Dot 模式"><span className="text-primary hover:underline font-medium cursor-pointer">Dot 模式</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Badge/展示" name="Max 上限"><span className="text-primary hover:underline font-medium cursor-pointer">Max 上限</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">判斷時對照 spec.md「何時用 / 何時不用」段;不符 → 改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

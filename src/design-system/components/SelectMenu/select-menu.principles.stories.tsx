@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import LinkTo from '@storybook/addon-links/react'
 
 const meta: Meta = {
   title: 'Design System/Internal/SelectMenu/設計原則',
@@ -7,19 +8,31 @@ const meta: Meta = {
 export default meta
 type Story = StoryObj
 
+// ── WhenToUse — 何時使用 SelectMenu ──────────────────────
+
 export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>SelectMenu 是 Select / Combobox / PeoplePicker 的 dropdown 內部 primitive — 提供搜尋 / 多選 / clear / sizes 共通行為。</p>
-      <p>適用情境(對照「展示」頁):</p>
-      <ul>
-        <li><strong>SingleSelect / MultiSelect</strong> — 單選 / 多選</li>
-        <li><strong>Searchable / MultiSearchable</strong> — 加搜尋的 single / multi</li>
-        <li><strong>Clearable</strong> — 一鍵清空</li>
-        <li><strong>States / AllSizes</strong> — 狀態 / 尺寸對照</li>
+      <p>適合 SelectMenu 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Internal/SelectMenu/展示" name="單選"><span className="text-primary hover:underline font-medium cursor-pointer">單選</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/SelectMenu/展示" name="搜尋"><span className="text-primary hover:underline font-medium cursor-pointer">搜尋</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/SelectMenu/展示" name="多選"><span className="text-primary hover:underline font-medium cursor-pointer">多選</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/SelectMenu/展示" name="多選 + 搜尋"><span className="text-primary hover:underline font-medium cursor-pointer">多選 + 搜尋</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/SelectMenu/展示" name="可清除"><span className="text-primary hover:underline font-medium cursor-pointer">可清除</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">consumer 通常不直接用 SelectMenu,而是用消費它的 Select / Combobox / PeoplePicker。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

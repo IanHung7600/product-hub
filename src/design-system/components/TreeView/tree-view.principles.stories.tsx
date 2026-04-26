@@ -1,4 +1,5 @@
 import React from 'react'
+import LinkTo from '@storybook/addon-links/react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Folder, FileText, Image, Users, User } from 'lucide-react'
 import { TreeView, TreeItem } from './tree-view'
@@ -32,14 +33,25 @@ export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>本元件適用的真實業務場景(對照「展示」頁 detail):</p>
-      <ul>
-        <li><strong>FileBrowser</strong> — File Browser 場景</li>
-        <li><strong>Stepper</strong> — Stepper 場景</li>
-        <li><strong>WithCheckbox</strong> — With Checkbox 場景</li>
-        <li><strong>LongLabel</strong> — Long Label 場景</li>
+      <p>適合 TreeView 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Components/TreeView/展示" name="File Browser"><span className="text-primary hover:underline font-medium cursor-pointer">File Browser</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/TreeView/展示" name="Stepper"><span className="text-primary hover:underline font-medium cursor-pointer">Stepper</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/TreeView/展示" name="多選"><span className="text-primary hover:underline font-medium cursor-pointer">多選</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/TreeView/展示" name="長 label"><span className="text-primary hover:underline font-medium cursor-pointer">長 label</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/TreeView/展示" name="Drag & Drop"><span className="text-primary hover:underline font-medium cursor-pointer">Drag & Drop</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">判斷時對照 spec.md「何時用 / 何時不用」段;不符 → 改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

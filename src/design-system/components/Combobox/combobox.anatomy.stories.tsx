@@ -213,12 +213,12 @@ export const Overview = {
             <span className="text-[11px] text-fg-muted font-medium">有值 + clearable</span>
             <div className="inline-flex items-center border-2 border-dashed border-primary/30 rounded-md px-3 py-2.5 gap-1">
               {[
-                { name: 'Tag', color: 'error' },
-                { name: 'Tag', color: 'error' },
-                { name: '+N', color: 'warning' },
-                { name: 'select(hidden)', color: 'success' },
-                { name: 'clear', color: 'magenta' },
-                { name: 'chevron', color: 'info' },
+                { name: '6. Tag', color: 'error' },
+                { name: '7. Tag', color: 'error' },
+                { name: '8. +N', color: 'warning' },
+                { name: '9. select(hidden)', color: 'success' },
+                { name: '10. clear', color: 'magenta' },
+                { name: '11. chevron', color: 'info' },
               ].map((s, i) => (
                 <span key={`${s.name}-${i}`} className="rounded px-2 py-1 text-[11px] font-mono border border-dashed"
                   style={{ borderColor: `var(--${s.color})`, backgroundColor: `var(--${s.color}-subtle)`, color: `var(--${s.color})` }}>{s.name}</span>
@@ -230,8 +230,8 @@ export const Overview = {
             <span className="text-[11px] text-fg-muted font-medium">空值</span>
             <div className="inline-flex items-center border-2 border-dashed border-primary/30 rounded-md px-3 py-2.5 gap-2">
               {[
-                { name: 'select(placeholder)', color: 'success' },
-                { name: 'chevron', color: 'info' },
+                { name: '12. select(placeholder)', color: 'success' },
+                { name: '13. chevron', color: 'info' },
               ].map((s) => (
                 <span key={s.name} className="rounded px-2 py-1 text-[11px] font-mono border border-dashed"
                   style={{ borderColor: `var(--${s.color})`, backgroundColor: `var(--${s.color}-subtle)`, color: `var(--${s.color})` }}>{s.name}</span>
@@ -251,10 +251,10 @@ export const Overview = {
         <div className="flex flex-col gap-2 items-start">
           <div className="inline-flex items-start border-2 border-dashed border-primary/30 rounded-md px-3 py-2.5 gap-1 flex-wrap w-64">
             {[
-              { name: 'Tag', color: 'error' },
-              { name: 'Tag', color: 'error' },
-              { name: 'Tag', color: 'error' },
-              { name: 'Tag', color: 'error' },
+              { name: '14. Tag', color: 'error' },
+              { name: '15. Tag', color: 'error' },
+              { name: '16. Tag', color: 'error' },
+              { name: '17. Tag', color: 'error' },
             ].map((s, i) => (
               <span key={i} className="rounded px-2 py-1 text-[11px] font-mono border border-dashed"
                 style={{ borderColor: `var(--${s.color})`, backgroundColor: `var(--${s.color}-subtle)`, color: `var(--${s.color})` }}>{s.name}</span>
@@ -277,9 +277,9 @@ export const Overview = {
             <span className="text-[11px] text-fg-muted font-medium">有值</span>
             <div className="inline-flex items-center border-2 border-dashed border-primary/30 rounded-md px-3 py-2.5 gap-1">
               {[
-                { name: 'Tag', color: 'error' },
-                { name: 'Tag', color: 'error' },
-                { name: '+N?', color: 'warning' },
+                { name: '18. Tag', color: 'error' },
+                { name: '19. Tag', color: 'error' },
+                { name: '20. +N?', color: 'warning' },
               ].map((s, i) => (
                 <span key={i} className="rounded px-2 py-1 text-[11px] font-mono border border-dashed"
                   style={{ borderColor: `var(--${s.color})`, backgroundColor: `var(--${s.color}-subtle)`, color: `var(--${s.color})` }}>{s.name}</span>

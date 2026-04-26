@@ -1,4 +1,5 @@
 import React from 'react'
+import LinkTo from '@storybook/addon-links/react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Upload } from 'lucide-react'
 import { Field, FieldLabel, FieldDescription, FieldError, FieldGroup } from './field'
@@ -35,14 +36,25 @@ export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>本元件適用的真實業務場景(對照「展示」頁 detail):</p>
-      <ul>
-        <li><strong>Vertical</strong> — Vertical 場景</li>
-        <li><strong>Horizontal</strong> — Horizontal 場景</li>
-        <li><strong>HorizontalLabelAlignment</strong> — Horizontal Label Alignment 場景</li>
-        <li><strong>MixedControlAlignment</strong> — Mixed Control Alignment 場景</li>
+      <p>適合 Field 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Components/Field/展示" name="Vertical"><span className="text-primary hover:underline font-medium cursor-pointer">Vertical</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Field/展示" name="Horizontal"><span className="text-primary hover:underline font-medium cursor-pointer">Horizontal</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Field/展示" name="Horizontal — label 垂直對齊公式驗證"><span className="text-primary hover:underline font-medium cursor-pointer">Horizontal — label 垂直對齊公式驗證</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Field/展示" name="混合 Control 的 field 高度對齊"><span className="text-primary hover:underline font-medium cursor-pointer">混合 Control 的 field 高度對齊</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Field/展示" name="SegmentedControl 作為 Field control"><span className="text-primary hover:underline font-medium cursor-pointer">SegmentedControl 作為 Field control</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">判斷時對照 spec.md「何時用 / 何時不用」段;不符 → 改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

@@ -1,4 +1,5 @@
 import React from 'react'
+import LinkTo from '@storybook/addon-links/react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { NumberInput } from './number-input'
@@ -39,14 +40,22 @@ export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>本元件適用的真實業務場景(對照「展示」頁 detail):</p>
-      <ul>
-        <li><strong>Modes</strong> — Modes 場景</li>
-        <li><strong>SizeAlignment</strong> — Size Alignment 場景</li>
-        <li><strong>FormatOptions</strong> — Format Options 場景</li>
-        <li><strong>InDataTable</strong> — In Data Table 場景</li>
+      <p>適合 NumberInput 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Components/NumberInput/展示" name="三種模式"><span className="text-primary hover:underline font-medium cursor-pointer">三種模式</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/NumberInput/展示" name="尺寸與 Button 對齊"><span className="text-primary hover:underline font-medium cursor-pointer">尺寸與 Button 對齊</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/NumberInput/展示" name="格式化選項"><span className="text-primary hover:underline font-medium cursor-pointer">格式化選項</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/NumberInput/展示" name="DataTable 整合"><span className="text-primary hover:underline font-medium cursor-pointer">DataTable 整合</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">判斷時對照 spec.md「何時用 / 何時不用」段;不符 → 改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

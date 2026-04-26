@@ -1,4 +1,5 @@
 import * as React from 'react'
+import LinkTo from '@storybook/addon-links/react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { TimePicker } from './time-picker'
 import { Field, FieldLabel } from '@/design-system/components/Field/field'
@@ -28,14 +29,25 @@ export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>本元件適用的真實業務場景(對照「展示」頁 detail):</p>
-      <ul>
-        <li><strong>MeetingSlot</strong> — Meeting Slot 場景</li>
-        <li><strong>FlightDepartureTime</strong> — Flight Departure Time 場景</li>
-        <li><strong>ShopBusinessHours</strong> — Shop Business Hours 場景</li>
-        <li><strong>EventTimestamp</strong> — Event Timestamp 場景</li>
+      <p>適合 TimePicker 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Components/TimePicker/展示" name="會議時段"><span className="text-primary hover:underline font-medium cursor-pointer">會議時段</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/TimePicker/展示" name="航班起飛時間"><span className="text-primary hover:underline font-medium cursor-pointer">航班起飛時間</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/TimePicker/展示" name="店家營業時間"><span className="text-primary hover:underline font-medium cursor-pointer">店家營業時間</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/TimePicker/展示" name="事件發生時間"><span className="text-primary hover:underline font-medium cursor-pointer">事件發生時間</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/TimePicker/展示" name="員工上班時段設定"><span className="text-primary hover:underline font-medium cursor-pointer">員工上班時段設定</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">判斷時對照 spec.md「何時用 / 何時不用」段;不符 → 改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

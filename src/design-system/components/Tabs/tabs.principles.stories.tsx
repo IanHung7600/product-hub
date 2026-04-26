@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import LinkTo from '@storybook/addon-links/react'
 import { Users, Settings, Bell } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs'
 import { SegmentedControl, SegmentedControlItem } from '@/design-system/components/SegmentedControl/segmented-control'
@@ -37,13 +38,19 @@ export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>本元件適用的真實業務場景(對照「展示」頁 detail):</p>
-      <ul>
-        <li><strong>WithSuffix</strong> — With Suffix 場景</li>
-        <li><strong>OverflowScroll</strong> — Overflow Scroll 場景</li>
-        <li><strong>OverflowMenu</strong> — Overflow Menu 場景</li>
+      <p>適合 Tabs 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Components/Tabs/展示" name="With Suffix"><span className="text-primary hover:underline font-medium cursor-pointer">With Suffix</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Tabs/展示" name="Overflow Scroll"><span className="text-primary hover:underline font-medium cursor-pointer">Overflow Scroll</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Tabs/展示" name="Overflow Menu"><span className="text-primary hover:underline font-medium cursor-pointer">Overflow Menu</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">判斷時對照 spec.md「何時用 / 何時不用」段;不符 → 改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

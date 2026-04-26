@@ -1,4 +1,5 @@
 import React from 'react'
+import LinkTo from '@storybook/addon-links/react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { toast } from './toast'
 import { Button } from '@/design-system/components/Button/button'
@@ -32,12 +33,16 @@ export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>本元件適用的真實業務場景(對照「展示」頁 detail):</p>
-      <ul>
-        <li><strong>WithDescription</strong> — With Description 場景</li>
-        <li><strong>Interactive</strong> — Interactive 場景</li>
+      <p>適合 Toast 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Components/Toast/展示" name="有 Title + Description"><span className="text-primary hover:underline font-medium cursor-pointer">有 Title + Description</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Toast/展示" name="互動測試"><span className="text-primary hover:underline font-medium cursor-pointer">互動測試</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">判斷時對照 spec.md「何時用 / 何時不用」段;不符 → 改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

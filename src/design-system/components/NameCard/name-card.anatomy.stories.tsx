@@ -142,7 +142,7 @@ export const Inspector: InspectorStory = {
     },
   },
   args: {
-    name: 'Ada Chen',
+    name: '8. Ada Chen',
     subtitle: 'Design Engineer · Engineering',
     status: 'online',
     withStatusMessage: true,
@@ -359,9 +359,9 @@ export const HoverCardIntegration: Story = {
         </Desc>
         <div className="border border-border rounded-lg p-6 flex items-center gap-8">
           {[
-            { name: 'Ada Chen', subtitle: 'Design Engineer', status: 'online' as const },
-            { name: 'Alice Wang', subtitle: 'Frontend Engineer', status: 'busy' as const },
-            { name: 'Bob Chen', subtitle: 'PM, Growth', status: 'away' as const },
+            { name: '9. Ada Chen', subtitle: 'Design Engineer', status: 'online' as const },
+            { name: '10. Alice Wang', subtitle: 'Frontend Engineer', status: 'busy' as const },
+            { name: '11. Bob Chen', subtitle: 'PM, Growth', status: 'away' as const },
           ].map(p => (
             <HoverCard key={p.name}>
               <HoverCardTrigger asChild>

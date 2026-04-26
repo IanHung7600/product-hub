@@ -1,4 +1,5 @@
 import React from 'react'
+import LinkTo from '@storybook/addon-links/react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Settings, Save, Info, AlertCircle } from 'lucide-react'
 import { Tooltip, TooltipTrigger, TooltipContent } from './tooltip'
@@ -33,13 +34,19 @@ export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>本元件適用的真實業務場景(對照「展示」頁 detail):</p>
-      <ul>
-        <li><strong>NonButtonTrigger</strong> — Non Button Trigger 場景</li>
-        <li><strong>Placement</strong> — Placement 場景</li>
-        <li><strong>LongText</strong> — Long Text 場景</li>
+      <p>適合 Tooltip 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Components/Tooltip/展示" name="非 Button 元素"><span className="text-primary hover:underline font-medium cursor-pointer">非 Button 元素</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Tooltip/展示" name="方向"><span className="text-primary hover:underline font-medium cursor-pointer">方向</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/Tooltip/展示" name="長文字"><span className="text-primary hover:underline font-medium cursor-pointer">長文字</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">判斷時對照 spec.md「何時用 / 何時不用」段;不符 → 改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

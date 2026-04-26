@@ -1,4 +1,5 @@
 import React from 'react'
+import LinkTo from '@storybook/addon-links/react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Trash2, FolderOpen, Info, Keyboard } from 'lucide-react'
 import { FileViewer, type FileInfo } from './file-viewer'
@@ -98,14 +99,25 @@ export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>本元件適用的真實業務場景(對照「展示」頁 detail):</p>
-      <ul>
-        <li><strong>JiraAttachments</strong> — Jira Attachments 場景</li>
-        <li><strong>NotionGallery</strong> — Notion Gallery 場景</li>
-        <li><strong>FigmaDesignReview</strong> — Figma Design Review 場景</li>
-        <li><strong>GmailAttachmentPreview</strong> — Gmail Attachment Preview 場景</li>
+      <p>適合 FileViewer 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Components/FileViewer/展示" name="Jira — 附件多圖檢視"><span className="text-primary hover:underline font-medium cursor-pointer">Jira — 附件多圖檢視</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/FileViewer/展示" name="Notion — 頁內配圖 gallery"><span className="text-primary hover:underline font-medium cursor-pointer">Notion — 頁內配圖 gallery</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/FileViewer/展示" name="Figma — 單檔 zoom focus"><span className="text-primary hover:underline font-medium cursor-pointer">Figma — 單檔 zoom focus</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/FileViewer/展示" name="Gmail — 多附件預覽"><span className="text-primary hover:underline font-medium cursor-pointer">Gmail — 多附件預覽</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/FileViewer/展示" name="活動相集 — filmstrip on"><span className="text-primary hover:underline font-medium cursor-pointer">活動相集 — filmstrip on</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">判斷時對照 spec.md「何時用 / 何時不用」段;不符 → 改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

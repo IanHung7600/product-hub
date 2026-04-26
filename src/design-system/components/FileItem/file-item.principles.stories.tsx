@@ -1,4 +1,5 @@
 import React from 'react'
+import LinkTo from '@storybook/addon-links/react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { X, Download, RotateCw } from 'lucide-react'
 import { FileItem } from './file-item'
@@ -33,14 +34,25 @@ export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>本元件適用的真實業務場景(對照「展示」頁 detail):</p>
-      <ul>
-        <li><strong>Rich</strong> — Rich 場景</li>
-        <li><strong>Compact</strong> — Compact 場景</li>
-        <li><strong>HoverSwap</strong> — Hover Swap 場景</li>
-        <li><strong>Clickable</strong> — Clickable 場景</li>
+      <p>適合 FileItem 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Components/FileItem/展示" name="Rich"><span className="text-primary hover:underline font-medium cursor-pointer">Rich</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/FileItem/展示" name="Compact"><span className="text-primary hover:underline font-medium cursor-pointer">Compact</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/FileItem/展示" name="Hover swap"><span className="text-primary hover:underline font-medium cursor-pointer">Hover swap</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/FileItem/展示" name="已上傳"><span className="text-primary hover:underline font-medium cursor-pointer">已上傳</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Components/FileItem/展示" name="Compact 混合"><span className="text-primary hover:underline font-medium cursor-pointer">Compact 混合</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">判斷時對照 spec.md「何時用 / 何時不用」段;不符 → 改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

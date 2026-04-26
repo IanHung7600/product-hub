@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import LinkTo from '@storybook/addon-links/react'
 
 const meta: Meta = {
   title: 'Design System/Internal/MenuItem/設計原則',
@@ -7,18 +8,31 @@ const meta: Meta = {
 export default meta
 type Story = StoryObj
 
+// ── WhenToUse — 何時使用 Menu ──────────────────────
+
 export const WhenToUse: Story = {
   name: '何時使用',
   render: () => (
     <div className="prose prose-sm max-w-prose">
-      <p>MenuItem 是 Family 1(scanning menu item)的 row primitive,被 DropdownMenu / SelectMenu / Command 等 overlay menu 消費。</p>
-      <p>適用情境(對照「展示」頁):</p>
-      <ul>
-        <li><strong>Default / WithStartIcon / WithDescription</strong> — 各種 slot 變體</li>
-        <li><strong>AvatarInline / AvatarBlock</strong> — 含 avatar 的 row 結構</li>
-        <li><strong>MultiSelect / Groups</strong> — checkbox / 群組 menu</li>
+      <p>適合 Menu 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+      <ul className="space-y-1">
+        <li>
+          <LinkTo kind="Design System/Internal/Menu/展示" name="Start Icon"><span className="text-primary hover:underline font-medium cursor-pointer">Start Icon</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/Menu/展示" name="Start Icon + Description"><span className="text-primary hover:underline font-medium cursor-pointer">Start Icon + Description</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/Menu/展示" name="Avatar"><span className="text-primary hover:underline font-medium cursor-pointer">Avatar</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/Menu/展示" name="Avatar + description"><span className="text-primary hover:underline font-medium cursor-pointer">Avatar + description</span></LinkTo>
+        </li>
+        <li>
+          <LinkTo kind="Design System/Internal/Menu/展示" name="多選"><span className="text-primary hover:underline font-medium cursor-pointer">多選</span></LinkTo>
+        </li>
       </ul>
-      <p className="text-fg-muted">consumer 直接消費 MenuItem 就用,不要自己 hand-craft row;若有 row 結構新需求 → 擴 MenuItem API,不另開元件(對齊 CLAUDE.md「既有 primitive 優先消費」)。</p>
+      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
   ),
 }

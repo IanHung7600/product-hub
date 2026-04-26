@@ -19,6 +19,7 @@ const config: StorybookConfig = {
     },
     "@storybook/addon-a11y",         // 無障礙檢查(對 DS 很重要)
     "@storybook/addon-docs",         // 自動生成文件
+    "@storybook/addon-links",        // 跨 story navigation(principles WhenToUse → 展示頁 link)
     // addon-html:選了元件後在右側 panel 看 rendered HTML + 套用的 className list,
     // 為 custom DS Devmode addon 的補強。
     "@whitespace/storybook-addon-html",
