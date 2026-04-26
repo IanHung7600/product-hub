@@ -34,17 +34,19 @@ const Label = ({ children, warn }: { children: React.ReactNode; warn?: boolean }
   <p className={`text-footnote leading-normal ${warn ? 'text-error font-medium' : 'text-fg-muted'}`}>{children}</p>
 )
 
-// ── 定位 ─────────────────────────────────────────────────────────────────────
+// ── UsageGuidance — 何時用 / 何時不用 / vs 近親元件 ─────────────────────────
 
-export const WhatItIs: Story = {
-  name: '定位與分界',
+export const UsageGuidance: Story = {
+  name: '使用指引',
   render: () => {
     const [align, setAlign] = useState('left')
     const [period, setPeriod] = useState('week')
     return (
-      <div>
+      <div className="flex flex-col gap-12">
+        {/* vs 近親元件 — 原 WhatItIs(定位與分界) */}
+        <div>
         <Rule
-          title="SegmentedControl 是 compact control（可以驅動下方內容變化）"
+          title="vs 近親元件 — SegmentedControl 是 compact control(可驅動下方內容變化)"
           note="常見誤解：以為 SegmentedControl 只能當 value input（選了就結束）。實際上它可以驅動下方局部內容變化——chart 維度切換、list 排序切換、form 條件欄位切換都是正當用法。關鍵是規模：它切的是局部變體（一個 chart / 一段 form section），不是整個 container"
         >
           <div>
@@ -67,7 +69,7 @@ export const WhatItIs: Story = {
         </Rule>
 
         <Rule
-          title="❌ 切的是整塊 container 結構 → 應該用 Tabs"
+          title="何時不用 / 替代元件 — 切的是整塊 container 結構 → 用 Tabs"
           note="若每個「選項」背後是一整塊獨立子頁（有自己的 toolbar / filters / table / actions），那是 Tabs 的規模不是 SegmentedControl。判斷 fallback：把它跟 Input / Button 並排違不違和？違和 → Tabs"
         >
           <div>
@@ -89,11 +91,43 @@ export const WhatItIs: Story = {
         </Rule>
 
         <Rule
-          title="❌ 單一功能 on/off → 應該用 Button pressed"
+          title="何時不用 / 替代元件 — 單一功能 on/off → 用 Button pressed"
           note="1 個 item 的 SegmentedControl 沒有選擇語意。二元狀態用 Button pressed"
         >
           <Button variant="text" pressed>已釘選</Button>
         </Rule>
+        </div>
+
+        {/* 何時不用 / 替代元件 — 原 WhenNotToUse */}
+        <div>
+        <Rule
+          title="何時不用 / 替代元件 — 5 個以上選項"
+          note="選項多 → Select / RadioGroup。SegmentedControl 視覺會過窄，label 被截斷。Stripe filter 若超過 5 選項會用 Select"
+        >
+          <Label warn>5+ 選項 → Select / RadioGroup,SegmentedControl 空間受限</Label>
+        </Rule>
+
+        <Rule
+          title="何時不用 / 替代元件 — 多選(checkboxes 語義)"
+          note="SegmentedControl 是「選恰好一個」。多選改用 Checkbox 群組。Notion 的權限欄(read / edit / owner)是 radio,不用 SegmentedControl"
+        >
+          <Label warn>多選 → CheckboxGroup,SegmentedControl 是互斥</Label>
+        </Rule>
+
+        <Rule
+          title="何時不用 / 替代元件 — 整塊 view 切換"
+          note="大規模 view 切換(各有 header / toolbar)改用 Tabs。小內容切換(chart type、list layout)才用 SegmentedControl。Figma 的頁面切換用 Tabs"
+        >
+          <Label warn>整塊 view → Tabs,SegmentedControl 只切局部內容</Label>
+        </Rule>
+
+        <Rule
+          title="何時不用 / 替代元件 — 選項需要複雜描述"
+          note="複雜選項(多行文字、icon + 說明)改用 RadioGroup。SegmentedControl 是 compact control,content 受限"
+        >
+          <Label warn>複雜選項 → RadioGroup,SegmentedControl 文字簡短</Label>
+        </Rule>
+        </div>
       </div>
     )
   },
@@ -244,37 +278,3 @@ export const FullWidthRule: Story = {
   ),
 }
 
-export const WhenNotToUse: Story = {
-  name: '何時不用',
-  render: () => (
-    <div>
-      <Rule
-        title="❌ 不用 SegmentedControl 做 5 個以上選項"
-        note="選項多 → Select / RadioGroup。SegmentedControl 視覺會過窄，label 被截斷。Stripe filter 若超過 5 選項會用 Select"
-      >
-        <Label warn>5+ 選項 → Select / RadioGroup，SegmentedControl 空間受限</Label>
-      </Rule>
-
-      <Rule
-        title="❌ 不用 SegmentedControl 做多選（checkboxes 語義）"
-        note="SegmentedControl 是「選恰好一個」。多選改用 Checkbox 群組。Notion 的權限欄（read / edit / owner）是 radio，不用 SegmentedControl"
-      >
-        <Label warn>多選 → CheckboxGroup，SegmentedControl 是互斥</Label>
-      </Rule>
-
-      <Rule
-        title="❌ 不用 SegmentedControl 做整塊 view 切換"
-        note="大規模 view 切換（各有 header / toolbar）改用 Tabs。小內容切換（chart type、list layout）才用 SegmentedControl。Figma 的頁面切換用 Tabs"
-      >
-        <Label warn>整塊 view → Tabs，SegmentedControl 只切局部內容</Label>
-      </Rule>
-
-      <Rule
-        title="❌ 不用 SegmentedControl 選項需要複雜描述"
-        note="複雜選項（多行文字、icon + 說明）改用 RadioGroup。SegmentedControl 是 compact control，content 受限"
-      >
-        <Label warn>複雜選項 → RadioGroup，SegmentedControl 文字簡短</Label>
-      </Rule>
-    </div>
-  ),
-}

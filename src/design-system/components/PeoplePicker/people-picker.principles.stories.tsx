@@ -39,40 +39,35 @@ const team: PersonValue[] = [
   { name: 'Emma Yang', avatarUrl: 'https://i.pravatar.cc/64?img=5' },
 ]
 
-// ── 定位與分界 ───────────────────────────────────────────────────────────────
+// ── UsageGuidance — 何時用 / 何時不用 / vs 近親元件(合併 WhenToUse + VsSelectRule + VsComboboxRule) ──
 
-// ── WhenToUse — 何時使用 PeoplePicker ──────────────────────
-
-export const WhenToUse: Story = {
-  name: '何時使用',
-  render: () => (
-    <div className="prose prose-sm max-w-prose">
-      <p>適合 PeoplePicker 的真實業務場景(點擊跳轉「展示」頁範例):</p>
-      <ul className="space-y-1">
-        <li>
-          <LinkTo kind="Design System/Components/PeoplePicker/展示" name="單人"><span className="text-primary hover:underline font-medium cursor-pointer">單人</span></LinkTo>
-        </li>
-        <li>
-          <LinkTo kind="Design System/Components/PeoplePicker/展示" name="多人"><span className="text-primary hover:underline font-medium cursor-pointer">多人</span></LinkTo>
-        </li>
-        <li>
-          <LinkTo kind="Design System/Components/PeoplePicker/展示" name="尺寸"><span className="text-primary hover:underline font-medium cursor-pointer">尺寸</span></LinkTo>
-        </li>
-      </ul>
-      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
-    </div>
-  ),
-}
-
-export const VsSelectRule: Story = {
-  name: '定位：選人 vs 選分類',
+export const UsageGuidance: Story = {
+  name: '使用指引',
   render: () => {
     const [assignee, setAssignee] = React.useState<PersonValue | null>(team[0])
     const [category, setCategory] = React.useState('design')
+    const [tags, setTags] = React.useState<string[]>(['design', 'typescript'])
     return (
       <div>
         <Rule
-          title="PeoplePicker — 選人員，選項有 avatar 視覺"
+          title="何時用 — 真實業務場景"
+          note="適合 PeoplePicker 的場景(點擊跳轉「展示」頁範例);判斷不確定時對照 spec.md「何時用 / 何時不用」段。"
+        >
+          <ul className="space-y-1">
+            <li>
+              <LinkTo kind="Design System/Components/PeoplePicker/展示" name="單人"><span className="text-primary hover:underline font-medium cursor-pointer">單人</span></LinkTo>
+            </li>
+            <li>
+              <LinkTo kind="Design System/Components/PeoplePicker/展示" name="多人"><span className="text-primary hover:underline font-medium cursor-pointer">多人</span></LinkTo>
+            </li>
+            <li>
+              <LinkTo kind="Design System/Components/PeoplePicker/展示" name="尺寸"><span className="text-primary hover:underline font-medium cursor-pointer">尺寸</span></LinkTo>
+            </li>
+          </ul>
+        </Rule>
+
+        <Rule
+          title="vs Select — PeoplePicker 是選人員(選項有 avatar 視覺)"
           note="assign task、email 收件人、PR reviewer、文章作者等場景:資料本質是人,使用者靠 avatar + 名字識別(不是純文字 label)。對齊 Slack people picker / Jira assignee dropdown 的 avatar-first 模式"
         >
           <div>
@@ -86,7 +81,7 @@ export const VsSelectRule: Story = {
         </Rule>
 
         <Rule
-          title="❌ 選非人員（分類 / 狀態）用 PeoplePicker"
+          title="❌ 選非人員(分類 / 狀態)用 PeoplePicker"
           note="Avatar 視覺是「選人」的獨有語意——選「優先級」、「產品類別」、「訂單狀態」這些非人員的分類用 Select / Combobox,否則 avatar 會變成無意義裝飾"
         >
           <div>
@@ -102,6 +97,23 @@ export const VsSelectRule: Story = {
             />
           </div>
           <Label warn>↑ 非人員不要用 PeoplePicker</Label>
+        </Rule>
+
+        <Rule
+          title="vs Combobox — 多選非人員 → Combobox(不是 PeoplePicker)"
+          note="Combobox 是通用多選,沒 avatar 假設。「產品標籤」、「技術 stack」這類非人員多選用 Combobox;人員多選才用 PeoplePicker"
+        >
+          <Combobox
+            options={[
+              { value: 'design', label: '設計' },
+              { value: 'typescript', label: 'TypeScript' },
+              { value: 'react', label: 'React' },
+              { value: 'figma', label: 'Figma' },
+            ]}
+            value={tags}
+            onChange={setTags}
+          />
+          <Label>↑ 技術 stack 是分類多選,不是人員,用 Combobox</Label>
         </Rule>
       </div>
     )
@@ -175,31 +187,3 @@ export const EmptyStateRule: Story = {
   ),
 }
 
-// ── 與 Combobox 的分界 ─────────────────────────────────────────────────
-
-export const VsComboboxRule: Story = {
-  name: '與 Combobox 的分界（多選非人員）',
-  render: () => {
-    const [tags, setTags] = React.useState<string[]>(['design', 'typescript'])
-    return (
-      <div>
-        <Rule
-          title="多選非人員 → Combobox（不是 PeoplePicker）"
-          note="Combobox 是通用多選,沒 avatar 假設。「產品標籤」、「技術 stack」這類非人員多選用 Combobox;人員多選才用 PeoplePicker"
-        >
-          <Combobox
-            options={[
-              { value: 'design', label: '設計' },
-              { value: 'typescript', label: 'TypeScript' },
-              { value: 'react', label: 'React' },
-              { value: 'figma', label: 'Figma' },
-            ]}
-            value={tags}
-            onChange={setTags}
-          />
-          <Label>↑ 技術 stack 是分類多選,不是人員,用 Combobox</Label>
-        </Rule>
-      </div>
-    )
-  },
-}

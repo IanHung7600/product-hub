@@ -31,12 +31,18 @@ const Label = ({ children, warn }: { children: React.ReactNode; warn?: boolean }
 
 // ── 定位與分界 ─────────────────────────────────────────────────────────────
 
-// ── WhenToUse — 何時使用 LinkInput ──────────────────────
+// ── UsageGuidance — 整合何時用 / 何時不用 / vs 近親(Polaris/Material/Ant 共識)
+// 合併自舊 WhenToUse / VsInputRule(2026-04-26 v3 canonical)
 
-export const WhenToUse: Story = {
-  name: '何時使用',
-  render: () => (
-    <div className="prose prose-sm max-w-prose">
+export const UsageGuidance: Story = {
+  name: '使用指引',
+  render: () => {
+    const [website, setWebsite] = React.useState('https://github.com')
+    const [slug, setSlug] = React.useState('my-design-system')
+    return (
+    <div className="flex flex-col gap-12">
+      {/* 何時用 — 原 WhenToUse */}
+      <div className="prose prose-sm max-w-prose">
       <p>適合 LinkInput 的真實業務場景(點擊跳轉「展示」頁範例):</p>
       <ul className="space-y-1">
         <li>
@@ -57,15 +63,8 @@ export const WhenToUse: Story = {
       </ul>
       <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
-  ),
-}
 
-export const VsInputRule: Story = {
-  name: '定位：URL 儲存 + 可點擊開啟',
-  render: () => {
-    const [website, setWebsite] = React.useState('https://github.com')
-    const [slug, setSlug] = React.useState('my-design-system')
-    return (
+      {/* vs 近親 — 原 VsInputRule */}
       <div>
         <Rule
           title="LinkInput — 有合法 URL 時變藍色連結，點擊開啟新分頁"
@@ -92,6 +91,7 @@ export const VsInputRule: Story = {
           </div>
         </Rule>
       </div>
+    </div>
     )
   },
 }

@@ -35,7 +35,10 @@ const Label = ({ children, warn }: { children: React.ReactNode; warn?: boolean }
 
 export const UsageGuidance: Story = {
   name: '使用指引',
-  render: () => (
+  render: () => {
+    const [bluetooth, setBluetooth] = React.useState(true)
+    const [agreeTerms, setAgreeTerms] = React.useState(false)
+    return (
     <div className="flex flex-col gap-12">
       {/* 何時用 — 原 WhenToUse */}
       <div className="prose prose-sm max-w-prose">
@@ -47,6 +50,50 @@ export const UsageGuidance: Story = {
       </ul>
       <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
+
+      {/* vs 近親元件 — 原 VsCheckboxRule */}
+      <div>
+        <Rule
+          title="vs 近親元件 — Switch 是即時套用的布林開關 (sweet spot)"
+          note="切換即生效——物理開關類比(牆上 light switch、iPhone settings)。使用者按下那刻 Bluetooth 就開了,不經任何 submit 流程"
+        >
+          <div className="border border-border rounded-lg p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-body font-medium">Bluetooth</div>
+                <div className="text-caption text-fg-muted">切換立刻開 / 關</div>
+              </div>
+              <Switch checked={bluetooth} onCheckedChange={setBluetooth} />
+            </div>
+          </div>
+          <Label>↑ 獨立 inline control,無 submit / cancel 流程</Label>
+        </Rule>
+
+        <Rule
+          title="何時不用 / 替代元件 — Form 內的同意 / 勾選用 Checkbox"
+          note="「我同意服務條款」是「勾選 → 送出 → 法律成立」的書面行為。Switch 的物理開關隱喻暗示「我打開了接受條款這個功能」——心智錯位且違反約定俗成(全球沒有 form 用 Switch 同意條款)"
+        >
+          <div className="border border-border rounded-lg p-4 space-y-3">
+            <Checkbox
+              label="我同意服務條款與隱私政策"
+              checked={agreeTerms}
+              onCheckedChange={(v) => setAgreeTerms(v === true)}
+            />
+            <div className="flex gap-2 pt-2">
+              <Button variant="primary">送出</Button>
+              <Button variant="tertiary">取消</Button>
+            </div>
+          </div>
+          <Label>↑ Form 內同意條款用 Checkbox,隨 submit 才成立</Label>
+        </Rule>
+
+        <Rule
+          title="vs 近親元件 — 判斷法:「旁邊有 submit / cancel button 嗎?」"
+          note="有 → Checkbox(form 流程、值隨 submit 送出);沒有,是獨立 inline control → Switch(切換即生效)"
+        >
+          <Label>完整三角度對照 SSOT 在 checkbox.spec.md「與 Switch 的分界」</Label>
+        </Rule>
+      </div>
 
       {/* vs 近親 — ReadonlyVsDisabledRule — 原 ReadonlyVsDisabledRule */}
       <div>
@@ -74,57 +121,6 @@ export const UsageGuidance: Story = {
       </Rule>
     </div>
     </div>
-  ),
-}
-
-export const VsCheckboxRule: Story = {
-  name: '與 Checkbox 的分界',
-  render: () => {
-    const [bluetooth, setBluetooth] = React.useState(true)
-    const [agreeTerms, setAgreeTerms] = React.useState(false)
-    return (
-      <div>
-        <Rule
-          title="Switch 的 sweet spot — 即時套用的布林開關"
-          note="切換即生效——物理開關類比(牆上 light switch、iPhone settings)。使用者按下那刻 Bluetooth 就開了,不經任何 submit 流程"
-        >
-          <div className="border border-border rounded-lg p-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-body font-medium">Bluetooth</div>
-                <div className="text-caption text-fg-muted">切換立刻開 / 關</div>
-              </div>
-              <Switch checked={bluetooth} onCheckedChange={setBluetooth} />
-            </div>
-          </div>
-          <Label>↑ 獨立 inline control,無 submit / cancel 流程</Label>
-        </Rule>
-
-        <Rule
-          title="❌ Form 內的同意 / 勾選:用 Checkbox"
-          note="「我同意服務條款」是「勾選 → 送出 → 法律成立」的書面行為。Switch 的物理開關隱喻暗示「我打開了接受條款這個功能」——心智錯位且違反約定俗成(全球沒有 form 用 Switch 同意條款)"
-        >
-          <div className="border border-border rounded-lg p-4 space-y-3">
-            <Checkbox
-              label="我同意服務條款與隱私政策"
-              checked={agreeTerms}
-              onCheckedChange={(v) => setAgreeTerms(v === true)}
-            />
-            <div className="flex gap-2 pt-2">
-              <Button variant="primary">送出</Button>
-              <Button variant="tertiary">取消</Button>
-            </div>
-          </div>
-          <Label>↑ Form 內同意條款用 Checkbox,隨 submit 才成立</Label>
-        </Rule>
-
-        <Rule
-          title="判斷法:「旁邊有 submit / cancel button 嗎?」"
-          note="有 → Checkbox(form 流程、值隨 submit 送出);沒有,是獨立 inline control → Switch(切換即生效)"
-        >
-          <Label>完整三角度對照 SSOT 在 checkbox.spec.md「與 Switch 的分界」</Label>
-        </Rule>
-      </div>
     )
   },
 }

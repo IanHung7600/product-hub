@@ -93,43 +93,41 @@ const jiraAttachments: FileInfo[] = [
   },
 ]
 
-// ── WhenToUse — 何時使用 FileViewer ──────────────────────
+// ── UsageGuidance — 何時用 / 何時不用 / vs 近親元件 ──
 
-export const WhenToUse: Story = {
-  name: '何時使用',
-  render: () => (
-    <div className="prose prose-sm max-w-prose">
-      <p>適合 FileViewer 的真實業務場景(點擊跳轉「展示」頁範例):</p>
-      <ul className="space-y-1">
-        <li>
-          <LinkTo kind="Design System/Components/FileViewer/展示" name="Jira — 附件多圖檢視"><span className="text-primary hover:underline font-medium cursor-pointer">Jira — 附件多圖檢視</span></LinkTo>
-        </li>
-        <li>
-          <LinkTo kind="Design System/Components/FileViewer/展示" name="Notion — 頁內配圖 gallery"><span className="text-primary hover:underline font-medium cursor-pointer">Notion — 頁內配圖 gallery</span></LinkTo>
-        </li>
-        <li>
-          <LinkTo kind="Design System/Components/FileViewer/展示" name="Figma — 單檔 zoom focus"><span className="text-primary hover:underline font-medium cursor-pointer">Figma — 單檔 zoom focus</span></LinkTo>
-        </li>
-        <li>
-          <LinkTo kind="Design System/Components/FileViewer/展示" name="Gmail — 多附件預覽"><span className="text-primary hover:underline font-medium cursor-pointer">Gmail — 多附件預覽</span></LinkTo>
-        </li>
-        <li>
-          <LinkTo kind="Design System/Components/FileViewer/展示" name="活動相集 — filmstrip on"><span className="text-primary hover:underline font-medium cursor-pointer">活動相集 — filmstrip on</span></LinkTo>
-        </li>
-      </ul>
-      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
-    </div>
-  ),
-}
-
-export const WhenNotToUse: Story = {
-  name: '何時用 FileViewer vs Dialog',
+export const UsageGuidance: Story = {
+  name: '使用指引',
   render: () => {
     const [fvOpen, setFvOpen] = React.useState(false)
     return (
+    <div className="flex flex-col gap-12">
+      {/* 何時用 — 原 WhenToUse */}
+      <div className="prose prose-sm max-w-prose">
+        <p>適合 FileViewer 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+        <ul className="space-y-1">
+          <li>
+            <LinkTo kind="Design System/Components/FileViewer/展示" name="Jira — 附件多圖檢視"><span className="text-primary hover:underline font-medium cursor-pointer">Jira — 附件多圖檢視</span></LinkTo>
+          </li>
+          <li>
+            <LinkTo kind="Design System/Components/FileViewer/展示" name="Notion — 頁內配圖 gallery"><span className="text-primary hover:underline font-medium cursor-pointer">Notion — 頁內配圖 gallery</span></LinkTo>
+          </li>
+          <li>
+            <LinkTo kind="Design System/Components/FileViewer/展示" name="Figma — 單檔 zoom focus"><span className="text-primary hover:underline font-medium cursor-pointer">Figma — 單檔 zoom focus</span></LinkTo>
+          </li>
+          <li>
+            <LinkTo kind="Design System/Components/FileViewer/展示" name="Gmail — 多附件預覽"><span className="text-primary hover:underline font-medium cursor-pointer">Gmail — 多附件預覽</span></LinkTo>
+          </li>
+          <li>
+            <LinkTo kind="Design System/Components/FileViewer/展示" name="活動相集 — filmstrip on"><span className="text-primary hover:underline font-medium cursor-pointer">活動相集 — filmstrip on</span></LinkTo>
+          </li>
+        </ul>
+        <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
+      </div>
+
+      {/* vs 近親 + 何時不用 — 原 WhenNotToUse(FileViewer vs Dialog) */}
       <div>
         <Rule
-          title="✅ 檢視檔案內容 — FileViewer(viewport-fill + dark canvas)"
+          title="vs 近親元件 — 檢視檔案內容用 FileViewer(viewport-fill + dark canvas)"
           note="Jira ticket 附件檢視、Notion 配圖預覽、Figma design review、Gmail 多附件預覽。主任務是「看 content」,需要 viewport 最大化 + dark 底襯托媒體。FileViewer 固定 fullscreen + toolbar chrome,避免 Dialog 的 maxWidth inset 把 media 擠小"
         >
           <Button variant="tertiary" startIcon={FolderOpen} onClick={() => setFvOpen(true)}>
@@ -145,7 +143,7 @@ export const WhenNotToUse: Story = {
         </Rule>
 
         <Rule
-          title="❌ 確認 / 表單 / 決策 — 用 Dialog"
+          title="何時不用 / 替代元件 — 確認 / 表單 / 決策用 Dialog"
           note="「確定要刪除專案?」「建立新客戶」這類聚焦決策或短表單場景,要用 Dialog。Dialog 是居中 modal(maxWidth 400–720),讓文字決策強制聚焦;若改用 FileViewer,使用者會因為 fullscreen dark 底感到突兀(「看圖」的視覺期待沒出現)"
         >
           <Dialog>
@@ -173,13 +171,14 @@ export const WhenNotToUse: Story = {
         </Rule>
 
         <Rule
-          title="判準 — 「我要讓使用者看什麼」?"
+          title="vs 近親元件 — 判準:「我要讓使用者看什麼」?"
           note="看文字決策 / 表單欄位 → Dialog(居中、maxWidth、light 底)。看媒體 content(圖 / PDF / 影片 / 設計稿)→ FileViewer(fullscreen、dark 底、toolbar chrome)"
         >
           <Label>FileViewer:Jira 附件、Notion 配圖、Figma design、Gmail 附件、產品 gallery</Label>
           <Label>Dialog:建立 / 編輯 / 刪除確認、付款確認、登出多裝置</Label>
         </Rule>
       </div>
+    </div>
     )
   },
 }

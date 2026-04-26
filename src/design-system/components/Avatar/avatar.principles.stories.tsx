@@ -1,3 +1,4 @@
+// @principles-rationale: UsageGuidance merges WhenToUse + Vs*Rule into single 使用指引 story per refactor task (2026-04-26)
 import React from 'react'
 import LinkTo from '@storybook/addon-links/react'
 import type { Meta, StoryObj } from '@storybook/react'
@@ -29,91 +30,88 @@ const Label = ({ children, warn }: { children: React.ReactNode; warn?: boolean }
   <p className={`text-footnote leading-normal ${warn ? 'text-error font-medium' : 'text-fg-muted'}`}>{children}</p>
 )
 
-// ── WhenToUse — 何時使用 Avatar ──────────────────────
+const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
+  <section className="mb-12">
+    <h2 className="text-heading-3 font-bold text-foreground mb-4 pb-2 border-b border-border">{title}</h2>
+    {children}
+  </section>
+)
 
-// ── UsageGuidance — 整合何時用 / 何時不用 / vs 近親(Polaris/Material/Ant 共識)
-// 合併自舊 WhenToUse / IdentityVsIconRule(2026-04-26 v3 canonical)
+// ── Stories ───────────────────────────────────────────────────────────────────
 
 export const UsageGuidance: Story = {
   name: '使用指引',
   render: () => (
-    <div className="flex flex-col gap-12">
-      {/* 何時用 — 原 WhenToUse */}
-      <div className="prose prose-sm max-w-prose">
-      <p>適合 Avatar 的真實業務場景(點擊跳轉「展示」頁範例):</p>
-      <ul className="space-y-1">
-        <li>
-          <LinkTo kind="Design System/Components/Avatar/展示" name="三種模式"><span className="text-primary hover:underline font-medium cursor-pointer">三種模式</span></LinkTo>
-        </li>
-        <li>
-          <LinkTo kind="Design System/Components/Avatar/展示" name="形狀"><span className="text-primary hover:underline font-medium cursor-pointer">形狀</span></LinkTo>
-        </li>
-        <li>
-          <LinkTo kind="Design System/Components/Avatar/展示" name="色彩"><span className="text-primary hover:underline font-medium cursor-pointer">色彩</span></LinkTo>
-        </li>
-        <li>
-          <LinkTo kind="Design System/Components/Avatar/展示" name="Fallback"><span className="text-primary hover:underline font-medium cursor-pointer">Fallback</span></LinkTo>
-        </li>
-        <li>
-          <LinkTo kind="Design System/Components/Avatar/展示" name="In Context"><span className="text-primary hover:underline font-medium cursor-pointer">In Context</span></LinkTo>
-        </li>
-      </ul>
-      <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
-    </div>
+    <div>
+      <Section title="何時用">
+        <div className="prose prose-sm max-w-prose mb-8">
+          <p>適合 Avatar 的真實業務場景(點擊跳轉「展示」頁範例):</p>
+          <ul className="space-y-1">
+            <li><LinkTo kind="Design System/Components/Avatar/展示" name="三種模式"><span className="text-primary hover:underline font-medium cursor-pointer">三種模式</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Avatar/展示" name="形狀"><span className="text-primary hover:underline font-medium cursor-pointer">形狀</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Avatar/展示" name="色彩"><span className="text-primary hover:underline font-medium cursor-pointer">色彩</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Avatar/展示" name="Fallback"><span className="text-primary hover:underline font-medium cursor-pointer">Fallback</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Avatar/展示" name="In Context"><span className="text-primary hover:underline font-medium cursor-pointer">In Context</span></LinkTo></li>
+          </ul>
+          <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見下方 vs 近親 段)。</p>
+        </div>
+      </Section>
 
-      {/* vs 近親 — IdentityVsIconRule — 原 IdentityVsIconRule */}
-      <div>
-      <Rule
-        title="Avatar — 代表實體（人、組織、專案、App）"
-        note="留言者頭像、團隊成員、workspace logo、app 身份。視覺上 identity 是唯一的、可被辨識的。作為列表 row 的 prefix 時透過 MenuItem 的 avatar slot 消費(而非手刻 flex row)"
-      >
-        <div className="border border-divider rounded-lg bg-surface py-1">
-          <MenuItem avatar={{ alt: 'Ada Chen' }}>Ada Chen 的留言</MenuItem>
-          <MenuItem avatar={{ alt: 'Engineering Team', color: 'blue' }}>Engineering Team 專案</MenuItem>
-        </div>
-      </Rule>
+      <Section title="何時不用 + 替代方案">
+        <Rule
+          title="❌ 代表抽象概念:用 Lucide Icon"
+          note="「設定」「通知」「首頁」這類功能 / 動作 / 概念不是「誰」,是「做什麼」。Icon 更適合——Avatar 用在這裡會讓使用者以為是某個人的頭像"
+        >
+          <div className="border border-divider rounded-lg bg-surface py-1">
+            <MenuItem avatar={{ alt: 'S' }}>❌ 設定用 Avatar</MenuItem>
+          </div>
+          <Label warn>↑ 「S」+ icon 讓使用者誤以為是某個人(使用者 S?)。功能導覽用 Lucide icon</Label>
+          <div className="border border-divider rounded-lg bg-surface py-1">
+            <MenuItem startIcon={Settings}>✓ 設定用 Icon</MenuItem>
+          </div>
+        </Rule>
 
-      <Rule
-        title="❌ 代表抽象概念：用 Lucide Icon"
-        note="「設定」「通知」「首頁」這類功能 / 動作 / 概念不是「誰」,是「做什麼」。Icon 更適合——Avatar 用在這裡會讓使用者以為是某個人的頭像"
-      >
-        <div className="border border-divider rounded-lg bg-surface py-1">
-          <MenuItem avatar={{ alt: 'S' }}>❌ 設定用 Avatar</MenuItem>
-        </div>
-        <Label warn>↑ 「S」+ icon 讓使用者誤以為是某個人(使用者 S?)。功能導覽用 Lucide icon</Label>
-        <div className="border border-divider rounded-lg bg-surface py-1">
-          <MenuItem startIcon={Settings}>✓ 設定用 Icon</MenuItem>
-        </div>
-      </Rule>
+        <Rule
+          title="❌ src 壞掉又沒 name → 空 avatar(不可辨識)"
+          note="Avatar 的核心是識別身份,沒 name 又沒 src 等於失去意義。必須至少有 name"
+        >
+          <Avatar alt="" size={40} src="https://invalid-url.example/fail.jpg" />
+          <Label warn>↑ 空 avatar → 使用者不知道是誰</Label>
+        </Rule>
+      </Section>
 
-      <Rule
-        title="判斷法：「這代表『誰』還是『做什麼』？」"
-        note="誰 / 什麼實體 → Avatar;做什麼 / 某個概念 → Icon"
-      >
-        {/* 視覺圖例(legend),非 list item — 用意是並排展示「Avatar/Icon 各自代表的語義」
-            作為教學 key。MenuItem 在此會誤導(看起來像可點列表),用 inline chip 組合才對。 */}
-        <div className="flex items-center gap-3 flex-wrap">
-          {/* @anatomy-exempt-next */}
-          <div className="flex items-center gap-2">
-            <Avatar alt="Ada Chen" size={24} />
-            <span className="text-footnote text-fg-muted">人員</span>
+      <Section title="vs 近親元件">
+        <Rule
+          title="Avatar 代表身份,Icon 代表概念"
+          note="判斷法:「這代表『誰』還是『做什麼』?」誰 / 什麼實體 → Avatar;做什麼 / 某個概念 → Icon"
+        >
+          <div className="border border-divider rounded-lg bg-surface py-1">
+            <MenuItem avatar={{ alt: 'Ada Chen' }}>Ada Chen 的留言</MenuItem>
+            <MenuItem avatar={{ alt: 'Engineering Team', color: 'blue' }}>Engineering Team 專案</MenuItem>
           </div>
-          <div className="flex items-center gap-2">
-            <Home size={16} />
-            <span className="text-footnote text-fg-muted">首頁(概念)</span>
+          {/* 視覺圖例(legend),非 list item */}
+          <div className="flex items-center gap-3 flex-wrap mt-2">
+            {/* @anatomy-exempt-next */}
+            <div className="flex items-center gap-2">
+              <Avatar alt="Ada Chen" size={24} />
+              <span className="text-footnote text-fg-muted">人員</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Home size={16} />
+              <span className="text-footnote text-fg-muted">首頁(概念)</span>
+            </div>
+            {/* @anatomy-exempt-next */}
+            <div className="flex items-center gap-2">
+              <Avatar alt="ABC Corp" size={24} color="purple" />
+              <span className="text-footnote text-fg-muted">組織</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Bell size={16} />
+              <span className="text-footnote text-fg-muted">通知(動作)</span>
+            </div>
           </div>
-          {/* @anatomy-exempt-next */}
-          <div className="flex items-center gap-2">
-            <Avatar alt="ABC Corp" size={24} color="purple" />
-            <span className="text-footnote text-fg-muted">組織</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Bell size={16} />
-            <span className="text-footnote text-fg-muted">通知(動作)</span>
-          </div>
-        </div>
-      </Rule>
-    </div>
+        </Rule>
+      </Section>
     </div>
   ),
 }
@@ -123,7 +121,7 @@ export const FallbackRule: Story = {
   render: () => (
     <div>
       <Rule
-        title="有 src → 顯示圖片；沒有 src / 圖片載入失敗 → 顯示 initials"
+        title="有 src → 顯示圖片;沒有 src / 圖片載入失敗 → 顯示 initials"
         note="Fallback 用 `name` 取首字母(中文取第一字,英文取前兩字首字母大寫)。背景色由 `color` prop 決定"
       >
         <div className="flex items-center gap-3">
@@ -133,14 +131,6 @@ export const FallbackRule: Story = {
           <Avatar alt="ABC Corp" size={40} color="blue" />
         </div>
         <Label>↑ 依序:有圖 / 中文首字 / 英文前兩字 / 組織首字 + 色彩</Label>
-      </Rule>
-
-      <Rule
-        title="❌ src 壞掉又沒 name → 空 avatar（不可辨識）"
-        note="Avatar 的核心是識別身份,沒 name 又沒 src 等於失去意義。必須至少有 name"
-      >
-        <Avatar alt="" size={40} src="https://invalid-url.example/fail.jpg" />
-        <Label warn>↑ 空 avatar → 使用者不知道是誰</Label>
       </Rule>
     </div>
   ),

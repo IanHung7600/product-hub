@@ -29,12 +29,18 @@ const Label = ({ children, warn }: { children: React.ReactNode; warn?: boolean }
   <p className={`text-footnote leading-normal ${warn ? 'text-error font-medium' : 'text-fg-muted'}`}>{children}</p>
 )
 
-// ── WhenToUse — 何時使用 Slider ──────────────────────
+// ── UsageGuidance — 整合何時用 / 何時不用 / vs 近親(Polaris/Material/Ant 共識)
+// 合併自舊 WhenToUse / WhenNotToUse(2026-04-26 v3 canonical)
 
-export const WhenToUse: Story = {
-  name: '何時使用',
-  render: () => (
-    <div className="prose prose-sm max-w-prose">
+export const UsageGuidance: Story = {
+  name: '使用指引',
+  render: () => {
+    const [volume, setVolume] = React.useState([70])
+    const [price, setPrice] = React.useState([500, 3500])
+    return (
+    <div className="flex flex-col gap-12">
+      {/* 何時用 — 原 WhenToUse */}
+      <div className="prose prose-sm max-w-prose">
       <p>適合 Slider 的真實業務場景(點擊跳轉「展示」頁範例):</p>
       <ul className="space-y-1">
         <li>
@@ -52,15 +58,8 @@ export const WhenToUse: Story = {
       </ul>
       <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>
-  ),
-}
 
-export const WhenNotToUse: Story = {
-  name: '何時用 Slider vs 近親元件',
-  render: () => {
-    const [volume, setVolume] = React.useState([70])
-    const [price, setPrice] = React.useState([500, 3500])
-    return (
+      {/* 何時不用 / 替代元件 — 原 WhenNotToUse */}
       <div>
         <Rule
           title="Slider 的 sweet spot — 連續感受值 + 使用者在意「相對位置」勝過「精確數字」"
@@ -122,6 +121,7 @@ export const WhenNotToUse: Story = {
           </div>
         </Rule>
       </div>
+    </div>
     )
   },
 }

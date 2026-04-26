@@ -78,22 +78,22 @@ export const UsageGuidance: Story = {
       <div>
         <Rule
           title="Combobox 的 sweet spot — 多選 + 空間受限 + 選項數 6+"
-          note="Tag / 分類 / 協作成員 / 通知訂閱。使用者快速加選、移除,label 自帶語意不需描述"
+          note="Tag / 分類 / 協作成員 / 通知訂閱。使用者快速加選、移除，label 自帶語意不需描述"
         >
           <Combobox options={categoryOptions} value={tags} onChange={setTags} />
         </Rule>
 
         <Rule
           title="❌ 單選:用 Select"
-          note="Combobox 永遠多選——單選塞進來使用者每次要手動先移除舊 Tag 再選新的,多餘的互動"
+          note="Combobox 永遠多選——單選塞進來使用者每次要手動先移除舊 Tag 再選新的，多餘的互動"
         >
           <Combobox options={categoryOptions} value={['electronics']} onChange={() => {}} />
-          <Label warn>↑ 只選一個 electronics → 應該用 Select,一次點擊完成切換</Label>
+          <Label warn>↑ 只選一個 electronics → 應該用 Select，一次點擊完成切換</Label>
         </Rule>
 
         <Rule
           title="❌ 2-5 個選項且需要全可見 + description:用 Checkbox stack"
-          note="權限授予、條款勾選、通知類型選擇——選項需要完整閱讀(含描述),決策後同意。Combobox 藏選項強迫多次點擊對比。完整對照見 select.spec.md「與 RadioGroup 的分界」(Combobox vs Checkbox stack 同構)"
+          note="權限授予、條款勾選、通知類型選擇——選項需要完整閱讀（含描述），決策後同意。Combobox 藏選項強迫多次點擊對比。完整對照見 select.spec.md「與 RadioGroup 的分界」(Combobox vs Checkbox stack 同構)"
         >
           <Combobox
             options={[
@@ -108,7 +108,7 @@ export const UsageGuidance: Story = {
         </Rule>
 
         <Rule
-          title="❌ 階層結構(父/子節點):用 TreeView"
+          title="❌ 階層結構（父/子節點）:用 TreeView"
           note="Combobox 是平面選項。部門 / 權限 / 資料夾等樹狀結構需要 TreeView 的展開收合互動"
         >
           <Combobox
