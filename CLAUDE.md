@@ -31,7 +31,7 @@
 
 ## 行數預算(Anthropic 對齊)
 
-CLAUDE.md ≤ 400(Anthropic 推薦 thresholds)/ SKILL ≤ 250 / spec ≤ 300(foundational SSOT 例外 ≤ 800-1200) / memory ≤ 100。
+CLAUDE.md target ≤ 200(Anthropic best-practice)/ transition ≤ 400 / hard cap 800。SKILL ≤ 250 / spec ≤ 300(foundational SSOT 例外 ≤ 800-1200)/ memory ≤ 100。
 
 ## Anti-bloat L1-L3
 
