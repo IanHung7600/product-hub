@@ -951,3 +951,32 @@ deviation ✓: {component} `{trait}` 在 spec.md L{n} 標 N/A,因 {rationale}
 ```
 
 End: `N components scanned, M with traits, K P0 violations, J P2 pending migration, I retire candidates`. Under 400 words. Don't fix.
+
+## 30. Principles canonical compliance(2026-04-26 — Polaris/Carbon/Ant aligned)
+
+**Type**: Absolute
+**Canonical source**: `.claude/skills/story-writing/references/category-templates.md`「Principles canonical」節
+**Rationale home**: 元件 spec.md(若需 scope-N/A 例外)
+
+Working directory: /Users/chenqiren/Library/CloudStorage/GoogleDrive-qijenchen@gmail.com/我的雲端硬碟/my-project
+
+對 `src/design-system/components/*/` 每元件:
+
+1. 讀 `*.principles.stories.tsx` 列 `export const X` 名稱
+2. 計算 universal core 命中數:
+   - `WhenToUse`(或 legacy `UsageScenarioRule` / `WhatItIs`)→ +1
+   - `WhenNotToUse`(或 legacy `Forbidden*` / `Donts` / `Pitfalls` / `Prohibitions` / `NonGoals` / `VisualDonts`)→ +1
+   - 任一 `Vs*Rule`(`VsTabsRule` / `XVsYRule` 等)→ +1
+   - `ContentGuidelines` → +1
+3. 命中 < 2 → P0 violation(universal core 不足)
+4. 任一 deprecated naming 命中 → P1 rename target(列出建議新名 `WhenNotToUse`)
+5. 多餘 stories → 過 earn-existence 2-test(對齊 Dim 24/25)→ retire 候選
+
+Report format:
+```
+[P0] {component}({file}):universal core only N/2 — add WhenToUse / WhenNotToUse / Vs*Rule / ContentGuidelines
+[P1] {component}:deprecated naming `{OldName}` → rename `WhenNotToUse`
+deviation ✓: {component} 在 spec.md 邊界案例 scope 標 N/A,因 {rationale}
+```
+
+End: `N components scanned, K P0 (universal core <2), J P1 (deprecated naming), I retire candidates`. Under 400 words. Don't fix.

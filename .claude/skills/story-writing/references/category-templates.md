@@ -104,3 +104,61 @@ v1 7 categories(A 視覺 variant / B field control / C selection / D structural 
 - `/design-system-audit` Dim 29 — periodic verify
 - `/new-component` Phase 5 — 新元件 trait-based scaffold
 - `scripts/compile-stories.mjs` — runtime trait → required stories check
+
+# Principles canonical(設計原則層,2026-04-26 加)
+
+第三層 stories `{name}.principles.stories.tsx` 的 canonical structure。對齊 M8 benchmark(Polaris / Carbon / Ant 3 家 verifiable):
+
+## 世界級對照
+
+3 種哲學:
+- **Carbon**(超嚴謹):~10 H2(`Overview / Formatting / Content / Universal behaviors / Modifiers / Related`)
+- **Polaris**(中等):4 H2(`Best practices / Content guidelines / Related components / Accessibility`)
+- **Ant**(極薄):1 H2(`When To Use`)
+
+採 **Polaris-aligned 中等**(避免 Carbon-style 過細 + Ant-style 過薄)+ 接受既有 project naming(`VsXRule` 對齊 Carbon「X versus Y」)。
+
+## Universal core(每元件 ≥ 2)
+
+| Story name(canonical)| 教什麼 | 世界級 anchor |
+|---------------------|--------|---------------|
+| `WhenToUse` | 真實場景何時該用此元件(Jira/Stripe/Notion 1-3 個)| Carbon `When to use` H3 + Ant `When To Use` H2 + Polaris intro |
+| `WhenNotToUse` | 反 pattern 何時不該用 + 該用什麼替代 | Carbon `When not to use` H3 |
+| `Vs{Sibling}Rule` | 跟近親元件分界(若 spec.md「近親」段有列)| Carbon `X versus Y` H3 + Polaris `Related components` |
+| `ContentGuidelines` | 文案 do/don't(若元件 render 使用者文案,如 Modal title / Button label)| Polaris `Content guidelines` H2 + Carbon `Content` H2 |
+
+**規則**:每元件至少 2 個。**全 4 個必有** = over-engineer(Polaris 4/4,但 Carbon Ant 都不到);**少於 2 個** = principles 太薄無教學價值。
+
+## Canonical naming(取代既有 drift 變體)
+
+| 既有 drift 命名 | Canonical | Rationale |
+|---------------|-----------|-----------|
+| `Forbidden*` / `Donts` / `Pitfalls` / `Prohibitions` / `NonGoals` / `VisualDonts` | **`WhenNotToUse`** | Polaris/Carbon 共識用「When NOT to use」semantics |
+| `UsageScenarioRule` / `WhatItIs` / `MvpScope` | **`WhenToUse`** | 對齊 Polaris/Carbon/Ant 三家 |
+| `Vs{X}Rule`(`VsTabsRule` / `VsCheckboxRule` 等) | **保留**(對齊 Carbon `versus` idiom)| 已是世界級 |
+| `{Topic}Rule`(其他 component-specific) | **保留**(過 earn-existence 即可)| 可選 component-specific 規則 |
+
+## 可選 stories(過 earn-existence)
+
+- `VariantDecision` — 元件 ≥ 3 variants 各自 semantic 不同(Button / Banner / Notification)時可加
+- `CompositionRules` — 元件可 non-trivial 組合(Field family / ActionBar)時可加
+- `AccessibilityNotes` — 非 mechanical a11y(mechanical 留 anatomy)
+- 其他 component-specific `XRule` — 過 earn-existence 2-test
+
+## 跟 anatomy / showcase 分權
+
+| 該放 principles | 該放 anatomy | 該放 showcase |
+|-----------------|--------------|---------------|
+| Do/don't 視覺對照 | Token / size matrix | 真實場景 + variant grid |
+| 跟近親元件比較 | Inspector 數值 | AllVariants / AllSizes |
+| 何時用 / 不該用 | StateBehavior 視覺 | Disabled / Loading state demo |
+| 文案 / 內容 guidelines | ColorMatrix | 業務 scenario 範例 |
+
+**禁止**:do/don't 對照放 showcase(屬 principles)/ token table 放 showcase(屬 anatomy)/ 純 variant grid 無 rule 放 principles(屬 showcase)。
+
+## 強制機制
+
+- **Hook** `check_principles_canonical.sh`:PreToolUse 攔不符 ≥ 2 universal core
+- **Audit Dim 30**:periodic verify
+- **`/new-component` Phase 5.3**:scaffold 4 universal stories template
+
