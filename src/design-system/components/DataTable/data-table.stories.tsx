@@ -5,6 +5,7 @@ import { Pencil, Trash2, MoreVertical } from 'lucide-react'
 import { DataTable } from './data-table'
 import { Button } from '@/design-system/components/Button/button'
 import { Empty } from '@/design-system/components/Empty/empty'
+import { BulkActionBar } from '@/design-system/components/BulkActionBar/bulk-action-bar'
 import './column-types' // ColumnMeta declaration merging
 
 // ── Sample Data ──────────────────────────────────────────────────────────────
@@ -382,6 +383,126 @@ export const VirtualScroll: Story = {
         height="500px"
         overscan={10}
       />
+    )
+  },
+}
+
+/* ── L2 Selection — Top inline replace pattern(table-as-page,Linear / Notion 風)── */
+export const BulkActionsTopReplace: Story = {
+  name: 'L2 Selection — Top toolbar replace',
+  render: () => {
+    const [selection, setSelection] = React.useState<string[]>([])
+    return (
+      <div className="flex flex-col gap-2">
+        {/* Top:常駐 toolbar OR BulkActionBar(視 selection 切換) */}
+        {selection.length === 0 ? (
+          <div className="flex items-center justify-between border border-border rounded-md px-3 py-2 bg-surface">
+            <div className="text-body text-fg-secondary">3 商品 · 篩選 / 搜尋(consumer 自組 toolbar)</div>
+            <Button variant="primary" size="sm">+ 新增商品</Button>
+          </div>
+        ) : (
+          <div className="border border-border rounded-md">
+            <BulkActionBar
+              selection={selection}
+              onClear={() => setSelection([])}
+              actions={
+                <>
+                  <Button variant="tertiary" size="sm" startIcon={Pencil}>編輯</Button>
+                  <Button variant="tertiary" size="sm" startIcon={Trash2} danger>刪除</Button>
+                </>
+              }
+            />
+          </div>
+        )}
+        {/* DataTable 帶 selection */}
+        <DataTable
+          columns={baseColumns}
+          data={sampleData}
+          height="auto"
+          selectable
+          selection={selection}
+          onSelectionChange={setSelection}
+          getRowId={(row) => row.sku}
+          getRowAriaLabel={(row) => `Select ${row.sku}`}
+        />
+      </div>
+    )
+  },
+}
+
+/* ── L2 Selection — Bottom footer pattern(table-in-form,file picker 風)── */
+export const BulkActionsFooterForm: Story = {
+  name: 'L2 Selection — Bottom footer form',
+  render: () => {
+    const [selection, setSelection] = React.useState<string[]>(['PRD-001', 'PRD-002', 'PRD-003'])
+    const [datasetAllSelected, setDatasetAllSelected] = React.useState(false)
+    const TOTAL = 5370
+    return (
+      <div className="flex flex-col border border-border rounded-md max-w-4xl">
+        {/* Table content(無 toolbar,純資料展示)*/}
+        <DataTable
+          columns={baseColumns}
+          data={sampleData.slice(0, 3)}
+          height="auto"
+          bordered={false}
+          selectable
+          selection={selection}
+          onSelectionChange={setSelection}
+          getRowId={(row) => row.sku}
+        />
+        {/* BulkActionBar bottom placement,左 actions + 右 page-Submit */}
+        <div className="flex items-stretch border-t border-divider">
+          <div className="flex-1">
+            <BulkActionBar
+              placement="bottom"
+              selection={selection}
+              onClear={() => { setSelection([]); setDatasetAllSelected(false) }}
+              actions={
+                <>
+                  <Button variant="tertiary" size="sm">下載</Button>
+                  <Button variant="tertiary" size="sm" danger>移除</Button>
+                </>
+              }
+              dataset={{
+                total: TOTAL,
+                visibleCount: 3,
+                isAllSelected: datasetAllSelected,
+                onSelectAll: () => setDatasetAllSelected(true),
+                onClearAll: () => { setSelection([]); setDatasetAllSelected(false) },
+              }}
+            />
+          </div>
+          {/* Page-level Submit consumer 自擺,跟 BulkActionBar 同 footer */}
+          <div className="flex items-center px-3 border-l border-divider">
+            <Button variant="primary" size="sm">送出</Button>
+          </div>
+        </div>
+      </div>
+    )
+  },
+}
+
+/* ── L2 Selection — disabled rows + filter 互動 ── */
+export const SelectionDisabledRows: Story = {
+  name: 'L2 Selection — Disabled rows(只 disable checkbox)',
+  render: () => {
+    const [selection, setSelection] = React.useState<string[]>([])
+    return (
+      <div className="flex flex-col gap-2 max-w-4xl">
+        <p className="text-caption text-fg-muted">
+          Out of stock 商品不可選 — 只 disable checkbox,row 內容正常 render(對齊 spec L2 五)。
+        </p>
+        <DataTable
+          columns={baseColumns}
+          data={sampleData}
+          height="auto"
+          selectable
+          selection={selection}
+          onSelectionChange={setSelection}
+          getRowId={(row) => row.sku}
+          isRowSelectable={(row) => row.stock !== 'Out of stock'}
+        />
+      </div>
     )
   },
 }

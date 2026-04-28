@@ -25,6 +25,8 @@ import { ComboboxDisplay } from '@/design-system/components/Combobox/combobox'
 import { DatePickerDisplay } from '@/design-system/components/DatePicker/date-picker'
 import { PersonDisplay, MultiPersonDisplay, type PersonValue } from '@/design-system/components/PeoplePicker/person-display'
 import { LinkInputDisplay } from '@/design-system/components/LinkInput/link-input'
+import { Checkbox } from '@/design-system/components/Checkbox/checkbox'
+import { useControllable } from '@/design-system/hooks/use-controllable'
 
 // ── Variants ─────────────────────────────────────────────────────────────────
 
@@ -55,6 +57,24 @@ export interface DataTableProps<TData>
   pinnedRightColumns?: string[]
   /** Inline edit 視覺模式：body cell 間加垂直分隔線，select 類欄位顯示指示器 */
   inlineEdit?: boolean
+
+  // ── L2 Selection(see data-table.spec.md「L2 選取」)──
+  /** 已選 row IDs(controlled) */
+  selection?: string[]
+  /** 預設選取(uncontrolled) */
+  defaultSelection?: string[]
+  /** Selection 變更 callback */
+  onSelectionChange?: (next: string[]) => void
+  /** 是否啟用 selection / 模式;true 等同 'multi' */
+  selectable?: boolean | 'single' | 'multi'
+  /** Row 是否可選(disabled rows 只 disable checkbox,row 內容正常 render) */
+  isRowSelectable?: (row: TData) => boolean
+  /** 取 row 唯一 ID(selection 用);default `(row, index) => String(index)` */
+  getRowId?: (row: TData, index: number) => string
+  /** Checkbox aria-label fallback;default `'Select row'` */
+  getRowAriaLabel?: (row: TData) => string
+  /** Filter 後 hidden selected rows 是否保留(default false,對齊 Material/AG Grid 共識) */
+  preserveSelectionOnFilter?: boolean
 }
 
 // ── Type → Display ──────────────────────────────────────────────────────────
@@ -153,18 +173,51 @@ function DataTableInner<TData>(
     overscan = 5, emptyState, enableHover = true, bordered,
     estimateRowHeight = 36, tableOptions, rowActions,
     pinnedLeftColumns, pinnedRightColumns, inlineEdit = false,
+    selection: selectionProp, defaultSelection, onSelectionChange,
+    selectable = false, isRowSelectable, getRowId, getRowAriaLabel,
+    preserveSelectionOnFilter = false,
     className, ...props
   }: DataTableProps<TData>,
   ref: React.ForwardedRef<HTMLDivElement>
 ) {
   const [sorting, setSorting] = React.useState<SortingState>(tableOptions?.state?.sorting as SortingState ?? [])
 
+  // ── L2 Selection state ──
+  const enabled = selectable !== false
+  const mode = selectable === 'single' ? 'single' : 'multi'
+  const [selection, setSelection] = useControllable<string[]>({
+    value: selectionProp,
+    defaultValue: defaultSelection ?? [],
+    onChange: onSelectionChange,
+  })
+  // 注入 checkbox column(enabled 時)
+  const columnsWithSelection = React.useMemo(() => {
+    if (!enabled) return columns
+    const selectColumn: ColumnDef<TData, any> = {
+      id: '__select__',
+      size: 40,
+      enableSorting: false,
+      enableResizing: false,
+      header: 'Select',  // header cell 由下方自訂 render 取代
+      cell: () => null,  // body cell 由下方自訂 render 取代
+    }
+    return [selectColumn, ...columns]
+  }, [columns, enabled])
+
+  // pinned-left 自動加 __select__
+  const effectivePinnedLeft = React.useMemo(() => {
+    if (!enabled) return pinnedLeftColumns ?? []
+    const list = pinnedLeftColumns ?? []
+    return list.includes('__select__') ? list : ['__select__', ...list]
+  }, [pinnedLeftColumns, enabled])
+
   const table = useReactTable({
-    data, columns,
-    state: { sorting, columnPinning: { left: pinnedLeftColumns ?? [], right: pinnedRightColumns ?? [] }, ...tableOptions?.state },
+    data, columns: columnsWithSelection,
+    state: { sorting, columnPinning: { left: effectivePinnedLeft, right: pinnedRightColumns ?? [] }, ...tableOptions?.state },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getRowId: getRowId,
     ...tableOptions,
   })
 
@@ -290,6 +343,31 @@ function DataTableInner<TData>(
   }
 
   const cellEl = (cell: ReturnType<typeof rows[number]['getVisibleCells']>[number], isLastInRow = false) => {
+    // L2 selection:__select__ 欄自訂 render(row checkbox)
+    if (enabled && cell.column.id === '__select__') {
+      const rowId = cell.row.id
+      const rowOriginal = cell.row.original
+      const isDisabled = isRowSelectable ? !isRowSelectable(rowOriginal) : false
+      const isChecked = selectionSet.has(rowId)
+      const ariaLabel = getRowAriaLabel?.(rowOriginal) ?? 'Select row'
+      return (
+        <div
+          key={cell.id}
+          role="cell"
+          className="flex items-center justify-center shrink-0"
+          style={{ width: cell.column.getSize(), ...cellPadding }}
+        >
+          <Checkbox
+            size={size === 'lg' ? 'lg' : 'md'}
+            checked={isChecked}
+            onCheckedChange={() => toggleRow(rowId, rowOriginal)}
+            disabled={isDisabled}
+            aria-label={ariaLabel}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )
+    }
     const meta = cell.column.columnDef.meta
     const colType = meta?.type as ColumnType | undefined
     const align = meta?.align ?? (colType ? columnTypeDefaults[colType].align : undefined)
@@ -316,8 +394,84 @@ function DataTableInner<TData>(
     )
   }
 
+  // ── L2 Selection helpers ──
+  const visibleRowIdsKey = React.useMemo(() => rows.map(r => r.id).join(','), [rows])
+  const visibleRowIdsSet = React.useMemo(() => new Set(rows.map(r => r.id)), [visibleRowIdsKey])
+
+  // 對齊 spec L2 七、Filter 套用 → filtered-out selected rows 預設清掉
+  React.useEffect(() => {
+    if (!enabled || preserveSelectionOnFilter) return
+    setSelection(prev => {
+      const filtered = prev.filter(id => visibleRowIdsSet.has(id))
+      return filtered.length === prev.length ? prev : filtered
+    })
+  }, [visibleRowIdsKey, enabled, preserveSelectionOnFilter, visibleRowIdsSet, setSelection])
+
+  // Visible 可選 row IDs(扣除 disabled)
+  const selectableVisibleIds = React.useMemo(() => {
+    if (!enabled) return [] as string[]
+    return rows
+      .filter(r => !isRowSelectable || isRowSelectable(r.original))
+      .map(r => r.id)
+  }, [rows, enabled, isRowSelectable])
+
+  // Header tri-state checkbox value
+  const selectionSet = React.useMemo(() => new Set(selection), [selection])
+  const visibleSelectedCount = selectableVisibleIds.filter(id => selectionSet.has(id)).length
+  const headerCheckedState: boolean | 'indeterminate' =
+    selectableVisibleIds.length === 0 ? false
+      : visibleSelectedCount === 0 ? false
+      : visibleSelectedCount === selectableVisibleIds.length ? true
+      : 'indeterminate'
+
+  const toggleHeaderCheckbox = () => {
+    if (headerCheckedState === true) {
+      // 清掉本頁可見已選(保留可見外的 selection)
+      const visibleSet = new Set(selectableVisibleIds)
+      setSelection(prev => prev.filter(id => !visibleSet.has(id)))
+    } else {
+      // 選全可見(扣除 disabled);保留可見外的既有 selection
+      setSelection(prev => Array.from(new Set([...prev, ...selectableVisibleIds])))
+    }
+  }
+
+  const toggleRow = (rowId: string, rowOriginal: TData) => {
+    if (isRowSelectable && !isRowSelectable(rowOriginal)) return
+    if (mode === 'single') {
+      setSelection(selectionSet.has(rowId) ? [] : [rowId])
+    } else {
+      setSelection(prev => {
+        const set = new Set(prev)
+        if (set.has(rowId)) set.delete(rowId)
+        else set.add(rowId)
+        return Array.from(set)
+      })
+    }
+  }
+
   // ── Header cell ──
   const headerCellEl = (header: ReturnType<typeof table.getHeaderGroups>[number]['headers'][number], showDivider: boolean) => {
+    // L2 selection:__select__ 欄自訂 render(tri-state header checkbox)
+    if (enabled && header.column.id === '__select__') {
+      return (
+        <div
+          key={header.id}
+          role="columnheader"
+          className="flex items-center justify-center shrink-0 select-none"
+          style={{ width: header.getSize(), ...cellPadding }}
+        >
+          {mode === 'multi' && (
+            <Checkbox
+              size={size === 'lg' ? 'lg' : 'md'}
+              checked={headerCheckedState}
+              onCheckedChange={() => toggleHeaderCheckbox()}
+              aria-label="Select all visible rows"
+              disabled={selectableVisibleIds.length === 0}
+            />
+          )}
+        </div>
+      )
+    }
     const meta = header.column.columnDef.meta
     const colType = meta?.type as ColumnType | undefined
     const align = meta?.align ?? (colType ? columnTypeDefaults[colType].align : undefined)
