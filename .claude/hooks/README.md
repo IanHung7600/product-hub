@@ -18,9 +18,9 @@
 |------|--------|
 | `enforce_home_charter.sh` | classification-sensitive dir / 新檔案的 charter gate(Write only) |
 | `check_file_size_budget.sh` | CLAUDE.md / spec / SKILL / memory 行數預算警告 |
-| `check_story_anatomy.sh` | **BLOCKS** stories 繞 DS canonical hand-craft |
-| `check_story_slot_split.sh` | stories slot 拆分 / atom 結構驗證 |
-| `check_story_category.sh` | stories 三層 trait-based category 驗證 |
+| `check_story_anatomy.sh` | **BLOCKS** stories 繞 DS canonical hand-craft(raw `<div>` 不用 MenuItem / Empty / Popover 等) |
+| `check_story_slot_split.sh` | stories slot 拆分結構(同 slot rule 不該拆兩 story:WithStartIcon + WithEndIcon → WithIcon grid) |
+| `check_story_category.sh` | stories trait coverage(hasSizes → AllSizes / isOverlay → OpenSnapshot / isInputLike → WithError) |
 | `check_principles_canonical.sh` | `*.principles.stories.tsx` Polaris-aligned core(WhenToUse / WhenNotToUse / Vs*Rule / ContentGuidelines)≥ 2 攔截 |
 | `check_l3_primitive_import.sh` | L3 primitive(L1 token / L2 atom)使用順序驗證 |
 
@@ -33,7 +33,10 @@
 | `check_hardcoded_strings.sh` | 偵測元件 / spec 內疑似硬寫字串(應走 token / 變數) |
 | `check_code_quality.sh` | clean-code 量化警告(`any` / dead export / long function / magic number) |
 | `check_cva_default_sync.sh` | 動到 cva `defaultVariants` 時三方(code / spec / story)同步警告 |
-| `check_story_compile_drift.sh` | 改元件 tsx / spec 自動跑 compile-stories `--check` |
+| `check_story_compile_drift.sh` | 改元件 tsx / spec 自動跑 compile-stories `--check`(stories 機械產 vs hand-edit drift) |
+| `check_layout_space_canonical.sh` | layoutSpace 規則違規(block 旁邊 tight margin / 全 inline form 用 gap-tight)|
+| `check_story_name_jargon.sh` | story name 含 spec 內部代號(L1-L7 / canonical / spec X)|
+| `check_person_data_richness.sh` | sparse PersonData literal 違反 NameCard 一致呈現 canonical |
 | `log_governance_fires.sh` | 治理檔 fire log 寫入 `.claude/logs/hook-fires.jsonl`(L2 anti-bloat) |
 
 ### PostToolUse(Skill)
@@ -48,8 +51,8 @@
 |------|--------|
 | `stop_tsc_sanity.sh` | turn 動到 `.ts` / `.tsx` 時跑 `tsc -b` 檢查 |
 | `stop_governance_drift_check.sh` | turn 動到 governance 檔(CLAUDE.md / rules / skills / memory)時 drift 檢查 |
-| `stop_self_audit.sh` | turn 結束 self-audit(每 turn 跑 score) |
-| `stop_meta_self_audit.sh` | M20 meta self-audit;score < 80 / regression ≥ 5 inject MAXIMUM-strength prompt |
+| `stop_self_audit.sh` | turn 行為 audit(claim 沒 verify / prune trigger / topic 重複 ≥ 3 次 → silent log,不 inject — 詳 known issue 段) |
+| `stop_meta_self_audit.sh` | turn infra-score audit(8 維 score 跌 ≥ 5 / 任何 dim < 80 → silent log,不 inject — 詳 known issue 段) |
 | `stop_harvest_corrections.sh` | 掃 session 的 user 糾正信號寫 `.claude/logs/user-corrections.jsonl` |
 | `stop_capture_metrics.sh` | session 結束 metric snapshot |
 
@@ -58,6 +61,12 @@
 | Hook | 做什麼 |
 |------|--------|
 | `session_start_governance_check.sh` | 4 check(行數 / prune / corrections / benchmarks 過期 auto-fetch) |
+
+### UserPromptSubmit
+
+| Hook | 做什麼 |
+|------|--------|
+| `inject_pending_self_audit.sh` | 讀 stop_self_audit / stop_meta_self_audit silent log,dedup + 24h filter + 3KB cap,inject 到 next turn additionalContext。修補 Stop hook silent-log 不 inject 的 known issue。 |
 
 ### Helper(非註冊 hook)
 
@@ -103,9 +112,31 @@
 - `exit 2` + stderr — **blocking**,AI 看到 stderr 訊息後必須處理
 - `stdout` with `{"hookSpecificOutput":{"hookEventName":"...","additionalContext":"..."}}` — non-blocking context injection
 
+## 已修(2026-04-28):Stop hook → UserPromptSubmit inject 鏈路
+
+**症狀**:Stop hooks(`stop_self_audit` / `stop_meta_self_audit`)silent-log 但不 inject,M14 / M20 的「auto-inject corrective prompt」 不生效 → AI reactive 模式持續。
+
+**修法**:加 `inject_pending_self_audit.sh` 註冊在 UserPromptSubmit hook(該 event 確認支援 `hookSpecificOutput.additionalContext`)。鏈路:
+
+```
+turn 結束 Stop event → stop_self_audit / stop_meta_self_audit silent log to .claude/logs/
+                                              ↓
+user 下一個 prompt → UserPromptSubmit fires → inject_pending_self_audit.sh
+                                              ↓
+                                        讀 log (since last-inject-ts)
+                                        dedup + 24h filter + 3KB cap
+                                              ↓
+                                        inject 給 AI next-turn context
+```
+
+**Self-test**:`bash .claude/hooks/tests/test_inject_pending_self_audit.sh`(5/5 pass)。
+
 ## Retired
 
 `retired/` 目錄存舊 hook(不再註冊),保留 reference 不刪除。當前已 retire 的 hook 不在本 inventory 列出 — 以 `settings.json` 為 SSOT。
+
+最近 retire(2026-04-28):
+- `check_button_icon_literal.sh` — 違反 Rule-of-3(DS-wide 0 hits,只我 1 次失誤建)
 
 ## 建立前必 Read
 

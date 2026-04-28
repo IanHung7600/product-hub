@@ -104,6 +104,37 @@ else
 fi
 teardown_proj
 
+# Test 6: Hook count > 25 (soft prune trigger) — auto-prune fires
+echo "Test 6: hook count 26 → soft prune trigger"
+setup_proj
+# Create 26 fake hooks(超過 soft 25)
+for i in $(seq 1 26); do
+  : > "$TMP_PROJ/.claude/hooks/check_fake_${i}.sh"
+done
+run_hook
+if [ "$EXIT" = "0" ] && echo "$STDOUT_TEXT" | grep -q "Auto-prune triggers" && echo "$STDOUT_TEXT" | grep -q "Hook count"; then
+  echo "  PASS  Test 6 hook count soft trigger"; PASS=$((PASS+1))
+else
+  echo "  FAIL  Test 6 (output: ${STDOUT_TEXT:0:200})"
+  FAIL=$((FAIL+1)); FAILED="${FAILED}\n  - Test 6"
+fi
+teardown_proj
+
+# Test 7: Hook count > 30 (hard) → BLOCKER
+echo "Test 7: hook count 31 → hard BLOCKER"
+setup_proj
+for i in $(seq 1 31); do
+  : > "$TMP_PROJ/.claude/hooks/check_fake_${i}.sh"
+done
+run_hook
+if [ "$EXIT" = "0" ] && echo "$STDOUT_TEXT" | grep -q "BLOCKER" && echo "$STDOUT_TEXT" | grep -q "hard 30"; then
+  echo "  PASS  Test 7 hook count hard BLOCKER"; PASS=$((PASS+1))
+else
+  echo "  FAIL  Test 7 (output: ${STDOUT_TEXT:0:200})"
+  FAIL=$((FAIL+1)); FAILED="${FAILED}\n  - Test 7"
+fi
+teardown_proj
+
 echo ""
 echo "════ Results: $PASS PASS, $FAIL FAIL ════"
 [ "$FAIL" -gt 0 ] && { printf "Failed:%b\n" "$FAILED"; exit 1; }

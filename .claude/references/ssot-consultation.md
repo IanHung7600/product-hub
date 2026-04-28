@@ -19,7 +19,7 @@ CLAUDE.md `# SSOT 消費 canonical` 的詳表 + 反例。主章留核心 + point
 | **Chrome header 選型**(fixed-h vs padding-based)| `tokens/uiSize/uiSize.spec.md`「Chrome header 選型 canonical」— decision tree + 8 家世界級對照 + checklist |
 | **Overlay chrome dismiss / unbounded button**| `patterns/overlay-surface/overlay-surface.spec.md`「Chrome dismiss size canonical v5」 |
 | **Overlay title size**(modal 16 vs non-modal 14)| `patterns/overlay-surface/overlay-surface.spec.md`「Overlay title typography canonical」 |
-| **Form field gap**| `components/Field/field.spec.md` +「layoutSpace 規則 3:fw↔non-fw = tight」 |
+| **Form field gap**| `components/Field/field.spec.md` +「layoutSpace 規則 3:跟 block 相鄰 = tight,inline ↔ inline = loose」 |
 | **Icon 選擇 / 尺寸**| `.claude/rules/ui-development.md`「元件 Props 命名」「Icon canonical」+ `ui-dev-rules.md`「Icon size 來源分層規則」 |
 | **浮層 header / body / footer**| `patterns/overlay-surface/overlay-surface.spec.md` |
 | **Scrollbar / 滾動**| `components/ScrollArea/scroll-area.spec.md` +「horizontal-overflow pattern」 |

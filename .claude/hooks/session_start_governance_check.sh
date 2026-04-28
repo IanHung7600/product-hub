@@ -151,22 +151,50 @@ if [ -f "$FIRES_LOG" ] && [ -d "$TESTS_DIR" ]; then
   fi
 fi
 
-# Inject if HARD BLOCKERS(must)or quarterly-prune-overdue soft reminder
-# (90 days,跨 session 但 throttled — 只 ≥ 90 days fire,< 90 silent)。
-# Other soft reminders 不 inject(noise reduction)。
+# Check 7: Hook count auto-trigger(soft 25 / hard 30 — Anthropic guideline ~15)
+PRUNE_TRIGGERS=""
+HOOKS_DIR="$PROJECT_DIR/.claude/hooks"
+HOOK_COUNT=0
+if [ -d "$HOOKS_DIR" ]; then
+  HOOK_COUNT=$(find "$HOOKS_DIR" -maxdepth 1 \( -name "*.sh" -o -name "*.py" \) -not -name "_log-fire*" 2>/dev/null | wc -l | tr -d ' ')
+  HOOK_COUNT=${HOOK_COUNT:-0}
+fi
+if [ "$HOOK_COUNT" -gt 30 ]; then
+  BLOCKERS="${BLOCKERS}\n- Hook count ${HOOK_COUNT}(hard 30 — Anthropic guideline ~15). /knowledge-prune REQUIRED FIRST ACTION 評估 retire / consolidate."
+elif [ "$HOOK_COUNT" -gt 25 ]; then
+  PRUNE_TRIGGERS="${PRUNE_TRIGGERS}\n- Hook count ${HOOK_COUNT}(soft 25 trigger — Anthropic guideline ~15). /knowledge-prune 評估 retire / consolidate 候選."
+fi
+
+# Check 8: Memory entries auto-trigger(soft 18 / hard 20)
+MEMORY_DIR="$HOME/.claude/projects/-Users-chenqiren-Library-CloudStorage-GoogleDrive-qijenchen-gmail-com--------my-project/memory"
+MEM_COUNT=0
+if [ -d "$MEMORY_DIR" ]; then
+  MEM_COUNT=$(find "$MEMORY_DIR" -maxdepth 1 -name "*.md" -not -name "MEMORY.md" 2>/dev/null | wc -l | tr -d ' ')
+  MEM_COUNT=${MEM_COUNT:-0}
+fi
+if [ "$MEM_COUNT" -gt 20 ]; then
+  BLOCKERS="${BLOCKERS}\n- Memory entries ${MEM_COUNT}(hard 20 cap). /knowledge-prune REQUIRED FIRST ACTION."
+elif [ "$MEM_COUNT" -ge 18 ]; then
+  PRUNE_TRIGGERS="${PRUNE_TRIGGERS}\n- Memory entries ${MEM_COUNT}(soft 18 trigger,20 = hard cap). /knowledge-prune 建議排程."
+fi
+
+# Inject if HARD BLOCKERS(must)or auto-prune-triggers or quarterly-prune-overdue
 QUARTERLY_DUE=""
 if [ -f .claude/logs/.last-prune ]; then
   PRUNE_DAYS=$(( ( $(date +%s) - $(stat -f %m .claude/logs/.last-prune 2>/dev/null || stat -c %Y .claude/logs/.last-prune 2>/dev/null || echo 0) ) / 86400 ))
   [ "$PRUNE_DAYS" -ge 90 ] && QUARTERLY_DUE="\n- Last /knowledge-prune ${PRUNE_DAYS} days ago(quarterly target ≤ 90 days). Invoke /knowledge-prune this session if convenient."
 fi
 
-[ -z "$BLOCKERS" ] && [ -z "$QUARTERLY_DUE" ] && exit 0
+[ -z "$BLOCKERS" ] && [ -z "$QUARTERLY_DUE" ] && [ -z "$PRUNE_TRIGGERS" ] && exit 0
 
 if [ -n "$BLOCKERS" ]; then
   MSG="🚨 BLOCKER — governance hard thresholds breached (SessionStart):${BLOCKERS}\n\n"
   MSG="${MSG}⚠️ REQUIRED_FIRST_ACTION:先 invoke 上述 skill(/knowledge-prune 或 /codify-corrections)"
   MSG="${MSG}把 governance 帶回健康區間,再處理 user 的實際請求。"
+  [ -n "$PRUNE_TRIGGERS" ] && MSG="${MSG}\n\n附 soft prune triggers:${PRUNE_TRIGGERS}"
   [ -n "$QUARTERLY_DUE" ] && MSG="${MSG}\n${QUARTERLY_DUE}"
+elif [ -n "$PRUNE_TRIGGERS" ]; then
+  MSG="⚙️ Auto-prune triggers fired (SessionStart):${PRUNE_TRIGGERS}\n建議 invoke /knowledge-prune scope=full 評估 retire / consolidate.${QUARTERLY_DUE}"
 else
   MSG="🧭 Governance hygiene reminder (SessionStart):${QUARTERLY_DUE}\nNot blocking — address inline when convenient."
 fi
