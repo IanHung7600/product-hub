@@ -649,8 +649,10 @@ function DataTableInner<TData>(
         {/* 右區:⌄ menu(hover/focus-within 顯,reserve = inline-action 排版佔位 16,對齊
             inline-action.spec.md「尺寸對照」表 sm/md = 16px;NOT 24)。
             data-table.spec.md「九之二、Cell action primitive 分類」對齊。
-            ItemInlineActionButton asChild-compatible,size="md" 因 header 不在 RowSizeProvider。 */}
-        <div className="shrink-0 ml-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
+            ItemInlineActionButton asChild-compatible,size="md" 因 header 不在 RowSizeProvider。
+            has-[[data-state=open]]:opacity-100 — menu 開啟後 trigger 維持可見,即使 cursor
+            移開(無 hover)+ focus 已 portal 到 menu 第一項(無 focus-within in subtree)。 */}
+        <div className="shrink-0 ml-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 has-[[data-state=open]]:opacity-100 transition-opacity">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <ItemInlineActionButton

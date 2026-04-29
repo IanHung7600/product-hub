@@ -586,6 +586,9 @@ export const ItemInlineActionButton = React.forwardRef<
       className={cn(
         "group/action relative grid place-content-center shrink-0 cursor-pointer",
         "text-fg-muted hover:text-foreground active:text-foreground transition-colors",
+        // Overlay trigger active state(Radix 自動 set data-state=open on asChild trigger)
+        // — 對齊世界級共識(Material / Polaris / Radix):浮層開啟時 trigger 視覺 = hover 持續態
+        "data-[state=open]:text-foreground",
         "focus-visible:outline-2 focus-visible:outline-ring",
         className
       )}
@@ -598,6 +601,8 @@ export const ItemInlineActionButton = React.forwardRef<
           "absolute pointer-events-none",
           "rounded-md",
           "bg-transparent group-hover/action:bg-neutral-hover group-active/action:bg-neutral-active",
+          // Overlay 開啟時 bg 持續顯 hover 色(對齊 trigger 視覺持續 active)
+          "group-data-[state=open]/action:bg-neutral-hover",
           "transition-colors"
         )}
         style={{
