@@ -135,7 +135,9 @@ Q3. Row 多大?
 | Select ChevronDown / DatePicker Calendar / Combobox ChevronDown | Field chrome(裝飾)| **Decorative**(不是 action)| Click falls through;host 是 trigger |
 | **FileItem compact**(row 24)| Row slot | Inline Action | Row 太小容不下 Button xs 24 |
 | **FileItem rich**(row 56 sm/md rich)| Row slot | Button xs iconOnly(24 固定)| ≤ 24 cap,不放大 |
-| **DataTable row action**(任何 tier)| Row dedicated column | Button xs iconOnly(24 固定)| ≤ 24 cap |
+| **DataTable header cell internal**(sort indicator / ⌄ menu / filter funnel / pin)| Header cell host internal | **Inline Action**(`ItemInlineActionButton` asChild for DropdownMenu)| Embedded inline,跟 label 一體 |
+| **DataTable body cell internal**(display endAction / clear / edit indicator)| Cell content host internal | **Inline Action**(自動繼承 Field family endAction)| Field display 元件已對齊 |
+| **DataTable row dedicated action column**(編輯 / 刪除 / 更多 ⋯)| Row dedicated column | Button xs iconOnly(24 固定)| ≤ 24 cap;有獨立 column divider 視覺分離 |
 | **Dialog / Sheet / Popover / Alert corner close** | Chrome corner | Button iconOnly `dismiss`(size sm)| Action group region |
 | **Toolbar commands**(FileViewer zoom / editor bold)| Toolbar | Button iconOnly(md 常見)| Action group region |
 | FileViewer / rich text editor formatting group | Toolbar action group | Button iconOnly 同 size + Separator | Action group 完整範例 |

@@ -169,23 +169,13 @@ Header 的對齊永遠與該欄 body cell 一致。
 
 ### 九、Row Actions
 
-每列最右側可配置操作（編輯、刪除、複製等）。位於 right-pinned region，不參與水平捲動。
+每列最右側可配置操作(編輯、刪除、複製等)。位於 right-pinned region(全高 `border-divider` 分隔),不參與水平捲動,**常駐顯示**(對齊 dense data ops 派)。
 
-**元件 canonical(2026-04-22)**:Row actions **一律 Button iconOnly, variant="text", size="xs"(固定 24px)**,不隨 row tier 放大,**不套 `dismiss` prop**。
+**Canonical**:Row actions 一律 `Button iconOnly variant="text" size="xs"`(固定 24px),不隨 row tier 放大,**不套 `dismiss` prop**(Trash/Delete = `onRemove` 語意,不是 dismiss)。
 
-**為什麼固定 size="xs"**:row actions 屬「dense utility affordance」——存在於每一 row 末端,常駐但不搶焦點,是輔助操作不是資料本體。固定小尺寸讓 action region 視覺輕量,資料 cell 為視覺重心。對照 `patterns/element-anatomy/item-anatomy.spec.md` 的「Predicate」+「Real case 表」:row-dedicated action region 屬「高頻小尺寸 utility」家族。
+**Why 固定 24**:row actions 是「dense utility affordance」(輔助 ≠ 資料本體),固定 24 讓資料 cell 為視覺重心;放大會違反「data 本體 / action 輔助」階層。對照 `patterns/element-anatomy/inline-action.spec.md` Real case 表「DataTable row dedicated action column」row。
 
-**世界級對照**:
-- **Material DataGrid**——row action 固定 24px(`GridActionsCellItem` 用 `IconButton size="small"`,不隨 rowHeight 放大)
-- **Polaris DataTable / IndexTable**——row actions 在 hover 顯示,固定 20-24px icon button
-- **Atlassian Dynamic Table**——row actions 固定 small iconOnly,不跟 table density 連動
-- **Apple HIG(macOS Finder / Mail list row)**——inline actions 固定 ≤24px,不隨 list density 放大
-
-**為什麼不隨 row tier 放大**:row height 變化反映的是「資料密度」(sm / md / lg row 高度 tier),action 不是資料本體,不該跟資料密度同步縮放——否則 lg row 的 action 會變成搶焦點的主要互動元素,violate「action 輔助、data 本體」的資訊層級。
-
-**不套 `dismiss` prop**:`dismiss` 語意是「關閉此訊息 / 忽略此提示」(見 Button spec「Dismiss 視覺類」+ `# 元件 Props 命名原則` callback 命名 canonical — `onDismiss` 指 toast / alert 被暫時忽略),Trash / Delete 是**資料破壞性動作**,語意是 `onRemove`(從集合移除 item),不是 dismiss。視覺用 `variant="text"` 標準 icon button 表達,不套 dismiss 的 icon 色弱化 treatment(dismiss 弱化是為了「訊息關閉不搶焦點」,row delete 需要正常 icon 可讀性)。
-
-**常駐顯示。** Row actions 有獨立的 frozen right region，不佔資料欄位空間，永遠可見。Region 邊界用全高度 `border-divider` 標示。
+**世界級對照**:Material DataGrid `GridActionsCellItem`(IconButton small)/ Polaris IndexTable hover 20-24px / Atlassian Dynamic Table small iconOnly / Apple HIG Finder list row ≤24px — 全派固定不放大。
 
 **收納邏輯：**
 
@@ -197,6 +187,34 @@ Header 的對齊永遠與該欄 body cell 一致。
 MoreVertical dropdown 包含所有操作，確保鍵盤可存取全部。
 
 **Header/body 寬度同步：** Header 渲染 invisible buttons 佔位(同 size="xs"),確保 header 和 body 的 right region 同寬。
+
+### 九之二、Cell action primitive 分類(2026-04-29 codified)
+
+DataTable 4 種 action 位置 → primitive 對應(SSOT → `patterns/element-anatomy/inline-action.spec.md`「Real case 表」+ Predicate decision tree)。
+
+**核心原則**:**Action 跟 data 的視覺關係決定 primitive**——
+- 視覺**一體**(嵌 cell content / column header unit)→ **Inline Action**
+- 視覺**分離**(獨立 column 有 divider / 獨立 toolbar / chrome corner)→ **Button**
+
+| 位置 | 跟 data 關係 | Primitive | Why |
+|------|--------------|-----------|-----|
+| **Header cell internal**(sort indicator / ⌄ menu / future filter funnel / pin)| 一體(在 cell 內,跟 column header label 同 unit)| **Inline Action**(`ItemInlineActionButton` asChild,`size="md"`)| Embedded inline,16+18px hover bg;對齊 AG Grid / Material DataGrid / Airtable / Notion header |
+| **Body cell internal**(display endAction / clear / edit indicator)| 一體(嵌 cell content)| **Inline Action**(自動繼承 Field family endAction)| Cell display(`InputDisplay` / `DatePickerDisplay` 等)是 Field family,內建 `endAction` canonical |
+| **Row dedicated action column**(編輯 / 刪除 / 更多 ⋯)| 分離(獨立 column,有 visual divider)| **Button xs iconOnly 24** | 見章節「九、Row Actions」 |
+| **Toolbar**(Sort / Filter / Eye / + 新增 / More)| 分離(table chrome 之上)| **Button**(action-bar 共識)| Action group region,見 `patterns/action-bar.spec.md` |
+
+**世界級對照**(對 cell internal 而言全派 Inline Action):
+- AG Grid:header menu icon + sort indicator + filter funnel = inline neutral icon
+- Material DataGrid:header sort icon + filter funnel = lightweight inline
+- Airtable / Notion:column header chevron = inline
+- Polaris IndexTable:sort icon inline
+
+**禁止 anti-pattern**:
+- ❌ Header cell 內塞 `<Button size="sm" iconOnly>` — chrome action 級視覺權重 28px,跟 label 不一體
+- ❌ Body cell 顯示 element 旁手刻 `<button>` — 繞過 Field endAction canonical,a11y / 尺寸自動化失效
+- ❌ Row dedicated action column 用 Inline Action — 該 column 是 action group region,需 chrome 表達 affordance
+
+**Future hook 提案**:`check_data_table_action_primitive.sh` grep DataTable header / body cell render path 內的 `<Button.*size="(sm|md|lg)".*iconOnly`,提示改 Inline Action(本 round 不做)。
 
 ### 十、與 Toolbar 的關係
 

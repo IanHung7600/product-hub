@@ -16,8 +16,8 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { ChevronDown, Calendar, ArrowUp, ArrowDown, Filter as FilterIcon, EyeOff, X as XIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/design-system/components/Tooltip/tooltip'
-import { Button } from '@/design-system/components/Button/button'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/design-system/components/DropdownMenu/dropdown-menu'
+import { ItemInlineActionButton } from '@/design-system/patterns/element-anatomy/item-anatomy'
 import { columnTypeDefaults, type ColumnType } from './column-types'
 import { InputDisplay } from '@/design-system/components/Input/input'
 import { NumberInputDisplay } from '@/design-system/components/NumberInput/number-input'
@@ -646,11 +646,19 @@ function DataTableInner<TData>(
             <SortIcon size={14} aria-hidden className="shrink-0 text-fg-secondary" />
           )}
         </div>
-        {/* 右區:⌄ menu(hover/focus-within 顯,reserve 1 slot 寬度避免 indicator push) */}
-        <div className="shrink-0 ml-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity" style={{ width: 24 }}>
+        {/* 右區:⌄ menu(hover/focus-within 顯,reserve 1 slot 寬度避免 indicator push)
+            ── 對齊 inline-action canonical(data-table.spec.md「九之二、Cell action primitive 分類」)──
+            Header cell internal action(sort/⌄/filter/pin)走 Inline Action 派,跟 label 一體 16+18px hover bg。
+            ItemInlineActionButton 是 asChild-compatible button(直接塞 DropdownMenuTrigger asChild),
+            size="md" 因 header 不在 RowSizeProvider 樹內。 */}
+        <div className="shrink-0 ml-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity flex items-center justify-center" style={{ width: 24, height: 24 }}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="text" size="sm" iconOnly startIcon={ChevronDown} aria-label={`${typeof header.column.columnDef.header === 'string' ? header.column.columnDef.header : header.column.id} 欄位選單`} />
+              <ItemInlineActionButton
+                icon={ChevronDown}
+                size="md"
+                aria-label={`${typeof header.column.columnDef.header === 'string' ? header.column.columnDef.header : header.column.id} 欄位選單`}
+              />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               {canSort && (
