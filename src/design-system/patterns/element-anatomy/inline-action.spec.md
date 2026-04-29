@@ -19,11 +19,15 @@
 | 預設 | transparent | — |
 | hover | `bg-neutral-hover` | transition-colors |
 | active(mouse down) | `bg-neutral-active` | transition-colors |
-| **overlay 開啟**(`data-state=open`,當 inline action 是 DropdownMenu / Popover trigger)| `bg-neutral-hover`(維持 hover 持續態)| transition-colors |
+| **overlay 開啟**(`data-state=open`,當 inline action 是 DropdownMenu / Popover trigger)| `bg-neutral-selected`(持續態,4% vs hover 2% 更明顯)| transition-colors |
 | focus-visible | `outline: 2px solid var(--ring)` | — |
 | 宿主 disabled | 不渲染 inline action | — |
 
-**Overlay trigger active state canonical**(2026-04-29):當 inline action 透過 `asChild` 作為 DropdownMenu / Popover / Tooltip trigger,Radix 自動 set `data-state="open"` on trigger element。為對齊世界級(Material / Polaris / Radix 共識),trigger 視覺**維持 hover 持續態**直到浮層關閉。`ItemInlineActionButton` 已內建 `data-[state=open]:text-foreground` + `group-data-[state=open]/action:bg-neutral-hover`;Button text variant 同樣 `data-[state=open]:bg-neutral-hover`。
+**Overlay trigger active state canonical**(2026-04-29):當 inline action 透過 `asChild` 作為 DropdownMenu / Popover / Tooltip trigger,Radix 自動 set `data-state="open"` on trigger element。為對齊世界級(Material / Polaris / Radix 共識),trigger 視覺**維持持續態**直到浮層關閉。
+
+**Token 選擇 rationale**:用 `bg-neutral-selected`(4%)而非 `bg-neutral-hover`(2%)— hover 是「轉瞬反饋」設計刻意 subtle,持續 active 需要 2x 更明顯的視覺回饋(對齊 Button toggle pressed `data-state=on` 同 family,跨 DS 一致)。
+
+`ItemInlineActionButton` 已內建 `data-[state=open]:text-foreground` + `group-data-[state=open]/action:bg-neutral-selected`;Button text variant 同樣 `data-[state=open]:bg-neutral-selected`。
 
 ### Icon 色彩（按 host 分兩類,2026-04-21 D6 矛盾解）
 

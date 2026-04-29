@@ -104,8 +104,8 @@ const buttonVariants = cva(
           'hover:bg-neutral-hover',
           'active:bg-neutral-active',
           // Overlay trigger active(Radix 自動 set data-state=open on asChild)
-          // — Material / Polaris / Radix 共識:浮層開啟時 trigger 維持 hover 持續態
-          'data-[state=open]:bg-neutral-hover',
+          // 對齊 toggle pressed 同 family(neutral-selected 4% vs hover 2%,持續態語義)
+          'data-[state=open]:bg-neutral-selected',
           'disabled:bg-transparent disabled:text-fg-disabled',
           // Toggle pressed（text + data-state=on）：走 neutral-selected family
           'data-[state=on]:bg-neutral-selected',

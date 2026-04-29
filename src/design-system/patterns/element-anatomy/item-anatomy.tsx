@@ -601,8 +601,8 @@ export const ItemInlineActionButton = React.forwardRef<
           "absolute pointer-events-none",
           "rounded-md",
           "bg-transparent group-hover/action:bg-neutral-hover group-active/action:bg-neutral-active",
-          // Overlay 開啟時 bg 持續顯 hover 色(對齊 trigger 視覺持續 active)
-          "group-data-[state=open]/action:bg-neutral-hover",
+          // Overlay 開啟時用 selected token(4% vs hover 2%,持續態語義對應 toggle pressed 同 family)
+          "group-data-[state=open]/action:bg-neutral-selected",
           "transition-colors"
         )}
         style={{
