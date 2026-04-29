@@ -11,7 +11,7 @@ import { Empty } from '@/design-system/components/Empty/empty'
 import { Input } from '@/design-system/components/Input/input'
 import { BulkActionBar } from '@/design-system/components/BulkActionBar/bulk-action-bar'
 import { Alert } from '@/design-system/components/Alert/alert'
-import { Popover, PopoverTrigger, PopoverContent } from '@/design-system/components/Popover/popover'
+import { Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverBody, PopoverFooter, PopoverTitle } from '@/design-system/components/Popover/popover'
 import { Checkbox } from '@/design-system/components/Checkbox/checkbox'
 import { ScrollArea } from '@/design-system/components/ScrollArea/scroll-area'
 import './column-types' // ColumnMeta declaration merging
@@ -489,10 +489,13 @@ export const WithBulkActions: Story = {
                 <Button variant="text" size="sm" iconOnly startIcon={Eye} aria-label="欄位顯示" />
               </PopoverTrigger>
               <PopoverContent align="end" className="w-72 p-0">
-                <div className="px-[var(--layout-space-loose)] py-[var(--layout-space-tight)] border-b border-divider">
-                  <div className="text-body-strong">欄位顯示</div>
-                </div>
-                <div className="px-[var(--layout-space-loose)] py-[var(--layout-space-tight)]">
+                {/* 對齊 overlay-surface canonical:用 PopoverHeader/Body/Footer/Title primitive
+                    PopoverHeader 自帶 close X(canonical 強制);所有 chrome inline padding = loose
+                    讓 title / search input / item content / footer button 全部左右對齊 */}
+                <PopoverHeader>
+                  <PopoverTitle>欄位顯示</PopoverTitle>
+                </PopoverHeader>
+                <PopoverBody>
                   <Input
                     size="sm"
                     placeholder="搜尋欄位…"
@@ -500,9 +503,11 @@ export const WithBulkActions: Story = {
                     onChange={(e) => setColumnSearch(e.target.value)}
                     startIcon={Search}
                   />
-                </div>
+                </PopoverBody>
+                {/* List section per overlay-surface 規則 3:body py-2 no px + item px-loose rounded-md
+                    → hover bg flush chrome edge,item content align with title at loose from chrome */}
                 <ScrollArea className="max-h-72">
-                  <div className="px-[var(--layout-space-loose)] pb-[var(--layout-space-tight)] flex flex-col gap-0.5">
+                  <div className="py-2 flex flex-col gap-0.5">
                     {baseColumns
                       .map((col) => {
                         const id = (col as any).accessorKey ?? (col as any).id
@@ -517,7 +522,7 @@ export const WithBulkActions: Story = {
                         return (
                           <label
                             key={id}
-                            className="flex items-center gap-2 px-2 py-1.5 rounded-md cursor-pointer hover:bg-hover"
+                            className="flex items-center gap-2 px-[var(--layout-space-loose)] py-1.5 rounded-md cursor-pointer hover:bg-neutral-hover"
                           >
                             <Checkbox
                               size="md"
@@ -530,7 +535,7 @@ export const WithBulkActions: Story = {
                       })}
                   </div>
                 </ScrollArea>
-                <div className="px-[var(--layout-space-loose)] py-[var(--layout-space-tight)] border-t border-divider">
+                <PopoverFooter className="justify-start">
                   <Button
                     variant="text"
                     size="sm"
@@ -543,7 +548,7 @@ export const WithBulkActions: Story = {
                       setColumnVisibility(next)
                     }}
                   >顯示全部</Button>
-                </div>
+                </PopoverFooter>
               </PopoverContent>
             </Popover>
             <Button variant="primary" size="sm" startIcon={Plus}>新增商品</Button>
