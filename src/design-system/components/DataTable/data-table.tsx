@@ -820,12 +820,11 @@ function DataTableInner<TData>(
       ref={(el) => { tableRef.current = el; if (typeof ref === 'function') ref(el); else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = el }}
       data-table-size={size}
       className={cn(dataTableVariants({ bordered }), isFillHeight && 'flex flex-col', className)}
-      // isFillHeight:`height: 100%` 強制填滿 wrapper(Notion / Airtable / Linear canonical)
-      // 配合 body flex-1 min-h-0 → body = outer - header,centerBody.maxHeight 用 JS 算的 px。
-      // 等同 100% 但 bypass CSS flex 場景下的不可靠 shrink。
-      // 視覺:content 小時 centerBody = content 高,下方仍是 outer bg-surface(canonical 看起來
-      // 像「table 區還有空間給更多 row」),不留 wrapper 外的空白。
-      style={isFillHeight ? { height } : undefined}
+      // isFillHeight:`maxHeight: 100%`(不是 height:100%)— content 小 → outer = intrinsic
+      // (hug rows);content 大或 window 縮 < content → outer cap 到 100% of parent。
+      // 行為:**永遠 hug rows**,只在被約束時才 cap + body shrink + V scroll。
+      // 簡單需求:有約束 → rows 沒超就 hug;超就 cap+scroll;RWD 同理。
+      style={isFillHeight ? { maxHeight: height } : undefined}
       role="table" aria-rowcount={rows.length + 1}
       tabIndex={enabled ? 0 : undefined}
       onKeyDown={enabled ? tableKeyboardHandler : undefined}
@@ -866,12 +865,11 @@ function DataTableInner<TData>(
            三個 region(left / center / right)各自 maxHeight + overflowY,JS 同步 scrollTop。
            Pinned 區 overflow-y:hidden(看不到自己的 V scrollbar),V scroll 真正發生在 center。
            isFillHeight 時 body div 加 min-h-0 讓它在 outer flex column 內可被 flex shrink — region maxHeight: 100% 才能 bind 到實際分配的高度。 */}
-      {/* body 在 isFillHeight 用 `flex-1 min-h-0 min-w-0`:flex-1 讓 body 填滿 outer 剩餘空間
-          (outer 是 height: 100%,body flex-1 = outer - header)。centerBody.maxHeight 用 JS
-          算的 px(bypass CSS % 在 flex 場景的不可靠 shrink)。
-          content 小:centerBody = content 高(intrinsic),body 內側餘空間是 outer bg-surface;
-          content 大 / window 縮:JS computed bodyMaxHeight 約束 centerBody → V scroll trigger。 */}
-      <div ref={bodyRef} className={cn('flex items-start', isFillHeight && 'flex-1 min-h-0 min-w-0')}>
+      {/* body 在 isFillHeight 用 `min-h-0 min-w-0`(**不**用 flex-1)。
+          flex-1 會強制 body 撐滿 outer = 不 hug content。預設 `flex: 0 1 auto` + min-h-0 =
+          body intrinsic = content,被 outer maxHeight 約束時可 shrink 到 outer 分配空間。
+          centerBody.maxHeight 用 JS 算 px(bypass CSS % flex 場景 buggy shrink)。 */}
+      <div ref={bodyRef} className={cn('flex items-start', isFillHeight && 'min-h-0 min-w-0')}>
         {hasLeft && (
           <div
             ref={leftBodyRef}
