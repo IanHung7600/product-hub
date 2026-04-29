@@ -13,7 +13,7 @@ import {
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { ChevronDown, Calendar } from 'lucide-react'
+import { ChevronDown, Calendar, ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/design-system/components/Tooltip/tooltip'
 import { columnTypeDefaults, type ColumnType } from './column-types'
@@ -572,9 +572,41 @@ function DataTableInner<TData>(
     const meta = header.column.columnDef.meta
     const colType = meta?.type as ColumnType | undefined
     const align = meta?.align ?? (colType ? columnTypeDefaults[colType].align : undefined)
+    // Sort UI(Phase A.1):可排序欄位整 cell 可點觸發 toggleSorting,arrow icon visual。
+    // 對齊 Polaris IndexTable / Material DataGrid:click toggle + 三態 icon(neutral hover-only / asc / desc)
+    const canSort = header.column.getCanSort()
+    const sortDir = header.column.getIsSorted() // false | 'asc' | 'desc'
+    const SortIcon = sortDir === 'asc' ? ArrowUp : sortDir === 'desc' ? ArrowDown : ArrowUpDown
+    const sortHandler = canSort ? header.column.getToggleSortingHandler() : undefined
     return (
-      <div key={header.id} role="columnheader" aria-sort={header.column.getIsSorted() === 'asc' ? 'ascending' : header.column.getIsSorted() === 'desc' ? 'descending' : 'none'} className={cn('relative flex items-center text-fg-secondary text-body font-normal shrink-0 overflow-hidden select-none', align === 'right' && 'text-right', align === 'center' && 'text-center')} style={{ width: header.getSize(), minWidth: header.column.columnDef.minSize, maxWidth: header.column.columnDef.maxSize, ...cellPadding }}>
-        <TruncateCell>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TruncateCell>
+      <div
+        key={header.id}
+        role="columnheader"
+        aria-sort={sortDir === 'asc' ? 'ascending' : sortDir === 'desc' ? 'descending' : 'none'}
+        className={cn(
+          'group relative flex items-center text-fg-secondary text-body font-normal shrink-0 overflow-hidden select-none',
+          align === 'right' && 'text-right',
+          align === 'center' && 'text-center',
+          canSort && 'cursor-pointer hover:text-foreground transition-colors',
+        )}
+        style={{ width: header.getSize(), minWidth: header.column.columnDef.minSize, maxWidth: header.column.columnDef.maxSize, ...cellPadding }}
+        onClick={sortHandler}
+        onKeyDown={canSort ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); sortHandler?.(e as any) } } : undefined}
+        tabIndex={canSort ? 0 : undefined}
+      >
+        <TruncateCell className={cn('flex-1 min-w-0', align === 'right' && 'text-right', align === 'center' && 'text-center')}>
+          {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+        </TruncateCell>
+        {canSort && (
+          <SortIcon
+            size={14}
+            aria-hidden
+            className={cn(
+              'shrink-0 ml-1 transition-opacity',
+              sortDir ? 'text-fg-secondary opacity-100' : 'text-fg-muted opacity-0 group-hover:opacity-100',
+            )}
+          />
+        )}
         {showDivider && <span className="absolute right-0 w-px bg-divider" style={{ top: 'var(--table-cell-py)', bottom: 'var(--table-cell-py)' }} aria-hidden />}
       </div>
     )
