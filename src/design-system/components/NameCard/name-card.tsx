@@ -168,12 +168,10 @@ const NameCard = React.forwardRef<HTMLDivElement, NameCardProps>(
                   />
                   <span className="text-body">{STATUS_LABEL[status!]}</span>
                 </div>
-                {/* Status message — 必須包在 DescriptionList 才語意正確 */}
+                {/* Status message — 包 DescriptionList 維持 dl/dt/dd 語意 */}
                 {statusMessage && (
                   <DescriptionList>
-                    <DescriptionItem label="Status message">
-                      <span>{statusMessage}</span>
-                    </DescriptionItem>
+                    <DescriptionItem label="Status message">{statusMessage}</DescriptionItem>
                   </DescriptionList>
                 )}
               </div>
