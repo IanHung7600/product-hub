@@ -23,7 +23,7 @@
 | 3 | Pattern `spec.md` | runtime 跨元件 primitive |
 | 4 | Code(`.tsx` / `.css`) | cva / 型別等機械強制 |
 | 5 | Skill(`.claude/skills/`) | invoke 情境的多步驟 workflow + checkpoint |
-| 6 | Memory(`~/.claude/.../memory/`) | 跨 session 狀態 |
+| 6 | Memory(`~/.claude/.../memory/` SSOT + repo `.claude/memory/` mirror)| 跨 session 狀態。本機編完跑 `npm run sync-memory` 推回 repo(讓 cloud sandbox 看得到) |
 | 7 | Hook(`.claude/hooks/`) | 機械化 pre/post tool 檢查 |
 | 8 | Slash Command(`.claude/commands/`) | 一次性單步 action |
 
