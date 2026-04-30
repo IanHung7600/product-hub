@@ -322,9 +322,11 @@ const Toolbar: React.FC<ToolbarProps> = ({
   return (
     <div
       className={cn(
-        // Chrome layer — bg-canvas 對齊 dark lightbox 派(Apple Photos / Drive)opaque 暗。
-        // 不用 bg-surface(dark = white α8 半透明,outer 透明時失去 backdrop 而洗白)。
-        'flex items-center gap-2 shrink-0 h-[var(--chrome-header-height)] bg-canvas border-b border-divider',
+        // Chrome layer — `bg-surface-raised` 對齊 token semantic「遮蓋型浮層必須不透明」。
+        // FileViewer 整體是 overlay,chrome 屬其 raised surface(同 DropdownMenuContent line 244)。
+        // 不用 bg-surface(dark = white α8 半透明,outer 透明時失去 backdrop 洗白)。
+        // 不用 bg-canvas(那是「頁面最底層」semantic,chrome 不是 page)。
+        'flex items-center gap-2 shrink-0 h-[var(--chrome-header-height)] bg-surface-raised border-b border-divider',
         'px-[var(--layout-space-loose)]',
       )}
     >
@@ -439,8 +441,8 @@ const InfoPanel: React.FC<InfoPanelProps> = ({
   return (
     <aside
       className={cn(
-        // Chrome — bg-canvas 同 Toolbar / Filmstrip,opaque dark 跟 mask 半透明區分
-        'w-80 shrink-0 flex flex-col bg-canvas border-l border-divider',
+        // Chrome — bg-surface-raised 同 Toolbar / Filmstrip(token semantic「遮蓋型浮層」)
+        'w-80 shrink-0 flex flex-col bg-surface-raised border-l border-divider',
         'h-full',
       )}
       aria-label={labels.detailPanel}
@@ -543,8 +545,8 @@ const Filmstrip: React.FC<FilmstripProps> = ({ files, activeIndex, onSelect, lab
   return (
     <div
       className={cn(
-        // Chrome — bg-canvas 同 Toolbar / InfoPanel,opaque dark 跟 mask 半透明區分
-        'relative shrink-0 h-24 bg-canvas border-t border-divider',
+        // Chrome — bg-surface-raised 同 Toolbar / InfoPanel(token semantic「遮蓋型浮層」)
+        'relative shrink-0 h-24 bg-surface-raised border-t border-divider',
         'flex items-center',
         'px-[var(--layout-space-loose)]',
       )}
@@ -901,7 +903,7 @@ const FileViewer = React.forwardRef<HTMLDivElement, FileViewerProps>(function Fi
               ── Q1 mask 透明度(2026-04-30)──
               outer **不**設 bg → Overlay(`bg-overlay` α45/α65)透出 image 周圍區域,
               對齊 Notion / Dropbox / Slack lightbox idiom 跟 Dialog mask 同 token 一致。
-              chrome(Toolbar / Filmstrip / InfoPanel)各自 `bg-canvas` opaque dark
+              chrome(Toolbar / Filmstrip / InfoPanel)各自 `bg-surface-raised` opaque dark
               (對齊 Apple Photos / Drive lightbox 派 — chrome opaque vs mask 半透明,
               清楚區分 backdrop click 區 vs 互動區)。
               **不**用 bg-surface — dark mode `--surface = white α8` 半透明,outer 透明時

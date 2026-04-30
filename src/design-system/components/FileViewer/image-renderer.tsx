@@ -94,19 +94,29 @@ export const ImageRenderer: React.FC<FileRendererProps> = ({
   }, [computeFitScale, clampToPct, onZoomChange])
 
   // Q2 RWD:container resize 時若在 fit mode 重算 — 對齊 Apple Photos / Drive canonical
+  // rAF debounce:drag window edge 期間 ResizeObserver 連續 fire 數十次,
+  // 合併到下一 frame 只觸發一次 → 避免 race / 過多 centerView animation 互相打斷。
   React.useEffect(() => {
     if (!loaded) return
     const container = containerRef.current
     if (!container) return
+    let rafId = 0
     const obs = new ResizeObserver(() => {
-      const mode = lastFitModeRef.current
-      if (mode === 'manual') return  // manual zoom 不自動覆蓋
-      const scale = computeFitScale(mode)
-      if (scale == null) return
-      onZoomChange(clampToPct(scale))
+      if (rafId) cancelAnimationFrame(rafId)
+      rafId = requestAnimationFrame(() => {
+        rafId = 0
+        const mode = lastFitModeRef.current
+        if (mode === 'manual') return
+        const scale = computeFitScale(mode)
+        if (scale == null) return
+        onZoomChange(clampToPct(scale))
+      })
     })
     obs.observe(container)
-    return () => obs.disconnect()
+    return () => {
+      obs.disconnect()
+      if (rafId) cancelAnimationFrame(rafId)
+    }
   }, [loaded, computeFitScale, clampToPct, onZoomChange])
 
   // Q3 雙擊 toggle fit ↔ 100%(對齊 Apple Photos / Preview.app / Imgur / PhotoSwipe canonical)
