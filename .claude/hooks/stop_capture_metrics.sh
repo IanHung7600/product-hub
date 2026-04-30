@@ -46,10 +46,19 @@ fi
 CLAUDE_MD_LINES=0
 [ -f CLAUDE.md ] && CLAUDE_MD_LINES=$(wc -l < CLAUDE.md | tr -d ' ')
 
-MEMORY_DIR="$HOME/.claude/projects/-Users-chenqiren-Library-CloudStorage-GoogleDrive-qijenchen-gmail-com--------my-project/memory"
+# Path resolution(2026-05-01):harness user-local SSOT + repo mirror fallback for cloud sandbox
+HARNESS_MEMORY_DIR="$HOME/.claude/projects/-Users-chenqiren-Library-CloudStorage-GoogleDrive-qijenchen-gmail-com--------my-project/memory"
+REPO_MEMORY_DIR=".claude/memory"
+if [ -d "$HARNESS_MEMORY_DIR" ]; then
+  MEMORY_DIR="$HARNESS_MEMORY_DIR"
+elif [ -d "$REPO_MEMORY_DIR" ]; then
+  MEMORY_DIR="$REPO_MEMORY_DIR"
+else
+  MEMORY_DIR=""
+fi
 MEMORY_ENTRIES=0
-if [ -d "$MEMORY_DIR" ]; then
-  MEMORY_ENTRIES=$(find "$MEMORY_DIR" -maxdepth 1 -name '*.md' -not -name 'MEMORY.md' 2>/dev/null | wc -l | tr -d ' ' || echo 0)
+if [ -n "$MEMORY_DIR" ] && [ -d "$MEMORY_DIR" ]; then
+  MEMORY_ENTRIES=$(find "$MEMORY_DIR" -maxdepth 1 -name '*.md' -not -name 'MEMORY.md' -not -name 'README.md' 2>/dev/null | wc -l | tr -d ' ' || echo 0)
 fi
 
 # Use `|| echo 0` after pipe to neutralize set -e/pipefail on missing dirs

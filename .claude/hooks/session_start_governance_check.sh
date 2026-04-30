@@ -166,10 +166,20 @@ elif [ "$HOOK_COUNT" -gt 25 ]; then
 fi
 
 # Check 8: Memory entries auto-trigger(soft 18 / hard 20)
-MEMORY_DIR="$HOME/.claude/projects/-Users-chenqiren-Library-CloudStorage-GoogleDrive-qijenchen-gmail-com--------my-project/memory"
+# Path resolution(2026-05-01):harness user-local 為 SSOT,fallback 到 repo `.claude/memory/`
+# 讓 cloud sandbox(claude.ai/code / Codespaces / Cursor cloud)mirror snapshot 仍 trigger 正確 prune signal
+HARNESS_MEMORY_DIR="$HOME/.claude/projects/-Users-chenqiren-Library-CloudStorage-GoogleDrive-qijenchen-gmail-com--------my-project/memory"
+REPO_MEMORY_DIR=".claude/memory"
+if [ -d "$HARNESS_MEMORY_DIR" ]; then
+  MEMORY_DIR="$HARNESS_MEMORY_DIR"
+elif [ -d "$REPO_MEMORY_DIR" ]; then
+  MEMORY_DIR="$REPO_MEMORY_DIR"
+else
+  MEMORY_DIR=""
+fi
 MEM_COUNT=0
-if [ -d "$MEMORY_DIR" ]; then
-  MEM_COUNT=$(find "$MEMORY_DIR" -maxdepth 1 -name "*.md" -not -name "MEMORY.md" 2>/dev/null | wc -l | tr -d ' ')
+if [ -n "$MEMORY_DIR" ] && [ -d "$MEMORY_DIR" ]; then
+  MEM_COUNT=$(find "$MEMORY_DIR" -maxdepth 1 -name "*.md" -not -name "MEMORY.md" -not -name "README.md" 2>/dev/null | wc -l | tr -d ' ')
   MEM_COUNT=${MEM_COUNT:-0}
 fi
 if [ "$MEM_COUNT" -gt 20 ]; then
