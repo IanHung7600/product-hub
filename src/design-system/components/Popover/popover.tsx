@@ -101,8 +101,33 @@ PopoverHeader.displayName = "PopoverHeader"
 // PopoverBody / PopoverFooter: wrap SurfaceBody / SurfaceFooter with data-popover-*
 // attributes so handlePopoverOpenAutoFocus 可正確定位 body 內第一個 interactive 元素
 // (autoFocus consistency — 不 focus 到 chrome close X)。
-const PopoverBody = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ ...props }, ref) => <SurfaceBody ref={ref} data-popover-body {...props} />
+//
+// `variant`(2026-04-30 對齊 Dialog/Sheet canonical):
+// - `default`(預設):SurfaceBody primitive 預設 padding(px-loose py-tight)
+// - `list`:body `py-2`(無 horizontal padding),item 自帶 `px-loose rounded-md`
+//   讓 hover bg flush chrome 內邊(Linear / Cmd+K idiom)
+// 對齊 layoutSpace 規則 4 line 1(default 套 commitment 前留白 概念 A)+ unbounded
+// list-as-region(list 套 0 outer,讓 list 自帶 py 撐 概念 B)
+interface PopoverBodyProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Body 佈局模式 — default / list,對齊 DialogBody / SheetBody */
+  variant?: "default" | "list"
+}
+const PopoverBody = React.forwardRef<HTMLDivElement, PopoverBodyProps>(
+  ({ className, variant = "default", children, ...props }, ref) =>
+    variant === "list" ? (
+      <div
+        ref={ref}
+        data-popover-body
+        className={cn("py-2", className)}
+        {...props}
+      >
+        {children}
+      </div>
+    ) : (
+      <SurfaceBody ref={ref} data-popover-body className={className} {...props}>
+        {children}
+      </SurfaceBody>
+    ),
 )
 PopoverBody.displayName = "PopoverBody"
 

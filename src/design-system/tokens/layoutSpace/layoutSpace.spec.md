@@ -281,6 +281,11 @@ document.documentElement.setAttribute('data-layout-space', 'lg')
 
 ## Notes
 
+- **不建 universal LayoutBody primitive**:world-class(Material 3 / Polaris / Atlassian / Carbon / Mantine)都採「**每元件 own variant + 共享底層 token**」,不抽 universal layout body。對齊此派
+- **Body variant catalog**(2026-04-30):每 overlay-class 元件提供 `variant="default" \| "list"` 對應規則 4 兩語意:
+  - `default` = 概念 A(commitment 前留白,`pb-bottom 48`)
+  - `list` = unbounded list-as-region(概念 B,`py-2` 0 outer 讓 list 自帶 py 撐)
+  - 已實作:Dialog / Sheet / Popover。新增 overlay 元件對齊此 catalog
 - **不建 FormLayout primitive**:規則 1-6 universal,角色 scope-relative 易誤封裝。獨特 chrome 已在 `overlay-surface.spec.md`(SurfaceFooter)+ `action-bar.spec.md` 處理
 - **v1 → v6 演化**(2026-04-30):從「block-adjacent 一律 tight」改為親疏判 + bundled-family 分權 + region 二分。詳 git log + memory `feedback_layout_v6_canonical.md`
 
