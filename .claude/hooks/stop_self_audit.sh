@@ -34,12 +34,15 @@ if [ -n "$TRANSCRIPT_PATH" ] && [ -f "$TRANSCRIPT_PATH" ]; then
     tail -50)
 
   # Detect claim keywords
-  CLAIM_RE='(verified|all green|all pass|0 errors|完成|全部 done|全綠|沒問題|tsc 0|永遠合規|不留待辦|done\.|complete\.|✅)'
-  # 撤回 escape:assistant 已明確撤回 / 認錯 / 預先聲明否定 → 不 trigger gap
-  # 包含 claim-denial patterns(「不 claim」「沒 claim」「明確不」)避免 false positive:
-  # 例 AI 寫「我這次明確不 claim verified」regex 仍會 match `verified`,但 denial 已在
-  # 同 sentence 表達 — 不該 block。
-  RETRACT_RE='(撤回 claim|false claim|沒修好|未驗證|未驗 真實|撤回|不 claim|沒 claim|明確不|明確未|not yet verified)'
+  # NOTE(2026-05-01): 縮窄 CLAIM_RE — 移除「完成 / 沒問題 / 全部 done / 全綠 / 永遠合規」
+  # over-broad conversational 字眼(每 turn 結尾「commit 完成 push」/「沒問題」自然出現,
+  # false positive 率高)。保留 strong verification claim(verified / 0 errors / tsc 0 等)。
+  CLAIM_RE='(verified|all green|all pass|0 errors|tsc 0|done\.|complete\.|✅)'
+  # 撤回 escape:assistant 已明確撤回 / 認錯 / 預先聲明否定 / 已 inline 跑 verify → 不 trigger gap
+  # 包含 claim-denial patterns(「不 claim」「沒 claim」「明確不」)避免 false positive。
+  # 加 verify-result patterns(2026-05-01):AI inline 跑 tsc / build 顯示 result 字眼,
+  # 證明本 turn 已驗證,不應 trigger gap。
+  RETRACT_RE='(撤回 claim|false claim|沒修好|未驗證|未驗 真實|撤回|不 claim|沒 claim|明確不|明確未|not yet verified|tsc exit 0|tsc:[[:space:]]*0|built in [0-9]+|✓ built|build-storybook exit 0|exit code 0)'
   if echo "$LAST_ASSISTANT" | grep -qiE "$CLAIM_RE" && ! echo "$LAST_ASSISTANT" | grep -qiE "$RETRACT_RE"; then
     # Check if any verify-class tool_use happened recent turns
     # (look for npx tsc / bash test / compile-stories / npm run / audit invocations)
