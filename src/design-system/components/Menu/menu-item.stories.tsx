@@ -111,9 +111,9 @@ export const States: Story = {
   name: '狀態',
   render: () => (
     <MenuContainer><MenuGroup>
-      <MenuItem startIcon={Mail}>Default</MenuItem>
-      <MenuItem startIcon={Mail} selected>Selected（單選）</MenuItem>
-      <MenuItem startIcon={Mail} disabled>Disabled</MenuItem>
+      <MenuItem startIcon={Mail}>收件匣</MenuItem>
+      <MenuItem startIcon={Mail} selected>已星標（單選）</MenuItem>
+      <MenuItem startIcon={Mail} disabled>已封存</MenuItem>
     </MenuGroup></MenuContainer>
   ),
 }

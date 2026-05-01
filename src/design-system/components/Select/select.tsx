@@ -49,7 +49,7 @@ export interface SelectProps
   onChange?: (value: string) => void
   placeholder?: string
   clearable?: boolean
-  display?: 'text' | 'tag'
+  display?: 'plain' | 'tag'
   startIcon?: LucideIcon
   /** 啟用搜尋（desktop 時 field 變 input，打字即篩選） */
   searchable?: boolean
@@ -94,14 +94,14 @@ function ReadonlyDisplay({
 
 // code-quality-allow: long-function — foundational composite main body — 拆 sub-fn 會複雜化 local state / ref / context binding
 const NativeSelect = React.forwardRef<HTMLSelectElement, SelectProps>(
-  ({ mode = 'edit', error: errorProp = false, size = 'md', options, value, onChange, placeholder, className, disabled: disabledProp, clearable = false, display = 'text', startIcon: StartIcon, id: idProp, 'aria-describedby': ariaDescribedByProp, 'aria-errormessage': ariaErrorMessageProp, ...props }, ref) => {
+  ({ mode = 'edit', error: errorProp = false, size = 'md', options, value, onChange, placeholder, className, disabled: disabledProp, clearable = false, display = 'plain', startIcon: StartIcon, id: idProp, 'aria-describedby': ariaDescribedByProp, 'aria-errormessage': ariaErrorMessageProp, ...props }, ref) => {
     const fieldCtx = useFieldContext()
     const error = errorProp || (fieldCtx?.invalid ?? false)
     const disabled = disabledProp ?? fieldCtx?.disabled
     const resolvedMode = disabled ? 'disabled' : mode
     const iconSize = getIconSize(size)
     const showClear = clearable && value && resolvedMode === 'edit'
-    const isTextDisplay = display === 'text'
+    const isTextDisplay = display === 'plain'
     const selectRef = React.useRef<HTMLSelectElement | null>(null)
     const setSelectRef = React.useCallback((el: HTMLSelectElement | null) => {
       selectRef.current = el
@@ -180,14 +180,14 @@ NativeSelect.displayName = 'NativeSelect'
 
 // code-quality-allow: long-function — foundational composite main body — 拆 sub-fn 會複雜化 local state / ref / context binding
 const CustomSelect = React.forwardRef<HTMLDivElement, SelectProps>(
-  ({ mode = 'edit', error: errorProp = false, size = 'md', options, value, onChange, placeholder, className, disabled: disabledProp, clearable = false, display = 'text', startIcon: StartIcon, searchable = false, id: idProp, 'aria-describedby': ariaDescribedByProp, 'aria-errormessage': ariaErrorMessageProp, 'aria-label': ariaLabel }, ref) => {
+  ({ mode = 'edit', error: errorProp = false, size = 'md', options, value, onChange, placeholder, className, disabled: disabledProp, clearable = false, display = 'plain', startIcon: StartIcon, searchable = false, id: idProp, 'aria-describedby': ariaDescribedByProp, 'aria-errormessage': ariaErrorMessageProp, 'aria-label': ariaLabel }, ref) => {
     const fieldCtx = useFieldContext()
     const error = errorProp || (fieldCtx?.invalid ?? false)
     const disabled = disabledProp ?? fieldCtx?.disabled
     const resolvedMode = disabled ? 'disabled' : mode
     const iconSize = getIconSize(size)
     const showClear = clearable && value && resolvedMode === 'edit'
-    const isTextDisplay = display === 'text'
+    const isTextDisplay = display === 'plain'
 
     const [open, setOpen] = React.useState(false)
     const [search, setSearch] = React.useState('')

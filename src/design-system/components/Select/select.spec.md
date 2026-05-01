@@ -165,10 +165,12 @@ Select 的值套用時機是**由 onChange handler 的副作用決定**，不是
 
 | 模式 | 何時使用 |
 |------|---------|
-| `text`（預設） | 選項語意靠文字表達（類別、國家、角色） |
+| `plain`（預設） | 選項語意靠文字表達（類別、國家、角色） |
 | `tag` | 選項有色彩語意，顏色加速掃視（狀態：紅黃綠） |
 
-### text 模式
+**命名 rationale**(2026-05-01 從 `'text'` 改 `'plain'`):跨元件 prop value 衝突防避 — `Button variant="text"` 表「無 chrome 文字按鈕」,跟 Select.display 的「純文字呈現」是兩個不同概念,共用 `'text'` 字面值會造成 consumer 認知衝突(命名三 test 第 3 條)。改 `'plain'` 後語意專屬:plain = 樸素文字呈現,對立 tag = 用 Tag 元件呈現。
+
+### plain 模式
 
 - 原生 select 純文字 + ChevronDown
 - 可搭配 `startIcon`——代表 value 的圖示（如狀態 icon），不是裝飾

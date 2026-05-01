@@ -19,12 +19,12 @@ export default meta
    ═══════════════════════════════════════════════════════════════════════════ */
 
 type ModeKey = 'edit' | 'readonly' | 'disabled'
-type DisplayKey = 'text' | 'tag'
+type DisplayKey = 'plain' | 'tag'
 type SizeKey = 'sm' | 'md' | 'lg'
 type StateKey = 'default' | 'hover' | 'focus' | 'error' | 'disabled'
 
 const MODES: ModeKey[] = ['edit', 'readonly', 'disabled']
-const DISPLAYS: DisplayKey[] = ['text', 'tag']
+const DISPLAYS: DisplayKey[] = ['plain', 'tag']
 const SIZES: SizeKey[] = ['sm', 'md', 'lg']
 
 const statusOptions = [
@@ -222,8 +222,8 @@ export const Overview = {
       {/* ── Anatomy: text mode ── */}
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
-          <H3>結構（Anatomy）— text 模式</H3>
-          <Desc>display="text"（預設）。原生 select 純文字 + ChevronDown。可搭配 startIcon 代表 value 的圖示。clearable 有值時出現 clear 按鈕。</Desc>
+          <H3>結構（Anatomy）— plain 模式</H3>
+          <Desc>display="plain"（預設）。原生 select 純文字 + ChevronDown。可搭配 startIcon 代表 value 的圖示。clearable 有值時出現 clear 按鈕。「plain」表樸素文字呈現,跟 Button variant="text" 區隔(2026-05-01 從 'text' 改名,避免 prop value 跨元件衝突)。</Desc>
         </div>
         <div className="flex gap-8">
           <div className="flex flex-col gap-2 items-start">
@@ -280,7 +280,7 @@ export const Overview = {
         <H3>display 模式一覽</H3>
         <div className="flex flex-col gap-2">
           {([
-            { display: 'text' as const, desc: '（預設）狀態、類別等純文字選項。原生 select 純文字 + ChevronDown' },
+            { display: 'plain' as const, desc: '（預設）狀態、類別等純文字選項。原生 select 純文字 + ChevronDown' },
             { display: 'tag' as const, desc: '需要視覺標記的選項（顏色標籤、優先級等）。Tag 元件 + 隱藏 select overlay' },
           ]).map(({ display, desc }) => (
             <div key={display} className="flex items-center gap-4">
@@ -304,7 +304,7 @@ export const Overview = {
             <tbody>
               {[
                 ['mode', "'edit'|'readonly'|'disabled'", "'edit'", '三種模式——edit 可編輯、readonly 顯示值、disabled 灰化'],
-                ['display', "'text'|'tag'", "'text'", '顯示模式——text 純文字，tag 用 Tag 元件呈現'],
+                ['display', "'plain'|'tag'", "'plain'", '顯示模式——plain 純文字，tag 用 Tag 元件呈現'],
                 ['size', "'sm'|'md'|'lg'", "'md'", '尺寸，與 Button 同 size 並排高度一致'],
                 ['options', 'SelectOption[]', '—', '選項列表 { value, label }'],
                 ['value', 'string | null', '—', '目前選中的值'],
@@ -331,7 +331,7 @@ export const Overview = {
 
 const InspectorInner = () => {
   const [mode, setMode] = useState<ModeKey>('edit')
-  const [display, setDisplay] = useState<DisplayKey>('text')
+  const [display, setDisplay] = useState<DisplayKey>('plain')
   const [size, setSize] = useState<SizeKey>('md')
   const [error, setError] = useState(false)
   const [clearable, setClearable] = useState(false)
@@ -640,7 +640,7 @@ export const ColorMatrix = {
                 <tr key={m}>
                   <Td mono>{m}</Td>
                   <Td>
-                    <Select mode={m} display="text" options={statusOptions} value="active" size="sm" disabled={m === 'disabled'} />
+                    <Select mode={m} display="plain" options={statusOptions} value="active" size="sm" disabled={m === 'disabled'} />
                   </Td>
                   <Td>
                     <Select mode={m} display="tag" options={statusOptions} value="active" size="sm" disabled={m === 'disabled'} />
@@ -766,7 +766,7 @@ export const SizeMatrix = {
                   <Td mono>{m}</Td>
                   {SIZES.map((sz) => (
                     <Td key={sz}>
-                      <Select mode={m} display="text" size={sz} options={statusOptions} value="active" disabled={m === 'disabled'} />
+                      <Select mode={m} display="plain" size={sz} options={statusOptions} value="active" disabled={m === 'disabled'} />
                     </Td>
                   ))}
                 </tr>
