@@ -319,3 +319,11 @@ hook `check_story_anatomy.sh` 規則 B 已在 stories 層攔 label Button 作 di
 
 我們採「config-first + slot escape hatch」屬刻意 deviation,rationale:90% case 宣告式 API 阻止 visual drift / a11y 漏失;10% case 仍提供逃生口,不強迫 consumer fork 元件。
 
+## 被引用(auto-maintained,Dim 3 reciprocal audit)
+
+> 本節由 `scripts/add-reciprocal-pointers.mjs` 自動維護,列出在 SSOT 語境下指向本 spec 的其他 spec。若要手動補充,寫在本節之前。
+
+- `alert.spec.md`
+- `data-table.spec.md`
+- `field-controls.spec.md`
+- `popover.spec.md`
