@@ -218,6 +218,10 @@
           {
             "type": "command",
             "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check_overlay_panel_scroll_chain.sh\""
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check_primitive_color_var_in_tsx.sh\""
           }
         ]
       }

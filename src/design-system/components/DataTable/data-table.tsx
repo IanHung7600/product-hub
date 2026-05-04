@@ -35,8 +35,13 @@ import { useControllable } from '@/design-system/hooks/use-controllable'
 
 // ── Variants ─────────────────────────────────────────────────────────────────
 
+// outer border = `border-divider`(同 row divider 色)— T-junction connectivity 設計原則:
+// row divider 兩端 meet table outer border;若不同色 → 交匯處視覺斷層;
+// divider 不能加重(過搶眼)→ 淡化 outer border 至 divider 同色,seamless。
+// 對齊 Ant Design colorBorderSecondary idiom(table outer + divider 同色)。
+// 詳 tokens/color/color.spec.md「T-junction connectivity」段。
 const dataTableVariants = cva('bg-surface rounded-md overflow-hidden', {
-  variants: { bordered: { true: 'border border-border', false: '' } },
+  variants: { bordered: { true: 'border border-divider', false: '' } },
   defaultVariants: { bordered: true },
 })
 
