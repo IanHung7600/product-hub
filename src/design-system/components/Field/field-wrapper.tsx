@@ -12,6 +12,10 @@ import { cva } from 'class-variance-authority'
 
 export const fieldWrapperStyles = cva(
   [
+    // K10 fix(2026-05-04):`group/field` 讓 inner placeholder/text 可透過 `group-data-[field-mode=...]/field:` 變體
+    //   各 Field 元件 wrapper 同時加 `data-field-mode={resolvedMode}` 屬性,bareInputStyles 即可
+    //   依 mode 切 placeholder color。User canonical:disabled 顯著性優於 muted。
+    'group/field',
     'inline-flex items-center w-full rounded-md',
     'text-foreground font-normal',
     'transition-colors duration-150',
@@ -101,6 +105,11 @@ export const bareInputStyles = [
   'outline-none border-none p-0',
   'text-[inherit] font-[inherit] leading-[inherit]',
   'placeholder:text-fg-muted',
+  // K10 fix(2026-05-04):wrapper data-field-mode=disabled 時,placeholder/text 都切 fg-disabled
+  //   依賴 fieldWrapperStyles 的 `group/field` + 各 Field 元件 wrapper 加 `data-field-mode={resolvedMode}`
+  //   User canonical:disabled state 顯著性優於 muted(neutral-6 > neutral-7)
+  'group-data-[field-mode=disabled]/field:placeholder:text-fg-disabled',
+  'group-data-[field-mode=disabled]/field:text-fg-disabled',
 ].join(' ')
 
 // ── Empty Value Display ─────────────────────────────────────────────────────

@@ -92,6 +92,11 @@ const FieldControlGroup = React.forwardRef<HTMLDivElement, FieldControlGroupProp
           '[&>*:not(:first-child):not(:last-child)]:rounded-none',
           '[&>*:first-child:not(:last-child)]:rounded-r-none',
           '[&>*:last-child:not(:first-child)]:rounded-l-none',
+          // K12 fix(2026-05-04):FCG 內 disabled cell 強制保留 border(全域 disabled 是 border-transparent
+          //   來避免 standalone field 視覺重),但 FCG context 下 group 整體 border integrity 必須 —
+          //   外圈 border + inner divider 健在,單個 cell 是 disabled 仍視覺上屬於同一 group
+          //   World-class 對照:Bootstrap input-group disabled / Ant Space.Compact disabled 同 idiom
+          '[&>*[data-field-mode="disabled"]]:border-border',
           className,
         )}
         data-field-control-group=""

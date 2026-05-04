@@ -133,6 +133,13 @@ Grouped by theme. Each runs as an independent subagent; many can parallelize.
 | 32 | **Filter operator registry SSOT consumption**(對齊 ClickUp/Airtable/Notion API + M17)| Per-consumer grep:反 pattern(a)hardcode op 字串 array 不 import `OPERATOR_REGISTRY`;(b)inline switch on op derive ValueShape(該走 `getValueShape`)。SSOT:`DataTable/filter-operators.ts`。`// filter-op-inline-allow:` 檔頭 escape |
 | 33 | **Component classification + abstraction discipline**(對齊 M21 + M22 + M23)| Per-component verify 5 子維:(a) **Internal vs Components 一致性**;(b) **Premature abstraction** rationale + cite;(c) **Sub-component 5-file 結構過度**;(d) **Benchmark claim 缺 source**(M22);(e) **DS internal canonical 優先**(M23)— spec / tsx 含 world-class DS keyword 但 visual decision(color / size / spacing / typography / state)未先 grep DS 既有 token / variant / pattern 命中 → flag。Sub-agent 對每 benchmark cite 反查:該屬性在 `tokens/` / 近親 spec 已有 codified canonical 嗎?有 → 該 cite 應為**輔證**(內部 canonical 主)而非**主導**(外部覆蓋內部)。違反 = M23 自開新 tier(2026-05-03 chevron 事件:Ant 5 家 muted 覆蓋 DS icon-only Button neutral-9 預設)|
 
+### Group N — State precedence + chain invariants(2026-05-04 新增,M24/M25 codify)
+
+| # | Audit | What it catches |
+|---|-------|-----------------|
+| 34 | **Disabled state 顯著性 precedence**(M24)| DS-wide grep 所有 Field family + 任何含 `placeholder:text-fg-muted` / `<span className="text-fg-muted">{placeholder ?? ...}</span>` 的 tsx,反向確認:對應 disabled state 是否有 `disabled:placeholder:text-fg-disabled` / `group-data-[field-mode=disabled]/field:` group selector / `resolvedMode === 'disabled' ? 'text-fg-disabled' : ...` JSX 條件。違反 = disabled 元件內 placeholder 仍 muted color → user 看 disabled 內容比 element 對比強(視覺反而 emphasis)。Hook `check_disabled_placeholder_color.sh` write-time 攔,本 dim batch verify 既有元件 |
+| 35 | **Layered chain invariant — overlay scroll**(M25)| DS-wide grep `<PopoverContent\|<HoverCardContent\|<DialogContent\|<SheetContent` consumer,確認所有中間 wrapper 含 `<SurfaceBody>` 時,wrapper className 是否含 `flex flex-col h-full`。Chain 任何一層斷 → SurfaceBody flex-1 失效 → body 不 scroll(Filter / Sort panel 2026-05-04 真實 bug)。Hook `check_overlay_panel_scroll_chain.sh` write-time 攔,本 dim batch verify 既有 panels |
+
 ---
 
 ## Workflow

@@ -201,6 +201,7 @@ SSOT → `patterns/element-anatomy/inline-action.spec.md`「Real case 表」+ Pr
 | 位置 | Primitive |
 |------|-----------|
 | Header cell internal(sort / ⌄ menu / filter funnel / pin)| `ItemInlineActionButton` `size="md"`(對齊 AG Grid / Material / Airtable / Notion / Polaris) |
+| **Multi-sort header(≥2 columns sorted)** | **隱藏 header arrow + 取消排序 dropdown option**(K7,2026-05-04)— 無 order 編號的單個 arrow 在 multi-sort 是 partial info → 反而混淆;user 走 SortManager panel 看完整 priority(SSOT)。0/1 sort 仍秀 arrow 完整資訊。理由:現行 DS 不顯 sort order 編號,跟 Airtable / Linear / Atlassian / Carbon 純箭頭派一致;multi-sort 時這派需 SortManager fallback(world-class 共識) |
 | Body cell internal(display endAction / clear / edit indicator)| Field family endAction(自動繼承) |
 | Row dedicated action column | Button `xs iconOnly` 24px(見「九、Row Actions」) |
 | Toolbar | Button(action-bar 共識) |

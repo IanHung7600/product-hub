@@ -378,7 +378,7 @@ function DataTableFilterPanelInner<TData>({
     () => filterableColumns.map((c) => ({ value: c.id, label: c.label })),
     [filterableColumns],
   )
-  const firstCol = filterableColumns[0]
+  // K13 後 firstCol 不再被 add* 消費(改用 newEmpty*),這裡只留 prefill effect 用(已直接讀 prefilledColumnId)。
 
   // **G fix(2026-05-04 v2)**:initial-mount 預設 1 empty row(field 未選 → op+value 自動 disabled)
   //   useRef gate → 只 mount 一次;user 後續手動刪光 → 不 re-add → 維持「全清 = empty CTA only」UX
@@ -444,7 +444,9 @@ function DataTableFilterPanelInner<TData>({
   }
   const addFlatCondition = () => {
     if (!flatTree) return
-    onChange({ ...flatTree, children: [...flatTree.children, newCondition(firstCol)] })
+    // K13 fix(2026-05-04):加篩選 → empty row(field 未選 → op+value disabled)
+    //   World-class:Notion / Coda / ClickUp 不 auto-select;對齊 initial mount canonical
+    onChange({ ...flatTree, children: [...flatTree.children, newEmptyCondition()] })
   }
   const setFlatConjunction = (conj: Conjunction) => {
     if (!flatTree) return
@@ -480,12 +482,13 @@ function DataTableFilterPanelInner<TData>({
       ),
     })
   }
+  // K13 fix(2026-05-04):同 addFlatCondition,巢狀內加條件也 empty row
   const addConditionToGroup = (groupId: string) => {
     if (!nestedTree) return
     onChange({
       ...nestedTree,
       children: nestedTree.children.map((g) =>
-        g.id === groupId ? { ...g, children: [...g.children, newCondition(firstCol)] } : g
+        g.id === groupId ? { ...g, children: [...g.children, newEmptyCondition()] } : g
       ),
     })
   }
@@ -495,7 +498,8 @@ function DataTableFilterPanelInner<TData>({
   }
   const addGroup = () => {
     if (!nestedTree) return
-    onChange({ ...nestedTree, children: [...nestedTree.children, newGroup(firstCol)] })
+    // K13:加群組也用 empty group
+    onChange({ ...nestedTree, children: [...nestedTree.children, newEmptyGroup()] })
   }
   const setRootConjunction = (conj: Conjunction) => {
     if (!nestedTree) return
@@ -510,7 +514,13 @@ function DataTableFilterPanelInner<TData>({
     //         gap-2(8) + trash(28) + 2×loose padding(32) = ~636 → 640px
     //   nested:再加 group p-2 (16) + outer ConjunctionLabel (80) + outer gap (8) → ~740 → 760px
     //   對齊 Airtable / Notion / Linear filter row 視覺密度 @benchmark-unverified(non-OSS)
+    // **K11 fix(2026-05-04)**:viewport-aware scroll chain invariant
+    //   parent PopoverContent 是 flex flex-col + max-h + overflow-hidden,
+    //   panel root 必 forward `flex flex-col h-full` 才能讓 SurfaceBody flex-1 min-h-0 overflow-y-auto 生效
+    //   無此 forward → 中間 wrapper 斷鏈 → body 不 scroll(NameCard 因為自身設 max-h flex-col 才繞過)
+    //   詳 overlay-surface.spec.md「viewport-aware scroll chain invariant」段
     <div ref={ref} className={cn(
+      'flex flex-col h-full',
       mode === 'nested'
         ? 'w-[min(760px,calc(100vw-2rem))]'
         : 'w-[min(640px,calc(100vw-2rem))]',
@@ -693,6 +703,7 @@ function FilterRow({
           value={condition.op}
           onChange={onChangeOp}
           disabled={!hasField}
+          placeholder="運算子"
           aria-label="篩選運算子"
         />
         <FilterValuePicker

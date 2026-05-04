@@ -32,6 +32,9 @@ const textareaVariants = cva(
     'text-foreground font-normal',
     'outline-none resize-y',
     'placeholder:text-fg-muted',
+    // K10 fix(2026-05-04):disabled 時 placeholder + text 切 fg-disabled(parallel 到 bareInputStyles)
+    //   Textarea 自身 `<textarea disabled>` 帶 disabled HTML attribute,用 `disabled:` variant 直接命中
+    'disabled:placeholder:text-fg-disabled disabled:text-fg-disabled',
     'px-3 py-2',
     'transition-colors duration-150',
   ],

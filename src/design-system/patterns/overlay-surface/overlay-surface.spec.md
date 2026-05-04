@@ -313,17 +313,32 @@ const CHROME_UNBOUNDED_SLOT =
 - Dialog header 塞 primary sm(無 data-dismiss)→ primary layout 佔 28 → header = 52 md(自然長)
 - Popover header 同 pattern:48 md / 56 lg
 
-**為什麼這樣合理**:
-- **Unbounded** 無視覺邊界:若用 sm/md(28/32),配合 2×tight 的 padding(12/16)會讓 header 產生過多負空間(padding 比 button 還大、button 自身無 chrome 填充)。縮小佔位到 xs(24)+ padding = 48/56 = chrome-header-height,視覺 tight compact。
-- **Bounded** 有視覺邊界:button 本身 bg/border 佔視覺重量,padding 自然包住 button,header 長到 52+ 不顯得空。這也跟 footer 保持一致 — footer 通常放 primary/tertiary,自然高度。
-- **幾何閉合**:只有 header 全是 unbounded(Dialog 只有 title + close X 典型場景)時,header = chrome-header-height canonical,跟 Sidebar / page header / top bar 完美對齊。
+**Rationale**:Unbounded 無 bg/border → 2×py-tight 過大,縮 layout 佔位至 xs(24)讓 header = chrome-header-height = 48 自然閉合,跟 Sidebar / page header / top bar 對齊。Bounded 自帶視覺重量,自然長到 52+,跟 footer 一致。
 
-**SurfaceHeader / SurfaceFooter 實作**(padding-based,非 fixed-height):
+---
+
+## Viewport-aware scroll chain invariant(2026-05-04 K11 升 SSOT)
+
+> **背景**:Popover / HoverCard / Dialog / Sheet content 設 `max-h-[var(--radix-*-available-height)] flex flex-col overflow-hidden`,讓 viewport 太小時 header/footer 永遠 in-viewport,body 壓縮 scroll。但**中間任何 wrapper div 沒 forward `flex flex-col h-full` 就斷鏈**,SurfaceBody flex-1 失效,body 不會 scroll。
+>
+> **真實 bug(2026-05-04)**:Filter / Sort panel 內 wrapper div 設 `w-[640px]` 無 flex-col → user 縮視窗時 body 不 scroll,內容被 clip。NameCard 之所以 work 因為它直接是 PopoverContent 唯一 child(無 wrapper)+ 自設 max-h flex-col。
+
+**Invariant**:從 `*Content`(浮層 root)到 `SurfaceBody` 之間的**所有中間 wrapper 都必 `flex flex-col h-full`**(forward chain)。
+
+**panel root 寫 width**:
 ```tsx
-// 保持 py-tight,不用 min-h / fixed h
-'flex items-center gap-2 shrink-0 border-b border-divider',
-'px-[var(--layout-space-loose)] py-[var(--layout-space-tight)]',
+<div ref={ref} className="flex flex-col h-full w-[640px]">  // ✓ chain forward
+  <SurfaceHeader />
+  <SurfaceBody />
+</div>
 ```
+
+**禁止**:
+```tsx
+<div ref={ref} className="w-[640px]">  // ❌ 斷鏈,SurfaceBody flex-1 失效
+```
+
+**DS-wide consumer 必檢點**:`grep '<PopoverContent\|<HoverCardContent\|<DialogContent\|<SheetContent'` 內第一層 wrapper 是否含 `flex flex-col h-full`(若該 panel 用 SurfaceBody)。Hook `check_overlay_panel_scroll_chain.sh` 機械化攔截。
 
 **共通 rationale**(全 overlay + banner 家族):corner close X 屬 **action group region**,必用 `<Button>` primitive(不自刻 `<button><X /></button>` 繞 DS token / a11y,不用 `ItemInlineActionButton`)。
 

@@ -72,21 +72,25 @@ const getIconSize = (size: string) => size === 'lg' ? 20 : 16
 
 // ── Shared readonly/disabled render ─────────────────────────────────────────
 function ReadonlyDisplay({
-  mode, size, options, value, display, startIcon: StartIcon, className,
-}: Pick<SelectProps, 'mode' | 'size' | 'options' | 'value' | 'display' | 'startIcon' | 'className'>) {
+  mode, size, options, value, display, startIcon: StartIcon, className, placeholder,
+}: Pick<SelectProps, 'mode' | 'size' | 'options' | 'value' | 'display' | 'startIcon' | 'className' | 'placeholder'>) {
   const resolvedMode = mode ?? 'readonly'
   const sz = size ?? 'md'
   const iconSize = getIconSize(sz)
   const label = options?.find(o => o.value === value)?.label ?? value
   const iconColor = resolvedMode === 'disabled' ? 'text-fg-disabled' : 'text-fg-muted'
   const isTextDisplay = display !== 'tag'
+  // K10+K14 fix(2026-05-04):disabled mode placeholder/empty 顯示色 → fg-disabled(neutral-6),非 fg-muted(neutral-7)
+  //   user canonical:disabled 顯著性優於 muted。同時 plain mode 必須 respect placeholder prop(之前忽略 = bug)
+  const emptyColorCls = resolvedMode === 'disabled' ? 'text-fg-disabled' : 'text-fg-muted'
+  const emptyText = placeholder ?? EMPTY_DISPLAY
 
   if (isTextDisplay) {
     return (
       <div className={cn(fieldWrapperStyles({ mode: resolvedMode, size: sz }), className)} data-field-mode={resolvedMode}>
         {StartIcon && <StartIcon size={iconSize} className={cn('shrink-0 pointer-events-none', iconColor)} aria-hidden />}
         <span className={cn('flex-1 min-w-0 truncate', resolvedMode === 'disabled' && 'text-fg-disabled')}>
-          {value ? label : <span className="text-fg-muted">{EMPTY_DISPLAY}</span>}
+          {value ? label : <span className={emptyColorCls}>{emptyText}</span>}
         </span>
       </div>
     )
@@ -97,7 +101,7 @@ function ReadonlyDisplay({
 
   return (
     <div className={cn(fieldWrapperStyles({ mode: resolvedMode, size: sz }), value && tagPadding[sz], className)} data-field-mode={resolvedMode}>
-      {value ? <Tag size={sz} variant={tagVariant}>{label}</Tag> : <span className="text-fg-muted">{EMPTY_DISPLAY}</span>}
+      {value ? <Tag size={sz} variant={tagVariant}>{label}</Tag> : <span className={emptyColorCls}>{emptyText}</span>}
     </div>
   )
 }
@@ -122,7 +126,7 @@ const NativeSelect = React.forwardRef<HTMLSelectElement, SelectProps>(
     }, [ref])
 
     if (resolvedMode !== 'edit') {
-      return <ReadonlyDisplay mode={resolvedMode} size={size} options={options} value={value} display={display} startIcon={StartIcon} className={className} />
+      return <ReadonlyDisplay mode={resolvedMode} size={size} options={options} value={value} display={display} startIcon={StartIcon} className={className} placeholder={placeholder} />
     }
 
     const selectEl = (
@@ -209,7 +213,7 @@ const CustomSelect = React.forwardRef<HTMLDivElement, SelectProps>(
     React.useEffect(() => { if (!open) setSearch('') }, [open])
 
     if (resolvedMode !== 'edit') {
-      return <ReadonlyDisplay mode={resolvedMode} size={size} options={options} value={value} display={display} startIcon={StartIcon} className={className} />
+      return <ReadonlyDisplay mode={resolvedMode} size={size} options={options} value={value} display={display} startIcon={StartIcon} className={className} placeholder={placeholder} />
     }
 
     const selectedOpt = options?.find(o => o.value === value)
