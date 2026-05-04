@@ -677,7 +677,8 @@ function FilterRow({
     : null
   // op 'is_set' / 'is_not_set' 等 shape='none' → 無 value cell,op 自動 expand 填剩餘寬
   // 對齊 Notion / Airtable / Linear filter row 行為
-  const hasValueCell = valueShape !== null && valueShape !== 'none'
+  // 注意:valueShape=null(初始無 field 選)時仍 render value cell(disabled placeholder)— 只 'none' 才 fold
+  const hasValueCell = valueShape !== 'none'
 
   // FieldControlGroup 接合 field + op + value 視覺(2026-05-04 E refactor + 多輪 fix):
   //   - border collapse 取代 3 顆獨立 Select 並排,對齊 Airtable / Linear / Notion filter row idiom
