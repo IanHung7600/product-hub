@@ -376,7 +376,7 @@ export const InlineEdit: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
-        <h3 className="text-body font-bold text-foreground mb-2">Inline Edit 模式</h3>
+        <h3 className="text-body font-bold text-foreground mb-2">Inline Edit 視覺模式</h3>
         <p className="text-caption text-fg-muted mb-3">Cell 間有垂直分隔線，select 類欄位顯示 ChevronDown / Calendar 指示器。</p>
         <DataTable
           columns={columnsWithPrice}
@@ -392,6 +392,185 @@ export const InlineEdit: Story = {
       </div>
     </div>
   ),
+}
+
+/* ── 互動式 Inline Edit (per-column meta.editable + onCellCommit) ── */
+const CATEGORY_OPTIONS = [
+  { value: 'Electronics', label: 'Electronics' },
+  { value: 'Furniture', label: 'Furniture' },
+  { value: 'Food', label: 'Food' },
+  { value: 'Lifestyle', label: 'Lifestyle' },
+]
+const STOCK_OPTIONS = [
+  { value: 'In stock', label: 'In stock' },
+  { value: 'Low stock', label: 'Low stock' },
+  { value: 'Out of stock', label: 'Out of stock' },
+]
+interface EditableProduct {
+  sku: string
+  name: string
+  category: string
+  stock: string
+  inStock: boolean
+  url: string
+  price: number
+  updatedAt: string
+}
+const editableSampleData: EditableProduct[] = sampleData.slice(0, 4).map((p) => ({
+  sku: p.sku,
+  name: p.name,
+  category: p.category,
+  stock: p.stock,
+  inStock: p.stock === 'In stock',
+  url: 'https://shop.example.com/' + p.sku.toLowerCase(),
+  price: p.price ?? 0,
+  updatedAt: p.updatedAt,
+}))
+
+export const InlineEditInteractive: Story = {
+  name: '就地編輯 — 互動式 (per-column editable)',
+  render: () => {
+    const [data, setData] = React.useState(editableSampleData)
+    const editCol = createColumnHelper<EditableProduct>()
+    const editableColumns = React.useMemo(
+      () => [
+        editCol.accessor('sku', { header: 'SKU', size: 100, meta: { type: 'string' } }),  // 唯讀
+        editCol.accessor('name', {
+          header: 'Product',
+          size: 280,
+          meta: { type: 'string', editable: true },  // 可編
+        }),
+        editCol.accessor('category', {
+          header: 'Category',
+          size: 140,
+          meta: { type: 'select', options: CATEGORY_OPTIONS, editable: true },
+        }),
+        editCol.accessor('stock', {
+          header: 'Stock',
+          size: 130,
+          meta: { type: 'select', options: STOCK_OPTIONS, editable: true },
+        }),
+        editCol.accessor('inStock', {
+          header: 'In Stock',
+          size: 90,
+          meta: { type: 'boolean', editable: true },  // 直接 toggle
+        }),
+        editCol.accessor('url', {
+          header: 'URL',
+          size: 180,
+          meta: { type: 'url', editable: true },  // hover Pencil → edit
+        }),
+        editCol.accessor('price', {
+          header: 'Price',
+          size: 110,
+          meta: { type: 'currency', prefix: '$', editable: true },
+        }),
+      ],
+      []
+    )
+    const handleCommit = (rowId: string, colId: string, value: unknown) => {
+      setData((prev) => prev.map((row) => row.sku === rowId ? { ...row, [colId]: value } : row))
+    }
+    return (
+      <div>
+        <p className="text-caption text-fg-muted mb-3">
+          name / category / stock / inStock / url / price 可編。SKU 唯讀。boolean = 點 Checkbox 即時 toggle;url = hover cell 顯示 Pencil → click 編輯;其他 type click cell 進 edit mode → Enter/blur commit / Esc cancel。
+        </p>
+        <DataTable
+          columns={editableColumns}
+          data={data}
+          height="auto"
+          inlineEdit
+          tableOptions={{ getRowId: (row) => row.sku }}
+          getRowId={(row) => row.sku}
+          onCellCommit={handleCommit}
+        />
+      </div>
+    )
+  },
+}
+
+/* ── Nested rows (tree-table) ── */
+interface TaskRow {
+  id: string
+  task: string
+  owner: string
+  status: string
+  children?: TaskRow[]
+}
+const NESTED_DATA: TaskRow[] = [
+  {
+    id: 'task-1',
+    task: 'Q1 行銷活動',
+    owner: 'Alice Wang',
+    status: 'In progress',
+    children: [
+      {
+        id: 'task-1-1',
+        task: '社群素材設計',
+        owner: 'Bob Chen',
+        status: 'Done',
+        children: [
+          { id: 'task-1-1-1', task: 'Instagram post 設計', owner: 'Bob Chen', status: 'Done' },
+          { id: 'task-1-1-2', task: 'Facebook cover 設計', owner: 'Bob Chen', status: 'Done' },
+        ],
+      },
+      { id: 'task-1-2', task: 'KOL 合作協調', owner: 'Carol Liu', status: 'In progress' },
+      { id: 'task-1-3', task: '預算審核', owner: 'Alice Wang', status: 'Blocked' },
+    ],
+  },
+  {
+    id: 'task-2',
+    task: 'Q2 產品上架',
+    owner: 'David Wu',
+    status: 'Not started',
+    children: [
+      { id: 'task-2-1', task: '產品文案撰寫', owner: 'Carol Liu', status: 'Not started' },
+      { id: 'task-2-2', task: 'SKU 設定', owner: 'David Wu', status: 'Not started' },
+    ],
+  },
+]
+
+export const NestedRows: Story = {
+  name: '巢狀 row(tree-table)',
+  render: () => {
+    const [expanded, setExpanded] = React.useState<Record<string, boolean>>({ 'task-1': true, 'task-1-1': true })
+    const STATUS_OPTIONS = [
+      { value: 'Not started', label: 'Not started' },
+      { value: 'In progress', label: 'In progress' },
+      { value: 'Blocked', label: 'Blocked' },
+      { value: 'Done', label: 'Done' },
+    ]
+    const taskCol = createColumnHelper<TaskRow>()
+    const taskColumns = React.useMemo(
+      () => [
+        taskCol.accessor('task', { header: '任務', size: 360, meta: { type: 'string' } }),
+        taskCol.accessor('owner', { header: '負責人', size: 160, meta: { type: 'string' } }),
+        taskCol.accessor('status', { header: '狀態', size: 140, meta: { type: 'select', options: STATUS_OPTIONS } }),
+      ],
+      []
+    )
+    return (
+      <div>
+        <p className="text-caption text-fg-muted mb-3">
+          forward TanStack <code>getSubRows</code> + 共用 token <code>--tree-indent-{'{sm,md,lg}'}</code>(跨 TreeView 設計語言)。Click chevron 展/收;chevron click stopPropagation 不 fire row select。
+        </p>
+        <DataTable
+          columns={taskColumns}
+          data={NESTED_DATA}
+          height="auto"
+          getRowId={(row) => row.id}
+          selectable
+          tableOptions={{
+            getSubRows: (row: TaskRow) => row.children,
+            getRowCanExpand: (row) => Boolean(row.original.children?.length),
+            state: { expanded },
+            onExpandedChange: setExpanded as any,
+          }}
+        />
+      </div>
+    )
+  },
 }
 
 /* ── 虛擬捲動（大量資料）── */
