@@ -77,7 +77,7 @@ const sizeForInput = (size: CellSize): CellSize => size
 // ── Cell Components ──────────────────────────────────────────────────────────
 
 function StringCell({ value, mode, size, onCommit, onCancel }: CellComponentProps) {
-  if (mode === 'display') return <Input mode="display" value={value != null ? String(value) : ''} />
+  if (mode === 'display') return <Input chrome="naked" mode="display" value={value != null ? String(value) : ''} />
   return (
     <Input
       autoFocus
@@ -97,6 +97,7 @@ function NumberCell({ value, meta, mode, size, onCommit, onCancel }: CellCompone
   if (mode === 'display') {
     return (
       <NumberInput
+        chrome="naked"
         mode="display"
         value={value as number | null}
         prefix={prefix}
@@ -129,6 +130,7 @@ function DateCell({ value, meta, mode, size, onCommit }: CellComponentProps) {
   if (mode === 'display') {
     return (
       <DatePicker
+        chrome="naked"
         mode="display"
         value={value as string | null}
         formatOptions={meta?.formatOptions}
@@ -152,6 +154,7 @@ function TimeCell({ value, meta, mode, size, onCommit }: CellComponentProps) {
   if (mode === 'display') {
     return (
       <TimePicker
+        chrome="naked"
         mode="display"
         value={value as string | null}
         formatOptions={meta?.formatOptions}
@@ -176,6 +179,7 @@ function SelectCell({ value, meta, mode, size, onCommit }: CellComponentProps) {
   if (mode === 'display') {
     return (
       <Select
+        chrome="naked"
         mode="display"
         value={value as string | null}
         options={meta?.options ?? []}
@@ -201,6 +205,7 @@ function MultiSelectCell({ value, meta, mode, size, autoRowHeight, onCommit }: C
   if (mode === 'display') {
     return (
       <Combobox
+        chrome="naked"
         mode="display"
         value={(value as string[] | null) ?? []}
         options={meta?.options ?? []}
@@ -223,7 +228,7 @@ function MultiSelectCell({ value, meta, mode, size, autoRowHeight, onCommit }: C
 function PersonCell({ value, mode, size, onCommit, meta }: CellComponentProps) {
   if (mode === 'display') {
     // PeoplePicker mode='display' 自動依 value 是否為 array 切 PersonDisplay vs MultiPersonDisplay
-    return <PeoplePicker mode="display" value={value as PersonValue | null} size={size} />
+    return <PeoplePicker chrome="naked" mode="display" value={value as PersonValue | null} size={size} />
   }
   return (
     <PeoplePicker
@@ -239,7 +244,7 @@ function PersonCell({ value, mode, size, onCommit, meta }: CellComponentProps) {
 
 function MultiPersonCell({ value, mode, size, onCommit, meta }: CellComponentProps) {
   if (mode === 'display') {
-    return <PeoplePicker mode="display" value={(value as PersonValue[]) ?? []} size={size} />
+    return <PeoplePicker chrome="naked" mode="display" value={(value as PersonValue[]) ?? []} size={size} />
   }
   return (
     <PeoplePicker
@@ -255,7 +260,7 @@ function MultiPersonCell({ value, mode, size, onCommit, meta }: CellComponentPro
 function BooleanCell({ value, mode, meta, size, isEditable, onCommit }: CellComponentProps) {
   // boolean 不分 read/edit mode — display 渲 mode='display' 純展示;editable 時直接 toggle Checkbox
   if (mode === 'display' && !isEditable) {
-    return <Checkbox mode="display" checked={value === true} />
+    return <Checkbox chrome="naked" mode="display" checked={value === true} />
   }
   return (
     <Checkbox
@@ -277,7 +282,7 @@ function BooleanCell({ value, mode, meta, size, isEditable, onCommit }: CellComp
 function UrlCell({ value, meta, mode, size, isEditable, onRequestEdit, onCommit, onCancel }: CellComponentProps) {
   if (mode === 'display') {
     const display = (
-      <LinkInput mode="display" value={value as string | null} label={meta?.linkLabel} />
+      <LinkInput chrome="naked" mode="display" value={value as string | null} label={meta?.linkLabel} />
     )
     if (!isEditable) return display
     // editable read mode:hover Pencil 鈕(對齊 spec 第十二段「url:read = 連結 + Pencil」)

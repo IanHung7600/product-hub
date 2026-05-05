@@ -112,26 +112,29 @@ export const fieldWrapperStyles = cva(
         variant: 'bare',
         className: 'bg-transparent border border-transparent cursor-not-allowed opacity-disabled',
       },
-      // naked variant chrome by mode — 完全無 wrapper border / 無 focus ring,host(cell)自管 visual
+      // naked variant chrome by mode — 完全無 wrapper border / 無 focus ring / 無 inner padding,
+      // host(cell)自管 visual + padding。`!px-0 !gap-0` override size variant 預設的 `px-3 gap-2`,
+      // 讓 cell-as-input(Airtable / Notion / Excel canonical)在 display ↔ edit 切換時
+      // 文字位置完全不偏移(host cell padding 是唯一 padding source)。
       {
         mode: 'edit',
         variant: 'naked',
-        className: 'bg-transparent border border-transparent',
+        className: 'bg-transparent border border-transparent !px-0 !gap-0',
       },
       {
         mode: 'display',
         variant: 'naked',
-        className: 'bg-transparent border border-transparent',
+        className: 'bg-transparent border border-transparent !px-0 !gap-0',
       },
       {
         mode: 'readonly',
         variant: 'naked',
-        className: 'bg-transparent border border-transparent',
+        className: 'bg-transparent border border-transparent !px-0 !gap-0',
       },
       {
         mode: 'disabled',
         variant: 'naked',
-        className: 'bg-transparent border border-transparent cursor-not-allowed opacity-disabled',
+        className: 'bg-transparent border border-transparent cursor-not-allowed opacity-disabled !px-0 !gap-0',
       },
     ],
     defaultVariants: {

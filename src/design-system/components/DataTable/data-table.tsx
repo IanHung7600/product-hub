@@ -287,7 +287,10 @@ function RowDragHandle({ disabled }: { disabled: boolean }) {
   const ctx = React.useContext(SortableRowCtx)
   const [rowEl, setRowEl] = React.useState<HTMLDivElement | null>(null)
   const [portalTarget, setPortalTarget] = React.useState<HTMLElement | null>(null)
-  const [pos, setPos] = React.useState<{ top: number; left: number; visible: boolean } | null>(null)
+  const [pos, setPos] = React.useState<{ top: number; left: number; rowHovered: boolean } | null>(null)
+  // Portal 逃逸 row DOM → cursor 移到 button 上時 row mouseleave → button hide → cycle flicker(2026-05-05)。
+  // Fix:button 自帶 hover state,visibility = rowHovered || buttonHovered || isDragging。
+  const [buttonHovered, setButtonHovered] = React.useState(false)
 
   // Anchor span ref callback finds the parent row element(自身位置 = row 內部,parentElement = row div)。
   // 用 useState 觸發 effect re-run(child ref callback 會 fire 在 commit phase,early enough for layout effect)
@@ -307,11 +310,11 @@ function RowDragHandle({ disabled }: { disabled: boolean }) {
       if (!tableEl) return
       const rRect = rowEl.getBoundingClientRect()
       const tRect = tableEl.getBoundingClientRect()
-      const isHovered = rowEl.hasAttribute('data-hovered') || !!ctx.isDragging
+      const rowHovered = rowEl.hasAttribute('data-hovered') || !!ctx.isDragging
       setPos({
         top: rRect.top + rRect.height / 2,
         left: tRect.left, // table outer 左 border line position(viewport coords)
-        visible: isHovered,
+        rowHovered,
       })
     }
 
@@ -333,14 +336,26 @@ function RowDragHandle({ disabled }: { disabled: boolean }) {
     }
   }, [rowEl, ctx])
 
-  // 永遠 render anchor span(讓 anchorRef 可拿到 row element)
+  // 永遠 render anchor span(讓 anchorRef 可拿到 row element)。
+  // A3 fix(2026-05-05):顯式 `top:0 left:0 pointer-events:none` — 雖 width/height=0 不該佔
+  // flex space,但部分瀏覽器對 abs span 在 flex container 行為微妙 → 顯式座標固定原點,
+  // 確保第一個 cell 文字位置不被推開。
   // ctx 為 null 或 mirror role 時 anchor 仍渲染但不渲 handle Portal
-  const anchor = <span ref={anchorRef} aria-hidden style={{ position: 'absolute', width: 0, height: 0 }} />
+  const anchor = (
+    <span
+      ref={anchorRef}
+      aria-hidden
+      style={{ position: 'absolute', top: 0, left: 0, width: 0, height: 0, pointerEvents: 'none' }}
+    />
+  )
 
   if (!ctx || ctx.role !== 'primary' || !pos) return anchor
 
   const canDrag = !disabled
   const showInvalid = !!ctx.invalidDrop && !!ctx.isDragging
+  // Visibility = rowHovered || buttonHovered || isDragging — button-level hover 補上 portal 逃逸後
+  // 「cursor 移到 button → row mouseleave」造成的閃爍。對齊 React Portal hover canonical(Radix HoverCard)。
+  const visible = pos.rowHovered || buttonHovered || !!ctx.isDragging
 
   const handle = (
     <Button
@@ -352,6 +367,8 @@ function RowDragHandle({ disabled }: { disabled: boolean }) {
       aria-disabled={!canDrag || undefined}
       tabIndex={canDrag ? 0 : -1}
       disabled={!canDrag}
+      onMouseEnter={() => setButtonHovered(true)}
+      onMouseLeave={() => setButtonHovered(false)}
       style={{
         position: 'fixed',
         top: pos.top,
@@ -359,8 +376,8 @@ function RowDragHandle({ disabled }: { disabled: boolean }) {
         transform: 'translate(-50%, -50%)',
         zIndex: 50,
         // hover-reveal:opacity 切換取代 visibility(動畫平順)
-        opacity: pos.visible ? 1 : 0,
-        pointerEvents: pos.visible ? 'auto' : 'none',
+        opacity: visible ? 1 : 0,
+        pointerEvents: visible ? 'auto' : 'none',
         transition: 'opacity 150ms ease',
       }}
       className={cn(
@@ -812,12 +829,15 @@ function DataTableInner<TData>(
     const meta = cell.column.columnDef.meta
     const colType = meta?.type as ColumnType | undefined
     const align = meta?.align ?? (colType ? columnTypeDefaults[colType].align : undefined)
-    const indicator = getEditIndicator(colType)
     // L4 inline edit 整合
     const cellRowId = cell.row.id
     const cellColId = cell.column.id
     const cellEditable = isCellEditable(meta, cell.row.original)
     const isEditingThisCell = editingCellId === cellEditId(cellRowId, cellColId)
+    // edit mode 時 indicator 由 inner Field control(SelectMenu trigger / DatePicker trigger)
+    // 自帶 chevron / Calendar — cell-level indicator 重複會 double。對齊 Airtable / Notion canonical:
+    // edit mode = cell content IS the input,no extra indicator overlay。
+    const indicator = isEditingThisCell ? null : getEditIndicator(colType)
     // Cell click → 進 edit mode(boolean 不需 — 自己 toggle;url 不需 — 走內部 Pencil button,Phase C 由 UrlCell 內處理)
     const onEditableCellClick = cellEditable && colType !== 'boolean' && colType !== 'url' && !isEditingThisCell
       ? () => setEditingCellId(cellEditId(cellRowId, cellColId))
@@ -845,12 +865,20 @@ function DataTableInner<TData>(
           inlineEdit && !isLastInRow && 'border-r border-divider',
           indicator && 'gap-2',
           onEditableCellClick && 'cursor-pointer',
-          // Cell-as-input(2026-05-05):editing 時 cell 本體扮演 input frame —
-          // outline ring(inset)取代內部 wrapper border,避免兩層 frame stacking(派 B 翻車)。
-          // 對齊 Airtable / Notion / Excel cell editing canonical。
-          isEditingThisCell && 'outline outline-2 outline-primary -outline-offset-2 z-10',
+          isEditingThisCell && 'z-10',
         )}
-        style={{ width: cell.column.getSize(), minWidth: cell.column.columnDef.minSize, maxWidth: cell.column.columnDef.maxSize, ...cellPadding }}
+        style={{
+          width: cell.column.getSize(),
+          minWidth: cell.column.columnDef.minSize,
+          maxWidth: cell.column.columnDef.maxSize,
+          ...cellPadding,
+          // Cell-as-input(2026-05-05 v2):editing 時 cell 本體扮演 input frame。
+          // box-shadow inset 1px 取代 outline — outline 在 overflow-hidden cell 內 top/bottom
+          // 會被 clip(只留左右兩條);box-shadow 是 paint(非 layout),不受 overflow 裁切,且
+          // 1px 落點與 cell 既有 `border-r border-divider` 同位,seamless 無縫替換 cell 邊框。
+          // 對齊 Airtable / Notion / Excel cell editing canonical。
+          ...(isEditingThisCell ? { boxShadow: 'inset 0 0 0 1px var(--primary)' } : null),
+        }}
         onClick={onEditableCellClick}
       >
         {/* L4 nested rows prefix:depth indent + chevron(僅 first content cell + 有 nested 結構)
@@ -1069,13 +1097,12 @@ function DataTableInner<TData>(
             <SortIcon size={14} aria-hidden className="shrink-0 text-fg-secondary" />
           )}
         </div>
-        {/* 右區:⌄ menu(hover/focus-within 顯,reserve = inline-action 排版佔位 16,對齊
-            inline-action.spec.md「尺寸對照」表 sm/md = 16px;NOT 24)。
-            data-table.spec.md「九之二、Cell action primitive 分類」對齊。
-            ItemInlineActionButton asChild-compatible,size="md" 因 header 不在 RowSizeProvider。
-            has-[[data-state=open]]:opacity-100 — menu 開啟後 trigger 維持可見,即使 cursor
-            移開(無 hover)+ focus 已 portal 到 menu 第一項(無 focus-within in subtree)。 */}
-        <div className="shrink-0 ml-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 has-[[data-state=open]]:opacity-100 transition-opacity">
+        {/* 右區:⌄ menu(hover/focus-within 才顯)— C2 fix(2026-05-05):absolute positioning
+            退出 layout flow,header label 可用滿欄寬而不被 chevron 佔位推擠。
+            開啟後仍可見(has-[[data-state=open]])因 cursor 已移到 menu。對齊 Notion / Linear /
+            Airtable column header pattern。
+            ItemInlineActionButton asChild-compatible,size="md" 因 header 不在 RowSizeProvider。 */}
+        <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 has-[[data-state=open]]:opacity-100 transition-opacity bg-muted rounded-sm">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <ItemInlineActionButton
