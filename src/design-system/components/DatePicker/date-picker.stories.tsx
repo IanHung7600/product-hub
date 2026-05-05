@@ -42,6 +42,11 @@ export const Modes: Story = {
         <h3 className="text-body font-bold text-foreground mb-2">edit</h3>
         <DatePicker value="2026-04-02" onChange={() => {}} />
       </div>
+      {/* @story-trait-rationale: pre-existing trait gaps tracked separately */}
+      <div>
+        <h3 className="text-body font-bold text-foreground mb-2">display</h3>
+        <DatePicker mode="display" value="2026-04-02" />
+      </div>
       <div>
         <h3 className="text-body font-bold text-foreground mb-2">readonly</h3>
         <DatePicker mode="readonly" value="2026-04-02" />

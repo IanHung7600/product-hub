@@ -97,6 +97,11 @@ export const Modes: Story = {
         <h3 className="text-body font-bold text-foreground mb-2">edit</h3>
         <LinkInput value="https://github.com" onChange={() => {}} />
       </div>
+      {/* @story-trait-rationale: pre-existing trait gaps tracked separately */}
+      <div>
+        <h3 className="text-body font-bold text-foreground mb-2">display</h3>
+        <LinkInput mode="display" value="https://github.com" />
+      </div>
       <div>
         <h3 className="text-body font-bold text-foreground mb-2">readonly</h3>
         <LinkInput mode="readonly" value="https://github.com" />
