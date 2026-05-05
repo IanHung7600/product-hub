@@ -52,17 +52,15 @@ TanStack Table 負責邏輯，DataTable 負責視覺與互動。
 
 ## 層級架構
 
-每一層建立在前一層之上，可獨立啟用。
+每一層建立在前一層之上,可獨立啟用。
 
 | 層級 | 能力 | 狀態 |
 |------|------|------|
-| **L1 基礎結構** | 骨架、尺寸、border、色彩、高度模式、行高模式 | 本文件 |
-| **L2 選取** | row selection、checkbox、批次操作列 | 設計決策已定（本文件 L2 段），實作待做 |
-| **L3 欄位互動** | 排序、resize、reorder、pin、顯示隱藏 | 待定 |
-| **L4 資料操作** | 篩選、分組、搜尋（統一入口） | 待定 |
-| **L5 Cell 能力** | custom renderer、inline edit、validation、copy/paste | 設計決策已定，實作待做 |
-| **L6 進階呈現** | 展開列、tree data | 待定 |
-| **L7 匯出** | CSV/Excel、列印、context menu | 待定 |
+| **L1 基礎結構** | 骨架、尺寸、border、色彩、高度模式、行高模式 | ✅ 完成(本文件 L1 段)|
+| **L2 選取** | row selection、checkbox、單/多選、bulk action 整合 | ✅ 完成(本文件 L2 段)|
+| **L3 欄位互動** | 排序(本文件 L3)、resize、reorder、pin、顯示隱藏 | 部分完成(sort 完成,resize/reorder/pin/visibility 待 v2)|
+| **L4 資料操作 + Cell 能力** | 進階篩選(本文件 L4 Filter)、inline edit、nested rows、row drag(本文件 L4 段)| ✅ Filter / Inline edit / Nested rows 完成,row drag API 設計完成 impl 待 v2 |
+| **L5 進階** | 分組、搜尋、tree data v2 enhancements、export CSV/Excel | 待 v2 |
 
 ---
 

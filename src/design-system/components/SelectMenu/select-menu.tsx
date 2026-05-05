@@ -256,6 +256,8 @@ const SelectMenu = React.forwardRef<HTMLElement, SelectMenuProps>(function Selec
                 onValueChange={setSearch}
                 className={cn(
                   'flex w-full bg-transparent outline-none placeholder:text-fg-muted',
+                  // M24 disabled state precedence:disabled 時 placeholder 切 fg-disabled(audit dim 34)
+                  'disabled:placeholder:text-fg-disabled disabled:text-fg-disabled disabled:cursor-not-allowed',
                   size === 'lg' ? 'text-body-lg leading-compact' : 'text-body leading-compact',
                 )}
               />
