@@ -783,8 +783,12 @@ function DataTableInner<TData>(
     // 對齊與截斷。回傳 primitive(string / number)才走 TruncateCell。
     // 理由:TruncateCell 的 `span.truncate` 強制 white-space:nowrap + inline baseline,
     // 對 inline-flex / icon+text 自訂結構會拉歪(見 circular-progress sync table 案例)。
+    // **edit mode bypass**(2026-05-05 v9 Bug 2 修):editing cell 內部是 Field 控件
+    // (Input/Textarea/Select etc.)自管 layout + 替代元素(textarea)不該被包進 inline span
+    // baseline context — 否則 line-box descender 加 5-7px 致 cell 進 edit 後 row 撐高 layout shift。
     const isConsumerCompound = !colType && React.isValidElement(content)
-    return wrap ? <span className="break-words min-w-0">{content}</span>
+    return isEditingThisCell ? content
+      : wrap ? <span className="break-words min-w-0">{content}</span>
       : (isKnownCompound || isConsumerCompound) ? content
       : <TruncateCell>{content}</TruncateCell>
   }

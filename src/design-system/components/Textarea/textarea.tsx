@@ -113,26 +113,33 @@ const textareaVariants = cva(
         variant: 'bare',
         className: 'bg-transparent border border-transparent cursor-not-allowed opacity-disabled text-fg-disabled',
       },
-      // naked chrome × mode — cell-as-input substrate(對齊 fieldWrapperStyles naked 規則)。
+      // naked chrome × mode — cell-as-input substrate(2026-05-05 v9 architectural rewrite)。
+      //   v8 用 outline-2 平行 state ring 跟 Field default border state 對抗 → user 報 Bug
+      //   (focus 樣式丟失 / hover 蓋 focus 變灰 / 線框加粗)。v9 **完全繼承 Field default
+      //   state machine**(border-based 同 token 同 hover/focus/open precedence),只改物理尺寸。
       //   `!h-full !resize-none`:fill cell box(host cell 控高,user 不該手動 resize)。
-      //   **state ring 用 outline + offset:[-1px] straddle**(2026-05-05 v4)— 對齊
-      //   field-wrapper.tsx `nakedCellHoverRing` / `nakedCellFocusRing` SSOT(同 token,同
-      //   straddle 行為,完整蓋 grid divider 不留漏邊)。
-      //   `!rounded-none` 對齊 cell square edge。
-      //   **edit mode 反向接管 cell padding** → 切 mode 文字 0 px shift(同 Field naked rule)。
+      //   `!rounded-none` 對齊 cell square edge。`!resize-none` 防 user drag handle。
+      //   edit 反向接管 cell padding,display/readonly/disabled 不重複 padding。
+      //   **focus-visible 用 textarea 自身 selector**(其為 focusable element,語意同 Field
+      //   default `focus-within`,DOM 層級不同寫法不同)。
       {
         mode: 'edit',
         variant: 'naked',
         className: [
-          'bg-transparent !border-0 !rounded-none !h-full !resize-none',
+          'bg-transparent !rounded-none !h-full !resize-none',
           '!px-[var(--table-cell-px)] !py-[var(--table-cell-py)]',
-          'hover:outline hover:outline-2 hover:outline-offset-[-1px] hover:outline-border',
-          'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-1px] focus-visible:outline-primary',
+          'border border-border',
+          'hover:border-border-hover',
+          'focus-visible:border-primary focus-visible:hover:border-primary',
+          // textarea UA stylesheet 預設 line-height: normal(1.2-1.5 不定),會跟 display
+          // `<div>` text-body line-height: 1.5(21px @ 14px)不一致 → cell 進 edit 後 height
+          // shift。顯式 leading-normal-content + box-sizing border-box 對齊 div 行為。
+          '!leading-[1.5]',
         ],
       },
-      { mode: 'display', variant: 'naked', className: 'bg-transparent !border-0 !rounded-none !h-full !resize-none !px-0 !py-0' },
-      { mode: 'readonly', variant: 'naked', className: 'bg-transparent !border-0 !rounded-none !h-full !resize-none !px-0 !py-0' },
-      { mode: 'disabled', variant: 'naked', className: 'bg-transparent !border-0 !rounded-none cursor-not-allowed opacity-disabled text-fg-disabled !h-full !resize-none !px-0 !py-0' },
+      { mode: 'display', variant: 'naked', className: 'bg-transparent !rounded-none !h-full !resize-none !px-0 !py-0 border border-transparent !leading-[1.5]' },
+      { mode: 'readonly', variant: 'naked', className: 'bg-transparent !rounded-none !h-full !resize-none !px-0 !py-0 border border-transparent !leading-[1.5]' },
+      { mode: 'disabled', variant: 'naked', className: 'bg-transparent !rounded-none cursor-not-allowed opacity-disabled text-fg-disabled !h-full !resize-none !px-0 !py-0 border border-transparent !leading-[1.5]' },
     ],
     defaultVariants: {
       mode: 'edit',

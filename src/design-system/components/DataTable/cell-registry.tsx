@@ -93,12 +93,15 @@ function StringCell({ value, mode, size, autoRowHeight, onCommit, onCancel }: Ce
       : <Input variant="naked" mode="display" value={v} />
   }
   if (autoRowHeight) {
-    // rows 預設估算:從 value 長度推算 wrap 行數(每行約 60 字),min 3 max 10。
-    // 避免 `rows=1` 導致 cell 進 edit 後 textarea intrinsic 30px → row 縮 → 視覺跳。
-    // !h-full 會 fallback 到 intrinsic 因為 row autoRowHeight 跟 cell content 的循環依賴
-    // (row=max(cells), cell=max(content), content=textarea h-full=row → 循環)。rows pre-size
-    // 給 textarea definite intrinsic 高,row 計算穩定 + 跟 display 內容高接近不會跳。
-    const estimateRows = Math.min(10, Math.max(3, Math.ceil(v.length / 60)))
+    // rows 估算(2026-05-05 v9 Bug 2 修):autoRow cell 進 edit 時 textarea intrinsic 必須
+    // ≈ display div 高度(否則 row layout shift)。`!h-full` 走循環依賴 fallback 到
+    // textarea intrinsic = `rows × line-height + padding + border`。
+    // 估算 rows = max(顯式 \n 行數, 字元 wrap 行數)。chars-per-line=40 對齊 typical column
+    // width(~300px content area / 14px font ~7-8px char width = 38-43 chars)。前 v8 用 60
+    // 過寬鬆 → 3-line 內容算成 2 lines → cell 進 edit shrink。Min=1 防短 value 強撐 layout。
+    const newlineRows = (v.match(/\n/g) || []).length + 1
+    const wrapRows = Math.ceil(v.length / 40)
+    const estimateRows = Math.min(10, Math.max(1, newlineRows, wrapRows))
     return (
       <Textarea
         autoFocus
@@ -373,7 +376,7 @@ function UrlCell({ value, meta, mode, size, isEditable, onRequestEdit, onCommit,
     if (!isEditable) return display
     // editable read mode:hover Pencil 鈕(對齊 spec 第十二段「url:read = 連結 + Pencil」)
     return (
-      <span className="group/cell relative flex items-center w-full">
+      <span className="group/cell relative flex items-center w-full"> {/* @naked-row-mode-allow: URL hover-Pencil 是 inline action 不是 value content,items-center 鎖 Pencil 對齊行高第一行(autoRow 跟 fixed 皆同視覺正確) */}
         <span className="flex-1 min-w-0">{display}</span>
         <Button
           variant="tertiary"
