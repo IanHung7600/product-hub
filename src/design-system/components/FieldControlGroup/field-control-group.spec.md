@@ -1,6 +1,6 @@
 ---
 component: FieldControlGroup
-family: FieldFamily(scope = control 集合,跟 FieldGroup 用 scope 區分)
+family: self-contained
 benchmark:
   - Ant Design Space.Compact: github.com/ant-design/ant-design/blob/master/components/style/compact-item.ts
   - Bootstrap input-group: github.com/twbs/bootstrap/blob/v5.3.3/scss/forms/_input-group.scss

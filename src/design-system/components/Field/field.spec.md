@@ -1,6 +1,6 @@
 ---
 component: Field
-family: null
+family: self-contained
 traits:
   - hasInteractiveStates
   - isStructural
