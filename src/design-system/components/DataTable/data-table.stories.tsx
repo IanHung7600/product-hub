@@ -1226,3 +1226,46 @@ export const FilterPanelLongTagOverflow: Story = {
     )
   },
 }
+
+/* ── 列拖曳重排(Jira-style)─────────────────────────────────────────────
+   enableRowDrag + onRowReorder 整合範例:
+   - hover row → 最左 GripVertical 浮現(opacity 0 → 100)
+   - 拖曳 row → 透過 @dnd-kit/sortable 重排;放下 → onRowReorder(sourceId, targetId, 'before' | 'after')
+   - consumer 自管 data array mutation(同 Notion / Airtable / Linear pattern)
+   - sort 啟用時 drag handle 自動 disabled + Tooltip 解釋
+   - v1 限制:non-virtualized + 單 panel(無 pinnedLeft/Right)時最佳;3-panel 整合 v2 */
+export const RowDragInteractive: Story = {
+  name: '列拖曳重排',
+  render: () => {
+    const [list, setList] = React.useState<Product[]>(sampleData)
+    const handleReorder = (sourceId: string, targetId: string, position: 'before' | 'after') => {
+      setList((prev) => {
+        const sourceIdx = prev.findIndex((r) => r.sku === sourceId)
+        const targetIdx = prev.findIndex((r) => r.sku === targetId)
+        if (sourceIdx === -1 || targetIdx === -1) return prev
+        const next = [...prev]
+        const [moved] = next.splice(sourceIdx, 1)
+        // splice 後 target 可能位移,重算
+        const adjustedTarget = next.findIndex((r) => r.sku === targetId)
+        const insertAt = position === 'before' ? adjustedTarget : adjustedTarget + 1
+        next.splice(insertAt, 0, moved)
+        return next
+      })
+    }
+    return (
+      <div className="flex flex-col gap-3 max-w-3xl">
+        <p className="text-caption text-fg-muted">
+          Hover 任一列 → 最左浮現 GripVertical handle → 按住拖曳重排。Consumer 透過 onRowReorder 收到 (sourceId, targetId, position) 自管 data mutation。
+        </p>
+        <DataTable
+          columns={baseColumns}
+          data={list}
+          height="auto"
+          getRowId={(row) => row.sku}
+          enableRowDrag
+          onRowReorder={handleReorder}
+        />
+      </div>
+    )
+  },
+}
