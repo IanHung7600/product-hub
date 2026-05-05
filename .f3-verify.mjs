@@ -1,6 +1,6 @@
 import { chromium } from 'playwright';
 
-const URL = 'file:///home/user/design-system/storybook-static/iframe.html?id=design-system-components-datatable--row-drag-interactive&viewMode=story';
+const URL = 'http://localhost:6007/iframe.html?id=design-system-components-datatable-展示--row-drag-interactive&viewMode=story';
 
 const out = (msg) => console.log(`[verify] ${msg}`);
 

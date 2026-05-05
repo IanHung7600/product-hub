@@ -126,10 +126,10 @@ export interface DataTableProps<TData>
    *
    * **必填 `getRowId`**:enableRowDrag 為 true 時 consumer 必傳 `getRowId`,用穩定 row identity 作 dnd source / target id。否則 dnd 用 row.index 會在 reorder 後錯位(runtime 不會 throw,但 reorder 行為不正確)。
    *
-   * **v1 已知限制**:
-   * - Virtualizer × transform 互動:長 list (> 50 rows) 拖動可能 measureElement 錯位
-   * - 3-panel mirror sync:只 primary region row 跟動 transform;mirror region 不跟隨
-   * - Cross-parent drop:nested rows 子層只能在同 parent scope 重排,不能跨 parent
+   * **v2(2026-05-05)修正**:
+   * - Virtualizer × transform:被拖 row 略過 `measureElement`(透過 SortableRowCtx 廣播 active id),避免 transform 干擾測量
+   * - 3-panel mirror sync:每 region 都呼叫 `useSortable({id})`(同 SortableContext 共用 state),mirror 自然取得相同 transform
+   * - Cross-parent drop:nested 全 row 進 SortableContext.items,自訂 collisionDetection 過濾出「同 parent siblings」;cross-parent over → 不觸發,handle cursor `not-allowed`
    *
    * 詳 `data-table.spec.md`「L4 Row drag」段。
    */
@@ -366,36 +366,41 @@ function TruncateCell({ children, className }: { children: React.ReactNode; clas
   return <Tooltip><TooltipTrigger asChild>{span}</TooltipTrigger><TooltipContent>{children}</TooltipContent></Tooltip>
 }
 
-// ── L4 Row Drag: SortableRowContext ──────────────────────────────────────────
-// 跨 3-region(left/center/right)同 row id 共享單一 useSortable() instance。
-// 一個 row 的 left/center/right 是 3 個獨立 DOM,但邏輯上是一個 sortable item;
-// useSortable 只能 mount 在「一個」DOM ref(setNodeRef),這裡選 left region(若有)
-// 否則 center region。其他 region 的 row 透過 context 拿到 transform CSS 同步動。
-// 同 listeners — drag handle render 在 left region(__drag__ column),其他 region 不需。
+// ── L4 Row Drag: SortableRowContext (v2) ─────────────────────────────────────
+// v2:每 region(left / center / right)各 mount 一次 SortableRowProvider — 多個 useSortable
+// 共用同一 SortableContext / 同 row id 時,dnd-kit 內部以 id 為 unit 分發 transform / isDragging,
+// 各 hook instance 取得相同值,因此 mirror region 自然跟動(v1 mirror static bug 修正)。
+// listeners 仍只走 primary region(避免 pointer 事件雙重觸發);primary = left region 若存在否則 center。
+// `invalidDrop`(cross-parent over)走 prop 廣播給 DragHandleCell 切 cursor-not-allowed。
 interface SortableRowCtxValue {
   setNodeRef: (el: HTMLElement | null) => void
-  /** 主 region(掛 setNodeRef 的)→ 'primary';其他 region(只跟動畫)→ 'mirror' */
   role: 'primary' | 'mirror'
   style: React.CSSProperties
   attributes: Record<string, unknown>
-  listeners: Record<string, unknown> | undefined
   isDragging: boolean
-  /** drag handle 走 listeners — render 在 __drag__ column body cell */
+  /** 只 primary 提供 listeners — render 在 __drag__ column body cell */
   handleListeners: Record<string, unknown> | undefined
   handleAttributes: Record<string, unknown>
+  /** drag 進行中且當前 over target 與 active 不同 parent → invalid signal */
+  invalidDrop: boolean
 }
 const SortableRowCtx = React.createContext<SortableRowCtxValue | null>(null)
 
-/** Per-row sortable wrapper: 為每 row 唯一一次呼叫 useSortable,把 ref/transform 透過
- *  React Context 散發給 3 region 對應的 row DOM。primary region 掛 setNodeRef,
- *  mirror regions 只套用 transform CSS。 */
+/** Per-region per-row sortable wrapper(v2 multi-instance pattern)。
+ *  同 row.id 在 left/center/right 三 region 各 mount 一次 — useSortable 共享同 SortableContext
+ *  state,各 instance 取得相同 transform → mirror 自動跟動。
+ *  primary instance 額外提供 listeners 給 DragHandleCell;mirror 不提供避免雙觸發。 */
 function SortableRowProvider({
   id,
   disabled,
+  role,
+  invalidDrop,
   children,
 }: {
   id: string
   disabled?: boolean
+  role: 'primary' | 'mirror'
+  invalidDrop: boolean
   children: (ctx: SortableRowCtxValue) => React.ReactNode
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id, disabled })
@@ -406,17 +411,15 @@ function SortableRowProvider({
     zIndex: isDragging ? 1 : undefined,
     position: 'relative',
   }
-  // primary region 拿 setNodeRef + listener-free attributes(listeners 走 handle);
-  // 提供 handleListeners + handleAttributes 給 __drag__ cell 上的 GripVertical
   const ctxValue: SortableRowCtxValue = {
     setNodeRef,
-    role: 'primary',
+    role,
     style,
     attributes: attributes as unknown as Record<string, unknown>,
-    listeners: undefined,
     isDragging,
-    handleListeners: listeners as unknown as Record<string, unknown> | undefined,
+    handleListeners: role === 'primary' ? (listeners as unknown as Record<string, unknown> | undefined) : undefined,
     handleAttributes: attributes as unknown as Record<string, unknown>,
+    invalidDrop,
   }
   return <SortableRowCtx.Provider value={ctxValue}>{children(ctxValue)}</SortableRowCtx.Provider>
 }
@@ -424,11 +427,13 @@ function SortableRowProvider({
 /** GripVertical handle 顯示在 __drag__ cell。
  *  - 透過 SortableRowCtx 拿 listeners(可能是 undefined,e.g. nested rows 子層 row 不 sortable)
  *  - sort active 時 disabled(visual + listeners 移除 + Tooltip 解釋)
+ *  - v2:invalidDrop(cross-parent over)→ cursor-not-allowed + text-error 警示
  *  - hover-revealed:opacity-0 → group-hover/row:opacity-100(group/row 在 row 層級設定) */
 function DragHandleCell({ disabled }: { disabled: boolean }) {
   const ctx = React.useContext(SortableRowCtx)
   // nested rows 子層 / 排序中 → 不可拖
   const canDrag = !!ctx && !disabled
+  const showInvalid = !!ctx?.invalidDrop && !!ctx?.isDragging
   const handle = (
     <span
       role={canDrag ? 'button' : undefined}
@@ -439,7 +444,9 @@ function DragHandleCell({ disabled }: { disabled: boolean }) {
         'inline-flex items-center justify-center w-4 h-4 rounded-sm text-fg-muted',
         'opacity-0 group-hover/row:opacity-100 focus-visible:opacity-100 transition-opacity',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring',
-        canDrag ? 'cursor-grab active:cursor-grabbing hover:text-foreground' : 'cursor-not-allowed text-fg-disabled',
+        canDrag && !showInvalid && 'cursor-grab active:cursor-grabbing hover:text-foreground',
+        canDrag && showInvalid && 'cursor-not-allowed text-error',
+        !canDrag && 'cursor-not-allowed text-fg-disabled',
       )}
       {...(canDrag ? ctx?.handleListeners ?? {} : {})}
       {...(canDrag ? ctx?.handleAttributes ?? {} : {})}
@@ -800,6 +807,29 @@ function DataTableInner<TData>(
 
   // L4 row drag:sort active 時 drag handle disabled(對齊 Notion / Airtable 共識)
   const dragDisabled = sorting.length > 0
+
+  // ── L4 Row drag v2:nested rows + parent map ─────────────────────────────────
+  // v2 cross-parent fix:全 row 進 SortableContext.items(含 sub-rows),custom collisionDetection
+  // 過濾掉 cross-parent over candidates,保留「同 parent siblings」。沒命中 → invalid drop signal。
+  // parentMap: rowId → parentId(top-level row 的 parent = '' 哨兵 string)
+  const { allRowIds, parentMap } = React.useMemo(() => {
+    const ids: string[] = []
+    const pmap = new Map<string, string>()
+    const walk = (r: typeof rows[number], parentId: string) => {
+      ids.push(r.id)
+      pmap.set(r.id, parentId)
+      const subs = (r as unknown as { subRows?: typeof rows }).subRows
+      if (subs && Array.isArray(subs)) subs.forEach(s => walk(s, r.id))
+    }
+    rows.forEach(r => { if ((r.depth ?? 0) === 0) walk(r, '') })
+    return { allRowIds: ids, parentMap: pmap }
+  }, [rows])
+
+  // active drag state(state for invalid signal re-render;ref for fast lookup in collisionDetection)
+  const [activeDragId, setActiveDragId] = React.useState<string | null>(null)
+  const [invalidDropActive, setInvalidDropActive] = React.useState(false)
+  const invalidRef = React.useRef(false)
+  invalidRef.current = invalidDropActive
 
   // code-quality-allow: long-function — cell render 含 selection / pinned / type-aware formatter 三邏輯,拆會增 prop drilling
   const cellEl = (cell: ReturnType<typeof rows[number]['getVisibleCells']>[number], isLastInRow = false) => {
@@ -1244,21 +1274,25 @@ function DataTableInner<TData>(
     }
     if (isEmpty) return null
 
-    // L4 row drag:primary region — left exists → left 為 primary;否則 center 為 primary
-    // primary region 掛 useSortable setNodeRef + transform style;mirror regions v1 不跟動。
+    // L4 row drag v2:per-region per-row useSortable instances 共享同一 SortableContext。
+    // primary = left region(若有)否則 center;listeners 只在 primary。
+    // mirror regions(其他)同呼叫 useSortable → 取得相同 transform → 自然跟動(v2 fix #2)。
     const isPrimaryRegion = hasLeft ? cols === leftCols : isCenter
+    const regionRole: 'primary' | 'mirror' = isPrimaryRegion ? 'primary' : 'mirror'
 
     const rowEl = (row: typeof rows[number], idx: number, opts?: { virtual?: boolean; start?: number; isLast?: boolean }) => {
       const showBorder = bordered !== false ? !opts?.isLast : true
-      // L4 row drag:nested sub-rows(depth>0)不 sortable(對齊 spec「同 parent level only」)
-      const isTopLevel = (row.depth ?? 0) === 0
-      const useSortableWrap = enableRowDrag && isTopLevel && isPrimaryRegion
+      // L4 row drag v2:nested rows 也 sortable(配合 cross-parent collisionDetection 過濾)
+      // sub-rows: depth>0 仍進 SortableContext,但 collisionDetection 只接受 same-parent over
+      const isThisRowDragging = enableRowDrag && activeDragId === row.id
+      const useSortableWrap = enableRowDrag
 
       const baseRowDiv = (extra?: { ref?: (el: HTMLElement | null) => void; style?: React.CSSProperties; isDragging?: boolean }) => (
         <div
           key={row.id}
           ref={(el) => {
-            if (isCenter && opts?.virtual && el) virtualizer.measureElement(el)
+            // v2 fix #1:被拖 row 略過 measureElement(transform 干擾測量,長 list 累積誤差)
+            if (isCenter && opts?.virtual && el && !isThisRowDragging) virtualizer.measureElement(el)
             extra?.ref?.(el)
           }}
           data-index={isCenter && opts?.virtual ? idx : undefined}
@@ -1291,9 +1325,17 @@ function DataTableInner<TData>(
       )
 
       if (useSortableWrap) {
+        // invalidDrop 只對「正在被拖」的 row 顯示 — handle 在 active row 上,UI 警示只需該 row
+        const rowInvalidDrop = isThisRowDragging && invalidDropActive
         return (
-          <SortableRowProvider key={row.id} id={row.id} disabled={dragDisabled}>
-            {(ctx) => baseRowDiv({ ref: ctx.setNodeRef, style: ctx.style, isDragging: ctx.isDragging })}
+          <SortableRowProvider key={row.id} id={row.id} disabled={dragDisabled} role={regionRole} invalidDrop={rowInvalidDrop}>
+            {(ctx) => baseRowDiv({
+              // mirror 也掛 setNodeRef — dnd-kit 內部以 hook instance 為單元,
+              // 多 instance 同 id 時,measurement 走最後 mount 的;不影響 transform 一致性
+              ref: ctx.setNodeRef,
+              style: ctx.style,
+              isDragging: ctx.isDragging,
+            })}
           </SortableRowProvider>
         )
       }

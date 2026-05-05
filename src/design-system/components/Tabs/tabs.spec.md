@@ -151,39 +151,19 @@ Tabs 支援三種 overflow 策略，透過 `TabsList` 的 `overflow` prop 選擇
 
 ### scroll 模式
 
-- 外層 `overflow-x-auto scrollbar-none`
-- 邊緣用 `mask-image: linear-gradient(...)` 漸變透明，指示還有內容在視窗外
-- Mask 依滾動位置動態調整（不可滾→無 mask、可往右→右邊 fade、可往左→左邊 fade、雙向→兩側 fade）
-- **左右 scroll arrow buttons**：`atStart === false` 時左側顯示 `<ChevronLeft>`、`atEnd === false` 時右側顯示 `<ChevronRight>`，點擊捲動 80% 容器寬度（smooth scroll）
-- 使用 `useScrollEdges()` hook 追蹤 scroll state
+外層 overflow-x scroll(scrollbar 隱藏)+ 邊緣 mask-image gradient 依滾動位置動態 fade(不可滾無 mask / 可右→右 fade / 可左→左 fade / 雙向→兩側)。`useScrollEdges()` hook 追蹤狀態。**Mask 不用 gradient overlay**:mask 淡化內容本身 alpha,自動融合任何背景(dark / card / surface);overlay 需寫死背景色會漂移。
 
-**為什麼用 mask 不用 gradient overlay**：mask 淡化的是內容本身的 alpha，自動融合任何背景色（dark mode / card / surface 都自動正確）。Gradient overlay 需要寫死具體背景色，遇到不同背景就漂移。
-
-**為什麼要 scroll arrow buttons**：三種輸入方式都要顧到
-- **鍵盤使用者**：Radix Tabs 原生左右方向鍵 + 瀏覽器 `scroll-into-view` 自動捲到 focused trigger ✓
-- **Trackpad 使用者**：兩指橫向滑動 ✓
-- **滑鼠滾輪使用者**：水平滾動需要 `Shift+wheel`，一般使用者不知道——**必須補 arrow buttons**
-
-Arrow buttons 用 `pointer-events-none` 外層 + `pointer-events-auto` 內層包 Button 的技巧，讓 arrow 按鈕以外的絕對定位區域不阻擋下方 triggers 的 hit test。
-
-**對齊**：Material 3 / Ant Design / Carbon / Mantine 都有 scroll arrows（Polaris / Primer 是少數例外，假設使用者用 trackpad）。
+**Scroll arrow buttons**(`atStart/atEnd === false` 時顯示 `<ChevronLeft/Right>`,點擊捲 80% 容器寬,smooth scroll):三輸入方式都要顧——鍵盤(Radix 原生方向鍵 + scroll-into-view) / trackpad(兩指橫滑) / 滑鼠滾輪(需 `Shift+wheel`,一般使用者不知道,**必須補 arrow buttons**)。Arrow 容器 `pointer-events-none` + 內層 Button `pointer-events-auto`,不阻擋下方 trigger hit test。對齊 Material 3 / Ant / Carbon / Mantine。
 
 ### menu 模式
 
-- 所有 `TabsTrigger` 渲染在 DOM 中（保留 Radix Tabs 的 roving tabindex）
-- 用 `useOverflowIndices()` 偵測哪些 trigger 溢出
-- 溢出的 trigger 套 `invisible`（`visibility: hidden`，不接受 hit test 但保持 layout）
-- 右側渲染 `<Button variant="text" iconOnly startIcon={MoreVertical} />`(overflow menu canonical icon,見 CLAUDE.md「常用 icon canonical」)
-- 點擊開 DropdownMenu，內容是對應的 tab labels
-- 點 menu item 透過 Tabs context 的 `onValueChange` 觸發選擇變化，Radix 自然更新 `data-state` 並讓對應 trigger 浮現
+所有 TabsTrigger 仍在 DOM(保 Radix roving tabindex),溢出者套 `invisible`(visibility hidden,不接 hit test 但保 layout)。`useOverflowIndices()` 偵測溢出。右側 `<Button variant="text" iconOnly startIcon={MoreVertical} />`(overflow canonical icon)開 DropdownMenu 顯示對應 labels;點 menu item 經 Tabs context `onValueChange` 觸發,Radix 自然更新 `data-state`。
 
-**a11y 保留機制**：溢出的 triggers 只是視覺隱藏、仍在 DOM，Radix 的 roving tabindex 依然可以 focus 它們。鍵盤使用者可以進入 TabsList 用方向鍵在所有 triggers 之間導覽，或用 Tab 到 `⋯` 按鈕用 dropdown 介面，兩條互動路徑同時可用。
-
-**對齊**：Ant Design Tabs `moreIcon` / Atlassian Navigation Tabs 的作法。
+**a11y**:溢出 trigger 只視覺隱藏仍可 focus;鍵盤使用者方向鍵導覽 / Tab 到 ⋯ 用 dropdown,兩路徑並存。對齊 Ant `moreIcon` / Atlassian Navigation Tabs。
 
 ### 跨元件共用
 
-`useOverflowIndices` 和 `useScrollEdges` 是 `src/design-system/hooks/use-overflow-items.ts` 裡的共用 hook，`ChipGroup` 的 `layout="scroll" | "menu"` 消費同一組 hook，確保 Tabs 和 Chip 的 overflow 行為視覺 / 機制一致。
+`useOverflowIndices` / `useScrollEdges` 在 `src/design-system/hooks/use-overflow-items.ts`,`ChipGroup` 的 `layout="scroll" | "menu"` 消費同一組 hook,確保 Tabs / Chip overflow 行為一致。
 
 ---
 
