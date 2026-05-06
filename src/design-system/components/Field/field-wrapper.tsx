@@ -65,7 +65,22 @@ export const fieldWrapperStyles = cva(
         className: [
           'bg-surface border border-border',
           'hover:border-border-hover',
-          'focus-within:border-primary focus-within:hover:border-primary',
+          // 2026-05-06 v13.3 SSOT canonical:focus-within `!important` 強制勝過 data-state attribute
+          // selector(specificity tie at 0,2,0;source order 後者勝)。
+          //
+          // 設計原則:**focus dominates everything**(M11 fix「focus-dominates-hover」延伸成
+          // 「focus-dominates-{hover,open,error-rest}」)。Cursor 在輸入框 = user 編輯中 = 必藍。
+          //
+          // 對齊世界級三家共識:
+          //   - Material Design 3:focus → primary line color
+          //   - Polaris(Shopify):focus state border-focus(藍)overrides hover/open
+          //   - Ant Design 5:`.ant-select-focused` blue,popover open + select option close 後
+          //     trigger 仍 focused → blue stays(focus return canonical via Radix `onCloseAutoFocus`)
+          //
+          // 副作用 — Ant 風「選後藍 / 取消灰」自動達成:
+          //   - 選 option close popover → Radix focus return to trigger → focus-within fires → 藍
+          //   - 點外取消 close popover → focus 移外 → focus-within 不 fire → 灰
+          'focus-within:!border-primary focus-within:hover:!border-primary',
           'data-[state=open]:border-border-hover',
         ],
       },
@@ -92,7 +107,8 @@ export const fieldWrapperStyles = cva(
         className: [
           'bg-transparent border border-transparent',
           'hover:border-border',
-          'focus-within:border-primary focus-within:hover:border-primary',
+          // 同 default chrome v13.3 SSOT:focus-within !important 強制勝過 data-state
+          'focus-within:!border-primary focus-within:hover:!border-primary',
           'data-[state=open]:border-border',
         ],
       },
@@ -154,7 +170,8 @@ export const fieldWrapperStyles = cva(
           '!px-[var(--table-cell-px)] !py-[var(--table-cell-py)]',
           'border border-border',
           'hover:border-border-hover',
-          'focus-within:border-primary focus-within:hover:border-primary',
+          // v13.3 SSOT canonical:focus-within !important(同 default + bare)
+          'focus-within:!border-primary focus-within:hover:!border-primary',
           'data-[state=open]:border-border-hover',
           'group-data-[row-mode=auto]/cell:!items-start',
         ],

@@ -437,7 +437,10 @@ const CustomSelect = React.forwardRef<HTMLDivElement, SelectProps>(
         className={cn(
           fieldWrapperStyles({ mode: 'edit', variant: variant, size }),
           !isTextDisplay && value && !searchable && tagPadding[size],
-          open && !error && 'border-primary',
+          // 2026-05-06 v13.3 SSOT retire:per-control `open && 'border-primary'` 移除。Field default
+          // state machine `data-[state=open]:border-border-hover`(灰深)處理 open;若 trigger focused
+          // (Radix focus on open),focus-within:!border-primary 強制勝出顯藍。focus dominates everything
+          // 全 DS 一致(Material/Polaris/Ant 共識),改 Field default 一處全 control 自動跟動。
           error && ['border-error hover:border-error-hover', 'focus-within:border-error focus-within:hover:border-error'],
           'cursor-pointer',
           className,

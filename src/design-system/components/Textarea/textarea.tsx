@@ -70,7 +70,7 @@ const textareaVariants = cva(
         className: [
           'bg-surface border border-border',
           'hover:border-border-hover',
-          'focus-visible:border-primary focus-visible:hover:border-primary',
+          'focus-visible:!border-primary focus-visible:hover:!border-primary',
         ],
       },
       {
@@ -95,7 +95,7 @@ const textareaVariants = cva(
         className: [
           'bg-transparent border border-transparent',
           'hover:border-border',
-          'focus-visible:border-primary focus-visible:hover:border-primary',
+          'focus-visible:!border-primary focus-visible:hover:!border-primary',
         ],
       },
       {
@@ -128,7 +128,7 @@ const textareaVariants = cva(
           '!px-[var(--table-cell-px)] !py-[var(--table-cell-py)]',
           'border border-border',
           'hover:border-border-hover',
-          'focus-visible:border-primary focus-visible:hover:border-primary',
+          'focus-visible:!border-primary focus-visible:hover:!border-primary',
           // textarea UA stylesheet 預設 line-height: normal(1.2-1.5 不定),會跟 display
           // `<div>` text-body line-height: 1.5(21px @ 14px)不一致 → cell 進 edit 後 height
           // shift。顯式 leading 對齊 div 行為。

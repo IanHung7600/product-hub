@@ -166,8 +166,10 @@ const PeoplePicker = React.forwardRef<HTMLDivElement, PeoplePickerProps>(functio
       tabIndex={0}
       className={cn(
         fieldWrapperStyles({ mode: 'edit', variant: resolvedVariant, size }),
-        // Radix Popover 在 trigger 上寫 data-state="open",用它顯示 focus border
-        'cursor-pointer data-[state=open]:border-primary',
+        // 2026-05-06 v13.3 SSOT retire:per-control `data-[state=open]:border-primary` 移除。
+        // Field default state machine 統一處理 — open=灰深 / focus=藍 (focus-within !important)。
+        // 對齊全 DS focus dominates everything 共識。
+        'cursor-pointer',
         className,
       )}
       data-field-mode="edit"

@@ -351,7 +351,8 @@ function CustomCombobox({
       aria-errormessage={error ? fieldCtx?.errorId : undefined}
       className={cn(fieldWrapperStyles({ mode: 'edit', variant: variant, size }), value.length > 0 && tagPadding[size], 'relative cursor-pointer',
         wrap && 'items-start py-1',
-        open && !error && 'border-primary',
+        // 2026-05-06 v13.3 SSOT retire:per-control `open && 'border-primary'` 移除。Field default
+        // 統一處理 — open=灰深(data-state)/ focus=藍(focus-within !important)。改一處全 control 跟動。
         error && ['border-error hover:border-error-hover', 'focus-within:border-error focus-within:hover:border-error'], className)}
       style={{ paddingRight: '0.75rem', ...(wrap ? { height: 'auto' } : undefined) }}
       data-field-mode="edit" data-error={error ? '' : undefined}>
