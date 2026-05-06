@@ -733,6 +733,11 @@ function DataTableInner<TData>(
   const rightCols = table.getRightVisibleLeafColumns()
   const hasLeft = leftCols.length > 0
   const hasRight = rightCols.length > 0 || hasRowActions
+  // 2026-05-06 v13.1:Center region SSOT width — header inner wrapper + body inner wrapper 共用
+  // 同一個 minWidth 算法,確保 header / body cell 寬度永遠對齊(前 v8 用 `w-max min-w-full`
+  // 在 header(content max-content 小)vs body(content max-content 大)會 diverge 76+ px,
+  // user 報「header / row 對不起來」)。
+  const centerColsWidth = centerCols.reduce((a, c) => a + c.getSize(), 0)
 
   // Header 寬度 → body region 同步（virtual mode 需要明確寬度）
   React.useEffect(() => {
@@ -1536,7 +1541,11 @@ function DataTableInner<TData>(
           ref={centerHeaderRef}
           className="flex-1 min-w-0 overflow-hidden"
         >
-          <div className="w-max min-w-full">
+          {/* 2026-05-06 v13.1:retire `w-max min-w-full` — 改 `style={{minWidth: centerColsWidth}}`
+              跟 body inner wrapper 同 SSOT。前 `w-max` 讓 header content max-content(label 短)
+              vs body content max-content(Note 長 break-words)diverge → header / row width 不對齊 76px。
+              統一 minWidth 公式後兩者永遠等寬,cells flex 均分結果一致。 */}
+          <div style={{ minWidth: centerColsWidth }}>
             {renderHeaderRow(centerCols, false)}
           </div>
         </div>
@@ -1593,7 +1602,10 @@ function DataTableInner<TData>(
           }
           onScroll={onCenterBodyScroll}
         >
-          <div className="w-max min-w-full">
+          {/* 2026-05-06 v13.1:retire `w-max min-w-full` — 改 `style={{minWidth: centerColsWidth}}`
+              跟 header inner wrapper 同 SSOT。renderBodyRows 內部已用同 containerWidth 公式 wrap rows,
+              此外層 wrapper minWidth 跟內層一致 = 兩層都 = centerColsWidth → header / body 對齊。 */}
+          <div style={{ minWidth: centerColsWidth }}>
             {renderBodyRows(centerCols, true, false)}
           </div>
         </div>
