@@ -75,7 +75,39 @@ const measurement = await page.evaluate(() => {
   const prevRowRect = prevRow?.getBoundingClientRect()
   const nextRowRect = nextRow?.getBoundingClientRect()
 
+  // DEBUG: trace ancestor chain to find offsetParent of Field
+  let ancestor = field
+  const chain = []
+  while (ancestor && ancestor !== document.body) {
+    const cs = window.getComputedStyle(ancestor)
+    chain.push({
+      tag: ancestor.tagName,
+      role: ancestor.getAttribute('role'),
+      pos: cs.position,
+      display: cs.display,
+      class: ancestor.className?.slice?.(0, 80),
+    })
+    ancestor = ancestor.parentElement
+    if (chain.length > 8) break
+  }
+
   return {
+    fieldOffsetParent: {
+      tag: field.offsetParent?.tagName,
+      role: field.offsetParent?.getAttribute?.('role'),
+      class: field.offsetParent?.className?.slice?.(0, 80),
+    },
+    fieldFullClass: field.className,
+    fieldComputed: {
+      position: window.getComputedStyle(field).position,
+      top: window.getComputedStyle(field).top,
+      left: window.getComputedStyle(field).left,
+      right: window.getComputedStyle(field).right,
+      bottom: window.getComputedStyle(field).bottom,
+      height: window.getComputedStyle(field).height,
+      width: window.getComputedStyle(field).width,
+    },
+    ancestorChain: chain,
     prevCell: {
       right: prevCellRect.right,
       borderRightWidth: prevCellCs.borderRightWidth,

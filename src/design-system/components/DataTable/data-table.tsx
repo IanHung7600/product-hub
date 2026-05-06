@@ -993,11 +993,18 @@ function DataTableInner<TData>(
           //     「框框跟 cell 一樣大並取代 cell 的框且與 table 隔線無縫接軌」(2026-05-05)。
           //   - **沒有** cell 自己 box-shadow ring — focus / hover / open ring 由 Field naked 自帶
           //     state machine 提供(對齊 user「狀態樣式取決於原輸入框」reminder)
-          'group/cell flex text-foreground text-body font-normal shrink-0 overflow-hidden relative self-stretch',
+          'group/cell flex text-foreground text-body font-normal shrink-0 relative self-stretch',
+          // 2026-05-06 v12:editing cell 必 `overflow-visible` 才允許 Field naked absolute 1px 外溢繪
+          // (-top-px / -left-px → border-t/-l overlap prev row.border-b / prev cell.border-r)。
+          // 非 editing cell 維持 `overflow-hidden` 防 content 外溢。
+          isEditingThisCell ? 'overflow-visible' : 'overflow-hidden',
           autoRowHeight ? 'items-start' : 'items-center',
           align === 'right' && 'justify-end text-right',
           align === 'center' && 'justify-center text-center',
-          inlineEdit && !isLastInRow && !isEditingThisCell && 'border-r border-divider',
+          // 2026-05-06 v12:retire `!isEditingThisCell` 條件 — Field naked v12 right edge 在
+          // [cell.right-1, cell.right] 跟 cell.border-r 同位置完全 overlap(child paint 後贏),
+          // 視覺仍 1px,不再需要 editing-time remove cell.border-r workaround。4 邊統一處理。
+          inlineEdit && !isLastInRow && 'border-r border-divider',
           indicator && 'gap-2',
           onEditableCellClick && ['cursor-pointer', nakedCellEditableDisplayHover],  // editable cell display hover affordance(對齊 Notion / Airtable hover-cell-shows-border canonical)
           isEditingThisCell && 'z-10',

@@ -114,32 +114,43 @@ export const fieldWrapperStyles = cva(
       },
       // naked variant — cell-as-input substrate(Notion / Airtable / Excel canonical)
       //
-      // ── 2026-05-05 v9 architectural rewrite ──
-      // 前 v4-v8 用 `outline-2 outline-offset-[-1px]` 平行 state machine 跟 Field default
-      // border state 對抗 → user 報 6 bug(thickness 加粗 / hover 蓋 focus / open 藍框 vs
-      // Field default open hover-color 不同)。本 v9 砍掉 outline ring,**naked 完全繼承
-      // Field default state machine**(同 border-based 同 token 同 hover/focus/open precedence),
-      // 只改物理尺寸(rounded-none / h-full / cell padding tokens)。
+      // ── 2026-05-06 v12 — 4 邊位置 overlap 修(seam fix,state machine 100% v9 不動)──
+      // user 報「上下左都 2px,只右邊 1px」+「我希望各 control state 各自繼承不被 wrapper 寫死」。
+      // DOM 量測證實:Field.border-l 跟 prev cell.border-r 兩 1px stripe **adjacent 不 overlap**
+      // (gap=0)→ 視覺 2px;顏色也不同(`--divider` 0.09 alpha grid vs `--border` 0.25 alpha Field)。
       //
-      // user 原話:「原本 field 的互動樣式都能保留,唯一差別就是 field 會填滿 cell,然後沒有圓角而已」
+      // v12 fix(只動位置不動 state machine):
+      //   - `absolute -top-px -left-px right-0 bottom-0`:Field box 整體 shift 1px 到上 + 左
+      //     → border-t/-l 位置精確 overlap prev row.border-b / prev cell.border-r
+      //     → border-r/-b 位置 overlap editing row.border-b / cell.border-r(child paint 後贏)
+      //   - `!h-auto`:absolute + inset 4 sides 已決定 dimensions,override 既有 !h-full
+      //   - host cell **editing 時必 `overflow-visible`** 才允許 Field 1px 外溢繪(data-table.tsx 配合)
       //
-      //   - `!h-full`:Field 框框 = host cell box(frame 填 cell)
-      //   - `!rounded-none`:cell 無 corner gap
-      //   - `!px-[var(--table-cell-px)] !py-[var(--table-cell-py)]`(edit 用)
-      //     / `!px-0 !py-0`(display/readonly/disabled 用):host cell padding ↔ Field padding
-      //     反向接管,切 mode 文字 0px shift
-      //   - state machine **完全繼承 Field default**(`border-border` 1px gray rest;hover
-      //     `border-border-hover`;focus-within `border-primary` + `focus-within:hover:border-primary`
-      //     處理 AND case;open `border-border-hover` 對齊 Field default 不是藍框)
-      //   - display/readonly/disabled **`border-transparent`** 預留 1px 空間防 hover 切 layout
-      //     shift,視覺無 border(host cell 仍有 cellPadding + border-r divider 構成 grid 線)
-      //   - `group-data-[row-mode=auto]/cell:!items-start`:host cell `data-row-mode=auto` 自動
-      //     propagate alignment
+      // SSOT 保留證明:
+      //   - state machine token(`border-border` / `border-border-hover` / `border-primary` /
+      //     `border-border-hover` 等)100% 沿用 v9
+      //   - 各 control 在 cn() 自己 append `open && 'border-primary'` etc 的 SSOT 100% work
+      //     (Select cell open=primary 藍 / Input cell focus=primary 藍 / 各 control 各自 inherit)
+      //   - 改的只是 Field box 的物理位置(absolute + inset),**state semantic 完全不動**
+      //
+      // 對齊 v9 user 認可的「99% complete,差 4 邊 seam」反饋,minimal-change 補完。
       {
         mode: 'edit',
         variant: 'naked',
         className: [
-          'bg-transparent !rounded-none !gap-0 !h-full',
+          'bg-transparent !rounded-none !gap-0',
+          // !important 強制 override:Select / Combobox per-control trigger 後續 cn() append `relative`
+          // (for Tag z-layering 等),tailwind-merge 預設後 wins 會蓋掉 `absolute`。`!absolute`
+          // 強制 position 為 absolute(Tag z-layering 仍 work,因 Field 本身 positioned ancestor)。
+          //
+          // 4 邊 inset:-1px(`-top-px -left-px -right-px -bottom-px`)→ Field box = cell + 2px。
+          //   - Field.border-t at [cell.top-1, cell.top] = OVERLAP prev row.border-b
+          //   - Field.border-l at [cell.left-1, cell.left] = OVERLAP prev cell.border-r
+          //   - Field.border-r at [cell.right-1, cell.right] = OVERLAP cell.border-r
+          //     (right: -1px 因 cell 有 border-r:1 padding-right edge = cell.right - 1)
+          //   - Field.border-b at [row.bottom-1, row.bottom] = OVERLAP editing row.border-b
+          //     (bottom: -1px 因 cell 無 border-b 但 row 有,padding-bottom edge = cell.bottom = row.bottom - 1)
+          '!absolute -top-px -left-px -right-px -bottom-px !h-auto !w-auto',
           '!px-[var(--table-cell-px)] !py-[var(--table-cell-py)]',
           'border border-border',
           'hover:border-border-hover',

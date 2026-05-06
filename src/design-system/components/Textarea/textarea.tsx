@@ -113,27 +113,25 @@ const textareaVariants = cva(
         variant: 'bare',
         className: 'bg-transparent border border-transparent cursor-not-allowed opacity-disabled text-fg-disabled',
       },
-      // naked chrome × mode — cell-as-input substrate(2026-05-05 v9 architectural rewrite)。
-      //   v8 用 outline-2 平行 state ring 跟 Field default border state 對抗 → user 報 Bug
-      //   (focus 樣式丟失 / hover 蓋 focus 變灰 / 線框加粗)。v9 **完全繼承 Field default
-      //   state machine**(border-based 同 token 同 hover/focus/open precedence),只改物理尺寸。
-      //   `!h-full !resize-none`:fill cell box(host cell 控高,user 不該手動 resize)。
-      //   `!rounded-none` 對齊 cell square edge。`!resize-none` 防 user drag handle。
-      //   edit 反向接管 cell padding,display/readonly/disabled 不重複 padding。
-      //   **focus-visible 用 textarea 自身 selector**(其為 focusable element,語意同 Field
-      //   default `focus-within`,DOM 層級不同寫法不同)。
+      // naked chrome × mode — cell-as-input substrate(2026-05-06 v12 position-overlap fix)。
+      //   同 field-wrapper.tsx Field naked v12 一致:**state machine 100% 沿用 v9 border-based
+      //   (focus-visible:border-primary)**,只改 Field box 物理位置 absolute + inset(-1, 0)讓
+      //   4 邊 border 精確 overlap 相鄰 grid stripe(prev cell.border-r / prev row.border-b /
+      //   editing row.border-b)。host cell editing 時 overflow-visible 配合外溢 1px 繪。
+      //   focus-visible 仍用 textarea 自身 selector(focusable element,DOM 層級不同寫法不同)。
       {
         mode: 'edit',
         variant: 'naked',
         className: [
-          'bg-transparent !rounded-none !h-full !resize-none',
+          'bg-transparent !rounded-none !resize-none',
+          '!absolute -top-px -left-px -right-px -bottom-px !h-auto !w-auto',
           '!px-[var(--table-cell-px)] !py-[var(--table-cell-py)]',
           'border border-border',
           'hover:border-border-hover',
           'focus-visible:border-primary focus-visible:hover:border-primary',
           // textarea UA stylesheet 預設 line-height: normal(1.2-1.5 不定),會跟 display
           // `<div>` text-body line-height: 1.5(21px @ 14px)不一致 → cell 進 edit 後 height
-          // shift。顯式 leading-normal-content + box-sizing border-box 對齊 div 行為。
+          // shift。顯式 leading 對齊 div 行為。
           '!leading-[1.5]',
         ],
       },
