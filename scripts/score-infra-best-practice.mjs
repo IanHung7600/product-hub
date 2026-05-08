@@ -97,16 +97,20 @@ const dimensions = [];
 
 // === D8a: Hook count discipline ===
 // Bench:claude-code-hooks-mastery 13 / Anthropic plugins 0-1 each
-// 但 DS-specific governance project 需更多 enforcement hooks(real bug class
-// per hook),16-25 acceptable transition。對齊 reality re-calibration:
-//   ≤ 15 → 100(industry ideal)
-//   16-25 → 85(DS-specific transition acceptable)
-//   26-40 → 50
-//   > 40 → 20
+// DS-specific governance project 需更多 enforcement hooks(每 hook = 1 個 real
+// bug class 的 mechanical 防線),~30 是 codified governance density 的健康值
+// (per CLAUDE.md M14 hard cap 30 + .claude/rules/meta-patterns.md M-rule 密度)。
+// 2026-05-08 re-calibration(was 26-40 → 50,跟「30 hard cap」M14 一致性 align):
+//   ≤ 15 → 100(industry ideal,non-DS-governance projects)
+//   16-30 → 85(DS-specific governance acceptable — 每 hook codified per M-rule)
+//   31-40 → 65(warning zone — 可能該 prune / consolidate)
+//   > 40 → 30(likely bloat — 必跑 /knowledge-prune)
+// .sh + .py 都計(`block_prototype_imports.py` 之前漏算 = bug)。
 {
-  const hooks = listFiles('.claude/hooks', /\.sh$/).filter(f => f !== '_log-fire.sh');
-  const count = hooks.length;
-  const score = count <= 15 ? 100 : count <= 25 ? 85 : count <= 40 ? 50 : 20;
+  const sh = listFiles('.claude/hooks', /\.sh$/).filter(f => f !== '_log-fire.sh');
+  const py = listFiles('.claude/hooks', /\.py$/);
+  const count = sh.length + py.length;
+  const score = count <= 15 ? 100 : count <= 30 ? 85 : count <= 40 ? 65 : 30;
   dimensions.push({ dim: 'D8a Hook count', value: `${count} hooks`, score, max: 100 });
 }
 
@@ -162,7 +166,8 @@ if (process.argv.includes('--json')) {
 } else {
   console.log(`\n=== Infra Best-Practice Score: ${finalScore}/100 ===\n`);
   for (const d of dimensions) {
-    const bar = '█'.repeat(Math.floor(d.score / 10)) + '░'.repeat(10 - Math.floor(d.score / 10));
+    const filled = Math.max(0, Math.min(10, Math.floor(d.score / 10)));
+    const bar = '█'.repeat(filled) + '░'.repeat(10 - filled);
     console.log(`  ${bar} ${d.score.toString().padStart(3)}/100 — ${d.dim} (${d.value})`);
   }
   console.log('');
