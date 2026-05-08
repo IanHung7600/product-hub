@@ -66,6 +66,20 @@ User 說以下 → 繼續 edit 不 push main:
 4. 留 6 個 stale branch(harness 不允許 delete remote,user 手動清)
 5. 第一版 memory 寫「push direct main」— 錯解 workflow,跳過 user 預檢
 
+## 2026-05-08 — 第 3 次違反 → 升 mechanical hook (M28)
+
+同 session 開 5 branch + 2 PR(#7、#8)+ 4 個 sequential 新 branch (gitignore-stop-hook-state / git-solo-work-canonical / fix-canonical-solo-workflow / governance-threshold-calibration)。Markdown rule (本檔 2026-05-04 codified) + CLAUDE.md pointer (cd8733d) 都不夠擋 — 我跳過 grep 本檔直接憑印象。
+
+**Mechanical 升級**:
+- M28 加入 `.claude/rules/meta-patterns.md`(mindset #2 AI-ops 子規則)
+- `.claude/hooks/check_solo_workflow.sh` PreToolUse Bash + mcp github tools:
+  - R1 BLOCK: 第 2 個 `git checkout -b claude/*` in same session(track via `.claude/logs/session-branch-track.jsonl`)
+  - R2 BLOCK: PR creation(`gh pr create` / `mcp__github__create_pull_request`)
+  - R3 BLOCK: push/merge to main 無 user「push/OK/好/合 main」trigger keyword in 近 10 user messages
+- Override:`CLAUDE_BYPASS_SOLO_WORKFLOW=1` env var,bypass 寫 `.claude/logs/solo-workflow-bypass.jsonl` 留審計
+
+**自我反省**:本次違反 mindset #2「優先消費既有」— 本檔 2026-05-04 寫得清楚,我沒 grep 直接憑印象重新 codify(PR #8 寫成「branch + PR + merge」全錯)。Hook 攔住的不是「不知道」,是「不查」。M28 強制 git-ops 也算 mindset #2 scope,違反 = hook BLOCK exit 2 不能繞過(除非 explicit env override)。
+
 ## 對齊既有 governance
 
 - Mindset #1「對標世界級」≠ 對標「multi-reviewer team workflow」。也不等於「無 review push main」。

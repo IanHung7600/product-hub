@@ -189,6 +189,28 @@ elif [ "$MEM_COUNT" -ge 18 ]; then
   PRUNE_TRIGGERS="${PRUNE_TRIGGERS}\n- Memory entries ${MEM_COUNT}(soft 18 trigger,20 = hard cap). /knowledge-prune 建議排程."
 fi
 
+# Check 9: Branch sprawl(M28 — solo work = 1 chat = 1 branch / 0-1 active feature)
+# 開場掃 local + remote claude/* branch,> 1 active 或 local main divergent → warn。
+LOCAL_CLAUDE_BRANCHES=$(git -C "$PROJECT_DIR" branch 2>/dev/null | grep -c "claude/" || echo 0)
+REMOTE_CLAUDE_BRANCHES=$(git -C "$PROJECT_DIR" branch -r 2>/dev/null | grep -cE "origin/claude/" || echo 0)
+if [ "$LOCAL_CLAUDE_BRANCHES" -gt 1 ]; then
+  PRUNE_TRIGGERS="${PRUNE_TRIGGERS}\n- Local branch sprawl ${LOCAL_CLAUDE_BRANCHES} active claude/* branches(M28: 1 session = 1 branch). git branch -d <merged> 清掉,只留當前 active feature."
+fi
+if [ "$REMOTE_CLAUDE_BRANCHES" -gt 1 ]; then
+  PRUNE_TRIGGERS="${PRUNE_TRIGGERS}\n- Remote branch sprawl ${REMOTE_CLAUDE_BRANCHES} stale claude/* branches on origin(sandbox HTTP 403 攔 push --delete). User GitHub UI 手動刪 OR 'git push origin --delete <branch>'."
+fi
+# Local main divergent from origin/main(sandbox commits 殘留 / 未 merge)
+if git -C "$PROJECT_DIR" rev-parse origin/main >/dev/null 2>&1; then
+  AHEAD_BEHIND=$(git -C "$PROJECT_DIR" rev-list --left-right --count main...origin/main 2>/dev/null || echo "0	0")
+  AHEAD=$(echo "$AHEAD_BEHIND" | cut -f1)
+  BEHIND=$(echo "$AHEAD_BEHIND" | cut -f2)
+  if [ -n "$AHEAD" ] && [ -n "$BEHIND" ]; then
+    if [ "$AHEAD" -gt 0 ] || [ "$BEHIND" -gt 0 ]; then
+      PRUNE_TRIGGERS="${PRUNE_TRIGGERS}\n- Local main divergent (ahead ${AHEAD} / behind ${BEHIND} vs origin/main). 'git fetch && git checkout main && git reset --hard origin/main' 對齊。"
+    fi
+  fi
+fi
+
 # Inject if HARD BLOCKERS(must)or auto-prune-triggers or quarterly-prune-overdue
 QUARTERLY_DUE=""
 if [ -f .claude/logs/.last-prune ]; then

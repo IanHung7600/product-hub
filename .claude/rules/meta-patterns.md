@@ -1,6 +1,6 @@
-# Meta-Pattern 預警(27 條大原則)
+# Meta-Pattern 預警(28 條大原則)
 
-**mindset #6 的具體化**。每條吸收數十個具體 bug,是失敗記憶索引上游。任務前先過這 26 條。
+**mindset #6 的具體化**。每條吸收數十個具體 bug,是失敗記憶索引上游。任務前先過這 28 條。
 
 | # | Meta-Principle | 能吸收的 bug 類型(舉例,非窮舉) |
 |---|---|---|
@@ -31,6 +31,7 @@
 | **M25** | **Layered chain invariant 必整鏈 forward(viewport-aware overlay scroll 範例)**。Overlay surface(Popover / HoverCard / Dialog / Sheet)的 viewport-aware scroll 機制要求 root → SurfaceBody 之間**所有中間 wrapper 都 forward `flex flex-col h-full`**;任何中間 div 沒 forward → SurfaceBody flex-1 失效 → body 不 scroll。同類 chain pattern:density 透傳 / fieldCtx 鏈 / theme subtree(M3 portal 逃逸對偶)。Hook `check_overlay_panel_scroll_chain.sh` 機械化攔截。 | 2026-05-04:Filter / Sort panel root `<div w-[640px]>` 無 flex-col → user 縮 viewport 時 body 不 scroll。NameCard 因自設 max-h flex-col 才繞過(無中間 wrapper) |
 | **M26** | **Behavior / visual canonical decision 前必跑 WebFetch + WebSearch 取 ≥ 3 source,不可憑印象 propose**。M22 升級版 — M22 管「寫 spec / tsx 含 claim 必附 cite」(實作後),M26 管「propose / 決策前必先 fetch」(實作前)。Pipeline:(1) WebFetch 3 家世界級 source(Atlassian / Material / Polaris / Ant / Carbon / Apple HIG / shadcn / Radix);(2) 全 403 → WebSearch fallback 用 snippet,**明示「search-only confidence」**;(3) WebFetch + WebSearch 都失敗 → STOP propose,告知 user「無法 verify,要看 screenshot/實機」。Hook `check_propose_without_benchmark.sh`(PreToolUse Edit/Write 攔截 visual decision keywords + 近 N turn 無 fetch tool call → BLOCKER)。 | 2026-05-05:user 反覆糾「為什麼每次都沒 webfetch 只憑印象」— Jira drag handle / cell display 兩題我憑印象 propose 多輪;升級成硬規範 |
 | **M27** | **DS prop name 跨元件 namespace 衝突檢查**(M23 子規則)。引入 / 暴露外部 framework prop name(TanStack `size` / Radix `disabled` / dnd-kit attrs 等)前必 grep DS 既有 prop;同字 prop 不同語意 → 強制 wrap-and-rename,本 DS API 永遠用 DS-internal naming。判斷流程:(a) grep `${propName}:` 在 src/design-system/components/ 出現 ≥ 5 次?(b) 既有意義跟新引入框架 prop 同?(c) 不同 → wrap layer(類似 ColumnMeta extension)+ pre-process map 到框架 prop。 | 2026-05-06 column width:DS 內 49+ 處 `size: 'sm'\|'md'\|'lg'` density,我直推薦 TanStack `size: 280` px = M23 違反。Wrap 解 — `meta.width` DS-internal 命名,internal pre-process copy 到 TanStack root size。Hook `check_data_table_size_num_to_meta_width.sh` 機械化警告 |
+| **M28** | **Solo-work git ops 必先 grep canonical**(mindset #2 AI-ops 子規則)。AI 自己 git/branch/PR/merge ops(`git checkout -b` / `gh pr create` / `git push origin main` / `mcp__github__create_pull_request` / `mcp__github__merge_pull_request`)前必 grep `.claude/memory/feedback_solo_dev_workflow.md` + CLAUDE.md `# Git solo-work canonical`,**不憑直覺反射開新 branch / 開 PR / 自決 merge**。Solo work 鐵律:1 chat = 1 working branch / no PR / 等 user「push」 trigger 才 merge main。Hook `check_solo_workflow.sh` 機械化攔(R1 第 2 個 branch / R2 PR creation / R3 merge 無 user trigger keyword)+ override `CLAUDE_BYPASS_SOLO_WORKFLOW=1` audit-logged。 | 2026-05-08:同 session AI 開 5 branch + 2 PR (#7 #8),user 第 3 次糾正才升 mechanical;memory file 2026-05-04 codified 但 markdown 級 + AI 沒 grep 直接憑印象 = mindset #2 違反 |
 
 ## 判斷 meta-principle 是否漏寫的 test
 
