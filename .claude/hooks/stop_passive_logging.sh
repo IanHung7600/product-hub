@@ -157,6 +157,11 @@ rule_capture_metrics() {
   if [ -d .claude/hooks/tests ]; then
     tested=$(find .claude/hooks/tests -maxdepth 1 -name 'test_*.sh' 2>/dev/null | wc -l | tr -d ' ' || echo 0)
   fi
+  # Defensive: strip non-digit chars (multiline / fallback "0\n0" from pipefail edge case)
+  hooks_total="${hooks_total//[^0-9]/}"
+  hooks_total=${hooks_total:-0}
+  tested="${tested//[^0-9]/}"
+  tested=${tested:-0}
   local untested=$(( hooks_total - tested ))
   [ "$untested" -lt 0 ] && untested=0
 

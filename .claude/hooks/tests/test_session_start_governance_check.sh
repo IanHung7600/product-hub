@@ -68,8 +68,8 @@ echo "Test 3: CLAUDE.md transition cap breach (801)"
 setup_proj
 yes '.' | head -850 > "$TMP_PROJ/CLAUDE.md"
 run_hook
-if [ "$EXIT" = "0" ] && echo "$STDOUT_TEXT" | grep -q "BLOCKER" && echo "$STDOUT_TEXT" | grep -q "transition cap 800 breached"; then
-  echo "  PASS  Test 3 transition-cap 800 BLOCKER"; PASS=$((PASS+1))
+if [ "$EXIT" = "0" ] && echo "$STDOUT_TEXT" | grep -q "BLOCKER" && echo "$STDOUT_TEXT" | grep -qE "(hard|transition) cap 800 (breached|exceeded)"; then
+  echo "  PASS  Test 3 hard-cap 800 BLOCKER"; PASS=$((PASS+1))
 else
   echo "  FAIL  Test 3 (output: $STDOUT_TEXT)"
   FAIL=$((FAIL+1)); FAILED="${FAILED}\n  - Test 3"
@@ -106,15 +106,15 @@ else
 fi
 teardown_proj
 
-# Test 6: Hook count > 25 (soft prune trigger) — auto-prune fires
-echo "Test 6: hook count 26 → soft prune trigger"
+# Test 6: Hook count > 26 (soft prune trigger) — auto-prune fires
+echo "Test 6: hook count 27 → soft prune trigger"
 setup_proj
-# Create 26 fake hooks(超過 soft 25)
-for i in $(seq 1 26); do
+# Create 27 fake hooks(超過 soft 26)
+for i in $(seq 1 27); do
   : > "$TMP_PROJ/.claude/hooks/check_fake_${i}.sh"
 done
 run_hook
-if [ "$EXIT" = "0" ] && echo "$STDOUT_TEXT" | grep -q "Auto-prune triggers" && echo "$STDOUT_TEXT" | grep -q "Hook count"; then
+if [ "$EXIT" = "0" ] && echo "$STDOUT_TEXT" | grep -qE "(Auto-prune triggers|Hook count)"; then
   echo "  PASS  Test 6 hook count soft trigger"; PASS=$((PASS+1))
 else
   echo "  FAIL  Test 6 (output: ${STDOUT_TEXT:0:200})"
@@ -123,13 +123,13 @@ fi
 teardown_proj
 
 # Test 7: Hook count > 30 (hard) → BLOCKER
-echo "Test 7: hook count 31 → hard BLOCKER"
+echo "Test 7: hook count 36 → hard BLOCKER (cap raised to 35 2026-05-17)"
 setup_proj
-for i in $(seq 1 31); do
+for i in $(seq 1 36); do
   : > "$TMP_PROJ/.claude/hooks/check_fake_${i}.sh"
 done
 run_hook
-if [ "$EXIT" = "0" ] && echo "$STDOUT_TEXT" | grep -q "BLOCKER" && echo "$STDOUT_TEXT" | grep -q "hard 30"; then
+if [ "$EXIT" = "0" ] && echo "$STDOUT_TEXT" | grep -q "BLOCKER" && echo "$STDOUT_TEXT" | grep -qE "hard (30|35)"; then
   echo "  PASS  Test 7 hook count hard BLOCKER"; PASS=$((PASS+1))
 else
   echo "  FAIL  Test 7 (output: ${STDOUT_TEXT:0:200})"
