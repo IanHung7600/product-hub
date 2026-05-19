@@ -202,7 +202,7 @@ TabsList 底部有 1px gray border（`border-divider`，neutral-4），selected 
 
 Tabs 常與容器 header 的底邊 border 合併——**視覺上只有一條線**,不是 header border + tabs border 疊兩條。
 
-**做法**:Tabs 的 `TabsList` 底部 border 與 header 的 `border-b` 實際上是**同一條線**(設計上重疊、實作上不重複渲染)。**Header 退讓**(移除自己 `border-b`),**Tabs 接管**(自身 `border-b border-border` 延展全 header 寬,因 TabsList wrapper 是 block-level full-width)。
+**做法**:Tabs 的 `TabsList` 底部 border 與 header 的 `border-b` 實際上是**同一條線**(設計上重疊、實作上不重複渲染)。**Header 退讓**(移除自己 `border-b`),**Tabs 接管**(自身 `border-b border-divider` per `TABS_LIST_BASE`,2026-05-18 fd843c25 統一 chrome separator 色)。none overflow mode → TabsList block-level full-width 延展;scroll / menu overflow mode → TabsList `inline-flex w-fit`(2026-05-19 c359c711 border owner 升 list 內部 + `overflow-y-hidden` 阻 y auto-promote)。
 
 **世界級對照(verbatim cite)**:
 - **GitHub Primer PageHeader**:「`hasBorder` defaults true,**but border NOT rendered if Navigation child contains UnderlineNav**;UnderlineNav itself provides bottom border」(`primer.style/components/page-header/react`)

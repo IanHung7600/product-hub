@@ -168,9 +168,11 @@ TabsList.displayName = 'TabsList'
 
 // ── Scroll mode ──
 //
-// 共同策略(對齊 Material 3 / Ant Design 世界級作法):
-//   - 容器 overflow-x-auto(真的可滾,鍵盤焦點可 scroll-into-view)
-//   - border-b 在外層 wrapper,不在 scroll container,避免 mask 淡化 border
+// 共同策略(對齊 Material 3 / Ant Design / Primer UnderlineNav 世界級作法):
+//   - 容器 overflow-x-auto + overflow-y-hidden(真的可滾,鍵盤焦點可 scroll-into-view;
+//     明示 y-hidden 阻 CSS overflow-3 spec「一軸 auto 時另軸 visible compute auto」)
+//   - border-b 在 TabsList 內部(TABS_LIST_BASE),不在 outer wrapper,避免
+//     active underline `after:bottom:-1px` 跟 outer + overflow-x-auto 觸發 y promote bug
 //   - mask / arrow / fade 全部從 horizontal-overflow pattern module 取得——
 //     參見 `patterns/horizontal-overflow/horizontal-overflow.spec.md`
 //   - Menu 模式 = scroll 模式 + 額外的 ⌄ quick-jump button,點 menu item 同時

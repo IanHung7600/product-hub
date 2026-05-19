@@ -835,9 +835,9 @@ export const stepsMeta = {
   family: 2,
   variants: {},
   sizes: {
-    sm: { px: 12, when: 'Sidebar / 緊湊 onboarding' },
-    md: { px: 16, when: '預設 — wizard / checkout / 註冊主流程' },
-    lg: { px: 20, when: 'Marketing 流程展示 / 重要 onboarding' },
+    sm: { px: 8, when: 'Sidebar / 緊湊 onboarding;indicator 8px dot' },
+    md: { px: 24, when: '預設 — wizard / checkout / 註冊主流程;indicator 24px circle' },
+    lg: { px: 32, when: 'Marketing 流程展示 / 重要 onboarding;indicator 32px circle' },
   },
   states: ['default', 'hover', 'active', 'focus-visible', 'disabled'],
   tokens: {
