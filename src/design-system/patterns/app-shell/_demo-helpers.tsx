@@ -132,12 +132,18 @@ export function PageHeader({
       <SidebarTrigger />
       <h1 className="text-body-lg font-medium flex-1 truncate">{title}</h1>
       {onToggleAside && (
+        // Aside trigger canonical(2026-05-20 user 拍板統一):
+        //   tertiary + pressed={open} → primary-subtle 底 + primary 字 = open 視覺指示
+        //   per Button pressed prop spec + action-bar.spec.md L141「filter/sort 重點 → tertiary 基底」
+        //   PanelRightOpen icon (Sidebar 對稱:左 SidebarTrigger 是 PanelLeft,右 Aside 是 PanelRight)
         <Button
           size="sm"
-          variant="text"
+          variant="tertiary"
           iconOnly
           startIcon={PanelRightOpen}
+          pressed={asideOpen}
           aria-label={asideOpen ? '關閉詳情' : '開啟詳情'}
+          aria-pressed={asideOpen}
           onClick={onToggleAside}
         />
       )}
