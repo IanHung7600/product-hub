@@ -2,7 +2,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
 const meta: Meta = {
-  title: 'Design System/Patterns/AppShell/設計原則',
+  title: 'Design System/Components/AppShell/設計原則',
   parameters: { layout: 'padded' },
 }
 export default meta

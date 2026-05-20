@@ -138,7 +138,7 @@ export function PageHeader({
         //   PanelRightOpen icon (Sidebar 對稱:左 SidebarTrigger 是 PanelLeft,右 Aside 是 PanelRight)
         <Button
           size="sm"
-          variant="tertiary"
+          variant="text"
           iconOnly
           startIcon={PanelRightOpen}
           pressed={asideOpen}

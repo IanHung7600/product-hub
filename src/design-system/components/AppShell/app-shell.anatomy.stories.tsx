@@ -10,7 +10,7 @@ import { SidebarProvider, SidebarTrigger } from '@/design-system/components/Side
 import { Button } from '@/design-system/components/Button/button'
 
 const meta: Meta<typeof AppShell> = {
-  title: 'Design System/Patterns/AppShell/設計規格',
+  title: 'Design System/Components/AppShell/設計規格',
   component: AppShell,
   parameters: { layout: 'fullscreen' },
 }

@@ -17,7 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/design-system/compone
 import type { SortingState } from '@tanstack/react-table'
 
 const meta: Meta<typeof AppShell> = {
-  title: 'Design System/Patterns/AppShell/展示',
+  title: 'Design System/Components/AppShell/展示',
   component: AppShell,
   parameters: { layout: 'fullscreen' },
 }
@@ -103,7 +103,7 @@ function IssuesView({ onSelectIssue: _onSelectIssue }: { onSelectIssue: (issue: 
           <Popover open={filterOpen} onOpenChange={setFilterOpen}>
             <PopoverTrigger asChild>
               <Button
-                variant="tertiary"
+                variant="text"
                 size="sm"
                 iconOnly
                 startIcon={Filter}
@@ -125,7 +125,7 @@ function IssuesView({ onSelectIssue: _onSelectIssue }: { onSelectIssue: (issue: 
           <Popover open={sortOpen} onOpenChange={setSortOpen}>
             <PopoverTrigger asChild>
               <Button
-                variant="tertiary"
+                variant="text"
                 size="sm"
                 iconOnly
                 startIcon={ArrowUpDown}
@@ -242,42 +242,5 @@ export const PrimarySidebar: Story = {
  */
 // export const PrimaryHeader: Story = { ... }  // future tier, pending Sidebar SSOT
 
-/**
- * Aside modal mode demo — viewport < 768px Aside 自動切 Sheet,從右滑出 + 蓋 mask。
- * 對齊 Material 3 modal drawer canonical。Content 同 desktop inline 模式(panel role 不變,host 換)。
- * asideOpen 預設 true 確保 visual probe 真實看到 modal Sheet。
- */
-export const AsideModalOnMobile: Story = {
-  name: 'Aside modal mode(< 768px Sheet fallback)',
-  parameters: { viewport: { defaultViewport: 'mobile1' } },
-  render: () => {
-    const [activeId, setActiveId] = React.useState<string>('inbox')
-    const [asideOpen, setAsideOpen] = React.useState(true)
-    const [selected] = React.useState<Issue | null>(ISSUES[0])
-
-    return (
-      <SidebarProvider activeId={activeId} onActiveChange={setActiveId}>
-        <AppShell
-          layout="primary-sidebar"
-          sidebar={<AcmeSidebar />}
-          header={
-            <PageHeader
-              title="Inbox"
-              onToggleAside={() => setAsideOpen(!asideOpen)}
-              asideOpen={asideOpen}
-            />
-          }
-          aside={
-            <AppShellAside title={selected ? selected.id : '詳情'} width={360}>
-              <IssueDetail issue={selected} />
-            </AppShellAside>
-          }
-          asideOpen={asideOpen}
-          onAsideOpenChange={setAsideOpen}
-        >
-          <IssuesView onSelectIssue={() => setAsideOpen(true)} />
-        </AppShell>
-      </SidebarProvider>
-    )
-  },
-}
+// AsideModalOnMobile story retired 2026-05-20 per user directive「不要這個範例」
+// Mobile responsive behavior 已在 anatomy StateBehavior story + spec.md「Aside 2-mode」段 documented。
