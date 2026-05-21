@@ -206,10 +206,24 @@ export function extractAllAuthorDecls(el: Element): Map<string, AuthorDecl> {
       let matches = false
       try { matches = el.matches(rule.selectorText) } catch { continue }
       if (!matches) continue
-      const decl = rule.style
-      for (let i = 0; i < decl.length; i++) {
-        const prop = decl.item(i)
-        captureDecl(prop, decl.getPropertyValue(prop), rule.selectorText)
+      // 2026-05-21 真因 fix(user 抓「DevMode 看不到 px-[var(--layout-space-loose)] padding-inline」):
+      // 原 decl.item(i) enumeration 對 author 寫的 shorthand(padding-inline / margin-inline / inset
+      // / 任何 logical property)會被 browser CSSOM 展開為 longhands(padding-inline-start +
+      // padding-inline-end),但 getPropertyValue(longhand) 對 shorthand-derived 返回空字串。
+      // 原 var() rawValue 只能透過 shorthand getPropertyValue('padding-inline') 取得。
+      // **Fix**:parse rule.style.cssText 直接,保留 shorthand 原始 token(對齊 author 真正寫的)。
+      // 對齊 Chrome DevTools Styles panel 慣例(顯示 author 寫的 shorthand,不 expand)。
+      const cssText = rule.style.cssText
+      // Split on `;` 但跳過 calc() / quoted 內的 `;`(實務上 CSS declaration ; 不會在 calc 內)
+      const declarations = cssText.split(';').map(s => s.trim()).filter(Boolean)
+      for (const declStr of declarations) {
+        const colonIdx = declStr.indexOf(':')
+        if (colonIdx < 0) continue
+        const prop = declStr.slice(0, colonIdx).trim()
+        let value = declStr.slice(colonIdx + 1).trim()
+        // Strip !important suffix
+        value = value.replace(/\s*!important\s*$/, '')
+        captureDecl(prop, value, rule.selectorText)
       }
     }
   }
