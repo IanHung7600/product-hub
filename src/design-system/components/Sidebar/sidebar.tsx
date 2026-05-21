@@ -817,8 +817,10 @@ const sidebarMenuButtonVariants = cva(
     "px-[var(--layout-space-loose)]",
     "font-medium text-fg-secondary",
     "cursor-pointer select-none outline-none",
-    // 同時 transition 顏色 / 寬高 / padding / gap——sidebar 收合時一起動,視覺連續
-    "transition-[width,height,padding,gap,background-color,color] duration-200 ease-linear motion-reduce:duration-0",
+    // 2026-05-21 v2 fix(user 抓「收起再展開高度先變小再變大」):撤回 transition-[height]。
+    // 反向解鎖時 height 從 40px 過渡到 `auto`(intrinsic)browser 無法 transition → flutter。
+    // Height 瞬切無動畫 = 穩定。Width/padding/gap/colors 仍保 200ms transition。
+    "transition-[width,padding,gap,background-color,color] duration-200 ease-linear motion-reduce:duration-0",
     "hover:bg-neutral-hover hover:text-foreground",
     "focus-visible:bg-neutral-hover focus-visible:text-foreground",
     "disabled:pointer-events-none disabled:opacity-disabled",
@@ -834,7 +836,11 @@ const sidebarMenuButtonVariants = cva(
     //     = 64 > 56)trade-off accepted vs fly。
     //   - label span 仍透過子選擇器 display:none(label 隱藏不需 layout 改 → 不觸發 fly)
     //   - !py-0 維持(高度由 size variant `field-height-*` 控制,padding-y 不該疊加)
-    "group-data-[collapsible=icon]:!py-0",
+    // 2026-05-21 v3 補 `!items-center`(user 抓「icon 沒垂直置中」):base `items-start` 對齊頂部,
+    // collapsed mode 沒 label 時 icon 黏 button 頂部不置中(y=10 vs button center y=12,差 2px 肉眼可見)。
+    // `align-items` 雖也 discrete property,但收合時 content 只在 vertical 微調 2px 不是 horizontal 大跳,
+    // 視覺無「飛」感(per 2026-05-21 v1 fix `!justify-center` horizontal fly 區分)。
+    "group-data-[collapsible=icon]:!py-0 group-data-[collapsible=icon]:!items-center",
     "group-data-[collapsible=icon]:[&_[data-sidebar=menu-label]]:hidden",
   ],
   {

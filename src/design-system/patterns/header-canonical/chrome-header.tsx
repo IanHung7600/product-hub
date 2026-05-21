@@ -135,8 +135,10 @@ export const ChromeHeader = React.forwardRef<HTMLElement, ChromeHeaderProps>(
           {...props}
         >
           {/* Rail:固定寬度 = sidebar-width-icon,內容 justify-center 居中(toggle center x
-              = rail 寬度的中點 = sidebar 收合 icon center x = 完美 vertical 對齊)*/}
-          <div className="flex w-[var(--sidebar-width-icon)] shrink-0 items-center justify-center">
+              = rail 寬度的中點 = sidebar 收合 icon center x = 完美 vertical 對齊)
+              2026-05-21 v2 user 抓:rail 右側加 `border-r border-divider`,sidebar 收合到
+              icon mode 時 rail 右 border = sidebar 右 border 連成一線(visual continuity)。 */}
+          <div className="flex w-[var(--sidebar-width-icon)] shrink-0 items-center justify-center border-r border-divider">
             {leadingRail}
           </div>
           {/* Main:flex-1 + px-loose(沿用 header 既有左右 padding canonical)+ gap-2 */}
