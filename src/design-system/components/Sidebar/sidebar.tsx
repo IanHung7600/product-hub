@@ -356,6 +356,11 @@ const Sidebar = React.forwardRef<
           className={cn(
             // 2026-05-20 v3:`inset-y-0 h-svh` → 可被 viewportInsetTop prop override(per AppShell primary-header)
             !viewportInsetTop && "inset-y-0 h-svh",
+            // 2026-05-21 v9 fix(per user 「右側分隔線跑去哪 + sidebar 寬度沒正確變化」):
+            // 補 `overflow-x-hidden` — C* refactor 主機制(outer narrows to sidebar-width-icon
+            // 時 clip inner 272px overflow,visual right border 顯示,主內容不被遮)。原 C*
+            // commit 漏加 className 只 comment 提及。
+            "overflow-x-hidden",
             "fixed z-10 hidden w-[var(--sidebar-width)] min-w-[var(--sidebar-width-min)] transition-[left,right,width,min-width] duration-200 ease-linear motion-reduce:duration-0 md:flex",
             "group-data-[collapsible=icon]:!min-w-0",
             side === "left"
@@ -445,19 +450,32 @@ SidebarInput.displayName = "SidebarInput"
 // 會隨 density 變大。Chrome 如果不跟著放大,lg density 下 padding 會被擠壓。
 const SidebarHeader = React.forwardRef<
   HTMLDivElement,
-  React.ComponentProps<"div"> & { withTabs?: boolean; tabsSlot?: React.ReactNode; leadingRail?: React.ReactNode }
->(({ className, withTabs, tabsSlot, leadingRail, ...props }, ref) => {
+  React.ComponentProps<"div"> & { withTabs?: boolean; tabsSlot?: React.ReactNode }
+>(({ className, withTabs, tabsSlot, ...props }, ref) => {
   return (
-    // 2026-05-21 v7(per user「sidebar 收合時 logo 跟下方 icon 沒水平置中」):
-    // leadingRail prop pass-through 到 ChromeHeader,讓 logo/avatar 走 sidebar-width-icon
-    // 寬度的 justify-center 容器(無 px-loose padding),center.x 自動 = 24 = menu icon center.x。
+    // 2026-05-21 v9 — restore main behavior(per user「不應該調整原本的樣式,只有說收起來的時候
+    // 要調整 header logo 的位置使其與其下 icon 水平置中」):
+    //   - Expanded mode:ChromeHeader default `px-loose`(16px L+R),avatar 跟 menu icon 對齊
+    //   - Collapsed mode:`!px-0 !justify-center` 拿掉 padding + 內容置中,WorkspaceBrand text
+    //     已 `group-data-[collapsible=icon]:hidden`,collapsed 只剩 avatar 24px,centered in 48px
+    //     square → avatar.center = 24 = menu icon center.x ✓
+    // 完全 match main 行為(v7 leadingRail / v8 -ml-1 surgical 全撤回)。
     <ChromeHeader
       ref={ref}
       withTabs={withTabs}
       tabsSlot={tabsSlot}
-      leadingRail={leadingRail}
       data-sidebar="header"
-      className={className}
+      className={cn(
+        // 2026-05-21 v9.1 — collapsed header width constraint(C* 副作用補位):
+        // C* refactor 把 SidebarInner pin 在 sidebar-width(272px)inline style,header 自然
+        // inherit 272 wide。`!justify-center` 在 272 中心 → avatar.cx=136 = visible 48px 外。
+        // 補 `!w-[var(--sidebar-width-icon)]` 收合時 header constrains to 48,justify-center
+        // 才能把 avatar 置中於 visible icon rail(avatar.cx=24 = menu icon center.x)。
+        "group-data-[collapsible=icon]:!w-[var(--sidebar-width-icon)]",
+        "group-data-[collapsible=icon]:!px-0 group-data-[collapsible=icon]:!justify-center",
+        "transition-[padding,width] duration-200 ease-linear motion-reduce:duration-0",
+        className
+      )}
       {...props}
     />
   )
