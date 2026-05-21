@@ -466,14 +466,15 @@ const SidebarHeader = React.forwardRef<
       tabsSlot={tabsSlot}
       data-sidebar="header"
       className={cn(
-        // 2026-05-21 v9.1 — collapsed header width constraint(C* 副作用補位):
-        // C* refactor 把 SidebarInner pin 在 sidebar-width(272px)inline style,header 自然
-        // inherit 272 wide。`!justify-center` 在 272 中心 → avatar.cx=136 = visible 48px 外。
-        // 補 `!w-[var(--sidebar-width-icon)]` 收合時 header constrains to 48,justify-center
-        // 才能把 avatar 置中於 visible icon rail(avatar.cx=24 = menu icon center.x)。
-        "group-data-[collapsible=icon]:!w-[var(--sidebar-width-icon)]",
-        "group-data-[collapsible=icon]:!px-0 group-data-[collapsible=icon]:!justify-center",
-        "transition-[padding,width] duration-200 ease-linear motion-reduce:duration-0",
+        // 2026-05-21 v10 — padding-driven smooth animation(per Material MiniDrawer / VSCode /
+        // Linear sidebar 共識):避免 `justify-content` / `width` 等 discrete property 切換
+        // 造成的 toggle 期間「avatar 先跳左又往右」反向位移。
+        //   Expanded:ChromeHeader default `px-loose`(16 L+R)→ avatar.x=16 cx=28
+        //   Collapsed:`!pl-3 !pr-0`(12 / 0)→ avatar.x=12 cx=24 = menu icon cx=24 ✓
+        //   Padding 連續可 transition,avatar 在 200ms 內 monotonic 由 12 → 16(或反向),
+        //   無 discrete jump。Probe verified(scripts/probe-proposed-fix-final.mjs)。
+        "group-data-[collapsible=icon]:!pl-3 group-data-[collapsible=icon]:!pr-0",
+        "transition-[padding] duration-200 ease-linear motion-reduce:duration-0",
         className
       )}
       {...props}
