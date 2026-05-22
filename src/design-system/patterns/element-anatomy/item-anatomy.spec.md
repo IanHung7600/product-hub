@@ -569,6 +569,23 @@ Canonical 對齊模式判斷:`MenuItem` 的 `isBlockAlign = avatarPx > 24 && !!d
 
 **這條規則跟 `ICON_SIZE` 的程式化邏輯一致**——icon / avatar / inline action hover bg 都從 `item-layout` module 單一來源 import,row primitive 的任何尺寸常數永遠不在 consumer 側重新定義。
 
+### Token: `--item-icon-size` / `--item-avatar-size`(2026-05-22 codify)
+
+**Local token family(per `--item-*` prefix 既有 family,e.g., `--item-prefix-slot` / `--item-gap-label-desc`)**。
+
+由 row primitive(目前 SidebarProvider)透過 inline style 注入,**JS const → CSS var mirror**:
+
+| Token | JS const source | sm | md | lg |
+|---|---|---|---|---|
+| `--item-icon-size` | `ICON_SIZE[size]` | 16 | 16 | 20 |
+| `--item-avatar-size` | `AVATAR_SIZE.inline[size]` | 20 | 24 | 24 |
+
+**Consumer**:SidebarMenuButton collapsed pl 公式(`(sidebar-width-icon - --item-{icon,avatar}-size) / 2`),讓所有 prefix center 鎖回 rail center = GlobalHeader toggle geometry。Future row primitive(SelectMenu / DropdownMenu / TreeView)如需同 cascade 可消費同 token。
+
+**Sync invariant**:CSS var 必鏡像 JS const。SidebarProvider re-render → CSS var 更新 → consumer formula 自動 cascade。
+
+**uniformPrefix mixing override**:當 `:has([data-prefix-type=icon]):has([data-prefix-type=avatar])` 觸發,`--item-icon-size` 被 cascade override 成 `var(--mixed-prefix-slot)`(24),因 ItemPrefix wrapper 被撐到 slot 寬,effective prefix width = slot 非 icon glyph。用 Tailwind `!` important 修飾子蓋過 inline style specificity。
+
 ### asChild pattern 的責任——用 helper 元件免除全部負擔
 
 普通 consumer(`<SidebarMenuButton startIcon={X}>{label}</SidebarMenuButton>`)不處理 prefix——元件內部自己渲染。

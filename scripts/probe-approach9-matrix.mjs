@@ -31,8 +31,8 @@ const probe = async (storyId, label, density) => {
       iconOffset: r(iconEl) && railCenter !== null ? r(iconEl).cx - railCenter : null,
       avatarCx: r(avatarEl)?.cx,
       avatarOffset: r(avatarEl) && railCenter !== null ? r(avatarEl).cx - railCenter : null,
-      cssVarRowIcon: window.getComputedStyle(document.querySelector('.group\\/sidebar-wrapper') || document.body).getPropertyValue('--row-icon-size'),
-      cssVarRowAvatar: window.getComputedStyle(document.querySelector('.group\\/sidebar-wrapper') || document.body).getPropertyValue('--row-avatar-size'),
+      cssVarRowIcon: window.getComputedStyle(document.querySelector('.group\\/sidebar-wrapper') || document.body).getPropertyValue('--item-icon-size'),
+      cssVarRowAvatar: window.getComputedStyle(document.querySelector('.group\\/sidebar-wrapper') || document.body).getPropertyValue('--item-avatar-size'),
     }
   }, { label })
   await p.close()
