@@ -79,6 +79,14 @@ jobs:
       - name: Storybook build
         run: npm run build-storybook 2>&1 | tail -20
 
+      - name: Storybook story runtime smoke test(Phase 4.13 — 0 console error gate)
+        # 2026-05-25 Phase 4.13 加 — 本 session 已踩 3 個 story runtime bug(Breadcrumb asChild
+        # / DataTable JSX comment / Internal pattern visual)。`build-storybook` 過 = compile pass
+        # ≠ runtime render pass。本 step Playwright 訪問每個 story id + assert 0 console error,
+        # catch React.Children.only / undefined import / 等 runtime trap。
+        # Fail = block main merge / 防 runtime regression ship。
+        run: node scripts/storybook-smoke-test.mjs
+
       - name: Windows-like scrollbar probe(Linux Chromium ≈ Windows persistent bar)
         # 地端 macOS 是 OS-overlay scrollbar，看不到 Windows 17px persistent bar 的圓角溢出。
         # CI Linux Chromium 預設 persistent native scrollbar，視覺接近 Win Chrome → 用來驗證
