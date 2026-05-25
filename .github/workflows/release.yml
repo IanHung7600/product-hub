@@ -22,12 +22,13 @@ on:
           - next
           - stable
       action:
-        description: 'Action to run(release = normal publish trigger via tag push;clear-latest = unpoint latest dist-tag back to nothing,for pre-release hygiene before v1.0.0)'
+        description: 'Action to run(release = normal publish trigger via tag push;repoint-latest = point `latest` dist-tag to current `@beta` version so consumers without @beta suffix get usable build;clear-latest = unpoint latest entirely,strict semver pre-release hygiene before v1.0.0)'
         required: true
         default: 'release'
         type: choice
         options:
           - release
+          - repoint-latest
           - clear-latest
 
 jobs:
@@ -134,8 +135,44 @@ jobs:
           fi
           # Non-blocking warning(per Anthropic spec:omit version → commit SHA auto-version,仍 work)
 
+  repoint-latest-tag:
+    name: Repoint latest dist-tag → current @beta
+    if: github.event_name == 'workflow_dispatch' && inputs.action == 'repoint-latest'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: 'https://registry.npmjs.org'
+      - name: Repoint latest → current @beta for both packages
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          # Why:beta.1 第一次 publish 時 npm 自動把 `latest` = beta.1,之後 `--tag beta` 只
+          # 更新 beta 不動 latest。consumer 跑 `npm install @qijenchen/design-system`(無
+          # @beta 後綴)會拉到 stale beta.X(可能 missing dist/ 等問題)。
+          # 此 action auto-detect 兩 package 當前 @beta 版本,把 `latest` 重指過去 — Figma
+          # Make / 任何 consumer 沒加 suffix 也能拉到最新可用 build。
+          # Sustainable design: 每次 beta release 後 user 從 GitHub Actions UI run 一次即可
+          #   (不在 tag-push job 自動跑,避免「latest = pre-release」semver 違紀)。
+          #   未來 v1.0.0 stable release tag(無 -beta suffix)會自動把 latest = stable,
+          #   屆時此 action 可 retire 或改為 emergency tool.
+          for pkg in "@qijenchen/design-system" "@qijenchen/storybook-config"; do
+            beta_ver=$(npm view "$pkg" dist-tags.beta 2>/dev/null)
+            if [ -z "$beta_ver" ] || [ "$beta_ver" = "undefined" ]; then
+              echo "::warning::$pkg has no @beta tag,skipping"
+              continue
+            fi
+            echo "==> $pkg: repointing latest → $beta_ver"
+            npm dist-tag add "$pkg@$beta_ver" latest
+          done
+          echo "---after repoint---"
+          npm view @qijenchen/design-system dist-tags
+          npm view @qijenchen/storybook-config dist-tags
+
   clear-latest-tag:
-    name: Clear latest dist-tag(pre-release hygiene)
+    name: Clear latest dist-tag(strict semver pre-release hygiene)
     if: github.event_name == 'workflow_dispatch' && inputs.action == 'clear-latest'
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -148,13 +185,11 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          # Why:beta.1 第一次 publish 時 npm 自動把 `latest` = beta.1,之後 --tag beta 只
-          # 更新 beta 不動 latest。consumer 跑 `npm install @qijenchen/design-system`(無
-          # @beta 後綴)會拉到 stale beta.X。Pre-release 期間 `latest` 不該存在,等 v1.0.0
-          # 才該指向 stable。
-          # User triggers from GitHub Actions UI(Run workflow → action=clear-latest)。
-          npm dist-tag rm @qijenchen/design-system latest || echo "(已無 latest 或第一次清)"
-          npm dist-tag rm @qijenchen/storybook-config latest || echo "(已無 latest 或第一次清)"
+          # Strict semver pre-release canonical: `latest` 不該存在 until v1.0.0 stable。
+          # 此 action 把 latest 完全 unpoint → consumer `npm install <pkg>`(無 @beta)會
+          # 失敗 with 明確 ERESOLVE error,強制 consumer 寫 `@beta`。
+          npm dist-tag rm @qijenchen/design-system latest || echo "(已無 latest)"
+          npm dist-tag rm @qijenchen/storybook-config latest || echo "(已無 latest)"
           echo "---after cleanup---"
           npm view @qijenchen/design-system dist-tags
           npm view @qijenchen/storybook-config dist-tags
