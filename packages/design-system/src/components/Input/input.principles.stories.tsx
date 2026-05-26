@@ -50,7 +50,7 @@ export const UsageGuidance: Story = {
         <div className="prose prose-sm max-w-prose mb-8">
           <p>適合 Input 的真實業務場景(點擊跳轉「展示」頁範例):</p>
           <ul className="space-y-1">
-            <li><LinkTo kind="Design System/Components/Input/展示" name="三種模式"><span className="text-primary hover:underline font-medium cursor-pointer">三種模式</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Input/展示" name="四模式"><span className="text-primary hover:underline font-medium cursor-pointer">四模式</span></LinkTo></li>
             <li><LinkTo kind="Design System/Components/Input/展示" name="尺寸與 Button 對齊"><span className="text-primary hover:underline font-medium cursor-pointer">尺寸與 Button 對齊</span></LinkTo></li>
             <li><LinkTo kind="Design System/Components/Input/展示" name="End Action"><span className="text-primary hover:underline font-medium cursor-pointer">End Action</span></LinkTo></li>
             <li><LinkTo kind="Design System/Components/Input/展示" name="Error"><span className="text-primary hover:underline font-medium cursor-pointer">Error</span></LinkTo></li>

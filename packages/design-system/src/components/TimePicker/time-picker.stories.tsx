@@ -28,9 +28,9 @@ export default meta
 type Story = StoryObj<typeof TimePicker>
 
 // @story-trait-rationale: pre-existing trait gaps tracked separately; this PR scope = add Modes story with display card.
-/* ── 三種模式 ── */
+/* ── 四模式 ── */
 export const Modes: Story = {
-  name: '三種模式',
+  name: '四模式',
   render: () => (
     <div className="flex flex-col gap-6 w-80">
       <div>

@@ -47,7 +47,7 @@ export const UsageGuidance: Story = {
         <div className="prose prose-sm max-w-prose mb-8">
           <p>適合 DatePicker 的真實業務場景(點擊跳轉「展示」頁範例):</p>
           <ul className="space-y-1">
-            <li><LinkTo kind="Design System/Components/DatePicker/展示" name="三種模式"><span className="text-primary hover:underline font-medium cursor-pointer">三種模式</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/DatePicker/展示" name="四模式"><span className="text-primary hover:underline font-medium cursor-pointer">四模式</span></LinkTo></li>
             <li><LinkTo kind="Design System/Components/DatePicker/展示" name="可清除"><span className="text-primary hover:underline font-medium cursor-pointer">可清除</span></LinkTo></li>
             <li><LinkTo kind="Design System/Components/DatePicker/展示" name="尺寸"><span className="text-primary hover:underline font-medium cursor-pointer">尺寸</span></LinkTo></li>
             <li><LinkTo kind="Design System/Components/DatePicker/展示" name="Range:訂房 / 訂機票情境"><span className="text-primary hover:underline font-medium cursor-pointer">Range:訂房 / 訂機票情境</span></LinkTo></li>

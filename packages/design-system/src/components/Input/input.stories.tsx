@@ -14,9 +14,9 @@ const meta: Meta<typeof Input> = {
 export default meta
 type Story = StoryObj<typeof Input>
 
-/* ── 三種模式 ── */
+/* ── 四模式 ── */
 export const Modes: Story = {
-  name: '三種模式',
+  name: '四模式',
   render: () => (
     <div className="flex flex-col gap-6 max-w-sm">
       <div>

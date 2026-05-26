@@ -70,9 +70,9 @@ export const TypedInput: Story = {
   },
 }
 
-/* ── 三種模式 ── */
+/* ── 四模式 ── */
 export const Modes: Story = {
-  name: '三種模式',
+  name: '四模式',
   render: () => (
     <div className="flex flex-col gap-6 max-w-xs">
       <div>

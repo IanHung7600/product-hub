@@ -67,7 +67,7 @@ export const UsageGuidance: Story = {
             <p>適合 Select 的真實業務場景(點擊跳轉「展示」頁範例):</p>
             <ul className="space-y-1">
               <li>
-                <LinkTo kind="Design System/Components/Select/展示" name="三種模式"><span className="text-primary hover:underline font-medium cursor-pointer">三種模式</span></LinkTo>
+                <LinkTo kind="Design System/Components/Select/展示" name="四模式"><span className="text-primary hover:underline font-medium cursor-pointer">四模式</span></LinkTo>
               </li>
               <li>
                 <LinkTo kind="Design System/Components/Select/展示" name="顯示模式"><span className="text-primary hover:underline font-medium cursor-pointer">顯示模式</span></LinkTo>

@@ -129,15 +129,18 @@ Chevron 是**展開/收合控件**,不是 prefix icon:`fg-muted`(指示色,hover
 - `aria-selected="true"` 在 selected node 上
 - 視覺:selected node 用 `neutral-selected` state(跟 MenuItem 單選一致;完整 token 見 anatomy `ColorMatrix`)
 
-### 多選(file browser)
+### 多選(file browser / permission picker)
 
-- **視覺 SSOT(2026-05-26 fix per 世界級 alignment)**:多選 selected node 跟 single 一樣用 `bg-neutral-selected` 為**主視覺信號**。Checkbox 為**加強信號**(file-browser / permission-picker variant),不取代 bg
-  - 對齊:macOS Finder(bg only)/ Gmail(checkbox + bg)/ MUI X Tree multi-select(checkbox + bg)/ Figma layers(bg only)/ Atlassian Tree(checkbox + bg)
-  - 反例(歷史 bug 2026-05-26):原 spec「不用背景色」+ code `selectionMode === 'single'` condition → multi-select 只字色變化視覺殘缺,世界級無此先例
-- `Shift+Click` 範圍選取
-- `Ctrl/Cmd+Click` 切換個別選取
-- `aria-multiselectable="true"` 在 TreeView 上
-- Checkbox(when present)反映**內建 `selectedIds`** state(consumer 不該繞過 built-in selection 自管 `checked` Record);參考 `WithCheckbox` story
+- **視覺 SSOT(per M23 DS-internal canonical)**:對齊 `SelectMenu`(select-menu.tsx:352-354)多選 pattern —
+  - **Checkbox 為 selection 唯一視覺信號**:`<TreeItem checkbox={<Checkbox />}>` slot
+  - **Row 本身 NO `bg-neutral-selected`**(該 token 保留給 single mode)
+  - `text-foreground`(字色從 muted 變 emphasis)仍套用所有 selected node(跟 single 一致)
+  - 對齊 cite:**SelectMenu** 已 codified `checked={isSelected} / selected={!multiple && isSelected}` 二分;TreeView 沿用同 canonical(per mindset #2 + M23 「DS 既有 canonical 優先於外部 benchmark」)
+- API:`selectionMode="multiple"` **必同時 pass checkbox prop** 才完整(妥當文件 + audit-dim 應 enforce);無 checkbox 的 multi-select = footgun
+- `Shift+Click` 範圍選取 / `Ctrl/Cmd+Click` 切換個別 / `aria-multiselectable="true"` 在 TreeView 上
+- Checkbox state 應反映**內建 `selectedIds`**(consumer 不該繞過 built-in selection 自管 `checked` Record)— 修 `WithCheckbox` story 對齊
+
+歷史錨例(2026-05-26):一次 revert 引世界級對照 macOS Finder 改 bg apply 多選 → user 抓「應跟我們 multiple select 樣式維持一樣才是 SSOT」 → M23 違反 → restore single-only bg + cite SelectMenu pattern。
 
 ### 無選取(純展開/收合)
 

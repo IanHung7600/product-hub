@@ -31,9 +31,9 @@ const meta: Meta<typeof Select> = {
 export default meta
 type Story = StoryObj<typeof Select>
 
-/* ── 三種模式 ── */
+/* ── 四模式 ── */
 export const Modes: Story = {
-  name: '三種模式',
+  name: '四模式',
   render: () => {
     const [value, setValue] = React.useState('in_stock')
     return (

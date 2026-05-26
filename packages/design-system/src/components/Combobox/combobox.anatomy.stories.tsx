@@ -306,7 +306,7 @@ export const Overview = {
             <thead><tr><Th>Prop</Th><Th>Type</Th><Th>Default</Th><Th>說明</Th></tr></thead>
             <tbody>
               {[
-                ['mode', "'edit'|'readonly'|'disabled'", "'edit'", '三種模式，disabled 原生屬性會自動覆蓋'],
+                ['mode', "'edit'|'display'|'readonly'|'disabled'", "'edit'", 'FieldMode 四模式;disabled 原生屬性會自動覆蓋'],
                 ['size', "'sm'|'md'|'lg'", "'md'", '尺寸，與 Button 共用 field-height token'],
                 ['options', 'SelectOption[]', '—', '選項列表 { value, label }'],
                 ['value', 'string[]', '[]', '已選中的值陣列'],

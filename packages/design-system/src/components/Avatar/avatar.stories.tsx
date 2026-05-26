@@ -10,15 +10,15 @@ const meta: Meta = {
 export default meta
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   1. 三種模式
+   1. 四模式
    ═══════════════════════════════════════════════════════════════════════════ */
 
 export const Modes = {
-  name: '三種模式',
+  name: '四模式',
   render: () => (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <h3 className="text-h6 font-semibold text-foreground">三種內容模式</h3>
+        <h3 className="text-h6 font-semibold text-foreground">四種內容模式</h3>
         <p className="text-caption text-fg-muted max-w-[720px]">
           按優先順序：有 src 顯示圖片 → 有 icon 顯示 Icon → 有 alt 顯示首字。都沒有時預設顯示 User icon。
         </p>

@@ -27,9 +27,9 @@ export default meta
 type Story = StoryObj<typeof Combobox>
 
 // @story-trait-rationale: pre-existing trait gaps (Default/WithError) tracked separately; this PR scope = add display mode card to Modes story only.
-/* ── 三種模式 ── */
+/* ── 四模式 ── */
 export const Modes: Story = {
-  name: '三種模式',
+  name: '四模式',
   render: () => {
     const [value, setValue] = React.useState(['electronics', 'food'])
     return (
