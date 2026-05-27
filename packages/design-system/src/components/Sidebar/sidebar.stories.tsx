@@ -22,6 +22,7 @@ import {
 } from './sidebar'
 import { TreeView, TreeItem } from '@/design-system/components/TreeView/tree-view'
 import { ItemAvatar, ItemLabel } from '@/design-system/patterns/element-anatomy/item-anatomy'
+import { Avatar } from '@/design-system/components/Avatar/avatar'
 import { NameCard, NameCardDefaultActions } from '@/design-system/components/NameCard/name-card'
 import { ChromeHeader } from '@/design-system/patterns/header-canonical/chrome-header'
 
@@ -51,8 +52,11 @@ const MAIN_NAV = [
  * Chrome typography:`text-body-lg font-medium`(16px)——跟 page title 同級。
  */
 const WorkspaceBrand = () => (
+  // Chrome header avatar canonical(header-canonical.spec.md:57-72 + sidebar.spec.md:241-247):
+  // chrome header 不是 row context → raw <Avatar size={24}>,禁 <ItemAvatar>(會誤啟動 row anatomy lookup)。
+  // 對應 CSS local token --chrome-header-avatar-size: 1.5rem(header-canonical.css)
   <div className="flex items-center gap-2 min-w-0 group-data-[collapsible=icon]:justify-center">
-    <ItemAvatar alt="Acme Inc" shape="square" color="blue" solid />
+    <Avatar size={24} shape="square" color="blue" solid alt="Acme Inc" />
     <span className="text-body-lg font-medium truncate group-data-[collapsible=icon]:hidden">Acme Inc</span>
   </div>
 )

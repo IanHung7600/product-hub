@@ -23,6 +23,7 @@ import {
 } from './sidebar'
 import { TreeView, TreeItem } from '@/design-system/components/TreeView/tree-view'
 import { ItemAvatar } from '@/design-system/patterns/element-anatomy/item-anatomy'
+import { Avatar } from '@/design-system/components/Avatar/avatar'
 
 const meta: Meta = {
   title: 'Design System/Components/Sidebar/設計原則',
@@ -191,9 +192,10 @@ export const ContentTypeChoice: Story = {
           <DoDont type="do" title="設計好的 app 主導覽 → SidebarMenu">
             <MiniSidebar activeId="dashboard">
               <SidebarHeader>
+                {/* Chrome header canonical:raw <Avatar size={24}> per header-canonical.spec.md:57-72 + text-body-lg per chrome typography */}
                 <div className="flex items-center gap-2">
-                  <ItemAvatar alt="Acme" shape="square" color="blue" solid />
-                  <span className="text-body font-medium">Acme Inc</span>
+                  <Avatar size={24} shape="square" color="blue" solid alt="Acme" />
+                  <span className="text-body-lg font-medium">Acme Inc</span>
                 </div>
               </SidebarHeader>
               <SidebarContent>

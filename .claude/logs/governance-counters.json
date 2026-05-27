@@ -1,11 +1,11 @@
 {
-  "ts": "2026-05-26T14:59:00.782Z",
+  "ts": "2026-05-27T00:50:23.400Z",
   "counts": {
-    "hooks": 43,
+    "hooks": 44,
     "mRules": 31,
-    "auditDims": 64,
+    "auditDims": 66,
     "auditDimMin": 1,
-    "auditDimMax": 64,
+    "auditDimMax": 66,
     "specTraits": 11
   },
   "mRulesList": [
@@ -48,6 +48,7 @@
     ".claude/hooks/check_audit_sample_escape.sh",
     ".claude/hooks/check_benchmark_citation.sh",
     ".claude/hooks/check_canonical_propagation.sh",
+    ".claude/hooks/check_chrome_header_avatar_canonical.sh",
     ".claude/hooks/check_codex_brief_invariants.sh",
     ".claude/hooks/check_codex_collab_5step.sh",
     ".claude/hooks/check_data_table_size_num_to_meta_width.sh",

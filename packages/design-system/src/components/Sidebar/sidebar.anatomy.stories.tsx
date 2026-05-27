@@ -16,6 +16,7 @@ import {
   Sidebar,
 } from './sidebar'
 import { ItemAvatar } from '@/design-system/patterns/element-anatomy/item-anatomy'
+import { Avatar } from '@/design-system/components/Avatar/avatar'
 
 const meta: Meta = {
   title: 'Design System/Components/Sidebar/設計規格',
@@ -88,8 +89,9 @@ const SidebarPreview = ({
       <SidebarProvider size={size} defaultActiveId={activeId} style={{ minHeight: 'auto' }}>
         <div className="flex flex-col w-full">
           <SidebarHeader>
+            {/* Chrome header canonical:raw <Avatar size={24}> per header-canonical.spec.md:57-72 */}
             <div className="flex items-center gap-2 min-w-0">
-              <ItemAvatar alt="Acme Inc" shape="square" color="blue" solid />
+              <Avatar size={24} shape="square" color="blue" solid alt="Acme Inc" />
               <span className="text-body-lg font-medium truncate">Acme Inc</span>
             </div>
           </SidebarHeader>
