@@ -19,6 +19,7 @@
 - [feedback_ssot_mechanical_p0_not_p1_warn_2026_05_27.md](feedback_ssot_mechanical_p0_not_p1_warn_2026_05_27.md) — SSOT canonical = 必 P0 BLOCKER 機械強制 with per-line escape comment;禁 P1 WARN soft signal(2026-05-27)
 - [feedback_composition_fidelity_pixel_vs_structural_2026_05_27.md](feedback_composition_fidelity_pixel_vs_structural_2026_05_27.md) — Pixel diff 對 template-vs-canonical 是錯工具;render fidelity 由架構(workspace link + portal + anti-pattern hooks)保;pixel diff 僅同內容 story 適用(2026-05-27)
 - [feedback_ai_self_audit_unreliable_mechanical_primary_2026_05_27.md](feedback_ai_self_audit_unreliable_mechanical_primary_2026_05_27.md) — AI self-audit unreliable;mechanical ground-truth = primary defense / AI judgement = supplementary only / new audit layer ALWAYS expand never replace(2026-05-27 user verbatim「你他媽常常無法發現自己錯」+ session 5+ anchor)
+- [feedback_deploy_url_auto_detect_2026_05_27.md](feedback_deploy_url_auto_detect_2026_05_27.md) — Deploy URL auto-detection 3-strategy + per-user override + curl content sniff(2026-05-27 user「fork user 也要自動推導」+「不能自己知道」directive,hook v4 ship)
 
 ## Feedback (DS canonical / 視覺判斷)
 - [feedback_story_baseline_reference.md](feedback_story_baseline_reference.md) — 寫 stories wrap primitive 必 reference 既有完整佈局 baseline(2026-05-20 AppShell-vs-Sidebar drift anchor)

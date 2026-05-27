@@ -51,7 +51,7 @@ BRANCH=$(echo "$CMD" | grep -oE 'origin\s+\S+' | awk '{print $2}' | head -1)
 [ -z "$BRANCH" ] && BRANCH=$(git -C "$CWD" branch --show-current 2>/dev/null || echo "main")
 
 # v3 2026-05-27:curl HEAD verify URL before reporting(per user「你確定有做到」complaint)
-# 只把 200 OK 的 URL inject;404 → mark as "unverified" so AI 知道要 ask user
+# v4 2026-05-27:add content sniff(防 squat URLs 200 但 unrelated content)
 verify_url() {
   local url="$1"
   local code=$(curl -s -o /dev/null -w "%{http_code}" -L --max-time 5 -I "$url" 2>/dev/null)
@@ -59,6 +59,13 @@ verify_url() {
     200|301|302) echo "OK" ;;
     *) echo "FAIL:$code" ;;
   esac
+}
+
+# v4 content sniff:check 200 URL 是 Storybook real deploy(not squat)
+# 用 Storybook hallmark patterns(sb-manager / sb-addons / @storybook/core title)
+is_storybook_deploy() {
+  local url="$1"
+  curl -s --max-time 5 -L "$url" 2>/dev/null | grep -qE "sb-manager|sb-addons|@storybook/core|storybook-static"
 }
 
 # Detection 1:Netlify CLI-linked(.netlify/state.json + scripts/deploy-url.mjs)
@@ -79,26 +86,55 @@ if [ -f "$DEPLOY_SCRIPT" ] && [ -f "$CWD/.netlify/state.json" ]; then
 fi
 
 # Detection 2:Netlify dashboard-linked(netlify.toml + no state.json)
-# Derive from git remote(repo name → Netlify auto-assigns subdomain)+ curl HEAD verify
+# v4:try multiple naming conventions + content sniff to filter squat URLs
 if [ -z "$URLS_FOUND" ] && [ -f "$CWD/netlify.toml" ]; then
-  REPO_NAME=$(git -C "$CWD" remote get-url origin 2>/dev/null | sed -E 's|.*/([^/.]+)(\.git)?$|\1|')
-  if [ -n "$REPO_NAME" ]; then
-    if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
-      CANDIDATE="https://${REPO_NAME}.netlify.app"
-      VERIFY=$(verify_url "$CANDIDATE")
-      if [ "$VERIFY" = "OK" ]; then
-        URLS_FOUND="${URLS_FOUND}🚀 Netlify PRODUCTION(${BRANCH}): ${CANDIDATE}  ✅ verified 200\n"
-      else
-        URLS_FOUND="${URLS_FOUND}🚀 Netlify PRODUCTION 推導 URL: ${CANDIDATE}  ⚠️ ${VERIFY}(可能 dashboard custom subdomain;請手動 share 給 AI)\n"
+  GH_REMOTE=$(git -C "$CWD" remote get-url origin 2>/dev/null)
+  REPO_NAME=$(echo "$GH_REMOTE" | sed -E 's|.*/([^/.]+)(\.git)?$|\1|')
+  OWNER_REPO=$(echo "$GH_REMOTE" | sed -E 's|.*github\.com[:/]([^/]+/[^/.]+)(\.git)?$|\1|')
+  OWNER=$(echo "$OWNER_REPO" | cut -d/ -f1)
+
+  # v4 multi-candidate strategy(Netlify naming conventions in order of likelihood):
+  # 1. <repo-name>.netlify.app(simple repo-only)
+  # 2. <owner>-<repo>.netlify.app(Netlify Import default)
+  # 3. <owner>.netlify.app(user-chosen handle, rare match)
+  # 4. ~/.claude/local/deploy-targets.json overrides(per-user known URLs)
+  USER_OVERRIDE=""
+  if [ -f "$HOME/.claude/local/deploy-targets.json" ]; then
+    USER_OVERRIDE=$(jq -r --arg key "$OWNER_REPO" '.[$key] // ""' "$HOME/.claude/local/deploy-targets.json" 2>/dev/null)
+  fi
+  CANDIDATES=""
+  if [ -n "$USER_OVERRIDE" ]; then
+    CANDIDATES="$USER_OVERRIDE"
+  else
+    if [ -n "$REPO_NAME" ]; then CANDIDATES="https://${REPO_NAME}.netlify.app"; fi
+    if [ -n "$OWNER" ] && [ -n "$REPO_NAME" ]; then CANDIDATES="$CANDIDATES https://${OWNER}-${REPO_NAME}.netlify.app"; fi
+  fi
+
+  REAL_URL=""
+  if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
+    for candidate in $CANDIDATES; do
+      if [ "$(verify_url "$candidate")" = "OK" ] && is_storybook_deploy "$candidate"; then
+        REAL_URL="$candidate"
+        break
       fi
+    done
+    if [ -n "$REAL_URL" ]; then
+      URLS_FOUND="${URLS_FOUND}🚀 Netlify PRODUCTION(${BRANCH}): ${REAL_URL}  ✅ verified 200 + Storybook content\n"
     else
-      CANDIDATE="https://${BRANCH}--${REPO_NAME}.netlify.app"
-      VERIFY=$(verify_url "$CANDIDATE")
-      if [ "$VERIFY" = "OK" ]; then
+      URLS_FOUND="${URLS_FOUND}🚀 Netlify PRODUCTION URL 未驗 — tried: ${CANDIDATES// /, }\n   ⚠️ 全 404 OR squat。需要 user 手動 share dashboard URL,OR 創 \$HOME/.claude/local/deploy-targets.json:\n   {\"${OWNER_REPO}\": \"https://<actual-site>.netlify.app\"}\n"
+    fi
+  else
+    # Branch preview:always use `<branch>--<sitename>` pattern,but sitename unknown unless USER_OVERRIDE
+    if [ -n "$USER_OVERRIDE" ]; then
+      SITENAME=$(echo "$USER_OVERRIDE" | sed -E 's|https?://([^.]+)\.netlify\.app.*|\1|')
+      CANDIDATE="https://${BRANCH}--${SITENAME}.netlify.app"
+      if [ "$(verify_url "$CANDIDATE")" = "OK" ]; then
         URLS_FOUND="${URLS_FOUND}🔍 Netlify PREVIEW(${BRANCH}): ${CANDIDATE}  ✅ verified 200\n"
       else
-        URLS_FOUND="${URLS_FOUND}🔍 Netlify PREVIEW 推導 URL: ${CANDIDATE}  ⚠️ ${VERIFY}(branch preview 可能未啟 OR Netlify 用 hash-based naming;dashboard verify)\n"
+        URLS_FOUND="${URLS_FOUND}🔍 Netlify PREVIEW 推導: ${CANDIDATE}  ⚠️ 404(preview 未啟 OR build pending — Netlify build 2-3 min)\n"
       fi
+    else
+      URLS_FOUND="${URLS_FOUND}🔍 Netlify PREVIEW(${BRANCH}) — sitename 未知;設 \$HOME/.claude/local/deploy-targets.json 後 hook 可推 preview URL\n"
     fi
   fi
 fi
