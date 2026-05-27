@@ -20,6 +20,7 @@
 - [feedback_codex_visual_audit_dangerously_bypass.md](feedback_codex_visual_audit_dangerously_bypass.md) — Codex exec MCP visual audit 唯一可行 path = `--dangerously-bypass-approvals-and-sandbox`(user explicit authorize),feature `exec_permission_approvals` 仍 under-dev(2026-05-27,62/62 PASS)
 - [feedback_propose_without_cite_fabrication_2026_05_27.md](feedback_propose_without_cite_fabrication_2026_05_27.md) — 對話 propose 含「規定 / 必配 / canonical 寫」必附 file:line cite,沒 cite = 瞎掰自動撤回(2026-05-27 user 永久糾正,hook `check_propose_cite_required.sh` 機械強制)
 - [feedback_ds_css_aggregator_full_sweep_2026_05_27.md](feedback_ds_css_aggregator_full_sweep_2026_05_27.md) — DS src/**/*.css 必在 tokens.css aggregator 或被 tsx import — 否則 consumer 拿不到致跑版(2026-05-27 user「最後一次」directive,hook `check_orphan_ds_css.sh` + generator auto-scan)
+- [feedback_ssot_mechanical_p0_not_p1_warn_2026_05_27.md](feedback_ssot_mechanical_p0_not_p1_warn_2026_05_27.md) — SSOT canonical = 必 P0 BLOCKER 機械強制 with per-line escape comment;**禁** P1 WARN「heuristic 不準」soft signal(2026-05-27 user「為何不全部 ssot 都要強制吻合」directive)
 
 ## Feedback (DS canonical / 視覺判斷)
 > **2026-05-15 prune D3 retired 4 entries**(已完全被上游吸收,SSOT pointer):
