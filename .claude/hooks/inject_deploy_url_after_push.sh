@@ -50,6 +50,17 @@ URLS_FOUND=""
 BRANCH=$(echo "$CMD" | grep -oE 'origin\s+\S+' | awk '{print $2}' | head -1)
 [ -z "$BRANCH" ] && BRANCH=$(git -C "$CWD" branch --show-current 2>/dev/null || echo "main")
 
+# v3 2026-05-27:curl HEAD verify URL before reporting(per user「你確定有做到」complaint)
+# 只把 200 OK 的 URL inject;404 → mark as "unverified" so AI 知道要 ask user
+verify_url() {
+  local url="$1"
+  local code=$(curl -s -o /dev/null -w "%{http_code}" -L --max-time 5 -I "$url" 2>/dev/null)
+  case "$code" in
+    200|301|302) echo "OK" ;;
+    *) echo "FAIL:$code" ;;
+  esac
+}
+
 # Detection 1:Netlify CLI-linked(.netlify/state.json + scripts/deploy-url.mjs)
 DEPLOY_SCRIPT="$CWD/scripts/deploy-url.mjs"
 if [ -f "$DEPLOY_SCRIPT" ] && [ -f "$CWD/.netlify/state.json" ]; then
@@ -68,15 +79,26 @@ if [ -f "$DEPLOY_SCRIPT" ] && [ -f "$CWD/.netlify/state.json" ]; then
 fi
 
 # Detection 2:Netlify dashboard-linked(netlify.toml + no state.json)
-# Derive from git remote(repo name → Netlify auto-assigns subdomain)
+# Derive from git remote(repo name → Netlify auto-assigns subdomain)+ curl HEAD verify
 if [ -z "$URLS_FOUND" ] && [ -f "$CWD/netlify.toml" ]; then
   REPO_NAME=$(git -C "$CWD" remote get-url origin 2>/dev/null | sed -E 's|.*/([^/.]+)(\.git)?$|\1|')
   if [ -n "$REPO_NAME" ]; then
-    # Netlify dashboard typically assigns: <repo-name>.netlify.app (production) + deploy-preview-N--<repo-name>.netlify.app (preview)
     if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
-      URLS_FOUND="${URLS_FOUND}🚀 Netlify PRODUCTION(${BRANCH}): https://${REPO_NAME}.netlify.app\n   (推導自 git remote;若 Netlify dashboard 配置不同 subdomain 請手動 verify)\n"
+      CANDIDATE="https://${REPO_NAME}.netlify.app"
+      VERIFY=$(verify_url "$CANDIDATE")
+      if [ "$VERIFY" = "OK" ]; then
+        URLS_FOUND="${URLS_FOUND}🚀 Netlify PRODUCTION(${BRANCH}): ${CANDIDATE}  ✅ verified 200\n"
+      else
+        URLS_FOUND="${URLS_FOUND}🚀 Netlify PRODUCTION 推導 URL: ${CANDIDATE}  ⚠️ ${VERIFY}(可能 dashboard custom subdomain;請手動 share 給 AI)\n"
+      fi
     else
-      URLS_FOUND="${URLS_FOUND}🔍 Netlify PREVIEW(${BRANCH}): https://${BRANCH}--${REPO_NAME}.netlify.app\n   (branch-deploy convention;Netlify dashboard 可能用不同 pattern)\n"
+      CANDIDATE="https://${BRANCH}--${REPO_NAME}.netlify.app"
+      VERIFY=$(verify_url "$CANDIDATE")
+      if [ "$VERIFY" = "OK" ]; then
+        URLS_FOUND="${URLS_FOUND}🔍 Netlify PREVIEW(${BRANCH}): ${CANDIDATE}  ✅ verified 200\n"
+      else
+        URLS_FOUND="${URLS_FOUND}🔍 Netlify PREVIEW 推導 URL: ${CANDIDATE}  ⚠️ ${VERIFY}(branch preview 可能未啟 OR Netlify 用 hash-based naming;dashboard verify)\n"
+      fi
     fi
   fi
 fi
@@ -85,14 +107,16 @@ fi
 if ls "$CWD/.github/workflows/"*.yml >/dev/null 2>&1; then
   if grep -l "actions/deploy-pages\|gh-pages\|github.io" "$CWD/.github/workflows/"*.yml >/dev/null 2>&1; then
     GH_REMOTE=$(git -C "$CWD" remote get-url origin 2>/dev/null)
-    # Parse owner/repo from git@github.com:owner/repo.git OR https://github.com/owner/repo.git
     OWNER_REPO=$(echo "$GH_REMOTE" | sed -E 's|.*github\.com[:/]([^/]+/[^/.]+)(\.git)?$|\1|')
     OWNER=$(echo "$OWNER_REPO" | cut -d/ -f1)
     REPO=$(echo "$OWNER_REPO" | cut -d/ -f2)
-    if [ -n "$OWNER" ] && [ -n "$REPO" ]; then
-      # Only show GH Pages URL on push to main(GH Pages typically only deploys main)
-      if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
-        URLS_FOUND="${URLS_FOUND}📄 GitHub Pages(${BRANCH}): https://${OWNER}.github.io/${REPO}/\n   Build ~3-5 min via .github/workflows action。verify GitHub Actions tab 變綠勾。\n"
+    if [ -n "$OWNER" ] && [ -n "$REPO" ] && { [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; }; then
+      CANDIDATE="https://${OWNER}.github.io/${REPO}/"
+      VERIFY=$(verify_url "$CANDIDATE")
+      if [ "$VERIFY" = "OK" ]; then
+        URLS_FOUND="${URLS_FOUND}📄 GitHub Pages(${BRANCH}): ${CANDIDATE}  ✅ verified 200\n"
+      else
+        URLS_FOUND="${URLS_FOUND}📄 GitHub Pages 推導 URL: ${CANDIDATE}  ⚠️ ${VERIFY}(build ~3-5 min;若仍 404 check Actions tab build status)\n"
       fi
     fi
   fi
