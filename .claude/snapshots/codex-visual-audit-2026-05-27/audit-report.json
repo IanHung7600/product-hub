@@ -1,0 +1,634 @@
+{
+  "source": "/tmp/codex-test/components.json",
+  "total": 62,
+  "passed": 62,
+  "failed": 0,
+  "verdict": "PASS",
+  "methodology": [
+    "browser_navigate",
+    "browser_take_screenshot",
+    "browser_evaluate"
+  ],
+  "results": [
+    {
+      "index": 1,
+      "component": "accordion",
+      "storyId": "design-system-components-accordion-展示--default",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-accordion-展示--default&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/accordion.png",
+      "status": "PASS",
+      "nodeCount": 158,
+      "errors": []
+    },
+    {
+      "index": 2,
+      "component": "alert",
+      "storyId": "design-system-components-alert-展示--subtle-single-line",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-alert-展示--subtle-single-line&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/alert.png",
+      "status": "PASS",
+      "nodeCount": 234,
+      "errors": []
+    },
+    {
+      "index": 3,
+      "component": "appshell",
+      "storyId": "design-system-components-appshell-展示--primary-sidebar",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-appshell-展示--primary-sidebar&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/appshell.png",
+      "status": "PASS",
+      "nodeCount": 570,
+      "errors": []
+    },
+    {
+      "index": 4,
+      "component": "aspectratio",
+      "storyId": "design-system-components-aspectratio-展示--hero-banner-16-x-9",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-aspectratio-展示--hero-banner-16-x-9&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/aspectratio.png",
+      "status": "PASS",
+      "nodeCount": 144,
+      "errors": []
+    },
+    {
+      "index": 5,
+      "component": "avatar",
+      "storyId": "design-system-components-avatar-展示--modes",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-avatar-展示--modes&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/avatar.png",
+      "status": "PASS",
+      "nodeCount": 184,
+      "errors": []
+    },
+    {
+      "index": 6,
+      "component": "badge",
+      "storyId": "design-system-components-badge-展示--shape",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-badge-展示--shape&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/badge.png",
+      "status": "PASS",
+      "nodeCount": 154,
+      "errors": []
+    },
+    {
+      "index": 7,
+      "component": "breadcrumb",
+      "storyId": "design-system-components-breadcrumb-展示--default",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-breadcrumb-展示--default&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/breadcrumb.png",
+      "status": "PASS",
+      "nodeCount": 179,
+      "errors": []
+    },
+    {
+      "index": 8,
+      "component": "bulkactionbar",
+      "storyId": "design-system-components-bulkactionbar-展示--default",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-bulkactionbar-展示--default&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/bulkactionbar.png",
+      "status": "PASS",
+      "nodeCount": 194,
+      "errors": []
+    },
+    {
+      "index": 9,
+      "component": "button",
+      "storyId": "design-system-components-button-展示--default",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-button-展示--default&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/button.png",
+      "status": "PASS",
+      "nodeCount": 167,
+      "errors": []
+    },
+    {
+      "index": 10,
+      "component": "calendar",
+      "storyId": "design-system-components-calendar-展示--team-calendar",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-calendar-展示--team-calendar&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/calendar.png",
+      "status": "PASS",
+      "nodeCount": 377,
+      "errors": []
+    },
+    {
+      "index": 11,
+      "component": "carousel",
+      "storyId": "design-system-components-carousel-展示--homepage-hero-banner",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-carousel-展示--homepage-hero-banner&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/carousel.png",
+      "status": "PASS",
+      "nodeCount": 191,
+      "errors": []
+    },
+    {
+      "index": 12,
+      "component": "chart",
+      "storyId": "design-system-components-chart-展示--bar-chart-revenue",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-chart-展示--bar-chart-revenue&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/chart.png",
+      "status": "PASS",
+      "nodeCount": 249,
+      "errors": []
+    },
+    {
+      "index": 13,
+      "component": "checkbox",
+      "storyId": "design-system-components-checkbox-展示--modes",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-checkbox-展示--modes&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/checkbox.png",
+      "status": "PASS",
+      "nodeCount": 172,
+      "errors": []
+    },
+    {
+      "index": 14,
+      "component": "chip",
+      "storyId": "design-system-components-chip-展示--default",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-chip-展示--default&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/chip.png",
+      "status": "PASS",
+      "nodeCount": 178,
+      "errors": []
+    },
+    {
+      "index": 15,
+      "component": "circularprogress",
+      "storyId": "design-system-components-circularprogress-展示--default",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-circularprogress-展示--default&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/circularprogress.png",
+      "status": "PASS",
+      "nodeCount": 220,
+      "errors": []
+    },
+    {
+      "index": 16,
+      "component": "coachmark",
+      "storyId": "design-system-components-coachmark-展示--feature-discovery",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-coachmark-展示--feature-discovery&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/coachmark.png",
+      "status": "PASS",
+      "nodeCount": 190,
+      "errors": []
+    },
+    {
+      "index": 17,
+      "component": "combobox",
+      "storyId": "design-system-components-combobox-展示--modes",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-combobox-展示--modes&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/combobox.png",
+      "status": "PASS",
+      "nodeCount": 267,
+      "errors": []
+    },
+    {
+      "index": 18,
+      "component": "command",
+      "storyId": "design-system-internal-command-展示--command-palette",
+      "url": "http://localhost:9001/iframe.html?id=design-system-internal-command-展示--command-palette&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/command.png",
+      "status": "PASS",
+      "nodeCount": 175,
+      "errors": []
+    },
+    {
+      "index": 19,
+      "component": "datatable",
+      "storyId": "design-system-components-datatable-展示--number-alignment",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-datatable-展示--number-alignment&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/datatable.png",
+      "status": "PASS",
+      "nodeCount": 494,
+      "errors": []
+    },
+    {
+      "index": 20,
+      "component": "dategrid",
+      "storyId": "design-system-internal-dategrid-展示--single",
+      "url": "http://localhost:9001/iframe.html?id=design-system-internal-dategrid-展示--single&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/dategrid.png",
+      "status": "PASS",
+      "nodeCount": 257,
+      "errors": []
+    },
+    {
+      "index": 21,
+      "component": "datepicker",
+      "storyId": "design-system-components-datepicker-展示--default",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-datepicker-展示--default&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/datepicker.png",
+      "status": "PASS",
+      "nodeCount": 175,
+      "errors": []
+    },
+    {
+      "index": 22,
+      "component": "descriptionlist",
+      "storyId": "design-system-components-descriptionlist-展示--user-profile",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-descriptionlist-展示--user-profile&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/descriptionlist.png",
+      "status": "PASS",
+      "nodeCount": 155,
+      "errors": []
+    },
+    {
+      "index": 23,
+      "component": "dialog",
+      "storyId": "design-system-components-dialog-展示--default",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-dialog-展示--default&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/dialog.png",
+      "status": "PASS",
+      "nodeCount": 180,
+      "errors": []
+    },
+    {
+      "index": 24,
+      "component": "dropdownmenu",
+      "storyId": "design-system-components-dropdownmenu-展示--default",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-dropdownmenu-展示--default&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/dropdownmenu.png",
+      "status": "PASS",
+      "nodeCount": 179,
+      "errors": []
+    },
+    {
+      "index": 25,
+      "component": "empty",
+      "storyId": "design-system-components-empty-展示--search-no-results",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-empty-展示--search-no-results&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/empty.png",
+      "status": "PASS",
+      "nodeCount": 168,
+      "errors": []
+    },
+    {
+      "index": 26,
+      "component": "field",
+      "storyId": "design-system-components-field-展示--vertical",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-field-展示--vertical&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/field.png",
+      "status": "PASS",
+      "nodeCount": 204,
+      "errors": []
+    },
+    {
+      "index": 27,
+      "component": "fieldcontrolgroup",
+      "storyId": "design-system-components-fieldcontrolgroup-展示--phone-number-input",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-fieldcontrolgroup-展示--phone-number-input&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/fieldcontrolgroup.png",
+      "status": "PASS",
+      "nodeCount": 197,
+      "errors": []
+    },
+    {
+      "index": 28,
+      "component": "fileitem",
+      "storyId": "design-system-components-fileitem-展示--rich",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-fileitem-展示--rich&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/fileitem.png",
+      "status": "PASS",
+      "nodeCount": 267,
+      "errors": []
+    },
+    {
+      "index": 29,
+      "component": "fileupload",
+      "storyId": "design-system-components-fileupload-展示--resume-upload",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-fileupload-展示--resume-upload&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/fileupload.png",
+      "status": "PASS",
+      "nodeCount": 175,
+      "errors": []
+    },
+    {
+      "index": 30,
+      "component": "fileviewer",
+      "storyId": "design-system-components-fileviewer-展示--jira-attachments",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-fileviewer-展示--jira-attachments&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/fileviewer.png",
+      "status": "PASS",
+      "nodeCount": 190,
+      "errors": []
+    },
+    {
+      "index": 31,
+      "component": "hovercard",
+      "storyId": "design-system-internal-hovercard-展示--person-name-card",
+      "url": "http://localhost:9001/iframe.html?id=design-system-internal-hovercard-展示--person-name-card&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/hovercard.png",
+      "status": "PASS",
+      "nodeCount": 166,
+      "errors": []
+    },
+    {
+      "index": 32,
+      "component": "input",
+      "storyId": "design-system-components-input-展示--modes",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-input-展示--modes&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/input.png",
+      "status": "PASS",
+      "nodeCount": 177,
+      "errors": []
+    },
+    {
+      "index": 33,
+      "component": "linkinput",
+      "storyId": "design-system-components-linkinput-展示--default",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-linkinput-展示--default&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/linkinput.png",
+      "status": "PASS",
+      "nodeCount": 164,
+      "errors": []
+    },
+    {
+      "index": 34,
+      "component": "menu",
+      "storyId": "design-system-internal-menu-展示--default",
+      "url": "http://localhost:9001/iframe.html?id=design-system-internal-menu-展示--default&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/menu.png",
+      "status": "PASS",
+      "nodeCount": 180,
+      "errors": []
+    },
+    {
+      "index": 35,
+      "component": "namecard",
+      "storyId": "design-system-internal-namecard-展示--default",
+      "url": "http://localhost:9001/iframe.html?id=design-system-internal-namecard-展示--default&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/namecard.png",
+      "status": "PASS",
+      "nodeCount": 172,
+      "errors": []
+    },
+    {
+      "index": 36,
+      "component": "notice",
+      "storyId": "design-system-internal-notice-展示--deployment-success",
+      "url": "http://localhost:9001/iframe.html?id=design-system-internal-notice-展示--deployment-success&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/notice.png",
+      "status": "PASS",
+      "nodeCount": 171,
+      "errors": []
+    },
+    {
+      "index": 37,
+      "component": "numberinput",
+      "storyId": "design-system-components-numberinput-展示--modes",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-numberinput-展示--modes&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/numberinput.png",
+      "status": "PASS",
+      "nodeCount": 221,
+      "errors": []
+    },
+    {
+      "index": 38,
+      "component": "overflowindicator",
+      "storyId": "design-system-internal-overflowindicator-展示--combobox-tag-overflow",
+      "url": "http://localhost:9001/iframe.html?id=design-system-internal-overflowindicator-展示--combobox-tag-overflow&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/overflowindicator.png",
+      "status": "PASS",
+      "nodeCount": 168,
+      "errors": []
+    },
+    {
+      "index": 39,
+      "component": "peoplepicker",
+      "storyId": "design-system-components-peoplepicker-展示--single",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-peoplepicker-展示--single&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/peoplepicker.png",
+      "status": "PASS",
+      "nodeCount": 221,
+      "errors": []
+    },
+    {
+      "index": 40,
+      "component": "popover",
+      "storyId": "design-system-components-popover-展示--filter-panel",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-popover-展示--filter-panel&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/popover.png",
+      "status": "PASS",
+      "nodeCount": 162,
+      "errors": []
+    },
+    {
+      "index": 41,
+      "component": "progressbar",
+      "storyId": "design-system-components-progressbar-展示--default",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-progressbar-展示--default&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/progressbar.png",
+      "status": "PASS",
+      "nodeCount": 150,
+      "errors": []
+    },
+    {
+      "index": 42,
+      "component": "radiogroup",
+      "storyId": "design-system-components-radiogroup-展示--modes",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-radiogroup-展示--modes&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/radiogroup.png",
+      "status": "PASS",
+      "nodeCount": 223,
+      "errors": []
+    },
+    {
+      "index": 43,
+      "component": "rating",
+      "storyId": "design-system-components-rating-展示--read-only-product-rating",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-rating-展示--read-only-product-rating&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/rating.png",
+      "status": "PASS",
+      "nodeCount": 250,
+      "errors": []
+    },
+    {
+      "index": 44,
+      "component": "scrollarea",
+      "storyId": "design-system-components-scrollarea-展示--vertical-issue-list",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-scrollarea-展示--vertical-issue-list&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/scrollarea.png",
+      "status": "PASS",
+      "nodeCount": 219,
+      "errors": []
+    },
+    {
+      "index": 45,
+      "component": "segmentedcontrol",
+      "storyId": "design-system-components-segmentedcontrol-展示--view-switcher",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-segmentedcontrol-展示--view-switcher&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/segmentedcontrol.png",
+      "status": "PASS",
+      "nodeCount": 177,
+      "errors": []
+    },
+    {
+      "index": 46,
+      "component": "select",
+      "storyId": "design-system-components-select-展示--modes",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-select-展示--modes&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/select.png",
+      "status": "PASS",
+      "nodeCount": 228,
+      "errors": []
+    },
+    {
+      "index": 47,
+      "component": "selectmenu",
+      "storyId": "design-system-internal-selectmenu-展示--single-select",
+      "url": "http://localhost:9001/iframe.html?id=design-system-internal-selectmenu-展示--single-select&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/selectmenu.png",
+      "status": "PASS",
+      "nodeCount": 182,
+      "errors": []
+    },
+    {
+      "index": 48,
+      "component": "selectioncontrol",
+      "storyId": "design-system-internal-selectioncontrol-展示--notification-preferences",
+      "url": "http://localhost:9001/iframe.html?id=design-system-internal-selectioncontrol-展示--notification-preferences&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/selectioncontrol.png",
+      "status": "PASS",
+      "nodeCount": 191,
+      "errors": []
+    },
+    {
+      "index": 49,
+      "component": "separator",
+      "storyId": "design-system-components-separator-展示--horizontal",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-separator-展示--horizontal&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/separator.png",
+      "status": "PASS",
+      "nodeCount": 196,
+      "errors": []
+    },
+    {
+      "index": 50,
+      "component": "sheet",
+      "storyId": "design-system-components-sheet-展示--create-project-right",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-sheet-展示--create-project-right&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/sheet.png",
+      "status": "PASS",
+      "nodeCount": 168,
+      "errors": []
+    },
+    {
+      "index": 51,
+      "component": "sidebar",
+      "storyId": "design-system-components-sidebar-展示--icon-collapse",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-sidebar-展示--icon-collapse&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/sidebar.png",
+      "status": "PASS",
+      "nodeCount": 275,
+      "errors": []
+    },
+    {
+      "index": 52,
+      "component": "skeleton",
+      "storyId": "design-system-components-skeleton-展示--default",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-skeleton-展示--default&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/skeleton.png",
+      "status": "PASS",
+      "nodeCount": 142,
+      "errors": []
+    },
+    {
+      "index": 53,
+      "component": "slider",
+      "storyId": "design-system-components-slider-展示--size-alignment",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-slider-展示--size-alignment&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/slider.png",
+      "status": "PASS",
+      "nodeCount": 169,
+      "errors": []
+    },
+    {
+      "index": 54,
+      "component": "steps",
+      "storyId": "design-system-components-steps-展示--default",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-steps-展示--default&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/steps.png",
+      "status": "PASS",
+      "nodeCount": 192,
+      "errors": []
+    },
+    {
+      "index": 55,
+      "component": "switch",
+      "storyId": "design-system-components-switch-展示--modes",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-switch-展示--modes&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/switch.png",
+      "status": "PASS",
+      "nodeCount": 172,
+      "errors": []
+    },
+    {
+      "index": 56,
+      "component": "tabs",
+      "storyId": "design-system-components-tabs-展示--default",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-tabs-展示--default&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/tabs.png",
+      "status": "PASS",
+      "nodeCount": 187,
+      "errors": []
+    },
+    {
+      "index": 57,
+      "component": "tag",
+      "storyId": "design-system-components-tag-展示--with-avatar",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-tag-展示--with-avatar&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/tag.png",
+      "status": "PASS",
+      "nodeCount": 158,
+      "errors": []
+    },
+    {
+      "index": 58,
+      "component": "textarea",
+      "storyId": "design-system-components-textarea-展示--default",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-textarea-展示--default&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/textarea.png",
+      "status": "PASS",
+      "nodeCount": 148,
+      "errors": []
+    },
+    {
+      "index": 59,
+      "component": "timepicker",
+      "storyId": "design-system-components-timepicker-展示--modes",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-timepicker-展示--modes&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/timepicker.png",
+      "status": "PASS",
+      "nodeCount": 189,
+      "errors": []
+    },
+    {
+      "index": 60,
+      "component": "toast",
+      "storyId": "design-system-components-toast-展示--with-description",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-toast-展示--with-description&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/toast.png",
+      "status": "PASS",
+      "nodeCount": 316,
+      "errors": []
+    },
+    {
+      "index": 61,
+      "component": "tooltip",
+      "storyId": "design-system-components-tooltip-展示--default",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-tooltip-展示--default&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/tooltip.png",
+      "status": "PASS",
+      "nodeCount": 160,
+      "errors": []
+    },
+    {
+      "index": 62,
+      "component": "treeview",
+      "storyId": "design-system-components-treeview-展示--file-browser",
+      "url": "http://localhost:9001/iframe.html?id=design-system-components-treeview-展示--file-browser&viewMode=story",
+      "screenshot": "/tmp/codex-screenshots/treeview.png",
+      "status": "PASS",
+      "nodeCount": 294,
+      "errors": []
+    }
+  ]
+}
