@@ -3,7 +3,7 @@
 #
 # 偵測 consumer / DS app code 用 Tailwind spacing magic numbers
 # (`p-4` / `px-6` / `py-2` / `gap-3` 等)而非 layoutSpace token
-# (`p-[var(--layout-space-*)]` / `gap-[var(--layout-space-*)]`)。
+# (`p-[var(--layout-space-N) N∈{loose,tight}]` / `gap-[var(--layout-space-N) N∈{loose,tight}]`)。
 # 2026-05-27 user verbatim「機械無強制就不會做?那為何不全部 ssot 都要強制吻合?」
 # 永久 codify — SSOT canonical 必 P0 BLOCKER,不分級。
 #
@@ -75,7 +75,7 @@ $(echo -e "$UNJUSTIFIED" | sed 's/^/    /' | head -10)
     space-y-[var(--layout-space-distant)]
 
   修法 2 選 1:
-    (a) 改 token:換成 var(--layout-space-*) family per 6 規則 + 親疏 3 級
+    (a) 改 token:換成 var(--layout-space-N) N∈{loose,tight} family per 6 規則 + 親疏 3 級
     (b) Escape:在該 line 加 \`// @layout-space-magic-ok: <rationale>\` 顯式 documented
         (eg.「\`gap-1\` 是 4px stack icon — non-spacing context,not consumer layout」)
 

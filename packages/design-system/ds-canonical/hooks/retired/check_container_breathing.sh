@@ -121,7 +121,7 @@ while IFS= read -r LINE || [ -n "$LINE" ]; do
   視覺邊界:${REASONS# }
   > $(echo "$LINE" | sed 's/^[[:space:]]*//' | cut -c1-120)
   判斷: 視覺容器(bg/border/shadow)必有 inner padding,不讓內容物貼容器邊。
-        建議:chrome 層用 p-[var(--layout-space-loose/tight)] / px-3 等。
+        建議:chrome 層用 p-[var(--layout-space-N) N∈{loose,tight}] / px-3 等。
         若是 (a) chrome primitive override 刻意 p-0,(b) 父容器另外提供 padding,
         (c) 子元件自帶足夠 padding → 加 // @breathing-exempt-next 到此行上一行。
         SSOT: patterns/element-anatomy/element-anatomy.spec.md「視覺容器 breathing invariant」"
