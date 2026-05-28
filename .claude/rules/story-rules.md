@@ -18,9 +18,18 @@ paths:
 
 ## Title 命名
 
-`Design System/{Tokens|Patterns|Components|Internal}/{Name}/{展示|設計規格|設計原則}`。
+**2 namespace canonical**(2026-05-28 codify per template create-app duplicate-id bug anchor):
 
-第一層英 / PascalCase / 子頁中文 / 子頁前不加元件名(❌ `MenuItem 展示` → ✅ `展示`)。
+| Repo / Path | Title pattern | 用途 |
+|---|---|---|
+| **DS repo** `packages/design-system/**/*.stories.tsx` | `Design System/{Tokens|Patterns|Components|Internal}/{Name}/{展示|設計規格|設計原則}` | DS 元件 / token / pattern building block |
+| **Consumer apps**(template / fork repos)`apps/**/*.stories.tsx` | `Apps/{app-kebab-name}/{Page Purpose}` | 產品 UI composition demo(eg. `Apps/order-dashboard/AppShell Dashboard`)|
+
+**Why 不統一**:DS 是 building block library(可重用元件),consumer apps 是 product UI 真實 composition demo(整頁、整 flow)。Namespace 不同 = Storybook sidebar 兩塊清楚分區。
+
+**Universal rule**:第一層英 / PascalCase 或 kebab-name / 子頁中文 / 子頁前不加元件名(❌ `MenuItem 展示` → ✅ `展示`)。
+
+**Template create-app 機械強制**(2026-05-28 ship):`scripts/create-app.mjs:patchStoryTitles()` 遞迴改 copied apps 內所有 `*.stories.{tsx,ts,mdx}` 的 `title: 'Apps/template/...'` → `Apps/<new-name>/...`,**防 Storybook duplicate id**(e2e verify-flow-test anchor 抓到 4 collisions)。
 
 **Internal vs Components 三 test**:(1) 有預設視覺?(2) 直接 `<X>` 有視覺?(3) 所有消費者都包 wrapper?三題傾向 Internal → `Internal/`。**例外:compound-component public API**(`Dialog.Root/Trigger/Content` / `Field + FieldLabel + FieldError + FieldDescription` 等定義 sub-component 給 consumer 拼的 documented composition pattern)豁免三-test — 它**定義** sub-components,不是被 wrap 的零件。對齊 Radix Dialog / MUI FormControl + InputLabel + FormHelperText / Mantine Input.Wrapper compound idiom。
 

@@ -1,11 +1,11 @@
 {
-  "ts": "2026-05-28T10:52:53.579Z",
+  "ts": "2026-05-28T11:31:41.367Z",
   "counts": {
-    "hooks": 58,
+    "hooks": 59,
     "mRules": 31,
-    "auditDims": 81,
+    "auditDims": 82,
     "auditDimMin": 1,
-    "auditDimMax": 81,
+    "auditDimMax": 82,
     "specTraits": 11
   },
   "mRulesList": [
@@ -52,6 +52,7 @@
     ".claude/hooks/check_chrome_header_avatar_canonical.sh",
     ".claude/hooks/check_codex_brief_invariants.sh",
     ".claude/hooks/check_codex_collab_5step.sh",
+    ".claude/hooks/check_consumer_app_story_title.sh",
     ".claude/hooks/check_consumer_ds_primitive_misuse.sh",
     ".claude/hooks/check_consumer_no_ds_catalog.sh",
     ".claude/hooks/check_consumer_story_baseline.sh",
