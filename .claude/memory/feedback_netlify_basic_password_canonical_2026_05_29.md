@@ -1,26 +1,41 @@
 ---
-name: Netlify access control canonical = Basic Password(2026-05-29)
-description: Netlify Identity deprecated;Team protection 鎖 Pro;fork-template default access = Basic Password(共用 password);Codespaces 是合法 cloud-dev path
+name: Netlify Basic Password canonical + Claude Code 直連是雲端主路徑(2026-05-29)
+description: Netlify Identity deprecated;fork-template default access = Basic Password;Claude Code 直連 fork repo 是 user 工作流(不是 Codespaces)
 type: feedback
 originSessionId: 41fa83c2-f951-431e-911e-ed3ceb185903
 ---
-# Netlify access control 真相 + 全雲端可行性(2026-05-29 user screenshot 抓出)
+# Netlify Basic Password + 雲端主路徑真相(2026-05-29 user 兩 turn 抓出)
 
-## Rule
+## Rule 1 — Netlify access control = Basic Password
 
-**Fork-template default Netlify access control = Basic Password Protection**(free-tier 唯一可用)。**禁** 推薦 Identity(已 deprecated)/ 推薦 Team protection(鎖 Pro $19/mo)。`npm run setup:netlify` 自動跑 CLI install + login + site 建 + 連 repo,**最後印 dashboard URL + 教 user 點 2 radio button + 輸 password**(無法 CLI 自動 — Netlify 沒提供 password protection 的 API,2026-05-29 verified)。
+**Fork-template default Netlify access control = Basic Password Protection**(free-tier 唯一可用)。**禁** 推薦 Identity(已 deprecated)/ Team protection(鎖 Pro $19/mo)。`npm run setup:netlify` 自動跑 CLI install + login + site 建 + 連 repo,**最後印 dashboard URL + 教 user 點 2 radio button + 輸 password**(無法 CLI 自動 — Netlify CLI 沒提供 password protection API,2026-05-29 verified)。
 
-**Why**:Netlify 2024 公告 Identity service deprecated;新帳號可能根本看不到 Identity menu。Visitor access UI 在 free-tier 只有「Basic protection」可選,「Team protection」+ 「Non-production deploys only」都鎖 Pro plan。Identity-based invite-only(per-user account)路徑**真實不可用**。我前期反覆 propose Identity-based 流程,user 2026-05-29 screenshot 抓出實際 UI 跟我講的對不上。
+**Why**:Netlify 2024 公告 Identity service deprecated;新帳號可能根本看不到 Identity menu。Visitor access UI 在 free-tier 只有「Basic protection」可選,「Team protection」+「Non-production deploys only」都鎖 Pro plan。Identity-based invite-only **真實不可用**。User 2026-05-29 screenshot 抓出實際 UI 跟我講的對不上。
 
-**How to apply**:
+## Rule 2 — 雲端主路徑 = Claude Code 直連 sandbox(不是 Codespaces)
+
+**User 工作流 verbatim 2026-05-29**:「我們的工作流程就是用 claude code 直接連去 repo 進行各種增刪改,然後要可以部署出來讓人驗證,驗證完成之後再推去 main」
+
+**真實雲端路徑**:Claude Code(claude.ai/code OR 桌面 OR VS Code ext)直接連 user 的 GitHub fork repo;Claude 把 repo clone 進 ephemeral sandbox,governance hooks + skills + npm + git ops 全在 sandbox 內跑。寫完 commit / push 回 GitHub。**這是 user 實際工作流;不需 Codespaces 也不需本地 IDE**。
+
+**Codespaces 是 fallback option**(給不用 Claude Code 直連的 user):`template/product-workspace/.devcontainer/` 已 ship,Path 2 OK 但不是 user 主路徑。
+
+**Setup script 必 npx fallback**(2026-05-29 verified):`npm install -g netlify-cli` 在 sandbox / Codespaces non-root / 鎖權限 Mac 打 EACCES → try/catch + `npx -y netlify-cli` fallback 才是 robust。
+
+## Rule 3 — Codex exec mode 大 brief 死局
+
+**Anti-pattern**:DISCUSS-ONLY 大型 6-軸 brief + xhigh / medium reasoning effort = 模型 plan turn 燒掉 budget 沒輸出 verdict。**Success pattern**(2026-05-29 r5/r6 verified):`--dangerously-bypass-approvals-and-sandbox`(per `feedback_codex_visual_audit_dangerously_bypass.md`)+ `model_reasoning_effort=low` + **拆 N 個小 focused brief 並行**(每 axis 25k tokens 真完成)。
+
+## How to apply
+
 - 寫 fork-template setup script / README / CLAUDE.md → default Basic Password,Identity 撤回不再 mention 為 option(只在「為何不用 Identity」段 explain why)
-- 寫 propose 給 user 涉及 Netlify access → 先 verify 該功能在 user's tier 真存在(Identity 普遍已不可見;Team protection 普遍鎖)
-- Fork user 體驗 = 5 個斷點:plugin install(30s)+ OAuth(1 click)+ password 設(30s dashboard)+ password 分享(team chat / DM)+ push trigger(1 word)。不騙人講「無痛 / 全自動」
-- 推 Codespaces 為 cloud-dev path(免本地 macOS):GitHub Codespaces 內可裝 Claude Code CLI,governance hooks 全 fire。免費 60h/月。我前期錯誤否定「全雲端可行」— 真相是 Codespaces 撐得起整套 governance
-- 動 Netlify access control 相關文件 / hook / audit dim → 同步 mirror 兩處(DS template `template/product-workspace/` SSOT + `/tmp/ds-product-template/` user live clone + ds-canonical mirror)
+- 推 user 雲端路徑首推 Claude Code 直連 sandbox(Path 1),Codespaces 是 Path 2 fallback
+- Setup script 用 `${netlifyCmd}` 變數 + try/catch global-install,fallback npx-y 保證所有環境 work
+- Codex collab 寫 brief:拆 single-axis focused brief + low reasoning + bypass flag,禁 6-軸 mega brief
 
 ## 錨例
 
 - 2026-05-29 user screenshot Netlify Dashboard Visitor access page 顯示 Password Protection 為唯一可用,Team protection 鎖 + Non-production deploys only 鎖
-- 我之前(2026-05-26)反覆 propose Identity invite-only + 寫 setup-netlify-access.mjs 用 `netlify api provisionSiteIdentity` — Identity API 在新 site 不穩定 / 不可用
-- 我之前 claim「寫 code 一定要本地」否定全雲端 — 錯,Codespaces 可裝 Claude Code,governance 全 fire
+- 我之前(2026-05-26)寫 setup-netlify-access.mjs 用 `netlify api provisionSiteIdentity` — Identity API 在新 site 不穩定 / 不可用
+- 2026-05-29 turn 1:我推 Codespaces 為「the cloud-only path」,user 抓「我們工作流是 Claude Code 直連,不需 Codespaces」
+- 2026-05-29 turn 4:codex r1-r4 用大 brief + xhigh reasoning 全失敗,r5/r6 小 focused brief + low + bypass flag 成功 25k tokens
