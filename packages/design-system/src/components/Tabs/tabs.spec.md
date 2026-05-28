@@ -104,7 +104,7 @@ TabsContent ← 對應被選中的 trigger
 Tabs trigger = **item-layout 橫向變體 + Button 高度系統**。對標 item-layout 的:slot gap-2 / startIcon-label-suffix 三格固定 / suffix 可組合容器。對標 Button 的:固定高度 token(`--tab-height-*`)/ icon size 查表 / suffix wrapper gap-1。
 
 三處刻意偏離 item-layout:
-- **固定高度** `h-[var(--tab-height-*)]` + `items-center`(非 `h-[1lh]`)— Tabs 是 Button 樣的固定容器,非內容撐高 row
+- **固定高度** `h-[var(--tab-height-N) N∈{sm,md,lg}]` + `items-center`(非 `h-[1lh]`)— Tabs 是 Button 樣的固定容器,非內容撐高 row
 - **無 `<ItemIcon>` / `<ItemLabel>` helper**,直接吃 `LucideIcon` prop + 裸 `<span>` label — slot 固定三格,無複雜 prefix mixing
 - **label 不包 `<span>` padding wrapper**(對比 Button 設計) — selected underline 必須 fit content,label 有橫向 padding 會讓 underline 多 8px 鬆散
 

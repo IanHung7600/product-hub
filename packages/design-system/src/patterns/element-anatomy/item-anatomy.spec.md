@@ -161,7 +161,7 @@ rg "grid-cols-\[[0-9]+px_1fr\]" packages/design-system/src src/hooks --type tsx
 ### Row primitives 必須共用的規格
 
 - **水平 padding**: `px-[var(--layout-space-loose)]`(sidebar context) / `px-3`(menu context),由 consumer 脈絡決定
-- **垂直 padding**: `py-[calc((var(--field-height-*)-1lh)/2)]` 的 item-layout 公式
+- **垂直 padding**: `py-[calc((var(--field-height-N) N∈{sm,md,lg}-1lh)/2)]` 的 item-layout 公式
 - **字重**: `font-medium`(500),**不隨 selected 變**
 - **預設文字色**: `text-fg-secondary`(neutral-8);icon 透過 currentColor 繼承
 - **Hover**: `bg-neutral-hover` + `text-foreground`

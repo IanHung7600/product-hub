@@ -325,7 +325,7 @@ const CHROME_UNBOUNDED_SLOT =
 
 ## Viewport-aware scroll chain invariant(2026-05-04 K11 升 SSOT)
 
-> **背景**:Popover / HoverCard / Dialog / Sheet content 設 `max-h-[var(--radix-*-available-height)] flex flex-col overflow-hidden`,讓 viewport 太小時 header/footer 永遠 in-viewport,body 壓縮 scroll。但**中間任何 wrapper div 沒 forward `flex flex-col h-full` 就斷鏈**,SurfaceBody flex-1 失效,body 不會 scroll。
+> **背景**:Popover / HoverCard / Dialog / Sheet content 設 `max-h-[var(--radix-{popover|hover-card|dialog}-content-available-height)] flex flex-col overflow-hidden`,讓 viewport 太小時 header/footer 永遠 in-viewport,body 壓縮 scroll。但**中間任何 wrapper div 沒 forward `flex flex-col h-full` 就斷鏈**,SurfaceBody flex-1 失效,body 不會 scroll。
 >
 > **真實 bug(2026-05-04)**:Filter / Sort panel 內 wrapper div 設 `w-[640px]` 無 flex-col → user 縮視窗時 body 不 scroll,內容被 clip。NameCard 之所以 work 因為它直接是 PopoverContent 唯一 child(無 wrapper)+ 自設 max-h flex-col。
 
