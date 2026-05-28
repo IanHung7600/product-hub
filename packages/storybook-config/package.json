@@ -1,12 +1,13 @@
 {
   "name": "@qijenchen/storybook-config",
-  "version": "0.1.0-beta.31",
+  "version": "0.1.0-beta.32",
   "private": false,
   "description": "Shared Storybook config (addons preset + preview parameters + decorators) for design-system + consumer products. Single SSOT for storybook UX.",
   "type": "module",
   "license": "UNLICENSED",
   "files": [
     "dist",
+    "addons/ds-devmode/preset.cjs",
     "README.md"
   ],
   "exports": {
@@ -30,9 +31,9 @@
     },
     "./addons/ds-devmode/preset": {
       "types": "./dist/addons/ds-devmode/preset.d.ts",
-      "import": "./dist/addons/ds-devmode/preset.js",
-      "require": "./dist/addons/ds-devmode/preset.js",
-      "default": "./dist/addons/ds-devmode/preset.js"
+      "import": "./addons/ds-devmode/preset.cjs",
+      "require": "./addons/ds-devmode/preset.cjs",
+      "default": "./addons/ds-devmode/preset.cjs"
     },
     "./addons/ds-devmode/manager": {
       "types": "./dist/addons/ds-devmode/manager.d.ts",

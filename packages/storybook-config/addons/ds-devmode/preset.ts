@@ -1,13 +1,26 @@
-import { fileURLToPath } from 'node:url'
-import { dirname, resolve } from 'node:path'
+// Static package-string paths — let Storybook's module resolver handle path lookup
+// via package.json `exports` map(wildcard `./dist/addons/ds-devmode/*` maps to
+// compiled .js files)。
+//
+// Why NOT dynamic resolution:
+// - `createRequire(import.meta.url) + require.resolve('./manager')` → esbuild-register
+//   transpiles ESM-import to CJS-require but package.json `"type":"module"` makes Node
+//   treat output as ESM → ReferenceError: require not defined(beta.27/.28/.29/.30 fails)
+// - `fileURLToPath(import.meta.url)` → 同樣被 esbuild-register CJS transpile 干擾
+//
+// Static strings are the ONLY pattern that works in both:
+// (a) Node 22 ESM scope(this file evaluated as pure ESM)
+// (b) esbuild-register CJS wrapping(Storybook's internal preset loader)
+//
+// Anchor:beta.27-30 4 連敗 + 連 1 commit 死(2026-05-28 全天炸 5 次)— root cause = mixed
+// CJS/ESM evaluation。Static strings 是 Storybook 自家 addon(@storybook/addon-essentials
+// 等)的 canonical pattern,世界級對照。
 
-// Resolve absolute filesystem paths via import.meta.url(ESM equivalent of __dirname)。
-// 不能用 `require.resolve('./preview')`— consumer side(Vite/webpack)走 package
-// `exports` map 嚴格驗,raw dist file path 不在 exports → block。
-// fileURLToPath + resolve 給 absolute fs path,bundler 走 file:// 直接 load,不過 exports gate。
-// Anchor:beta.27/.28/.29/.30 4 連敗,beta.30 ship 後 Netlify 仍 fail
-// 「Missing './dist/addons/ds-devmode/preview.js' specifier」— 改 absolute path 修。
-const __dirname = dirname(fileURLToPath(import.meta.url))
-
-export const managerEntries = (entry: string[] = []) => [...entry, resolve(__dirname, 'manager.js')]
-export const previewAnnotations = (entry: string[] = []) => [...entry, resolve(__dirname, 'preview.js')]
+export const managerEntries = (entry: string[] = []) => [
+  ...entry,
+  '@qijenchen/storybook-config/dist/addons/ds-devmode/manager.js',
+]
+export const previewAnnotations = (entry: string[] = []) => [
+  ...entry,
+  '@qijenchen/storybook-config/dist/addons/ds-devmode/preview.js',
+]
