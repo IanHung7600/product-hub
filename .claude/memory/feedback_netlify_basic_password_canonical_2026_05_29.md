@@ -18,7 +18,7 @@ originSessionId: 41fa83c2-f951-431e-911e-ed3ceb185903
 
 **真實雲端路徑**:Claude Code(claude.ai/code OR 桌面 OR VS Code ext)直接連 user 的 GitHub fork repo;Claude 把 repo clone 進 ephemeral sandbox,governance hooks + skills + npm + git ops 全在 sandbox 內跑。寫完 commit / push 回 GitHub。**這是 user 實際工作流;不需 Codespaces 也不需本地 IDE**。
 
-**Codespaces 是 fallback option**(給不用 Claude Code 直連的 user):`template/product-workspace/.devcontainer/` 已 ship,Path 2 OK 但不是 user 主路徑。
+**Codespaces 是 fallback option**(給不用 Claude Code 直連的 user):`template/ds-product-template/.devcontainer/` 已 ship,Path 2 OK 但不是 user 主路徑。
 
 **Setup script 必 npx fallback**(2026-05-29 verified):`npm install -g netlify-cli` 在 sandbox / Codespaces non-root / 鎖權限 Mac 打 EACCES → try/catch + `npx -y netlify-cli` fallback 才是 robust。
 
