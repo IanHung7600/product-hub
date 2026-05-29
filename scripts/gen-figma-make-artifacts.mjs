@@ -173,7 +173,15 @@ function generate() {
       .join('\n')
   }
 
-  return header + imports + extrasBlock + '\n'
+  // Base layer(body typography + reset + focus + button cursor)— 必在所有 token 之後 import
+  // (依賴 --font-sans / --canvas / --foreground 等)。Consumer 經單一 `@import tokens` 即拿到 base,
+  // 符 single-import 原則(2026-05-29 fix:base.css orphan + consumer 字體 drift root cause)。SSOT: styles/base.css。
+  const baseBlock =
+    '\n\n/* Base layer — body typography(font-family var(--font-sans))+ reset + focus + button cursor。\n' +
+    '   必在 token 之後(依賴 token vars)。Consumer `@import tokens` 一次拿到。SSOT: styles/base.css。 */\n' +
+    "@import './base.css';"
+
+  return header + imports + extrasBlock + baseBlock + '\n'
 }
 
 function ensureDir(dir) {
