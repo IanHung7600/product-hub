@@ -26,16 +26,30 @@ const DIR_PAIRS = ['commands', 'hooks', 'references', 'rules', 'skills'].map((d)
 }))
 const FILE_PAIRS = [{ src: 'CLAUDE.md', dest: 'packages/design-system/CLAUDE.md' }]
 
-// -rtc = recurse + preserve mtime + checksum compare (content, not mtime). -t avoids mtime-only false drift.
-// -i itemizes changed paths in both modes so the report/exit reflects real content drift only.
+// -rtc = recurse + preserve mtime + checksum compare (content, not mtime). -i itemizes changes.
 const flags = CHECK ? '-rtci --delete --dry-run' : '-rtci --delete'
 let drift = []
+
+// Real content drift only: a deletion (`*deleting`), a new/transferred file with checksum (`c`) or
+// size (`s`) change, or a `+++++++` new file. Pure mtime/perm-only itemize lines (`.f..t....`,
+// `.d..t....`) are NOT drift — git checkout touches SSOT mtimes without changing content.
+function contentDrift(itemizeOut) {
+  return itemizeOut
+    .split('\n')
+    .filter((l) => l.trim())
+    .filter((l) => {
+      if (l.startsWith('*deleting')) return true
+      const code = l.split(/\s+/)[0] // e.g. >f.st.... / .f..t.... / >f+++++++
+      return code.includes('+') || code[2] === 'c' || code[3] === 's'
+    })
+}
 
 for (const { src, dest } of DIR_PAIRS) {
   const out = execSync(`rsync ${flags} '${join(ROOT, src)}' '${join(ROOT, dest)}'`, {
     encoding: 'utf8',
   }).trim()
-  if (out) drift.push(`[${src}]\n${out}`)
+  const real = contentDrift(out)
+  if (real.length) drift.push(`[${src}]\n${real.join('\n')}`)
 }
 // Single files: deterministic content compare (rsync -c on a single file dest mis-reports in dry-run).
 for (const { src, dest } of FILE_PAIRS) {
