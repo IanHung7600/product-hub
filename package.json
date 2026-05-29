@@ -13,6 +13,7 @@
     "build:lib": "npm -w @qijenchen/design-system run build && npm -w @qijenchen/design-system run build:dts && npm -w @qijenchen/storybook-config run build",
     "create-app": "node scripts/create-app.mjs",
     "setup:netlify": "node scripts/setup-netlify-access.mjs",
+    "deploy-url": "node scripts/deploy-url.mjs",
     "test:scenarios": "node scripts/test-2-scenario-architecture.mjs",
     "preview": "vite preview",
     "prestorybook": "npm -w @qijenchen/storybook-config run build",
