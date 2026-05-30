@@ -94,7 +94,7 @@ jobs:
         run: |
           npx tsc -b
           node scripts/audit-orphan-tokens.mjs --check
-          node scripts/code-quality-audit.mjs --scope=packages/design-system/src/components
+          node scripts/code-quality-audit.mjs --scope=packages/design-system/src/components --check
           node scripts/audit-content-quality.mjs --check
           node scripts/sync-governance-counters.mjs --check
           node scripts/gen-figma-make-artifacts.mjs --check
