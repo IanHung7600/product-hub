@@ -34,7 +34,7 @@
 // Invoked by:
 //   .github/workflows/mirror-to-published-template.yml on push main
 
-import { existsSync, mkdirSync, cpSync, rmSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, cpSync, rmSync, readFileSync, writeFileSync, readdirSync } from 'node:fs'
 import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -151,14 +151,25 @@ console.log(`▶ Integrity scans(mirror integrity)`)
 let scanFail = 0
 
 // Scan 1: DS source residue prevention(per Test case M3)
-const dsSourceCheck = ['packages/design-system/src', 'packages/storybook-config/addons', '.claude/rules', '.claude/hooks', '.claude/skills', '.claude/memory', '.claude/planning', '.claude-plugin']
+const dsSourceCheck = ['packages/design-system/src', 'packages/storybook-config/addons', '.claude/rules', '.claude/skills', '.claude/memory', '.claude/planning', '.claude-plugin']
 for (const p of dsSourceCheck) {
   if (existsSync(join(OUT_DIR, p))) {
     console.error(`  ❌ DS internal path leaked into mirror: ${p}`)
     scanFail++
   }
 }
-console.log(`  ✓ Scan DS source residue: ${dsSourceCheck.length} paths checked,${scanFail} leaks`)
+// .claude/hooks 特例(2026-05-30):fork-committed bootstrap hooks 合法該在 mirror(補 plugin chicken-egg);
+// 只准這 2 個,其餘 = DS governance hook 洩漏(governance 走 plugin install,不該進 mirror)。
+const FORK_BOOTSTRAP_HOOKS = new Set(['check_plugin_bootstrap.sh', 'block_production_edit_without_plugin.sh'])
+const mirrorHooksDir = join(OUT_DIR, '.claude/hooks')
+if (existsSync(mirrorHooksDir)) {
+  const leaked = readdirSync(mirrorHooksDir).filter((f) => !FORK_BOOTSTRAP_HOOKS.has(f))
+  if (leaked.length) {
+    console.error(`  ❌ DS governance hook leaked into mirror .claude/hooks: ${leaked.join(', ')}(governance 應走 plugin install)`)
+    scanFail += leaked.length
+  }
+}
+console.log(`  ✓ Scan DS source residue: ${dsSourceCheck.length} paths + .claude/hooks bootstrap-allowlist checked,${scanFail} leaks`)
 
 // Scan 2: secret leak prevention(per Test case M2)
 const secretCheck = ['.env', '.env.local', '.npmrc.local', 'tmp/codex-stdout', '.claude/logs', '.claude/snapshots']
