@@ -50,7 +50,7 @@ const COVERAGE = {
   // Group F — Architecture
   16: { tier: 'DETERMINISTIC', mechanism: 'scripts/audit-layout-family-frontmatter.mjs --check(primary spec 必有 family: frontmatter;2026-05-30 從誤分 PURE-JUDGMENT 修正)' },
   17: { tier: 'PURE-JUDGMENT', mechanism: 'Prop value cross-component semantic conflict — dispatch 必 grep prop literal DS-wide' },
-  18: { tier: 'HOOK-ENFORCED', mechanism: 'check_token_hygiene.sh(folded lib/_token_hygiene.sh — shadcn compat alias ban write-time)+ DS-wide grep audit-time;2026-05-30 M4 修 stale ref check_shadcn_alias' },
+  18: { tier: 'HOOK-ENFORCED', mechanism: 'post_edit_dispatcher.sh → lib/_token_hygiene.sh(shadcn compat alias ban write-time;dispatcher 已 registered settings.json)+ DS-wide grep audit-time;2026-05-31 字串精確化(原寫 check_token_hygiene.sh standalone 不存在,實際 active 路徑是 dispatcher source lib)' },
   // Group G — Home governance
   19: { tier: 'PURE-JUDGMENT', mechanism: 'Home-name-vs-scope AI judgment;dispatch 必 DS-wide enumerate folder vs actual scope' },
   20: { tier: 'PURE-JUDGMENT', mechanism: 'Spec 硬寫機械化值 — dispatch 必 grep DS-wide spec.md 找 px / hex / Tailwind class lists' },
@@ -89,7 +89,7 @@ const COVERAGE = {
   45: { tier: 'DETERMINISTIC', mechanism: 'scripts/compile-stories.mjs --all + grep generated rows full coverage' },
   46: { tier: 'PURE-JUDGMENT', mechanism: 'Manual vs Mechanical boundary — dispatch 必 grep DS-wide stories trait-derived hand-written exports' },
   // Group P — World-class tier
-  47: { tier: 'HOOK-ENFORCED', mechanism: 'check_token_hygiene.sh(folded lib/_token_hygiene.sh)+ utility-registry.json SSOT;2026-05-30 M4 修 stale ref check_tailwind_token_registry' },
+  47: { tier: 'HOOK-ENFORCED', mechanism: 'post_edit_dispatcher.sh → lib/_token_hygiene.sh(utility-registry.json SSOT compliance write-time)+ DS-wide grep audit-time;2026-05-31 字串精確化(原寫 check_token_hygiene.sh standalone 不存在)' },
   48: { tier: 'DETERMINISTIC', mechanism: 'scripts/audit-orphan-tokens.mjs --check(0 真孤兒 structural-keep classifier)' },
   49: { tier: 'DETERMINISTIC', mechanism: 'scripts/audit-a11y.mjs(axe-core WCAG 2A+AA all stories deterministic;separate workflow .github/workflows/a11y-and-size.yml)' },
   50: { tier: 'DETERMINISTIC', mechanism: 'size-limit npx + package.json per-component manifest(deterministic CI gate)' },
