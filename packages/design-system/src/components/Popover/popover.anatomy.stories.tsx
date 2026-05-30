@@ -43,7 +43,7 @@ export const Overview: Story = {
 
       <div>
         <H3>Props 速查</H3>
-        <Desc>Popover / PopoverTrigger / PopoverContent 全部是 Radix Popover 的薄 re-export。完整 API 見 <a href="https://www.radix-ui.com/primitives/docs/components/popover" className="underline" target="_blank" rel="noreferrer">Radix Popover 官方文件</a>。</Desc>
+        <Desc>Popover / PopoverTrigger / PopoverContent 直接沿用 Radix Popover 的同名 API,只多接上設計系統的 token,行為與 props 與 Radix 一致。完整 API 見 <a href="https://www.radix-ui.com/primitives/docs/components/popover" className="underline" target="_blank" rel="noreferrer">Radix Popover 官方文件</a>。</Desc>
         <div className="overflow-x-auto">
           <table className="text-caption border-collapse">
             <thead><tr><Th>Prop(PopoverContent)</Th><Th>Type</Th><Th>Default</Th><Th>說明</Th></tr></thead>
@@ -268,7 +268,7 @@ export const Accessibility = {
   render: () => (
     <div className="max-w-3xl text-body text-fg-secondary">
       <h3 className="text-h5 text-foreground mb-2">無障礙設計</h3>
-      <p className="whitespace-pre-line">{"詳 `popover.spec.md` 「A11y 預設」段。摘要:\n\nRadix Popover 自動處理：\n\n-   焦點管理  ：開啟時移動焦點進入 content；關閉時 focus return to trigger\n-   Esc 關閉  ：按 Esc 自動關閉並返回焦點\n-   Focus trap  ： modal={true}  時焦點鎖在 content 內；預設 non-modal 下焦點離開 content 樹會自動關閉\n-   ARIA  ：trigger 自動  aria-expanded  /  aria-controls ，content  role=\"dialog\" \n\nConsumer 無需額外處理 a11y，保留 Radix  data-state  屬性即可。"}</p>
+      <p className="whitespace-pre-line">{"Radix Popover 自動處理：\n\n-   焦點管理  ：開啟時移動焦點進入 content；關閉時 focus return to trigger\n-   Esc 關閉  ：按 Esc 自動關閉並返回焦點\n-   Focus trap  ： modal={true}  時焦點鎖在 content 內；預設 non-modal 下焦點離開 content 樹會自動關閉\n-   ARIA  ：trigger 自動  aria-expanded  /  aria-controls ，content  role=\"dialog\" \n\nConsumer 無需額外處理 a11y，保留 Radix  data-state  屬性即可。"}</p>
     </div>
   ),
 }

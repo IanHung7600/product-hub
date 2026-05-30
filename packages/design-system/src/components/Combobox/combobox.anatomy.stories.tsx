@@ -206,17 +206,17 @@ export const Overview = {
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <H3>結構（Anatomy）— edit 單行</H3>
-          <Desc>Tags 陣列 + 隱藏 select overlay + ChevronDown。有值時 select 以 absolute inset-0 overlay 覆蓋整個 field，tags 和右側控件用 z-10 蓋在上方。無值時 select 顯示 placeholder 在 tags 區域內。</Desc>
+          <Desc>桌機（預設）：觸發區是一個可聚焦的容器（combobox 角色），內含 Tags 陣列 + ChevronDown，點擊開啟浮層選單（搜尋 + 選項清單）。無值時容器內顯示 placeholder。手機 / 觸控裝置另走隱藏的原生 select 結構（下方「新增選擇」段說明），桌機不使用原生 select。</Desc>
         </div>
         <div className="flex gap-8">
           <div className="flex flex-col gap-2 items-start">
             <span className="text-[11px] text-fg-muted font-medium">有值 + clearable</span>
             <div className="inline-flex items-center border-2 border-dashed border-primary/30 rounded-md px-3 py-2.5 gap-1">
               {[
+                { name: 'combobox 容器', color: 'success' },
                 { name: 'Tag', color: 'error' },
                 { name: 'Tag', color: 'error' },
                 { name: '+N', color: 'warning' },
-                { name: 'select（hidden）', color: 'success' },
                 { name: 'clear', color: 'magenta' },
                 { name: 'chevron', color: 'info' },
               ].map((s, i) => (
@@ -224,20 +224,20 @@ export const Overview = {
                   style={{ borderColor: `var(--${s.color})`, backgroundColor: `var(--${s.color}-subtle)`, color: `var(--${s.color})` }}>{s.name}</span>
               ))}
             </div>
-            <span className="text-[10px] text-fg-muted font-mono">select absolute overlay · Tags z-10 · +N = OverflowIndicator</span>
+            <span className="text-[10px] text-fg-muted font-mono">role=combobox 觸發容器 · 點擊開浮層選單 · +N = OverflowIndicator</span>
           </div>
           <div className="flex flex-col gap-2 items-start">
             <span className="text-[11px] text-fg-muted font-medium">空值</span>
             <div className="inline-flex items-center border-2 border-dashed border-primary/30 rounded-md px-3 py-2.5 gap-2">
               {[
-                { name: 'select（placeholder）', color: 'success' },
+                { name: 'placeholder', color: 'success' },
                 { name: 'chevron', color: 'info' },
               ].map((s) => (
                 <span key={s.name} className="rounded px-2 py-1 text-[11px] font-mono border border-dashed"
                   style={{ borderColor: `var(--${s.color})`, backgroundColor: `var(--${s.color}-subtle)`, color: `var(--${s.color})` }}>{s.name}</span>
               ))}
             </div>
-            <span className="text-[10px] text-fg-muted font-mono">select 正常 flow · flex-1 min-w-20</span>
+            <span className="text-[10px] text-fg-muted font-mono">placeholder span（flex-1 min-w-0 truncate）</span>
           </div>
         </div>
       </div>
@@ -912,7 +912,7 @@ export const Accessibility = {
   render: () => (
     <div className="max-w-3xl text-body text-fg-secondary">
       <h3 className="text-h5 text-foreground mb-2">無障礙設計</h3>
-      <p className="whitespace-pre-line">{"詳 `combobox.spec.md` 「A11y 預設」段。摘要:\n\n### 鍵盤可達性的 delegation 設計\n\nCombobox 內部結構有多個  <div>  /  <Tag>  帶  onClick （tag 容器、ChevronDown 區域、搜尋輸入 wrapper 等）——  這些是 mouse 優化的 click-path delegation，不是鍵盤介面  。鍵盤路徑由  隱藏的 native  <select>    處理（tab-focusable，Enter/Space 開啟，arrow 導覽，Esc 關閉）。\n\n  設計取捨  :\n- ✅   好處  : 保留原生  <select>  的完整 a11y（包含 mobile screen reader + 語音輸入 + 所有 OS-level 整合）\n- ⚠️   後果  : 非 button 元素帶  onClick  是 mouse-only 互動,鍵盤使用者不經過它們—"}</p>
+      <p className="whitespace-pre-line">{"鍵盤可達性依裝置走兩條路徑（觸控偵測自動切換）：\n\n桌機（預設）：觸發區是一個 combobox 角色的容器，可用 Tab 聚焦，方向鍵在選項間移動，Enter 選取，Esc 關閉——由浮層選單的鍵盤導覽負責，不是原生 select。\n\n手機 / 觸控裝置：改用隱藏的原生 select（可 Tab 聚焦、方向鍵導覽、喚起原生 picker），以保留行動裝置的 screen reader、語音輸入與系統層整合。\n\n兩條路徑共通：欄位內 Tag 容器、ChevronDown、搜尋框上的點擊事件是滑鼠優化的點擊區，不是鍵盤介面——鍵盤使用者不經過它們，但兩條路徑都各自提供完整鍵盤可達性。這些點擊區不加可聚焦角色，是為了不搶走真正聚焦目標的 Tab focus。"}</p>
     </div>
   ),
 }

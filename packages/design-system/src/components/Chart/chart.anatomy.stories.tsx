@@ -229,7 +229,7 @@ export const CategoryTokens: Story = {
     <div className="flex flex-col gap-8">
       <div>
         <H3>--chart-1..5（5 色類別 token）</H3>
-        <Desc>Categorical data viz 專用 token,**固定到 primitive 而非 semantic**（避免 brand swap 影響 data viz 色義）。超過 5 類別應改用 grouping 或切換 visualization。</Desc>
+        <Desc>圖表類別配色專用變數,用的是固定底層色（不隨品牌主色變動），避免改品牌色時影響圖表的類別色彩意義。超過 5 類別時應把小類別合併成「其他」,或改用其他圖表類型。</Desc>
         <div className="overflow-x-auto">
           <table className="text-caption border-collapse">
             <thead><tr><Th>Token</Th><Th>Light mode</Th><Th>Dark mode</Th><Th>建議</Th></tr></thead>
@@ -301,7 +301,7 @@ export const Accessibility = {
   render: () => (
     <div className="max-w-3xl text-body text-fg-secondary">
       <h3 className="text-h5 text-foreground mb-2">無障礙設計</h3>
-      <p className="whitespace-pre-line">{"詳 `chart.spec.md` 「A11y 預設」段。摘要:\n\n  ARIA / 鍵盤  :所有 chart 範例都傳 Recharts `accessibilityLayer` prop(本 DS showcase / anatomy / principles 全預設開啟)。啟用後 Recharts 接管鍵盤焦點與讀屏語義 — ChartContainer wrapper 本身不掛 onKeyDown,鍵盤與 ARIA 由 Recharts 提供。\n\n- 方向鍵 ←/→ — 逐資料點瀏覽\n- 讀屏器 — 讀出當前資料點的類別與數值\n\n  顏色非唯一語義  :不只靠色彩區分類別,配合 legend / 軸標籤 + 圖形變化(Recharts `strokeDasharray` 虛線等),讓色盲 / 黑白列印仍可辨識。實例見 principles 的 `顏色不是區分類別的唯一手段`(iOS 實線 / Android 虛線)。\n\n  對比度  :`--chart-*` 對 canvas bg 的對比已在 token 層考量(light = step-6 / dark = step-5)。\n\n  驗證  :Storybook a11y addon panel 應 0 critical violation;`accessibilityLayer` 開啟後鍵盤可逐點瀏覽。"}</p>
+      <p className="whitespace-pre-line">{"  鍵盤與讀屏  :長條、折線、面積圖的範例都加上 Recharts 的 accessibilityLayer。加上之後,使用者可用方向鍵 ←/→ 逐一瀏覽資料點,讀屏器會讀出當前資料點的類別與數值。圓餅 / 環圈圖目前沒有加這個能力,鍵盤無法逐點瀏覽——若需要讓比例圖也能鍵盤瀏覽,改用可逐項聚焦的呈現方式(例如搭配資料表格)。\n\n  顏色非唯一語義  :不只靠色彩區分類別,配合圖例、軸標籤與圖形變化(例如折線用虛線),讓色盲或黑白列印時仍可辨識。實例見「設計原則」頁的「顏色不是區分類別的唯一手段」(iOS 實線 / Android 虛線)。\n\n  對比度  :類別色對畫布底色的對比已在色彩設定時考量(淺色模式用較深的一階、深色模式用較淺的一階)。\n\n  驗證  :打開 Storybook 的 a11y 檢測面板應為 0 critical violation。"}</p>
     </div>
   ),
 }

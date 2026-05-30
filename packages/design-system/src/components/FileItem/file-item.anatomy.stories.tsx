@@ -45,14 +45,14 @@ export const Overview: Story = {
             <tbody>
               {[
                 ['name', 'string', '必填', '檔名'],
-                ['mode', "'compact' | 'rich'", "'compact'", 'compact=Paperclip 16px icon / rich=Avatar 56px 縮圖'],
+                ['mode', "'compact' | 'rich'", "'compact'", 'compact=Paperclip 16px icon / rich=Avatar 48px 縮圖'],
                 ['status', "'uploading' | 'completed' | 'error'", '—', '上傳狀態(不傳=已上傳靜態)'],
                 ['progress', 'number', '—', '上傳進度 0-100(uploading 時顯示 bar)'],
                 ['description', 'string', '—', 'rich 任意場景 / compact 只有 error 才顯示'],
                 ['thumbnailSrc', 'string', '—', 'rich mode 的縮圖 URL(圖片類檔案)'],
                 ['actions', 'ReactNode', '—', 'suffix actions(例:delete / cancel button)'],
-                ['onDownload', '() => void', '—', "hover-swap:status='completed' 時,row hover ✓ 換成 Download ↓。幾何=rich → Button xs 24(row action ≤ 24 cap)/ compact → ItemInlineAction 16"],
-                ['onRetry', '() => void', '—', "hover-swap:status='error' 時,row hover ✗ 換成 RotateCw ⟲(幾何同上 — rich xs / compact Inline Action)"],
+                ['onDownload', '() => void', '—', "hover-swap:status='completed' 時,滑鼠移上整列,綠勾 ✓ 換成下載 ↓。兩種 mode 都用 Button xs(24)iconOnly,符合列內操作 ≤ 24 上限"],
+                ['onRetry', '() => void', '—', "hover-swap:status='error' 時,滑鼠移上整列,紅叉 ✗ 換成重試 ⟲。幾何同上 — 兩種 mode 都用 Button xs(24)"],
                 ['onClick', '() => void', '—', '傳入後整個 item 變可點擊(cursor-pointer,**無 hover bg**——FileItem 設計準則:permanent-anchored 元件不加 hover-bg double-emphasis)'],
               ].map(([p, t, d, desc]) => (
                 <tr key={p}><Td mono>{p}</Td><Td mono>{t}</Td><Td mono>{d}</Td><Td>{desc}</Td></tr>
@@ -188,7 +188,7 @@ export const ModeMatrix: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
-        <H3>rich — Avatar 56px square 在左</H3>
+        <H3>rich — Avatar 48px square 在左</H3>
         <Desc>閱讀模式(text-body 14px 1.5 line-height),資訊容量較高。適合圖片 / 文件 / 需要縮圖的場景。</Desc>
         <div className="flex flex-col gap-2 max-w-lg">
           <FileItem name="Q1-report.pdf" description="2.4 MB · 已上傳" mode="rich" />
@@ -250,7 +250,7 @@ export const SizeMatrix: Story = {
               <tr><Td>Typography</Td><Td mono>text-body leading-compact(掃描模式)</Td><Td mono>text-body 預設行高(閱讀模式)</Td></tr>
               <tr><Td>Description</Td><Td>僅 error 才顯示</Td><Td>任何場景都可顯示</Td></tr>
               <tr><Td>Progress bar</Td><Td mono>絕對定位 2px 在底</Td><Td mono>inline 4px,bar 底部對齊 avatar</Td></tr>
-              <tr><Td>Actions</Td><Td>右側 ItemInlineAction(row 24 容不下 Button xs)</Td><Td>右側 Button xs iconOnly(24 固定,row action ≤ 24 cap;多 action 橫排)</Td></tr>
+              <tr><Td>Actions</Td><Td>右側 Button xs iconOnly(24 固定;靠列內 wrapper trick 不撐高列)</Td><Td>右側 Button xs iconOnly(24 固定,列內操作 ≤ 24 上限;多操作橫排)</Td></tr>
               <tr><Td>使用場景</Td><Td>批次上傳、log 列表、CSV/JSON</Td><Td>圖片上傳、文件附件、需預覽的檔案</Td></tr>
             </tbody>
           </table>
@@ -329,7 +329,26 @@ export const Accessibility = {
   render: () => (
     <div className="max-w-3xl text-body text-fg-secondary">
       <h3 className="text-h5 text-foreground mb-2">無障礙設計</h3>
-      <p className="whitespace-pre-line">{"詳 `fileitem.spec.md` 「A11y 預設」段。摘要:\n\n-    aria-busy  for uploading  : status=\"uploading\"  時 row 自動  aria-busy=\"true\" ,SR 朗讀「busy」避免 user 嘗試互動已 in-flight item。\n-   Error state live region  : status=\"error\"  row 自動  role=\"status\"  +  aria-live=\"polite\" ,error 訊息(label + description)即時 announce,user 不用主動 navigate 過去。 polite  不打斷既有 SR 朗讀,適合 file upload 非緊急情境。\n-   Action button labels  :Download / retry / remove 等 inline action 必傳  aria-l"}</p>
+      <ul className="flex flex-col gap-2 list-disc pl-5">
+        <li>
+          <strong className="text-foreground">進度條有檔名 context</strong>:上傳進度條會自動帶上「檔名 + 上傳進度」的語音標籤,
+          螢幕報讀軟體唸出進度時使用者知道是哪個檔案。進度條本身為被動指示器,不需鍵盤聚焦。
+        </li>
+        <li>
+          <strong className="text-foreground">狀態 icon 換成按鈕時的語音切換</strong>:滑鼠移上整列時,
+          被動的狀態 icon(綠勾 / 紅叉)會淡出換成操作按鈕(下載 / 重試)。被動 icon 對螢幕報讀軟體隱藏,
+          換上的操作按鈕自帶語音標籤,使用者不會聽到視覺切換的雜訊。
+        </li>
+        <li>
+          <strong className="text-foreground">操作按鈕標籤要帶檔名</strong>:下載 / 重試 / 移除等列內操作,
+          consumer 必須傳語音標籤並帶上檔名(例:「下載 report.pdf」「重試上傳」),
+          只寫「下載」「刪除」缺檔名,螢幕報讀使用者無法分辨是哪一列。
+        </li>
+        <li>
+          <strong className="text-foreground">整列不可整塊鍵盤聚焦</strong>:為避免與列內操作按鈕互相干擾(巢狀互動),
+          整列不設成單一可聚焦按鈕;鍵盤使用者直接 Tab 到列內的操作按鈕。滑鼠仍可點擊整列觸發 onClick。
+        </li>
+      </ul>
     </div>
   ),
 }

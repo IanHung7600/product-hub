@@ -65,7 +65,7 @@ export const UsageGuidance: Story = {
           <LinkTo kind="Design System/Components/DescriptionList/展示" name="詳情面板"><span className="text-primary hover:underline font-medium cursor-pointer">詳情面板</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/DescriptionList/展示" name="Horizontal"><span className="text-primary hover:underline font-medium cursor-pointer">Horizontal</span></LinkTo>
+          <LinkTo kind="Design System/Components/DescriptionList/展示" name="水平佈局"><span className="text-primary hover:underline font-medium cursor-pointer">水平佈局</span></LinkTo>
         </li>
       </ul>
       <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>

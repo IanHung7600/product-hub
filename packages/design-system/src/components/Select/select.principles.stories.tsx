@@ -285,25 +285,25 @@ export const SearchableRule: Story = {
 }
 
 export const NativeSelectRule: Story = {
-  name: '為什麼用原生 select',
+  name: '桌機自建選單 vs 手機原生 picker',
   render: () => {
     const [value, setValue] = React.useState('electronics')
     return (
       <div>
         <Rule
-          title="用原生 <select> —— 不自建 dropdown menu"
-          note="原生 select 免費提供:mobile 上的原生 picker UI、完整的鍵盤導覽(↑↓ 跳選項、字母鍵跳首字)、screen reader 正確朗讀、作業系統層級的無障礙支援。自建 dropdown 任何一樣都要自己做一遍且不一定做好"
+          title="依裝置自動切換兩種實作"
+          note="Select 偵測觸控裝置自動選路:桌機(非觸控)用自建選單——觸發點是一個可聚焦的容器,點開後在浮層裡顯示選項清單,支援搜尋與群組;手機(觸控)改用瀏覽器原生的 <select>,直接叫出作業系統內建的滾輪 picker。同一份 options 兩邊共用,consumer 不需分平台寫兩套。"
         >
           <Select options={categoryOptions} value={value} onChange={setValue} />
-          <Label>↑ 打開 mobile 模擬器或用 VoiceOver 測試——原生行為直接可用</Label>
+          <Label>↑ 桌機這顆是自建選單(點開看浮層);切到手機模擬器會變成系統原生 picker</Label>
         </Rule>
 
         <Rule
-          title="tag 模式也是原生 select"
-          note="Tag 視覺疊在隱藏的原生 select 上(absolute inset-0 opacity-0),Tag 本身 pointer-events-none 讓點擊穿透到 select。視覺客製 + 原生行為兩者兼得"
+          title="tag 模式只是把選中值畫成 Tag,行為跟 plain 一樣"
+          note="tag 與 plain 的差別只在「選中值怎麼呈現」——tag 用一顆有顏色的 Tag,plain 用純文字。底層的開選單、選值、鍵盤行為兩種模式完全相同,都走上面那套依裝置切換的路徑。"
         >
           <Select display="tag" options={statusOptions} value="in_stock" onChange={() => {}} />
-          <Label>↑ 點擊 Tag 會打開原生 picker,看起來客製實際上走原生路徑</Label>
+          <Label>↑ 點這顆 Tag 會打開選單;桌機是自建浮層,手機是系統原生 picker</Label>
         </Rule>
       </div>
     )

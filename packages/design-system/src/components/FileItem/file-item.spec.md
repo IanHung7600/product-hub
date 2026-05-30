@@ -412,12 +412,11 @@ Passive status icon 置中於 action-sized 容器,hover 時 active action 填滿
 
 ## A11y 預設
 
-- **`aria-busy` for uploading**:`status="uploading"` 時 row 自動 `aria-busy="true"`,SR 朗讀「busy」避免 user 嘗試互動已 in-flight item。
-- **Error state live region**:`status="error"` row 自動 `role="status"` + `aria-live="polite"`,error 訊息(label + description)即時 announce,user 不用主動 navigate 過去。`polite` 不打斷既有 SR 朗讀,適合 file upload 非緊急情境。
+- **ProgressBar 整合(進度 context 帶檔名)**:消費的 `<ProgressBar>` 自帶 `role="progressbar"` + `aria-valuenow` / `aria-valuemax`(Radix Progress primitive 提供),本元件再傳 `aria-label={檔名 上傳進度}` 作 context;keyboard 不需 focus progress bar(被動指示器,非互動元素)。
 - **Action button labels**:Download / retry / remove 等 inline action 必傳 `aria-label`(中文 / consumer locale)— 「下載 report.pdf」/「重試上傳」/「移除附件」,單純「下載」/「刪除」缺檔名 context SR user 無法區分多 row。
-- **ProgressBar 整合**:消費的 `<ProgressBar>` 自帶 `role="progressbar"` + `aria-valuenow` / `aria-valuemax`,本元件不再重複;keyboard 不需 focus progress bar(被動指示器,非互動元素)。
-- **Row clickable**:傳 `onClick` 時自動 `role="button"` + `tabIndex=0` + Enter / Space activate,keyboard user 與 mouse user 等價可達 FileViewer / download。
-- **Status icon hover-swap a11y**:hover-swap 不改變 SR 語意 — passive icon `aria-hidden`,active action button 自帶 `aria-label`,避免 SR user 收到視覺 swap 噪音。
+- **Status icon hover-swap a11y**:hover-swap 不改變 SR 語意 — passive status icon `aria-hidden`,active action button 自帶 `aria-label`,避免 SR user 收到視覺 swap 噪音。
+- **Row clickable 不做整列 keyboard 焦點**:傳 `onClick` 時整列僅滑鼠可點(`onClick` 直接掛在 row);**刻意不**把整列設成單一可聚焦按鈕(不加 `role="button"` / `tabIndex` / Enter-Space handler),避免與列內操作按鈕(下載 / 重試 / 移除)構成巢狀互動(axe nested-interactive)。keyboard user 直接 Tab 到列內 explicit 操作按鈕取得等價能力。世界級對照:Slack message row / Notion page row 同模式(整列只滑鼠點,鍵盤走列內按鈕)。
+- **status / error 不額外加 row ARIA**:`status="uploading"` / `status="error"` 不在 row 上加 `aria-busy` / `role="status"` / `aria-live`;狀態由 progress bar 的 `role="progressbar"` 與 description 文字本身傳達。若 consumer 需要上傳完成 / 失敗的即時 announce,由外層上傳流程容器(FileUpload)統一管理 live region,避免每列各自宣告造成 SR 噪音。
 
 ---
 

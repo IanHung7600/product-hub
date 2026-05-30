@@ -223,7 +223,7 @@ export const Overview = {
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <H3>結構（Anatomy）— plain 模式</H3>
-          <Desc>display="plain"（預設）。原生 select 純文字 + ChevronDown。可搭配 startIcon 代表 value 的圖示。clearable 有值時出現 clear 按鈕。「plain」表樸素文字呈現,跟 Button variant="text" 區隔(2026-05-01 從 'text' 改名,避免 prop value 跨元件衝突)。</Desc>
+          <Desc>display="plain"（預設）。觸發點顯示選中值的純文字 + ChevronDown。可搭配 startIcon 代表 value 的圖示。clearable 有值時出現 clear 按鈕。「plain」表樸素文字呈現,跟 Button variant="text" 區隔(2026-05-01 從 'text' 改名,避免 prop value 跨元件衝突)。</Desc>
         </div>
         <div className="flex gap-8">
           <div className="flex flex-col gap-2 items-start">
@@ -251,7 +251,7 @@ export const Overview = {
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <H3>結構（Anatomy）— tag 模式</H3>
-          <Desc>display="tag"。Tag 元件呈現選中值 + 隱藏的原生 select overlay（absolute inset-0 opacity-0）。Tag 設為 pointer-events-none，點擊穿透到底層 select。startIcon 不可用於 tag 模式。</Desc>
+          <Desc>display="tag"。用一顆 Tag 元件呈現選中值,Tag 設為 pointer-events-none 讓點擊穿透到觸發點容器去開選單。startIcon 不可用於 tag 模式。</Desc>
         </div>
         <div className="flex gap-8">
           <div className="flex flex-col gap-2 items-start">
@@ -262,7 +262,7 @@ export const Overview = {
                   style={{ borderColor: `var(--${s.color})`, backgroundColor: `var(--${s.color}-subtle)`, color: `var(--${s.color})` }}>{s.name}</span>
               ))}
             </div>
-            <span className="text-[10px] text-fg-muted font-mono">select: absolute inset-0 opacity-0 · Tag: pointer-events-none</span>
+            <span className="text-[10px] text-fg-muted font-mono">Tag: pointer-events-none · 點擊穿透到觸發點開選單</span>
           </div>
           <div className="flex flex-col gap-2 items-start">
             <span className="text-[11px] text-fg-muted font-medium">readonly / disabled</span>
@@ -270,7 +270,7 @@ export const Overview = {
               <span className="rounded px-2 py-1 text-[11px] font-mono border border-dashed"
                 style={{ borderColor: 'var(--color-turquoise-6)', backgroundColor: 'var(--color-turquoise-1)', color: 'var(--color-turquoise-6)' }}>Tag</span>
             </div>
-            <span className="text-[10px] text-fg-muted font-mono">無 chevron · 無 select overlay · tagPadding 置中</span>
+            <span className="text-[10px] text-fg-muted font-mono">無 chevron · 不可開選單 · tagPadding 置中</span>
           </div>
         </div>
       </div>
@@ -811,7 +811,7 @@ export const Accessibility = {
   render: () => (
     <div className="max-w-3xl text-body text-fg-secondary">
       <h3 className="text-h5 text-foreground mb-2">無障礙設計</h3>
-      <p className="whitespace-pre-line">{"詳 `select.spec.md` 「A11y 預設」段。摘要:\n\n  ARIA / Pattern  :預設走原生  <select>  element 取得完整 a11y;searchable 模式走  role=\"combobox\"  容器 +  aria-expanded  /  aria-haspopup=\"listbox\"  + 隱藏的原生  <input> 。Field wrapper 補  aria-labelledby  /  aria-invalid  /  aria-describedby 。\n\n  Keyboard 行為(原生  <select>  路徑)  :\n\n- Tab — focus\n- ↑ / ↓ — 在選項間移動\n- 字母鍵 — type-to-jump 跳到符合首字的選項(searchable 模式則為打字篩選)\n- Enter / Space — 展開選單\n- Esc — 關閉選單(清除值走右側 clear 按鈕,非 Esc)\n\n  Focus  :native  <select>  focus ring;DS focus-visible ring( focus-visible:!border-primary )由 Field wrapper 提供。\n\n  驗證  :Storybook a11y addon panel 應 0 critical violation;鍵盤完整可操作(無需滑鼠)。WCAG AA contrast ≥ 4.5:1(text)/ 3:1(UI)。"}</p>
+      <p className="whitespace-pre-line">{"無障礙行為依裝置分兩條路徑:\n\n  ARIA / Pattern  :桌機(非觸控)觸發點是一個容器,標記  role=\"combobox\"  +  aria-expanded  /  aria-haspopup=\"listbox\" ,選項在浮層的 listbox 裡;searchable 模式時容器內另放一個可打字篩選的  <input> 。手機(觸控)改用瀏覽器原生的  <select>  element,直接取得作業系統內建的無障礙與 picker。Field wrapper 兩邊都補  aria-labelledby  /  aria-invalid  /  aria-describedby 。\n\n  Keyboard 行為  :\n\n- Tab — 聚焦到觸發點\n- Enter / Space — 展開選單(searchable 模式則直接進入打字篩選)\n- ↑ / ↓ — 選單展開後在選項間移動\n- 字母鍵 — 選單內逐字定位(searchable 模式為打字篩選)\n- Enter — 選定目前 highlight 的選項並關閉\n- Esc — 關閉選單(清除值走右側 clear 按鈕,非 Esc)\n\n  Focus  :DS focus-visible ring( focus-visible:!border-primary )由 Field wrapper 提供;手機原生  <select>  另有系統 focus ring。\n\n  驗證  :Storybook a11y addon panel 應 0 critical violation;鍵盤完整可操作(無需滑鼠)。WCAG AA contrast ≥ 4.5:1(text)/ 3:1(UI)。"}</p>
     </div>
   ),
 }

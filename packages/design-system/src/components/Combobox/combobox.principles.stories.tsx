@@ -228,8 +228,8 @@ export const OverflowRule: Story = {
         </Rule>
 
         <Rule
-          title="❌ 不自建 dropdown"
-          note="與 Select 同理——原生 select 提供 mobile picker、鍵盤導覽、screen reader，自建會失去這些。Combobox 底層也走原生 select，Tag 浮在上層但點擊穿透"
+          title="❌ 不從零自刻下拉互動"
+          note="與 Select 同理——下拉的開關、鍵盤導覽、聚焦管理、screen reader 支援很容易做不完整。Combobox 桌機走共用的浮層選單元件（已內建搜尋與方向鍵導覽），手機則走原生 picker，兩者都不該繞過去從零自刻"
         >
           <Label>實作細節見 Design System / Components / Combobox / 設計規格</Label>
         </Rule>

@@ -164,11 +164,11 @@ export const StateBehavior: Story = {
         <div className="border border-dashed border-divider rounded-md p-4 max-w-md">
           <DescriptionList cols={2}>
             <DescriptionItem label="姓名">Ada Chen</DescriptionItem>
-            <DescriptionItem label="職稱">—</DescriptionItem>
+            <DescriptionItem label="職稱"><span className="text-fg-muted">—</span></DescriptionItem>
             <DescriptionItem label="Email">user@example.com</DescriptionItem>
-            <DescriptionItem label="電話">—</DescriptionItem>
+            <DescriptionItem label="電話"><span className="text-fg-muted">—</span></DescriptionItem>
             <DescriptionItem label="團隊">Engineering</DescriptionItem>
-            <DescriptionItem label="直屬主管">—</DescriptionItem>
+            <DescriptionItem label="直屬主管"><span className="text-fg-muted">—</span></DescriptionItem>
           </DescriptionList>
         </div>
         <p className="text-footnote text-fg-muted mt-3">
