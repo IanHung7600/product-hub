@@ -451,7 +451,7 @@ export const Accessibility = {
   render: () => (
     <div className="max-w-3xl text-body text-fg-secondary">
       <h3 className="text-h5 text-foreground mb-2">無障礙設計</h3>
-      <p className="whitespace-pre-line">{"Breadcrumb 是純 HTML 結構元件(nav + ol + li + a/span),無第三方 primitive。摘要:\n\n  ARIA  :外層 nav 帶 aria-label=\"Breadcrumb\";當前頁 BreadcrumbPage 帶 aria-current=\"page\";分隔符 aria-hidden 不進無障礙樹。a11y 行為來自原生 HTML 語意,非任何 primitive 的預設值。\n\n  Keyboard 行為  :\n\n- Tab — 逐個 link 依序聚焦(每個連結都是獨立 tab stop,無 focus trap)\n- Enter — 觸發連結導覽\n\n  Focus  :聚焦時顯示 visible ring(outline: 2px solid var(--ring));連結逐個依序聚焦,不攔截焦點。\n\n  驗證  :Storybook a11y addon panel 應 0 critical violation;鍵盤完整可操作(無需滑鼠)。WCAG AA contrast ≥ 4.5:1(text)/ 3:1(UI)。"}</p>
+      <p className="whitespace-pre-line">{"Breadcrumb 結構是原生 HTML(nav + ol + li + a/span);asChild 多型渲染用 Radix Slot,但 Slot 只合併 prop、不管理焦點 / ARIA / 鍵盤(非行為型 primitive)。摘要:\n\n  ARIA  :外層 nav 帶 aria-label=\"Breadcrumb\";當前頁 BreadcrumbPage 帶 aria-current=\"page\";分隔符 aria-hidden 不進無障礙樹。a11y 行為來自原生 HTML 語意,非 Slot 提供。\n\n  Keyboard 行為  :\n\n- Tab — 逐個 link 依序聚焦(每個連結都是獨立 tab stop,無 focus trap)\n- Enter — 觸發連結導覽\n\n  Focus  :聚焦時顯示 visible ring(outline: 2px solid var(--ring));連結逐個依序聚焦,不攔截焦點。\n\n  驗證  :Storybook a11y addon panel 應 0 critical violation;鍵盤完整可操作(無需滑鼠)。WCAG AA contrast ≥ 4.5:1(text)/ 3:1(UI)。"}</p>
     </div>
   ),
 }
