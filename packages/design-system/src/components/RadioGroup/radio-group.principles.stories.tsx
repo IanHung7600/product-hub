@@ -46,7 +46,7 @@ export const UsageGuidance: Story = {
           <div className="prose prose-sm max-w-prose mb-8">
             <p>適合 RadioGroup 的真實業務場景(點擊跳轉「展示」頁範例):</p>
             <ul className="space-y-1">
-              <li><LinkTo kind="Design System/Components/RadioGroup/展示" name="垂直 Group"><span className="text-primary hover:underline font-medium cursor-pointer">垂直 Group</span></LinkTo></li>
+              <li><LinkTo kind="Design System/Components/RadioGroup/展示" name="直式群組"><span className="text-primary hover:underline font-medium cursor-pointer">直式群組</span></LinkTo></li>
               <li><LinkTo kind="Design System/Components/RadioGroup/展示" name="水平排列"><span className="text-primary hover:underline font-medium cursor-pointer">水平排列</span></LinkTo></li>
             </ul>
             <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見下方 vs 近親 段)。</p>

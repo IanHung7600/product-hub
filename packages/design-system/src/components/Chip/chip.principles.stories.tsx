@@ -53,15 +53,6 @@ export const UsageGuidance: Story = {
         <li>
           <LinkTo kind="Design System/Components/Chip/展示" name="Single Selection"><span className="text-primary hover:underline font-medium cursor-pointer">Single Selection</span></LinkTo>
         </li>
-        <li>
-          <LinkTo kind="Design System/Components/Chip/展示" name="Layout Wrap"><span className="text-primary hover:underline font-medium cursor-pointer">Layout Wrap</span></LinkTo>
-        </li>
-        <li>
-          <LinkTo kind="Design System/Components/Chip/展示" name="Layout Scroll"><span className="text-primary hover:underline font-medium cursor-pointer">Layout Scroll</span></LinkTo>
-        </li>
-        <li>
-          <LinkTo kind="Design System/Components/Chip/展示" name="Layout Menu"><span className="text-primary hover:underline font-medium cursor-pointer">Layout Menu</span></LinkTo>
-        </li>
       </ul>
       <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>
     </div>

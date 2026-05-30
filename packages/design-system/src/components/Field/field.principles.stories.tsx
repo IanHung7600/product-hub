@@ -51,9 +51,9 @@ export const UsageGuidance: Story = {
           <ul className="space-y-1">
             <li><LinkTo kind="Design System/Components/Field/展示" name="Vertical"><span className="text-primary hover:underline font-medium cursor-pointer">Vertical</span></LinkTo></li>
             <li><LinkTo kind="Design System/Components/Field/展示" name="Horizontal"><span className="text-primary hover:underline font-medium cursor-pointer">Horizontal</span></LinkTo></li>
-            <li><LinkTo kind="Design System/Components/Field/展示" name="Horizontal — label 垂直對齊公式驗證"><span className="text-primary hover:underline font-medium cursor-pointer">Horizontal — label 垂直對齊公式驗證</span></LinkTo></li>
-            <li><LinkTo kind="Design System/Components/Field/展示" name="混合 Control 的 field 高度對齊"><span className="text-primary hover:underline font-medium cursor-pointer">混合 Control 的 field 高度對齊</span></LinkTo></li>
-            <li><LinkTo kind="Design System/Components/Field/展示" name="SegmentedControl 作為 Field control"><span className="text-primary hover:underline font-medium cursor-pointer">SegmentedControl 作為 Field control</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Field/展示" name="水平 — 標籤 垂直對齊公式驗證"><span className="text-primary hover:underline font-medium cursor-pointer">水平 — 標籤 垂直對齊公式驗證</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Field/展示" name="混合 控制元件 的 field 高度對齊"><span className="text-primary hover:underline font-medium cursor-pointer">混合 控制元件 的 field 高度對齊</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Field/展示" name="SegmentedControl 作為 Field 控制元件"><span className="text-primary hover:underline font-medium cursor-pointer">SegmentedControl 作為 Field 控制元件</span></LinkTo></li>
           </ul>
           <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見下方 vs 近親 段)。</p>
         </div>

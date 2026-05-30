@@ -75,10 +75,10 @@ export const UsageGuidance: Story = {
       <p>適合 Sheet 的真實業務場景(點擊跳轉「展示」頁範例):</p>
       <ul className="space-y-1">
         <li>
-          <LinkTo kind="Design System/Components/Sheet/展示" name="右側建立 project"><span className="text-primary hover:underline font-medium cursor-pointer">右側建立 project</span></LinkTo>
+          <LinkTo kind="Design System/Components/Sheet/展示" name="右側建立 專案"><span className="text-primary hover:underline font-medium cursor-pointer">右側建立 專案</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/Sheet/展示" name="右側編輯 user detail"><span className="text-primary hover:underline font-medium cursor-pointer">右側編輯 user detail</span></LinkTo>
+          <LinkTo kind="Design System/Components/Sheet/展示" name="右側編輯 使用者 詳情"><span className="text-primary hover:underline font-medium cursor-pointer">右側編輯 使用者 詳情</span></LinkTo>
         </li>
       </ul>
       <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>

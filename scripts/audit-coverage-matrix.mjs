@@ -48,7 +48,7 @@ const COVERAGE = {
   14: { tier: 'PURE-JUDGMENT', mechanism: '命名一致性 cross-component AI judgment;dispatch 必 grep DS-wide prop value semantic conflicts' },
   15: { tier: 'DETERMINISTIC', mechanism: 'scripts/audit-content-quality.mjs --check(cross-doc drift)' },
   // Group F — Architecture
-  16: { tier: 'PURE-JUDGMENT', mechanism: 'Layout Family DS-wide frontmatter audit — dispatch 必 grep 全 spec.md frontmatter `family:` 宣告' },
+  16: { tier: 'DETERMINISTIC', mechanism: 'scripts/audit-layout-family-frontmatter.mjs --check(primary spec 必有 family: frontmatter;2026-05-30 從誤分 PURE-JUDGMENT 修正)' },
   17: { tier: 'PURE-JUDGMENT', mechanism: 'Prop value cross-component semantic conflict — dispatch 必 grep prop literal DS-wide' },
   18: { tier: 'HOOK-ENFORCED', mechanism: 'check_shadcn_alias.sh write-time block + DS-wide grep audit-time(zero hit)' },
   // Group G — Home governance
@@ -76,10 +76,10 @@ const COVERAGE = {
   // Group N — State + chain
   34: { tier: 'HOOK-ENFORCED', mechanism: 'check_disabled_placeholder_color.sh' },
   35: { tier: 'HOOK-ENFORCED', mechanism: 'check_overlay_panel_scroll_chain.sh' },
-  36: { tier: 'PURE-JUDGMENT', mechanism: 'Naked variant cell-as-input row-mode propagation DS-wide — dispatch 必 grep consumer wrapper apply' },
-  37: { tier: 'PURE-JUDGMENT', mechanism: 'Field state machine focus-dominates — dispatch 必 grep per-control border-primary pattern DS-wide' },
+  36: { tier: 'DETERMINISTIC', mechanism: 'scripts/audit-data-table-row-mode-ssot.mjs(已 wire ci.yml verify;cell-render wrapper 消費 per-row state;2026-05-30 從誤分 PURE-JUDGMENT 修正)' },
+  37: { tier: 'HOOK-ENFORCED', mechanism: 'check_field_family_invariants.sh(focus-dominates border-primary state machine;2026-05-30 從誤分 PURE-JUDGMENT 修正)' },
   38: { tier: 'PURE-JUDGMENT', mechanism: 'Inline-action gap canonical — dispatch 必 grep ItemInlineAction sibling gap DS-wide' },
-  39: { tier: 'PURE-JUDGMENT', mechanism: 'Row-layout slot primitive consumption — dispatch 必 grep handcraft slot wrapper DS-wide' },
+  39: { tier: 'HOOK-ENFORCED', mechanism: 'check_pattern_invariants.sh C.4(row-slot handcraft,2026-05-30 fixed order-independent regex + 從誤分 PURE-JUDGMENT 修正)' },
   // Group O — Storybook content quality
   40: { tier: 'DETERMINISTIC', mechanism: 'scripts/audit-story-quality.mjs --check(title canonical 全 196 stories deterministic)' },
   41: { tier: 'DETERMINISTIC', mechanism: 'scripts/audit-story-quality.mjs --check(name jargon 全 350 names deterministic)' },

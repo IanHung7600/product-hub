@@ -1,6 +1,7 @@
 ---
 pattern: overlay-surface
 internal: true
+family: composite  # composes SurfaceHeader/Body/Footer,非 Family 1-4 row element
 scope: overlay shell sub-components (SurfaceHeader / SurfaceBody / SurfaceFooter + padding SSOT) — DS-internal consumer only(Dialog / Sheet / Popover / HoverCard / Coachmark wrap)
 ---
 

@@ -49,7 +49,7 @@ export const UsageGuidance: Story = {
           <LinkTo kind="Design System/Components/FileItem/展示" name="Compact"><span className="text-primary hover:underline font-medium cursor-pointer">Compact</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/FileItem/展示" name="Hover swap"><span className="text-primary hover:underline font-medium cursor-pointer">Hover swap</span></LinkTo>
+          <LinkTo kind="Design System/Components/FileItem/展示" name="Hover 替換"><span className="text-primary hover:underline font-medium cursor-pointer">Hover 替換</span></LinkTo>
         </li>
         <li>
           <LinkTo kind="Design System/Components/FileItem/展示" name="已上傳"><span className="text-primary hover:underline font-medium cursor-pointer">已上傳</span></LinkTo>

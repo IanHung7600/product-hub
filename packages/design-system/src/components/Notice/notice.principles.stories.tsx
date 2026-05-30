@@ -26,13 +26,13 @@ export const UsageGuidance: Story = {
         <p>適合 Notice 的真實業務場景(點擊跳轉「展示」頁範例):</p>
         <ul className="space-y-1">
           <li>
-            <LinkTo kind="Design System/Internal/Notice/展示" name="部署成功 banner"><span className="text-primary hover:underline font-medium cursor-pointer">部署成功 banner</span></LinkTo>
+            <LinkTo kind="Design System/Internal/Notice/展示" name="部署成功 橫幅"><span className="text-primary hover:underline font-medium cursor-pointer">部署成功 橫幅</span></LinkTo>
           </li>
           <li>
             <LinkTo kind="Design System/Internal/Notice/展示" name="Workspace 付款失敗"><span className="text-primary hover:underline font-medium cursor-pointer">Workspace 付款失敗</span></LinkTo>
           </li>
           <li>
-            <LinkTo kind="Design System/Internal/Notice/展示" name="Inline 通知變體對照"><span className="text-primary hover:underline font-medium cursor-pointer">Inline 通知變體對照</span></LinkTo>
+            <LinkTo kind="Design System/Internal/Notice/展示" name="行內通知變體對照"><span className="text-primary hover:underline font-medium cursor-pointer">行內通知變體對照</span></LinkTo>
           </li>
           <li>
             <LinkTo kind="Design System/Internal/Notice/展示" name="Toast 樣式"><span className="text-primary hover:underline font-medium cursor-pointer">Toast 樣式</span></LinkTo>
@@ -74,7 +74,7 @@ export const CompositionRules: Story = {
     <div>
       <Section title="Pattern 1 — Alert(persistent inline announcement)">
         <div className="prose prose-sm max-w-prose">
-          <p>需要「持續顯示直到 user 主動 dismiss」→ <LinkTo kind="Design System/Components/Alert/展示" name="預設"><span className="text-primary hover:underline font-medium cursor-pointer">Alert</span></LinkTo>。Alert 內部消費 Notice + 加上 dismiss button + role="alert" ARIA。</p>
+          <p>需要「持續顯示直到 user 主動 dismiss」→ <LinkTo kind="Design System/Components/Alert/展示" name="Subtle 單行"><span className="text-primary hover:underline font-medium cursor-pointer">Subtle 單行</span></LinkTo>。Alert 內部消費 Notice + 加上 dismiss button + role="alert" ARIA。</p>
           <ul>
             <li>典型場景:付款失敗 banner / workspace 警告 / 重要通知 user 必看</li>
             <li>對齊世界級:Polaris <code>Banner</code> / Material <code>Banner</code> / Atlassian <code>InlineMessage</code> — 共識用「persistent + dismissible」</li>
@@ -84,7 +84,7 @@ export const CompositionRules: Story = {
 
       <Section title="Pattern 2 — Toast(auto-dismiss floating announcement)">
         <div className="prose prose-sm max-w-prose">
-          <p>需要「短暫提示,使用者不需 acknowledge」→ <LinkTo kind="Design System/Components/Toast/展示" name="預設"><span className="text-primary hover:underline font-medium cursor-pointer">Toast</span></LinkTo>。Toast 基於 Sonner + 消費 Notice layout,自動 4 秒消失(可調)。</p>
+          <p>需要「短暫提示,使用者不需 acknowledge」→ <LinkTo kind="Design System/Components/Toast/展示" name="有 Title + Description"><span className="text-primary hover:underline font-medium cursor-pointer">有 Title + Description</span></LinkTo>。Toast 基於 Sonner + 消費 Notice layout,自動 4 秒消失(可調)。</p>
           <ul>
             <li>典型場景:儲存成功 / 複製到剪貼簿 / 非關鍵操作回饋</li>
             <li>對齊世界級:Material <code>Snackbar</code> / Polaris <code>Toast</code> / Sonner — 共識用「auto-dismiss + 浮動 + 不阻塞 task」</li>

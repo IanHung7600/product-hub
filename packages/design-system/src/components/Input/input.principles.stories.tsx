@@ -53,8 +53,7 @@ export const UsageGuidance: Story = {
             <li><LinkTo kind="Design System/Components/Input/展示" name="四模式"><span className="text-primary hover:underline font-medium cursor-pointer">四模式</span></LinkTo></li>
             <li><LinkTo kind="Design System/Components/Input/展示" name="尺寸與 Button 對齊"><span className="text-primary hover:underline font-medium cursor-pointer">尺寸與 Button 對齊</span></LinkTo></li>
             <li><LinkTo kind="Design System/Components/Input/展示" name="End Action"><span className="text-primary hover:underline font-medium cursor-pointer">End Action</span></LinkTo></li>
-            <li><LinkTo kind="Design System/Components/Input/展示" name="Error"><span className="text-primary hover:underline font-medium cursor-pointer">Error</span></LinkTo></li>
-            <li><LinkTo kind="Design System/Components/Input/展示" name="邊框互動狀態"><span className="text-primary hover:underline font-medium cursor-pointer">邊框互動狀態</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Input/展示" name="錯誤狀態"><span className="text-primary hover:underline font-medium cursor-pointer">錯誤狀態</span></LinkTo></li>
           </ul>
           <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見下方 vs 近親 段)。</p>
         </div>

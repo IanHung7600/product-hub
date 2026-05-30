@@ -70,10 +70,10 @@ export const UsageGuidance: Story = {
           <LinkTo kind="Design System/Components/FileUpload/展示" name="批次上傳"><span className="text-primary hover:underline font-medium cursor-pointer">批次上傳</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/FileUpload/展示" name="內建 files prop"><span className="text-primary hover:underline font-medium cursor-pointer">內建 files prop</span></LinkTo>
+          <LinkTo kind="Design System/Components/FileUpload/展示" name="內建 files 屬性"><span className="text-primary hover:underline font-medium cursor-pointer">內建 files 屬性</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/FileUpload/展示" name="Custom children"><span className="text-primary hover:underline font-medium cursor-pointer">Custom children</span></LinkTo>
+          <LinkTo kind="Design System/Components/FileUpload/展示" name="自訂內容"><span className="text-primary hover:underline font-medium cursor-pointer">自訂內容</span></LinkTo>
         </li>
       </ul>
       <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>

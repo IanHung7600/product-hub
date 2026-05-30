@@ -64,7 +64,7 @@ export const UsageGuidance: Story = {
               <LinkTo kind="Design System/Components/ProgressBar/展示" name="批次任務進度"><span className="text-primary hover:underline font-medium cursor-pointer">批次任務進度</span></LinkTo>
             </li>
             <li>
-              <LinkTo kind="Design System/Components/ProgressBar/展示" name="DataTable cell 內進度"><span className="text-primary hover:underline font-medium cursor-pointer">DataTable cell 內進度</span></LinkTo>
+              <LinkTo kind="Design System/Components/ProgressBar/展示" name="DataTable 儲存格 內進度"><span className="text-primary hover:underline font-medium cursor-pointer">DataTable 儲存格 內進度</span></LinkTo>
             </li>
           </ul>
           <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見下方「vs 近親」)。</p>

@@ -70,7 +70,7 @@ export const CompositionRules: Story = {
     <div>
       <Section title="Pattern 1 — Select(static 單選 dropdown)">
         <div className="prose prose-sm max-w-prose">
-          <p>已知選項清單 + 單選回 form → <LinkTo kind="Design System/Components/Select/展示" name="預設"><span className="text-primary hover:underline font-medium cursor-pointer">Select</span></LinkTo>(內部 SelectMenu + cmdk + MenuItem)。對齊 Material <code>Select</code> / Ant <code>Select</code> idiom。</p>
+          <p>已知選項清單 + 單選回 form → <LinkTo kind="Design System/Components/Select/展示" name="四模式"><span className="text-primary hover:underline font-medium cursor-pointer">Select</span></LinkTo>(內部 SelectMenu + cmdk + MenuItem)。對齊 Material <code>Select</code> / Ant <code>Select</code> idiom。</p>
           <ul>
             <li>典型場景:Country picker / Status selector / Priority dropdown</li>
             <li>判斷:選項 ≤ 20 + 不需搜尋 → Select(可選 searchable mode 啟用搜尋)</li>
@@ -80,7 +80,7 @@ export const CompositionRules: Story = {
 
       <Section title="Pattern 2 — Combobox(多選 + 搜尋 + 可建立新值)">
         <div className="prose prose-sm max-w-prose">
-          <p>多選 + 大量選項需搜尋 + 可創新 tag → <LinkTo kind="Design System/Components/Combobox/展示" name="預設"><span className="text-primary hover:underline font-medium cursor-pointer">Combobox</span></LinkTo>。對齊 GitHub Label picker / Linear Multi-assignee / Notion Multi-select idiom。</p>
+          <p>多選 + 大量選項需搜尋 + 可創新 tag → <LinkTo kind="Design System/Components/Combobox/展示" name="四模式"><span className="text-primary hover:underline font-medium cursor-pointer">Combobox</span></LinkTo>。對齊 GitHub Label picker / Linear Multi-assignee / Notion Multi-select idiom。</p>
           <ul>
             <li>典型場景:Tag picker / Multi-assignee / Filter chips multi-value</li>
             <li>單行模式自動接 OverflowIndicator(`+N`)避免 tag wrap</li>
@@ -90,7 +90,7 @@ export const CompositionRules: Story = {
 
       <Section title="Pattern 3 — PeoplePicker(人員選擇 + Avatar 渲染)">
         <div className="prose prose-sm max-w-prose">
-          <p>選人員(單 / 多)+ 渲染 avatar + 名稱 + role → <LinkTo kind="Design System/Components/PeoplePicker/展示" name="預設"><span className="text-primary hover:underline font-medium cursor-pointer">PeoplePicker</span></LinkTo>。對齊 Slack mention / Linear assignee / Asana people-search idiom。</p>
+          <p>選人員(單 / 多)+ 渲染 avatar + 名稱 + role → <LinkTo kind="Design System/Components/PeoplePicker/展示" name="單人"><span className="text-primary hover:underline font-medium cursor-pointer">PeoplePicker</span></LinkTo>。對齊 Slack mention / Linear assignee / Asana people-search idiom。</p>
           <ul>
             <li>典型場景:Task assignee / Document collaborator / Workspace member invite</li>
           </ul>

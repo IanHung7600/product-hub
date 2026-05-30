@@ -48,8 +48,8 @@ export const UsageGuidance: Story = {
             <li><LinkTo kind="Design System/Components/TreeView/展示" name="File Browser"><span className="text-primary hover:underline font-medium cursor-pointer">File Browser</span></LinkTo></li>
             <li><LinkTo kind="Design System/Components/TreeView/展示" name="Stepper"><span className="text-primary hover:underline font-medium cursor-pointer">Stepper</span></LinkTo></li>
             <li><LinkTo kind="Design System/Components/TreeView/展示" name="多選"><span className="text-primary hover:underline font-medium cursor-pointer">多選</span></LinkTo></li>
-            <li><LinkTo kind="Design System/Components/TreeView/展示" name="長 label"><span className="text-primary hover:underline font-medium cursor-pointer">長 label</span></LinkTo></li>
-            <li><LinkTo kind="Design System/Components/TreeView/展示" name="Drag & Drop"><span className="text-primary hover:underline font-medium cursor-pointer">Drag & Drop</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/TreeView/展示" name="長 標籤"><span className="text-primary hover:underline font-medium cursor-pointer">長 標籤</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/TreeView/展示" name="拖曳重排"><span className="text-primary hover:underline font-medium cursor-pointer">拖曳重排</span></LinkTo></li>
           </ul>
           <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見下方 vs 近親 段)。</p>
         </div>

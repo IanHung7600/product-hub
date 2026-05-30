@@ -71,19 +71,13 @@ export const UsageGuidance: Story = {
       <p>適合 DataTable 的真實業務場景(點擊跳轉「展示」頁範例):</p>
       <ul className="space-y-1">
         <li>
-          <LinkTo kind="Design System/Components/DataTable/展示" name="Column Types"><span className="text-primary hover:underline font-medium cursor-pointer">Column Types</span></LinkTo>
-        </li>
-        <li>
           <LinkTo kind="Design System/Components/DataTable/展示" name="數字靠右對齊"><span className="text-primary hover:underline font-medium cursor-pointer">數字靠右對齊</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/DataTable/展示" name="行高模式"><span className="text-primary hover:underline font-medium cursor-pointer">行高模式</span></LinkTo>
+          <LinkTo kind="Design System/Components/DataTable/展示" name="自動行高"><span className="text-primary hover:underline font-medium cursor-pointer">自動行高</span></LinkTo>
         </li>
         <li>
           <LinkTo kind="Design System/Components/DataTable/展示" name="空狀態"><span className="text-primary hover:underline font-medium cursor-pointer">空狀態</span></LinkTo>
-        </li>
-        <li>
-          <LinkTo kind="Design System/Components/DataTable/展示" name="外框"><span className="text-primary hover:underline font-medium cursor-pointer">外框</span></LinkTo>
         </li>
       </ul>
       <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>

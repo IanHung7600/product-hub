@@ -67,7 +67,7 @@ export const UsageGuidance: Story = {
           <LinkTo kind="Design System/Components/DropdownMenu/展示" name="子選單"><span className="text-primary hover:underline font-medium cursor-pointer">子選單</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/DropdownMenu/展示" name="Checkbox"><span className="text-primary hover:underline font-medium cursor-pointer">Checkbox</span></LinkTo>
+          <LinkTo kind="Design System/Components/DropdownMenu/展示" name="勾選項"><span className="text-primary hover:underline font-medium cursor-pointer">勾選項</span></LinkTo>
         </li>
         <li>
           <LinkTo kind="Design System/Components/DropdownMenu/展示" name="單選"><span className="text-primary hover:underline font-medium cursor-pointer">單選</span></LinkTo>

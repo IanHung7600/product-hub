@@ -1,5 +1,6 @@
 ---
 pattern: app-shell
+family: composite  # 組合 sidebar+header+main+aside,非 Family 1-4 row element
 scope: web service page-level layout primitive (sidebar + header + main + aside composition)
 benchmark:
   - Mantine AppShell: https://mantine.dev/core/app-shell/ — 6-slot (Header/Navbar/Aside/Footer/Main) + layout="default|alt" mode

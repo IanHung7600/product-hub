@@ -88,7 +88,7 @@ export const UsageGuidance: Story = {
           <LinkTo kind="Design System/Components/Steps/展示" name="Multiple 展開模式"><span className="text-primary hover:underline font-medium cursor-pointer">Multiple 展開模式</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/Steps/展示" name="Column rhythm 驗證"><span className="text-primary hover:underline font-medium cursor-pointer">Column rhythm 驗證</span></LinkTo>
+          <LinkTo kind="Design System/Components/Steps/展示" name="欄 節奏 驗證"><span className="text-primary hover:underline font-medium cursor-pointer">欄 節奏 驗證</span></LinkTo>
         </li>
       </ul>
       <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>

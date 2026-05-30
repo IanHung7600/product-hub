@@ -50,9 +50,29 @@ if (!fs.existsSync(INDEX_FILE)) {
 }
 
 const index = JSON.parse(fs.readFileSync(INDEX_FILE, 'utf-8'))
+if (!index.entries || typeof index.entries !== 'object') {
+  console.error('❌ storybook-static/index.json has no `entries` map — manifest format changed. Aborting (refuse false-green).')
+  process.exit(1)
+}
 let stories = Object.values(index.entries).filter(e => e.type === 'story')
+
+// Empty-set guard BEFORE any TAG/LIMIT narrowing — 0 stories from the raw manifest
+// means the build is empty or the manifest format changed → scanning 0 stories would
+// vacuously "pass" (false-green). Refuse it.
+if (stories.length === 0) {
+  console.error('❌ 0 stories — manifest empty/format changed (no `type === "story"` entries). Refusing false-green pass.')
+  process.exit(1)
+}
+
 if (TAG) stories = stories.filter(s => s.id.toLowerCase().includes(TAG.toLowerCase()))
 if (LIMIT > 0) stories = stories.slice(0, LIMIT)
+
+// Second empty-set guard AFTER narrowing — a --tag that matches nothing would also
+// scan 0 stories and vacuously pass. Dev spot-checks must not silently no-op.
+if (stories.length === 0) {
+  console.error(`❌ 0 stories after filtering (--tag=${TAG ?? ''} --story=${LIMIT}) — nothing to scan. Refusing false-green pass.`)
+  process.exit(1)
+}
 
 console.log(`▶ a11y audit:running axe-core against ${stories.length} stories`)
 

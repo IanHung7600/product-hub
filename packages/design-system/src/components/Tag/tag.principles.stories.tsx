@@ -47,7 +47,7 @@ export const UsageGuidance: Story = {
         <div className="prose prose-sm max-w-prose mb-8">
           <p>適合 Tag 的真實業務場景(點擊跳轉「展示」頁範例):</p>
           <ul className="space-y-1">
-            <li><LinkTo kind="Design System/Components/Tag/展示" name="Avatar"><span className="text-primary hover:underline font-medium cursor-pointer">Avatar</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Tag/展示" name="頭像"><span className="text-primary hover:underline font-medium cursor-pointer">頭像</span></LinkTo></li>
             <li><LinkTo kind="Design System/Components/Tag/展示" name="可移除"><span className="text-primary hover:underline font-medium cursor-pointer">可移除</span></LinkTo></li>
             <li><LinkTo kind="Design System/Components/Tag/展示" name="截斷 + Tooltip"><span className="text-primary hover:underline font-medium cursor-pointer">截斷 + Tooltip</span></LinkTo></li>
           </ul>

@@ -26,7 +26,9 @@ const deriveName = (exp) =>
 const titleToNames = new Map()
 for (const rel of files) {
   const c = fs.readFileSync(rel, 'utf8')
-  const titleM = c.match(/title:\s*['"]([^'"]+)['"]/)
+  // meta.title 只認 namespace-prefixed canonical(story-rules.md 2-namespace SSOT);
+  // 避免被 data-object `title:` 欄位(eg. `title: '電子郵件通知'`)誤當 meta title。
+  const titleM = c.match(/title:\s*['"]((?:Design System|Apps)\/[^'"]+)['"]/)
   if (!titleM) continue
   const title = titleM[1]
   if (!titleToNames.has(title)) titleToNames.set(title, new Set())

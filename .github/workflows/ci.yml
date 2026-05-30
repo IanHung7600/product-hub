@@ -165,6 +165,9 @@ jobs:
       - name: Story LinkTo target SSOT(principles LinkTo name 必命中 showcase story name — 2026-05-30 治系統性死連結)
         run: node scripts/check-story-linkto-targets.mjs --check 2>&1 | tail -40
 
+      - name: Layout Family frontmatter(Dim 16 deterministic backstop — 2026-05-30 從誤分 PURE-JUDGMENT 修正)
+        run: node scripts/audit-layout-family-frontmatter.mjs --check 2>&1 | tail -20
+
       - name: Figma Make artifacts(SSOT propagation check)
         run: node scripts/gen-figma-make-artifacts.mjs --check
 

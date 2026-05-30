@@ -80,7 +80,7 @@ export const UsageGuidance: Story = {
                 <LinkTo kind="Design System/Internal/DateGrid/展示" name="Range — 分析時段 / 訂單範圍"><span className="text-primary hover:underline font-medium cursor-pointer">Range — 分析時段 / 訂單範圍</span></LinkTo>
               </li>
               <li>
-                <LinkTo kind="Design System/Internal/DateGrid/展示" name="Inline — Dashboard 小卡"><span className="text-primary hover:underline font-medium cursor-pointer">Inline — Dashboard 小卡</span></LinkTo>
+                <LinkTo kind="Design System/Internal/DateGrid/展示" name="行內 — 儀表板小卡"><span className="text-primary hover:underline font-medium cursor-pointer">行內 — 儀表板小卡</span></LinkTo>
               </li>
             </ul>
             <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見下方「vs 近親」)。</p>

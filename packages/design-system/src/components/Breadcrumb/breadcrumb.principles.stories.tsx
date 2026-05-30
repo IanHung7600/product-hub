@@ -64,7 +64,7 @@ export const UsageGuidance: Story = {
       <p>適合 Breadcrumb 的真實業務場景(點擊跳轉「展示」頁範例):</p>
       <ul className="space-y-1">
         <li>
-          <LinkTo kind="Design System/Components/Breadcrumb/展示" name="Interactive ellipsis"><span className="text-primary hover:underline font-medium cursor-pointer">Interactive ellipsis</span></LinkTo>
+          <LinkTo kind="Design System/Components/Breadcrumb/展示" name="可互動省略"><span className="text-primary hover:underline font-medium cursor-pointer">可互動省略</span></LinkTo>
         </li>
         <li>
           <LinkTo kind="Design System/Components/Breadcrumb/展示" name="Deep"><span className="text-primary hover:underline font-medium cursor-pointer">Deep</span></LinkTo>
@@ -73,7 +73,7 @@ export const UsageGuidance: Story = {
           <LinkTo kind="Design System/Components/Breadcrumb/展示" name="Two Levels"><span className="text-primary hover:underline font-medium cursor-pointer">Two Levels</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/Breadcrumb/展示" name="asChild prop"><span className="text-primary hover:underline font-medium cursor-pointer">asChild prop</span></LinkTo>
+          <LinkTo kind="Design System/Components/Breadcrumb/展示" name="整合 React Router / Next.js Link"><span className="text-primary hover:underline font-medium cursor-pointer">整合 React Router / Next.js Link</span></LinkTo>
         </li>
       </ul>
       <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>

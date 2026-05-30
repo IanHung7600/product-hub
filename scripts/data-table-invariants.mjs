@@ -82,7 +82,11 @@ for (const t of cellTypes) {
     const r = cell.getBoundingClientRect()
     return { width: r.width, height: r.height, left: r.left, top: r.top }
   }, t)
-  if (!display) { record('I1', t.label, false, 'cell not found'); continue }
+  if (!display) {
+    // I1 真 assertion 路徑未進入 → 不可假綠,record fail
+    record('I1', `${t.label} display↔edit cell width 一致`, false, 'cell not found(I1 真測路徑未進入)')
+    continue
+  }
 
   await page.mouse.click(display.left + display.width / 2, display.top + 20)
   await page.waitForTimeout(500)
@@ -101,6 +105,8 @@ for (const t of cellTypes) {
   await page.waitForTimeout(300)
 
   if (!edit) {
+    // I1 真 assertion 路徑未進入(沒進 edit mode)→ 不可假綠,record fail
+    record('I1', `${t.label} display↔edit cell width 一致`, false, 'no edit field — I1 真測路徑未進入(may be intentional pattern e.g. multiPerson Popover)')
     record('I1-4', t.label, false, 'no edit field(may be intentional pattern e.g. multiPerson Popover)')
     continue
   }
@@ -108,6 +114,10 @@ for (const t of cellTypes) {
   const widthDelta = Math.abs(display.width - edit.cellWidth)
   const heightDelta = Math.abs(display.height - edit.cellHeight)
   const fieldVsCell = Math.abs(edit.cellHeight - edit.fieldHeight)
+
+  // I1:display↔edit cell 寬度一致(cell width = column width,跟 padding/state/mode 無關)
+  // 真量 display cell rect.width vs edit cell rect.width,差異 > 1px → fail
+  record('I1', `${t.label} display↔edit cell 寬度一致(>1px = fail)`, widthDelta <= 1, `display ${display.width.toFixed(2)} vs edit ${edit.cellWidth.toFixed(2)}, delta ${widthDelta.toFixed(2)}`)
 
   record('I2', `${t.label} display↔edit width 0 delta`, widthDelta < 0.5, `delta ${widthDelta.toFixed(2)}`)
   record('I3', `${t.label} display↔edit height 0 delta`, heightDelta < 0.5, `delta ${heightDelta.toFixed(2)}`)

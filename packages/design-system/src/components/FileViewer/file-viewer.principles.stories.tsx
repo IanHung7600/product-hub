@@ -109,16 +109,16 @@ export const UsageGuidance: Story = {
             <LinkTo kind="Design System/Components/FileViewer/展示" name="Jira — 附件多圖檢視"><span className="text-primary hover:underline font-medium cursor-pointer">Jira — 附件多圖檢視</span></LinkTo>
           </li>
           <li>
-            <LinkTo kind="Design System/Components/FileViewer/展示" name="Notion — 頁內配圖 gallery"><span className="text-primary hover:underline font-medium cursor-pointer">Notion — 頁內配圖 gallery</span></LinkTo>
+            <LinkTo kind="Design System/Components/FileViewer/展示" name="Notion — 頁內配圖 相簿"><span className="text-primary hover:underline font-medium cursor-pointer">Notion — 頁內配圖 相簿</span></LinkTo>
           </li>
           <li>
-            <LinkTo kind="Design System/Components/FileViewer/展示" name="Figma — 單檔 zoom focus"><span className="text-primary hover:underline font-medium cursor-pointer">Figma — 單檔 zoom focus</span></LinkTo>
+            <LinkTo kind="Design System/Components/FileViewer/展示" name="Figma — 單檔 縮放 聚焦"><span className="text-primary hover:underline font-medium cursor-pointer">Figma — 單檔 縮放 聚焦</span></LinkTo>
           </li>
           <li>
             <LinkTo kind="Design System/Components/FileViewer/展示" name="Gmail — 多附件預覽"><span className="text-primary hover:underline font-medium cursor-pointer">Gmail — 多附件預覽</span></LinkTo>
           </li>
           <li>
-            <LinkTo kind="Design System/Components/FileViewer/展示" name="活動相集 — filmstrip on"><span className="text-primary hover:underline font-medium cursor-pointer">活動相集 — filmstrip on</span></LinkTo>
+            <LinkTo kind="Design System/Components/FileViewer/展示" name="活動相集 — 縮圖膠卷 開"><span className="text-primary hover:underline font-medium cursor-pointer">活動相集 — 縮圖膠卷 開</span></LinkTo>
           </li>
         </ul>
         <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>

@@ -24,16 +24,16 @@ export const UsageGuidance: Story = {
       <p>適合 Menu 的真實業務場景(點擊跳轉「展示」頁範例):</p>
       <ul className="space-y-1">
         <li>
-          <LinkTo kind="Design System/Internal/Menu/展示" name="Start Icon"><span className="text-primary hover:underline font-medium cursor-pointer">Start Icon</span></LinkTo>
+          <LinkTo kind="Design System/Internal/Menu/展示" name="基本"><span className="text-primary hover:underline font-medium cursor-pointer">基本</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Internal/Menu/展示" name="Start Icon + Description"><span className="text-primary hover:underline font-medium cursor-pointer">Start Icon + Description</span></LinkTo>
+          <LinkTo kind="Design System/Internal/Menu/展示" name="前置圖示 + 說明文字"><span className="text-primary hover:underline font-medium cursor-pointer">前置圖示 + 說明文字</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Internal/Menu/展示" name="Avatar"><span className="text-primary hover:underline font-medium cursor-pointer">Avatar</span></LinkTo>
+          <LinkTo kind="Design System/Internal/Menu/展示" name="頭像"><span className="text-primary hover:underline font-medium cursor-pointer">頭像</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Internal/Menu/展示" name="Avatar + description"><span className="text-primary hover:underline font-medium cursor-pointer">Avatar + description</span></LinkTo>
+          <LinkTo kind="Design System/Internal/Menu/展示" name="頭像 + 說明文字"><span className="text-primary hover:underline font-medium cursor-pointer">頭像 + 說明文字</span></LinkTo>
         </li>
         <li>
           <LinkTo kind="Design System/Internal/Menu/展示" name="多選"><span className="text-primary hover:underline font-medium cursor-pointer">多選</span></LinkTo>
@@ -65,10 +65,10 @@ export const CompositionRules: Story = {
         <p>MenuItem 是 Family 1 layout primitive,由三類 consumer 包覆使用,**不直接放在 app code**:</p>
 
         <h4>Pattern 1 — DropdownMenu + MenuItem(action menu)</h4>
-        <p>使用者點擊觸發某個 action(複製 / 刪除 / 重新命名)→ <LinkTo kind="Design System/Components/DropdownMenu/展示" name="預設"><span className="text-primary hover:underline font-medium cursor-pointer">DropdownMenu</span></LinkTo>(Radix 控制 open / close + keyboard nav,MenuItem 提供 row layout)。</p>
+        <p>使用者點擊觸發某個 action(複製 / 刪除 / 重新命名)→ <LinkTo kind="Design System/Components/DropdownMenu/展示" name="基本"><span className="text-primary hover:underline font-medium cursor-pointer">DropdownMenu</span></LinkTo>(Radix 控制 open / close + keyboard nav,MenuItem 提供 row layout)。</p>
 
         <h4>Pattern 2 — SelectMenu(Popover + Command + MenuItem)— form value 選擇</h4>
-        <p>使用者選一個 / 多個值寫回 form → <LinkTo kind="Design System/Components/Select/展示" name="預設"><span className="text-primary hover:underline font-medium cursor-pointer">Select</span></LinkTo> / <LinkTo kind="Design System/Components/Combobox/展示" name="預設"><span className="text-primary hover:underline font-medium cursor-pointer">Combobox</span></LinkTo>(內部已組合 SelectMenu + cmdk + MenuItem)。</p>
+        <p>使用者選一個 / 多個值寫回 form → <LinkTo kind="Design System/Components/Select/展示" name="四模式"><span className="text-primary hover:underline font-medium cursor-pointer">Select</span></LinkTo> / <LinkTo kind="Design System/Components/Combobox/展示" name="四模式"><span className="text-primary hover:underline font-medium cursor-pointer">Combobox</span></LinkTo>(內部已組合 SelectMenu + cmdk + MenuItem)。</p>
 
         <h4>Pattern 3 — ContextMenu + MenuItem(右鍵選單,未來)</h4>
         <p>右鍵觸發 contextual action → 預留消費者(Radix ContextMenu + MenuItem 同 layout primitive)。</p>

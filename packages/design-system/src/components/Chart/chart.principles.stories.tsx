@@ -149,16 +149,16 @@ export const UsageGuidance: Story = {
       <p>適合 Chart 的真實業務場景(點擊跳轉「展示」頁範例):</p>
       <ul className="space-y-1">
         <li>
-          <LinkTo kind="Design System/Components/Chart/展示" name="Bar Chart — 月營收"><span className="text-primary hover:underline font-medium cursor-pointer">Bar Chart — 月營收</span></LinkTo>
+          <LinkTo kind="Design System/Components/Chart/展示" name="長條 Chart — 月營收"><span className="text-primary hover:underline font-medium cursor-pointer">長條 Chart — 月營收</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/Chart/展示" name="Line Chart — 伺服器回應時間"><span className="text-primary hover:underline font-medium cursor-pointer">Line Chart — 伺服器回應時間</span></LinkTo>
+          <LinkTo kind="Design System/Components/Chart/展示" name="折線 Chart — 伺服器回應時間"><span className="text-primary hover:underline font-medium cursor-pointer">折線 Chart — 伺服器回應時間</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/Chart/展示" name="Donut Chart — 流量來源分布"><span className="text-primary hover:underline font-medium cursor-pointer">Donut Chart — 流量來源分布</span></LinkTo>
+          <LinkTo kind="Design System/Components/Chart/展示" name="環圈 Chart — 流量來源分布"><span className="text-primary hover:underline font-medium cursor-pointer">環圈 Chart — 流量來源分布</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/Chart/展示" name="Stacked Area — 部門支出"><span className="text-primary hover:underline font-medium cursor-pointer">Stacked Area — 部門支出</span></LinkTo>
+          <LinkTo kind="Design System/Components/Chart/展示" name="堆疊 面積 — 部門支出"><span className="text-primary hover:underline font-medium cursor-pointer">堆疊 面積 — 部門支出</span></LinkTo>
         </li>
       </ul>
       <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>

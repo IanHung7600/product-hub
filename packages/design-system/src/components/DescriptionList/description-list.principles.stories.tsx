@@ -53,16 +53,16 @@ export const UsageGuidance: Story = {
       <p>適合 DescriptionList 的真實業務場景(點擊跳轉「展示」頁範例):</p>
       <ul className="space-y-1">
         <li>
-          <LinkTo kind="Design System/Components/DescriptionList/展示" name="User profile"><span className="text-primary hover:underline font-medium cursor-pointer">User profile</span></LinkTo>
+          <LinkTo kind="Design System/Components/DescriptionList/展示" name="使用者個資"><span className="text-primary hover:underline font-medium cursor-pointer">使用者個資</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/DescriptionList/展示" name="Product spec"><span className="text-primary hover:underline font-medium cursor-pointer">Product spec</span></LinkTo>
+          <LinkTo kind="Design System/Components/DescriptionList/展示" name="產品規格"><span className="text-primary hover:underline font-medium cursor-pointer">產品規格</span></LinkTo>
         </li>
         <li>
           <LinkTo kind="Design System/Components/DescriptionList/展示" name="訂單明細"><span className="text-primary hover:underline font-medium cursor-pointer">訂單明細</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/DescriptionList/展示" name="Detail panel"><span className="text-primary hover:underline font-medium cursor-pointer">Detail panel</span></LinkTo>
+          <LinkTo kind="Design System/Components/DescriptionList/展示" name="詳情面板"><span className="text-primary hover:underline font-medium cursor-pointer">詳情面板</span></LinkTo>
         </li>
         <li>
           <LinkTo kind="Design System/Components/DescriptionList/展示" name="Horizontal"><span className="text-primary hover:underline font-medium cursor-pointer">Horizontal</span></LinkTo>

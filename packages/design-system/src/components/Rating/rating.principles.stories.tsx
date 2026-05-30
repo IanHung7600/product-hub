@@ -61,7 +61,7 @@ export const UsageGuidance: Story = {
           <LinkTo kind="Design System/Components/Rating/展示" name="商品列表平均分"><span className="text-primary hover:underline font-medium cursor-pointer">商品列表平均分</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/Rating/展示" name="送出評分 Flow"><span className="text-primary hover:underline font-medium cursor-pointer">送出評分 Flow</span></LinkTo>
+          <LinkTo kind="Design System/Components/Rating/展示" name="送出評分流程"><span className="text-primary hover:underline font-medium cursor-pointer">送出評分流程</span></LinkTo>
         </li>
         <li>
           <LinkTo kind="Design System/Components/Rating/展示" name="包在 Field 內"><span className="text-primary hover:underline font-medium cursor-pointer">包在 Field 內</span></LinkTo>

@@ -27,7 +27,7 @@ export const UsageGuidance: Story = {
           <LinkTo kind="Design System/Internal/OverflowIndicator/展示" name="Combobox 標籤溢出"><span className="text-primary hover:underline font-medium cursor-pointer">Combobox 標籤溢出</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Internal/OverflowIndicator/展示" name="人員頭像 stack +N"><span className="text-primary hover:underline font-medium cursor-pointer">人員頭像 stack +N</span></LinkTo>
+          <LinkTo kind="Design System/Internal/OverflowIndicator/展示" name="人員頭像 疊合 +N"><span className="text-primary hover:underline font-medium cursor-pointer">人員頭像 疊合 +N</span></LinkTo>
         </li>
         <li>
           <LinkTo kind="Design System/Internal/OverflowIndicator/展示" name="形狀對照"><span className="text-primary hover:underline font-medium cursor-pointer">形狀對照</span></LinkTo>
@@ -65,7 +65,7 @@ export const CompositionRules: Story = {
         <p>OverflowIndicator 是 internal `+N` pill primitive,由三類 consumer 在「visible 子集 + 隱藏剩餘」場景消費,**不直接放在 app code**:</p>
 
         <h4>Pattern 1 — Combobox tag overflow(單行模式)</h4>
-        <p>多選 tag 過多無法單行顯示 → <LinkTo kind="Design System/Components/Combobox/展示" name="預設"><span className="text-primary hover:underline font-medium cursor-pointer">Combobox</span></LinkTo> 內部消費 OverflowIndicator;hover `+N` 展開完整清單。對齊 GitHub multi-label / Linear multi-assignee idiom。</p>
+        <p>多選 tag 過多無法單行顯示 → <LinkTo kind="Design System/Components/Combobox/展示" name="四模式"><span className="text-primary hover:underline font-medium cursor-pointer">Combobox</span></LinkTo> 內部消費 OverflowIndicator;hover `+N` 展開完整清單。對齊 GitHub multi-label / Linear multi-assignee idiom。</p>
 
         <h4>Pattern 2 — Avatar.Group +N(人員 stack)</h4>
         <p>Avatar 群組顯示前 N 人 + 剩餘 `+M` → Avatar.Group 內部消費 OverflowIndicator(形狀對齊 Avatar 圓形)。對齊 Slack workspace member preview / Linear team members 慣例。</p>
