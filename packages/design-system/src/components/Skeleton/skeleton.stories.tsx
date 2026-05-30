@@ -4,7 +4,7 @@ import { Skeleton } from './skeleton'
 
 /**
  * Skeleton 展示——在資料載入完成前，用灰色色塊模擬真實內容的形狀與排版。
- * 設計規則詳見 `skeleton.spec.md`；完整技術規格見設計規格頁。
+ * 何時用、何時改用近親元件，見「設計原則」頁；各種形狀與屬性，見「設計規格」頁。
  *
  * 展示範例均對標世界級產品的真實載入情境（Linear task detail、Stripe dashboard、
  * Notion sidebar、GitHub PR list），讓讀者能直接類推到自己產品的佈局。

@@ -103,7 +103,7 @@ export const Overview: Story = {
               <tr>
                 <Td mono>Trigger(tag)</Td>
                 <Td>Tag 組尾端 +N</Td>
-                <Td mono>tagVariants{`{ variant: 'neutral' }`}</Td>
+                <Td mono>tagVariants{`{ color: 'neutral', size }`}</Td>
               </tr>
               <tr>
                 <Td mono>HoverCardContent</Td>
@@ -312,11 +312,11 @@ function OverflowInspector() {
               </tr>
               <tr>
                 <Td mono>openDelay</Td>
-                <Td mono>200ms</Td>
+                <Td mono>700ms（HOVER_DELAY_RICH_MS）</Td>
               </tr>
               <tr>
                 <Td mono>closeDelay</Td>
-                <Td mono>300ms</Td>
+                <Td mono>200ms（HOVER_DELAY_CLOSE_MS）</Td>
               </tr>
             </tbody>
           </table>
@@ -529,7 +529,7 @@ export const Accessibility = {
   render: () => (
     <div className="max-w-3xl text-body text-fg-secondary">
       <h3 className="text-h5 text-foreground mb-2">無障礙設計</h3>
-      <p className="whitespace-pre-line">{"詳 `overflow-indicator.spec.md` 「A11y 預設」段。摘要:\n\n  ARIA / Pattern  :對齊 [W3C ARIA Authoring Practices Guide](https://www.w3.org/WAI/ARIA/apg/patterns/) 對應 pattern。\n\n  Keyboard 行為  :\n\n- Tab — focus indicator\n- Enter — show overflow menu\n\n  Focus  :focus-visible ring 對齊 DS 設計準則( outline: 2px solid var(--ring) );focus management 由元件 own。\n\n  驗證  :Storybook a11y addon panel 應 0 critical violation;鍵盤完整可操作(無需滑鼠)。WCAG AA contrast ≥ 4.5:1(text)/ 3:1(UI)。"}</p>
+      <p className="whitespace-pre-line">{"摘要:\n\n  ARIA / Pattern  :對齊 [W3C ARIA Authoring Practices Guide](https://www.w3.org/WAI/ARIA/apg/patterns/) 對應 pattern。\n\n  互動行為  :\n\n  +N trigger 是 passive 計數 span（cursor-default，無 tabIndex / role / Enter handler）。HoverCard 在 hover 或 trigger 取得 focus 時自動展開，沒有「按 Enter 開選單」的鍵盤指令，也沒有 click 切換。\n\n  Focus  :trigger 本身不是 tab stop；HoverCard 內展開的可互動內容（人員 tag / NameCard）由各自內容元件負責 focus 管理。\n\n  驗證  :Storybook a11y addon panel 應 0 critical violation；HoverCard 內容透過 hover 或 focus 自動顯示（非鍵盤指令觸發）。WCAG AA contrast ≥ 4.5:1（text）/ 3:1（UI）。"}</p>
     </div>
   ),
 }

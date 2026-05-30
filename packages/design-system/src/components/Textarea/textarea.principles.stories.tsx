@@ -124,14 +124,14 @@ export const ResizeRule: Story = {
 // ── Readonly 保留邊框 ───────────────────────────────────────────────────
 
 export const ReadonlyRule: Story = {
-  name: 'Readonly 保留邊框（不同於 Input）',
+  name: 'Readonly 用底色標示閱讀區（不同於 Input）',
   render: () => (
     <div>
       <Rule
-        title="Textarea readonly 保留邊框 + padding，只改底色"
-        note="多行內容需要明確的閱讀區域邊界——移除邊框後多行文字會跟周圍純文字區融合,讀者無法辨識「這是一個 field 的內容」還是「文章一部分」。Input readonly 可以移除邊框是因為單行,但 Textarea 的多行本質需要閱讀區訊號"
+        title="Textarea readonly 保留 padding，用底色標示閱讀區"
+        note="多行內容需要明確的閱讀區域邊界——多行文字若直接攤平會跟周圍純文字區融合,讀者無法辨識「這是一個 field 的內容」還是「文章一部分」。所以 readonly 時填上 bg-disabled 底色並保留內距,圈出一塊可辨識的閱讀區。Input readonly 因為是單行,可以做得更緊湊"
       >
-        <Textarea mode="readonly" defaultValue={'這是已送出的留言,現在呈現在 readonly 狀態。\n\n多行內容需要明確的閱讀區域邊界,所以 readonly 時保留邊框 + padding,只改底色為 bg-disabled。'} rows={4} />
+        <Textarea mode="readonly" defaultValue={'這是已送出的留言,現在呈現在 readonly 狀態。\n\n多行內容需要明確的閱讀區域邊界,所以 readonly 時保留內距並填上 bg-disabled 底色,圈出一塊閱讀區。'} rows={4} />
         <Label>↑ 對照 Slack 已編輯留言 / Notion 嵌入文字塊的 readonly 呈現</Label>
       </Rule>
 

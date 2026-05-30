@@ -88,7 +88,7 @@ SegmentedControl item 的**內部結構、padding、字體、icon size 全部鏡
 ## 內部結構
 
 ```
-SegmentedControl (root, role="radiogroup")
+SegmentedControl (root, role="group")
   ├─ Item  [startIcon?] [label?] [suffix: badge?]
   ├─ Item  ...
   └─ Item  ...
@@ -211,7 +211,8 @@ SegmentedControl 必須能塞進 `Field` 容器（就像 `Input` / `Button` / `S
 
 ### 選中 / 未選
 
-- **選中**：`bg-surface text-primary border-primary z-10`
+- **選中**：`bg-surface text-primary-hover border-primary-hover z-10`
+  - 文字與邊框都用 `--primary-hover`（底色維持 `bg-surface` 不變），這是 pill 風格元件（Chip / SegmentedControl）共用的選中規則
   - `z-10` 讓 selected item 的邊框浮在相鄰 item 之上，避免被重疊的 border 切掉
 - **未選**：`bg-surface text-fg-secondary border-border`
   - hover：`text-foreground`（不改 bg，避免 hover 狀態與 selected 搶戲）
@@ -280,7 +281,7 @@ Items 之間 `-ml-px`（除了第一個）讓相鄰 border 重疊、視覺上只
 - ←/→ — 切 segment
 - Enter / Space — 選擇
 
-**Focus**:Radix primitive 自管 focus trap / restoration / visible ring(`outline: 2px solid var(--ring)` per design-system focus-visible canonical)。
+**Focus**:Radix primitive 採 roving tabindex（整組共用單一 tab 停留點，方向鍵在 item 間移動），非 Dialog 式 focus trap / restoration。Focus ring 對齊 Button focus-visible canonical（`outline: 2px solid var(--ring)`）。
 
 **驗證**:Storybook a11y addon panel 應 0 critical violation;鍵盤完整可操作(無需滑鼠)。WCAG AA contrast ≥ 4.5:1(text)/ 3:1(UI)。
 

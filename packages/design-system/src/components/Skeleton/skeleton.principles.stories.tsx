@@ -53,7 +53,7 @@ export const UsageGuidance: Story = {
             <li><LinkTo kind="Design System/Components/Skeleton/展示" name="文件載入"><span className="text-primary hover:underline font-medium cursor-pointer">文件載入</span></LinkTo></li>
             <li><LinkTo kind="Design System/Components/Skeleton/展示" name="卡片網格載入"><span className="text-primary hover:underline font-medium cursor-pointer">卡片網格載入</span></LinkTo></li>
           </ul>
-          <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見下方 vs 近親 段)。</p>
+          <p className="text-fg-muted mt-3">判斷不確定時:先確認資料回來後的佈局是否已知;若不符合載入佔位的情境,改用近親元件(見下方「vs 近親元件」段)。</p>
         </div>
       </Section>
 

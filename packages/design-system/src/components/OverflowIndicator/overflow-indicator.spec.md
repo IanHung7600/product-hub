@@ -109,12 +109,9 @@ OverflowIndicator 是 **composite**(HoverCard trigger + tag-styled `+N` span + H
 
 **ARIA / Pattern**:對齊 [W3C ARIA Authoring Practices Guide](https://www.w3.org/WAI/ARIA/apg/patterns/) 對應 pattern。
 
-**Keyboard 行為**:
+**互動行為**:trigger 是 passive 的 `+N` 計數 span(`cursor-default`,無 tabIndex / role / Enter handler),HoverCard 在 hover 或 trigger 取得 focus 時自動展開——無「按 Enter 開選單」的鍵盤指令,也沒有 click 切換。
 
-- Tab — focus indicator
-- Enter — show overflow menu
+**Focus**:trigger 本身不是 tab stop;HoverCard 內展開的可互動內容(如人員 tag / NameCard)由各自的內容元件負責 focus 管理。
 
-**Focus**:focus-visible ring 對齊 DS canonical(`outline: 2px solid var(--ring)`);focus management 由元件 own。
-
-**驗證**:Storybook a11y addon panel 應 0 critical violation;鍵盤完整可操作(無需滑鼠)。WCAG AA contrast ≥ 4.5:1(text)/ 3:1(UI)。
+**驗證**:Storybook a11y addon panel 應 0 critical violation;HoverCard 內容透過 hover 或 focus 自動顯示(非鍵盤指令觸發)。WCAG AA contrast ≥ 4.5:1(text)/ 3:1(UI)。
 

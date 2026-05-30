@@ -54,7 +54,7 @@ export const Overview = {
               <div className="inline-flex items-center border-2 border-dashed border-primary/30 rounded-md p-3">
                 <Rating value={0} max={1} readOnly size="lg" aria-label="empty" />
               </div>
-              <span className="text-[10px] text-fg-muted font-mono">fill = var(--color-neutral-4)</span>
+              <span className="text-[10px] text-fg-muted font-mono">fill = var(--divider)</span>
             </div>
             <div className="flex flex-col gap-2 items-start">
               <span className="text-[11px] text-fg-muted font-medium">單顆星 — half (precision=half)</span>
@@ -93,7 +93,7 @@ export const Overview = {
               ['defaultValue', 'number', '0', 'uncontrolled 預設值'],
               ['onChange', '(value: number) => void', '—', '評分改變 callback'],
               ['max', 'number', '5', '滿分星數（世界級慣例 = 5，不建議超過 7）'],
-              ['size', "'sm'|'md'|'lg'", "'md'", '尺寸,對應 star icon 20/24/24 px(對齊 inline Avatar,非 icon tier)'],
+              ['size', "'xs'|'sm'|'md'|'lg'", 'xs / md', '尺寸,star icon 20/20/24/24 px(對齊 inline Avatar,非 icon tier)。預設依情境:獨立展示 xs,Field 內跟隨 Field md'],
               ['precision', "'full'|'half'", "'full'", '整星 / 半星'],
               ['readOnly', 'boolean', 'false', '唯讀展示（不響應 hover/click/鍵盤）'],
               ['disabled', 'boolean', 'false', '完全停用'],
@@ -203,7 +203,7 @@ const InspectorInner = () => {
               <span className="text-[10px] font-semibold text-fg-muted uppercase tracking-wider">Color</span>
             </div>
             <PropRow label="Filled"><TokenCell token="--warning" /></PropRow>
-            <PropRow label="Empty"><TokenCell token="--color-neutral-4" /></PropRow>
+            <PropRow label="Empty"><TokenCell token="--divider" /></PropRow>
             <PropRow label="Focus ring"><TokenCell token="--ring" display="ring-2 ring-ring ring-offset-2" /></PropRow>
           </div>
 
@@ -223,7 +223,7 @@ const InspectorInner = () => {
             </div>
             <PropRow label="Role">{readOnly || disabled ? 'img' : 'slider'}</PropRow>
             <PropRow label="tabIndex">{readOnly || disabled ? '—' : '0'}</PropRow>
-            <PropRow label="Hover">{readOnly || disabled ? '—' : 'scale-110 · transition-transform'}</PropRow>
+            <PropRow label="Hover">{readOnly || disabled ? '—' : '填色預覽至游標所在星（不改尺寸）'}</PropRow>
             <PropRow label="Keyboard">{readOnly || disabled ? '—' : `Arrow ± ${precision === 'half' ? '0.5' : '1'}`}</PropRow>
           </div>
 
@@ -306,8 +306,8 @@ export const ColorMatrix = {
             <Td mono>hover (interactive)</Td>
             <Td><Rating defaultValue={3} size="md" aria-label="hover 範例" /></Td>
             <Td><TokenCell token="--warning" /></Td>
-            <Td><TokenCell token="--color-neutral-4" /></Td>
-            <Td className="text-[11px]">scale-110 · transition-transform</Td>
+            <Td><TokenCell token="--divider" /></Td>
+            <Td className="text-[11px]">填色預覽至游標所在星</Td>
           </tr>
           <tr>
             <Td mono>focus (keyboard)</Td>

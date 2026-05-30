@@ -135,7 +135,9 @@ Notice 是 **Toast / Alert 共用的 layout primitive**,刻意不擁有尺寸與
 **Keyboard 行為**:
 
 - Tab — focus dismiss button(若 dismissible)
-- Esc — dismiss(若 dismissible)
+- Enter / Space — 觸發 focus 中的 dismiss button(原生 button 行為,呼叫 `onDismiss`)
+
+Notice **不**自帶 Esc-to-dismiss 行為(`notice.tsx` 無 keydown handler);dismiss 純粹由 dismiss button 的 `onClick={onDismiss}` 觸發。若 consumer(Alert / Toast)需要 Esc 關閉,於 consumer 層自行掛 keydown。
 
 **Focus**:focus-visible ring 對齊 DS canonical(`outline: 2px solid var(--ring)`);focus management 由元件 own。
 

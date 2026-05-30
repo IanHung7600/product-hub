@@ -24,7 +24,7 @@ export const Overview: Story = {
     <div className="flex flex-col gap-10">
       <div>
         <H3>Anatomy</H3>
-        <Desc>SegmentedControl(role="radiogroup")+ N 個 Item(role="radio",N = 2-5)。Items 連體展示,基於 Radix ToggleGroup(type="single")。內部結構 mirror Button(gap-1、label px-1、suffix gap-1)。</Desc>
+        <Desc>SegmentedControl(role="group")+ N 個 Item(role="radio",N = 2-5)。Items 連體展示,基於 Radix ToggleGroup(type="single")。內部結構 mirror Button(gap-1、label px-1、badge gap-1)。</Desc>
         <div className="border border-border rounded-lg p-4 max-w-md">
           <SegmentedControl defaultValue="week">
             <SegmentedControlItem value="day">日</SegmentedControlItem>
@@ -64,7 +64,7 @@ export const Overview: Story = {
                 ['SegmentedControlItem', '', '', ''],
                 ['  value', 'string', '必填', '唯一識別碼'],
                 ['  startIcon', 'LucideIcon', '—', 'label 左側 icon'],
-                ['  suffix', 'ReactNode', '—', 'label 右側(badge 等)'],
+                ['  badge', 'ReactNode', '—', 'label 右側 badge(計數指示器,如「全部 12」)'],
                 ['  aria-label', 'string', '(iconOnly 必填)', 'iconOnly 時 TS 強制必填,自動渲染 tooltip'],
                 ['  disabled', 'boolean', 'false', '單獨 item 停用(不得是當前 value)'],
               ].map(([p, t, d, desc]) => (
@@ -132,7 +132,7 @@ export const SizeMatrix: Story = {
           <table className="text-caption border-collapse">
             <thead><tr><Th>Size</Th><Th>Token</Th><Th>Padding</Th><Th>字體</Th><Th>Icon</Th></tr></thead>
             <tbody>
-              <tr><Td mono>xs</Td><Td mono>--field-height-xs(固定)</Td><Td mono>px-2</Td><Td>text-caption</Td><Td mono>14</Td></tr>
+              <tr><Td mono>xs</Td><Td mono>--field-height-xs(固定)</Td><Td mono>px-2</Td><Td>text-caption</Td><Td mono>16</Td></tr>
               <tr><Td mono>sm</Td><Td mono>--field-height-sm</Td><Td mono>px-3</Td><Td>text-body</Td><Td mono>16</Td></tr>
               <tr><Td mono>md ★default</Td><Td mono>--field-height-md</Td><Td mono>px-3</Td><Td>text-body</Td><Td mono>16</Td></tr>
               <tr><Td mono>lg</Td><Td mono>--field-height-lg</Td><Td mono>px-3</Td><Td>text-body-lg</Td><Td mono>20</Td></tr>
@@ -168,7 +168,7 @@ export const StateBehavior: Story = {
             <tbody>
               <tr><Td>Unselected</Td><Td><TokenCell token="--surface" display="bg-surface" /></Td><Td><TokenCell token="--fg-secondary" display="text-fg-secondary" /></Td><Td><TokenCell token="--border" display="border-border" /></Td><Td>—</Td></tr>
               <tr><Td>Hover unselected</Td><Td><TokenCell token="--surface" display="bg-surface(不變)" /></Td><Td><TokenCell token="--foreground" display="text-foreground" /></Td><Td><TokenCell token="--border" display="border-border" /></Td><Td>—</Td></tr>
-              <tr><Td>Selected</Td><Td><TokenCell token="--surface" display="bg-surface" /></Td><Td><TokenCell token="--primary" display="text-primary" /></Td><Td><TokenCell token="--primary" display="border-primary" /></Td><Td mono>z-10(浮在相鄰 item border 上)</Td></tr>
+              <tr><Td>Selected</Td><Td><TokenCell token="--surface" display="bg-surface" /></Td><Td><TokenCell token="--primary-hover" display="text-primary-hover" /></Td><Td><TokenCell token="--primary-hover" display="border-primary-hover" /></Td><Td mono>z-10(浮在相鄰 item border 上)</Td></tr>
               <tr><Td>Disabled</Td><Td>灰化</Td><Td>灰化</Td><Td>—</Td><Td>—</Td></tr>
             </tbody>
           </table>
@@ -289,7 +289,7 @@ export const Accessibility = {
   render: () => (
     <div className="max-w-3xl text-body text-fg-secondary">
       <h3 className="text-h5 text-foreground mb-2">無障礙設計</h3>
-      <p className="whitespace-pre-line">{"詳 `segmented-control.spec.md` 「A11y 預設」段。摘要:\n\n  ARIA / Pattern  :繼承 Radix  toggle-group  primitive a11y 預設(role / aria-  / 鍵盤導覽)。詳 [Radix Accessibility docs](https://www.radix-ui.com/primitives/docs/components/toggle-group#accessibility)。\n\n  Keyboard 行為  :\n\n- Tab — 進入 group(focus 在第一個或選中項)\n- ←/→ — 切 segment\n- Enter / Space — 選擇\n\n  Focus  :Radix primitive 自管 focus trap / restoration / visible ring( outline: 2px solid var(--ring)  per design-system focus-visible 設計準則)。\n\n  驗證  :Storybook a11y addon panel 應 0 critical violation;鍵盤完整可操作(無需滑鼠)。WCAG AA contrast ≥ 4.5:1(text)/ 3:1(UI)。"}</p>
+      <p className="whitespace-pre-line">{"  ARIA / Pattern  :繼承 Radix toggle-group primitive 的無障礙預設——整組 role=\"group\",每個 item role=\"radio\"(type=\"single\" 互斥選一),鍵盤導覽由 primitive 處理。詳 [Radix Accessibility docs](https://www.radix-ui.com/primitives/docs/components/toggle-group#accessibility)。\n\n  Keyboard 行為  :\n\n- Tab — 進入整組(只有一個 tab 停留點,落在選中項;沒選就落第一項)\n- ←/→ — 在 item 之間移動 focus 並切換選取\n- Enter / Space — 選取目前 focus 的 item\n\n  Focus  :採 roving tabindex——整組共用一個 tab 停留點,方向鍵在 item 間移動;不是 Dialog 那種把焦點關在裡面的 focus trap。Focus ring 對齊 Button:2px var(--ring) 外框。\n\n  驗證  :Storybook a11y addon panel 應 0 critical violation;鍵盤完整可操作(無需滑鼠)。WCAG AA contrast ≥ 4.5:1(text)/ 3:1(UI)。"}</p>
     </div>
   ),
 }
