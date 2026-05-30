@@ -38,7 +38,7 @@ const COVERAGE = {
   7: { tier: 'PURE-JUDGMENT', mechanism: 'Spec 邊界案例 AI judgment;dispatch 必 DS-wide 全 spec.md 每 spec 過 7-dim 覆蓋' },
   8: { tier: 'PURE-JUDGMENT', mechanism: '7-維對標 AI judgment;dispatch 必 DS-wide 全 spec.md;每 spec 7-dim per row' },
   // Group C — Code conformance
-  9: { tier: 'HOOK-ENFORCED', mechanism: 'check_codex_collab_5step.sh + shadcn passthrough grep(forwardRef / displayName)— dispatch 全 components/*.tsx 全掃' },
+  9: { tier: 'PURE-JUDGMENT', mechanism: 'shadcn passthrough 完整度 — dispatch agent DS-wide 全掃 components/*.tsx 驗 forwardRef/displayName/asChild/...props/data-state 齊;無 write-time hook(2026-05-31 infra-audit 修:原誤標 HOOK-ENFORCED 且 cite 無關的 check_codex_collab_5step.sh(codex hook+soft-warn),實際是 audit-time grep)' },
   10: { tier: 'PURE-JUDGMENT', mechanism: 'a11y aria-label DS-wide AI judgment + scripts/audit-a11y.mjs(axe-core deterministic);dispatch 必 全 components grep aria-label coverage' },
   // Group D — Story layer
   11: { tier: 'HOOK-ENFORCED', mechanism: 'check_story_anatomy.sh + 3-layer file existence DS-wide grep' },
