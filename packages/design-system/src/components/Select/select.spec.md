@@ -19,11 +19,22 @@ benchmark:
 
 ## 定位
 
-Select 是**單選下拉的表單 control**——從 3+ 選項中挑恰好一個，選項收在 dropdown 內展開。底層走原生 `<select>`，透過 CSS 客製視覺。
+Select 是**單選下拉的表單 control**——從 3+ 選項中挑恰好一個，選項收在 dropdown 內展開。**裝置自適應雙路徑**:觸控裝置(`pointer: coarse`)走原生 `<select>` 取平台原生 picker;桌機走自建 combobox(`role="combobox"` + Radix Popover + Command 渲染 SelectMenu)。詳下方「實作:裝置自適應雙路徑」段。
 
 共用規則見 `field-controls.spec.md`。本文件只記錄 Select 特有的原則。
 
 **Layout Family**：CLAUDE.md 4-Family Model **Family 4（Field control layout）** 消費者。結構繼承 `components/Field/field-controls.spec.md` 的 `fieldWrapperStyles + [startIcon?] [<editable>] [endAction?]` 規格,視覺對齊 Family 1（Menu item）讓 SelectMenu trigger + options 連續一致。
+
+## 實作：裝置自適應雙路徑
+
+`Select` public component 在 render 時用 `useIsTouchDevice()`（內部 `matchMedia('(pointer: coarse)')`）分流（`select.tsx`）：
+
+| 裝置 | 路徑 | 實作 | 為什麼 |
+|---|---|---|---|
+| 觸控（`pointer: coarse`，手機 / 平板）| `NativeSelect` | 真原生 `<select>` + CSS 客製 trigger | 行動裝置的原生 picker（iOS wheel / Android dialog）是平台最佳 a11y + 操作體驗，自建選單無法取代 |
+| 桌機（精確指標）| `CustomSelect` | 自建 combobox（`role="combobox"` + Radix Popover + Command + SelectMenu）| 桌機需可控渲染：搜尋輸入、選項內頭像 / 描述 / 分組、自訂鍵盤導覽——原生 `<select>` 都做不到 |
+
+**此分流是「裝置」軸，與 `searchable` 正交**：`searchable` 只決定桌機 combobox 的 trigger 要不要顯搜尋輸入框，**不**決定走原生還是 combobox。一個不可搜尋的桌機 Select 仍是完整自建 combobox（可捲動 / 點選，只是沒搜尋框）。
 
 ---
 
@@ -255,7 +266,7 @@ Select 的值套用時機是**由 onChange handler 的副作用決定**，不是
 ## 禁止事項
 
 - ❌ `startIcon` 不可用於 tag 模式——Tag 本身已有視覺標記，startIcon 是冗餘的
-- ❌ 不自建 dropdown menu——使用原生 `<select>` 保證無障礙和行動裝置體驗
+- ❌ 在**觸控裝置**自建 dropdown——手機 / 平板必走原生 `<select>`（平台 picker 的 a11y + 操作體驗最佳）；桌機才走自建 combobox（見「實作：裝置自適應雙路徑」）
 - ❌ 讓使用者搞不清楚是即時還是 on-submit——用 label / 按鈕位置明確傳達
 - ❌ 把「決策節點」選擇塞進 Select（付款方式、訂閱方案）——使用者需要對比評估，用 RadioGroup
 
