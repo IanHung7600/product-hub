@@ -75,14 +75,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       mode: modeProp,
       variant: variantProp,
       error = false,
-      size,
+      size: sizeProp,
       startIcon: StartIcon,
       endAction,
       endSlot,
       loading = false,
       autoWidth = false,
       className,
-      disabled,
+      disabled: disabledProp,
       readOnly,
       value,
       id: idProp,
@@ -94,6 +94,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ) => {
     // ── FieldContext 自動讀取(在 <Field> 內時,invalid / disabled / mode / chrome 由 context 接管) ──
     const fieldCtx = useFieldContext()
+    // 2026-05-31 #11/#12:size + disabled 從 Field context cascade(對齊 NumberInput number-input.tsx:100-101
+    // + MUI FormControl)。原 Input 不讀 fieldCtx.size/disabled → <Field size="lg"> / <Field disabled> 對 Input 無效。
+    const size = sizeProp ?? fieldCtx?.size ?? 'md'
+    const disabled = disabledProp ?? fieldCtx?.disabled
     // chrome 透傳:per-prop override context;context 沒值則 'default'
     const variant: FieldVariant = variantProp ?? fieldCtx?.variant ?? 'default'
     // mode resolve order(Phase B1 2026-05-05):
