@@ -117,7 +117,8 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             className={cn(
               'flex-1 min-w-0',
               resolvedMode === 'disabled' && 'text-fg-disabled cursor-not-allowed',
-              value == null && 'text-fg-muted',
+              // 2026-05-31 M24:disabled > muted。disabled 時不可再套 muted(否則 neutral-7 蓋過 disabled neutral-6)
+              value == null && resolvedMode !== 'disabled' && 'text-fg-muted',
             )}
           >
             {value == null ? EMPTY_DISPLAY : formatNumber(value, { precision, prefix, suffix, locale })}

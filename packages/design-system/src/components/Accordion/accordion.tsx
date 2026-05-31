@@ -49,6 +49,9 @@ const AccordionTrigger = React.forwardRef<
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         // AccordionTrigger 單一 text-style 列 → semantic `text-fg-disabled`(非 opacity);Button canonical 對齊
         'disabled:text-fg-disabled disabled:pointer-events-none',
+        // 2026-05-31 M24:disabled 時 chevron(icon 載體)亦降 text-fg-disabled,不停留 text-fg-muted
+        //（muted=neutral-7 比 disabled=neutral-6 深 → 層級顛倒)。覆寫 chevron 自身 text-fg-muted。
+        'disabled:[&>svg]:text-fg-disabled',
         "[&[data-state=open]>svg]:rotate-180",
         className,
       )}

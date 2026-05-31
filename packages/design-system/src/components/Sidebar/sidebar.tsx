@@ -883,8 +883,11 @@ const sidebarMenuButtonVariants = cva(
     "transition-[background-color,color] duration-200 ease-linear motion-reduce:duration-0",
     "hover:bg-neutral-hover hover:text-foreground",
     "focus-visible:bg-neutral-hover focus-visible:text-foreground",
-    "disabled:pointer-events-none disabled:opacity-disabled",
-    "aria-disabled:pointer-events-none aria-disabled:opacity-disabled",
+    // 2026-05-31 M24:SidebarMenuButton 主要為 icon+label(currentColor 可改寫)→ 用 semantic
+    // text-fg-disabled 對齊 MenuItem primitive(menu-item.tsx:198/221/248 + item-anatomy.tsx:374),
+    // 非 opacity-disabled(opacity 保留給圖片/avatar/Switch 等無法改寫內部色者,per color.spec.md:103/118/701)。
+    "disabled:pointer-events-none disabled:text-fg-disabled",
+    "aria-disabled:pointer-events-none aria-disabled:text-fg-disabled",
     "data-[active=true]:bg-neutral-selected data-[active=true]:text-foreground",
     "group-has-[[data-sidebar=menu-action]]/menu-item:pr-8",
     // 2026-05-21 v5 restore label display:none(user 抓「label 沒消失」):
