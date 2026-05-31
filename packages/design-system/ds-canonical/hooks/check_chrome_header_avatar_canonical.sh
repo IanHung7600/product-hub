@@ -81,4 +81,7 @@ Canonical citation:
 
 Bypass(極罕見):CLAUDE_BYPASS_CHROME_HEADER_AVATAR=1 env var(audit-logged)。
 EOF
-exit 0
+# 2026-05-31:exit 0 → exit 2(folded-hook-audit:原宣稱 BLOCKER 但 exit 0 = 假 enforcement;
+# chrome-header avatar 是 SSOT canonical [feedback_ssot_mechanical_p0_not_p1 = 必 P0 BLOCK],
+# verified clean on 現有 canonical sidebar code + 有 env escape 兜 false-positive)。
+exit 2

@@ -27,6 +27,9 @@ case "${TOOL:-}" in
 esac
 
 FILE=$(echo "$INPUT" | jq -r '.tool_input.file_path // ""' 2>/dev/null)
+# Self-exemption:本 hook help-text 合法含 anti-pattern literal 作為文件範例(且 .sh 不被 Tailwind
+# vite plugin 掃,無 build 風險)→ 不掃自己,避免 self-trigger false-positive(2026-05-30 test-surfaced)。
+case "$FILE" in */check_tailwind_wildcard_in_docs.sh) exit 0 ;; esac
 # Only check files Tailwind v4 might scan
 if ! echo "$FILE" | grep -qE '\.(md|spec\.md|sh|ts|tsx|css|json)$'; then exit 0; fi
 
@@ -37,7 +40,9 @@ CONTENT=$(echo "$INPUT" | jq -r '.tool_input.new_string // .tool_input.content /
 if echo "$CONTENT" | grep -qE '@tailwind-wildcard-allow:'; then exit 0; fi
 
 # Detect anti-patterns(class form with wildcard / slash enumeration in CSS var)
-ANTI_PATTERNS=$(echo "$CONTENT" | grep -oE 'var\(--[a-z][a-z0-9-]*[\*/]+[a-z0-9-]*\)' | sort -u)
+# 2026-05-30 fix(test-surfaced M34 over-narrow):slash-segment 改 repeatable,
+# 否則漏多段斜線列舉形式(beta.27 anchor 的 N-段 enum,hook header 列為必擋 anti-pattern)。
+ANTI_PATTERNS=$(echo "$CONTENT" | grep -oE 'var\(--[a-z][a-z0-9-]*([\*/]+[a-z0-9-]*)+\)' | sort -u)
 
 if [ -n "$ANTI_PATTERNS" ]; then
   cat >&2 << EOF
@@ -53,8 +58,8 @@ $(echo "$ANTI_PATTERNS" | sed 's/^/    /')
     build 死 → release CI fail。本 anchor:beta.27 6+ CI iteration 燒此問題。
 
   改用 math notation(Tailwind 不誤判):
-    var(--elevation-*)         → var(--elevation-N) N∈{100,200,300}
-    var(--elevation-100/200/300) → var(--elevation-N) N∈{100,200,300}
+    var(--elevation-*)         → var(--elevation-N) N∈{100,200}
+    var(--elevation-100/200) → var(--elevation-N) N∈{100,200}
     var(--field-height-*)      → var(--field-height-N) N∈{sm,md,lg}
     var(--layout-space-*)      → var(--layout-space-N) N∈{loose,tight}
     var(--radix-*-available-height) → var(--radix-{popover|hover-card|dialog}-content-available-height)

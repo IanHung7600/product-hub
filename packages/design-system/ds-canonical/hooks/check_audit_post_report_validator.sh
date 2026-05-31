@@ -41,21 +41,38 @@ if grep -qE 'sample top [0-9]+|sampled top|subset|pick top [0-9]+|top hot|sample
   WARNINGS="${WARNINGS}\n  ❌ [A] NO-SAMPLE violation:report 含 sample subset keyword,違反 audit-full-sweep canonical(memory/feedback_audit_full_sweep_not_sample.md)"
 fi
 
-# ─ Validator B: 46-dim coverage ───────────────────────────────────────────
-DIM_COUNT=$(grep -cE '(Dim|dim) ([1-9]|[1-4][0-9]|5[01])(\b|:)' "$FILE_PATH" 2>/dev/null || echo 0)
+# ─ Validator B: dim coverage(2026-05-30 M2/M3 fix per laziness-hunt:原 regex `5[01]` 只到 dim 51,
+#   52-88 完全不計（含 PURE-JUDGMENT dim 62/66/68/72）+ 寫死 46。改動態讀 dispatch total + count UNIQUE dim 號）─
+DIM_TOTAL=$(node -e "try{console.log(JSON.parse(require('fs').readFileSync('$PROJECT_DIR/.claude/logs/audit-dims-dispatch.json','utf8')).total)}catch{console.log(88)}" 2>/dev/null || echo 88)
+DIM_COUNT=$(grep -oiE '\bdim[[:space:]]+[0-9]{1,2}\b' "$FILE_PATH" 2>/dev/null | grep -oE '[0-9]+' | sort -un | wc -l | tr -d ' ')
 DIM_COUNT=${DIM_COUNT:-0}
-if [ "$DIM_COUNT" -lt 46 ]; then
-  WARNINGS="${WARNINGS}\n  ⚠️ [B] Dim coverage:report 提到 ${DIM_COUNT} dim,< 46 期望。確認跑了 46-dim 全 dispatch 還是漏 group"
+if [ "$DIM_COUNT" -lt "$DIM_TOTAL" ]; then
+  WARNINGS="${WARNINGS}\n  ⚠️ [B] Dim coverage:report 提到 ${DIM_COUNT} unique dim,< ${DIM_TOTAL} 期望。確認全 dim NO-SAMPLE（PURE-JUDGMENT/requiresAgent dim 必有 per-dim agent-output 非散文提號）"
 fi
 
 # ─ Validator C: audit-prompts.md coverage ─────────────────────────────────
 AUDIT_PROMPTS="$PROJECT_DIR/.claude/skills/design-system-audit/references/audit-prompts.md"
 if [ -f "$AUDIT_PROMPTS" ]; then
-  PROMPT_DIM_COUNT=$(grep -cE '^###[[:space:]]*Dim[[:space:]]+[1-9][0-9]?(\b|:|[[:space:]])' "$AUDIT_PROMPTS" 2>/dev/null || echo 0)
-  PROMPT_DIM_COUNT=${PROMPT_DIM_COUNT:-0}
-  if [ "$PROMPT_DIM_COUNT" -lt 46 ]; then
-    WARNINGS="${WARNINGS}\n  🔴 [C] audit-prompts.md prompt coverage:${PROMPT_DIM_COUNT}/46 — 紙上 dim 無 prompt,sub-agent 跑不動。下輪 prune Phase 1 D5 candidate(canonical drift:SKILL.md 46-dim vs audit-prompts.md prompt 數差距)"
-    TRIGGER_PRUNE=1
+  # 2026-05-30 M3 fix:原 regex `^### Dim N` 對不上實際格式 `## N. Title`（grep 0 → 永遠誤觸 prune）;
+  # 寫死 46 也錯。改成數真實 `## N.` heading + 動態判「PURE-JUDGMENT dim 數」（只有 judgment dim 需 prompt
+  # 才能派 agent;deterministic/hook dim 不需）。prompts < judgment dim = 有 judgment dim 派不出 agent。
+  # 2026-05-30 fix(hook-test surfaced):`grep -c ... || echo 0` 在 0-match 時 grep 已印 "0" + exit 1,
+  # `|| echo 0` 再 append → "0\n0" → 下方 `[ -lt ]` integer error → trigger 失效。改 `|| true` + 取首行。
+  # 2026-05-31 fix(infra-audit self-finding):原 `[53 -lt 23]` 是 count-vs-count = 永遠 false = dead gate。
+  # 改 SET-MEMBERSHIP:逐個 PURE-JUDGMENT dim 號檢查 audit-prompts.md 有無對應 `## N.` heading,列出缺的。
+  MISSING_PROMPTS=$(node -e "
+    try {
+      const fs=require('fs');
+      const m=JSON.parse(fs.readFileSync('$PROJECT_DIR/.claude/logs/audit-coverage-matrix.json','utf8'));
+      const judg=Object.entries(m.coverage_by_dim).filter(([k,v])=>v.tier==='PURE-JUDGMENT').map(([k])=>+k);
+      const prompts=fs.readFileSync('$AUDIT_PROMPTS','utf8');
+      const have=new Set([...prompts.matchAll(/^##\s+(\d+)\./gm)].map(x=>+x[1]));
+      console.log(judg.filter(d=>!have.has(d)).join(','));
+    } catch(e){ console.log(''); }
+  " 2>/dev/null || echo "")
+  if [ -n "$MISSING_PROMPTS" ]; then
+    WARNINGS="${WARNINGS}\n  🔴 [C] audit-prompts.md 缺 judgment dim prompt:dim ${MISSING_PROMPTS} 是 PURE-JUDGMENT 卻無 \`## N.\` rubric → sub-agent 派不出正確 prompt → 必被跳過。補這些 dim 的 prompt 進 audit-prompts.md。"
+    TRIGGER_PRUNE=1; CRITICAL_FAIL=1
   fi
 fi
 
@@ -65,6 +82,37 @@ BENCH_DEBT=${BENCH_DEBT:-0}
 if [ "$BENCH_DEBT" -gt 0 ]; then
   WARNINGS="${WARNINGS}\n  ⚠️ [D] Benchmark cite debt:${BENCH_DEBT} 處 `@benchmark-unverified-blanket` marker — 對應 prune D9(M22 cite debt)"
   TRIGGER_PRUNE=1
+fi
+
+# ─ Validator F: A.1b story-vs-code adversarial pass recorded(2026-05-30 403-finding 偷懶 anchor)─
+#   deep-audit report 必含「每 component 讀 .tsx 逐句比對宣稱」的 story-vs-code verdict。缺 = 該 pass
+#   沒跑/沒記 = 前期偷懶 failure mode。偵測 report 是否含 story-vs-code 證據 keyword;deep-audit 規模
+#   report(提 ≥ 10 dim)卻無此 pass = BLOCKER-class warning(走 prune-chain inject 提醒補跑)。
+if [ "$DIM_COUNT" -ge 10 ]; then   # 只對 full/deep-audit 規模 report 要求(小 scoped report 豁免)
+  if ! grep -qiE 'story-vs-code|FALSE_CLAIM|claimsVerified|宣稱.*(真實|code)|A\.1b|逐句比對' "$FILE_PATH" 2>/dev/null; then
+    WARNINGS="${WARNINGS}\n  🔴 [F] Story-vs-code adversarial pass 缺席:deep-audit report(${DIM_COUNT} dim)無 A.1b per-component story-vs-code verdict 證據。202 FALSE_CLAIM(2026-05-30)正是此 pass 沒跑 → 補跑 A.1b(讀每元件 .tsx + wrap lib 逐句驗 anatomy/a11y/spec 宣稱)再出 report。"
+    TRIGGER_PRUNE=1; CRITICAL_FAIL=1
+  fi
+
+  # ─ Validator G: 全 PURE-JUDGMENT dim(含 infra 62/66/68/72)必 show「真跑」證據,非只 mention(2026-05-30 generalize)─
+  #   user 質問「包括所有 infra 稽核?」→ Validator F 只硬保證 story 子集;G 推及全 judgment set。
+  #   judgment dim 無 deterministic script / hook,只能靠「report 含 per-dim 真跑證據」當 proxy。
+  #   evidence marker = 「files scanned / DS-wide 全N / file:line cite / 0 findings after 全掃」。
+  #   evidence 數 < PURE-JUDGMENT dim 數 → 部分 judgment dim 可能 mention-only(偷懶 risk)。
+  PJ_COUNT=$(node -e "try{const m=JSON.parse(require('fs').readFileSync('$PROJECT_DIR/.claude/logs/audit-coverage-matrix.json','utf8'));console.log(Object.values(m.coverage_by_dim).filter(v=>v.tier==='PURE-JUDGMENT').length)}catch{console.log(23)}" 2>/dev/null || echo 23)
+  EVIDENCE_COUNT=$(grep -oiE 'files? scanned|DS-wide|全 ?[0-9]+ (file|stories|component|spec)|[a-z0-9_.-]+\.(tsx|ts|md):[0-9]+|0 findings|scanned: ?[0-9]+' "$FILE_PATH" 2>/dev/null | wc -l | tr -d ' ')
+  EVIDENCE_COUNT=${EVIDENCE_COUNT:-0}
+  if [ "$EVIDENCE_COUNT" -lt "$PJ_COUNT" ]; then
+    WARNINGS="${WARNINGS}\n  🔴 [G] PURE-JUDGMENT dim 真跑證據不足:report 只 ${EVIDENCE_COUNT} 個 per-dim 證據 marker < ${PJ_COUNT} judgment dim(含 infra 62/66/68/72)。judgment dim 無 script/hook 兜底,必每 dim show『DS-wide N files scanned + file:line / 0-after-全掃』證據,否則=mention-only 偷懶。補齊再出 report。"
+    TRIGGER_PRUNE=1; CRITICAL_FAIL=1
+  fi
+fi
+
+# ─ Validator BLOCK gate(2026-05-31 fix infra-audit self-finding:原 hook 只 exit 0 + additionalContext
+#   soft-inject = 我過度宣稱「BLOCKER」。改:C/F/G critical fail → stderr + exit 2 真 block PostToolUse)─
+if [ "${CRITICAL_FAIL:-0}" -eq 1 ]; then
+  printf '🚨 AUDIT-REPORT VALIDATOR BLOCK(C/F/G critical):%b\n\n此 deep-audit report 不合格,補齊上述後重出 report。' "$WARNINGS" >&2
+  exit 2
 fi
 
 # ─ Validator E: prune-chain-trigger emit ──────────────────────────────────

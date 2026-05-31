@@ -1,11 +1,12 @@
 #!/bin/bash
 # Field family unified invariant hook(2026-05-08 cluster A consolidation)
 #
-# Merges 4 PreToolUse hooks(原各檔已 retire,合併入此)— 共 4 條 sub-rules:
+# Merges PreToolUse hooks(原各檔已 retire,合併入此)— 共 5 條 sub-rules:
 #   A.1 naked row-mode propagation(原 check_naked_row_mode_propagation,P0 BLOCKER)
 #   A.2 FieldControlGroup wrapper direct child(原 check_field_control_group_direct_child,P1 WARN)
 #   A.3 Field state ring SSOT(原 check_field_state_token_consume 3 sub-rules,P0 BLOCKER)
 #   A.4 disabled placeholder color(原 check_disabled_placeholder_color,P1 stderr only)
+#   A.5 _Group child fieldCtx.id 隔離(2026-05-31 折入,M4 AR34 regression detector,P0 BLOCKER)
 #
 # Why merge:皆 Field 家族 invariant,共用 INPUT parsing + Edit/Write filter pattern,
 #   分散在 4 個 hook 是「散裝 SSOT」(M17 + Anthropic ≤ 15 hook best practice 違反)。
@@ -17,6 +18,7 @@
 #   A.2: `// @fcg-wrapper-allow: <reason>` 或檔頭
 #   A.3: `// @field-state-ring-allow: <reason>`
 #   A.4: `// @disabled-color-allow: <reason>`
+#   A.5: `// @group-fieldctx-allow: <reason>`
 
 source "$(dirname "$0")/_log-fire.sh" 2>/dev/null && log_hook_fire
 
@@ -201,5 +203,38 @@ EOF
     # A.4 原 hook exit 0(stderr only),保持向後兼容不升 WORST
   fi
 fi
+
+# ── A.5 _Group child fieldCtx.id 隔離(P0 BLOCKER,2026-05-31 折入,M4 AR34 regression detector)──
+# M4:_Group 元件(CheckboxGroup/RadioGroup/SwitchGroup)的 child item 不可共用 fieldCtx.id —— 否則
+# group 內所有 label 被抑制 + 點 label 只 toggle 第一個(AR34 root bug)。正解:item 在 group 內走自己
+# 的 generatedId,不 fall back 到共用 fieldCtx.id。偵測 AR34 regression shape(MERGED 整檔,3-signal AND):
+#   (1) 消費 *GroupContext  (2) bare `idProp ?? fieldCtx?.id ?? generatedId` fallback
+#   (3) 缺 `insideGroup ? generatedId` / `inGroup ? generatedId` group guard
+case "$FILE_PATH" in
+  *components/*.tsx)
+    if ! echo "$MERGED_CONTENT" | grep -q '@group-fieldctx-allow' \
+       && echo "$MERGED_CONTENT" | grep -qE 'useContext\([A-Za-z_]*GroupContext\)' \
+       && echo "$MERGED_CONTENT" | grep -qE 'idProp[[:space:]]*\?\?[[:space:]]*fieldCtx\?\.id[[:space:]]*\?\?[[:space:]]*generatedId' \
+       && ! echo "$MERGED_CONTENT" | grep -qE '(insideGroup|inGroup)[[:space:]]*\?[[:space:]]*generatedId'; then
+      cat >&2 <<EOF
+
+┄┄┄ A.5 check_field_family_invariants — _Group child fieldCtx.id 隔離 BLOCKER ┄┄┄
+
+[P0] ${FILE_PATH}
+偵測到 _Group child item 消費 GroupContext + bare \`idProp ?? fieldCtx?.id ?? generatedId\` fallback,
+但**缺** group guard(\`insideGroup ? generatedId\`)= M4 AR34 regression shape。
+
+⚠️  M4 canonical:Group 內 item 不可共用 fieldCtx.id(否則所有 label 被抑制 + 點 label 只 toggle 第一個)。
+
+修法:
+  inputId = idProp ?? (insideGroup ? generatedId : (fieldCtx?.id ?? generatedId))
+  即 group 內走自己的 generatedId,不 fall back 共用 fieldCtx.id。
+  例外:行尾 \`// @group-fieldctx-allow: <reason>\`
+
+EOF
+      record_worst 2
+    fi
+    ;;
+esac
 
 exit $WORST

@@ -614,7 +614,7 @@ Forbidden in our code (these SHOULD be migrated to direct tokens):
 - `bg-card` / `text-card-foreground` → `bg-surface` / `text-foreground`
 - `text-primary-foreground` → `text-white`
 - `border-input` → `border-border`
-- `shadow-md / shadow-sm / shadow-lg / shadow-xl / shadow-2xl` → `shadow-[var(--elevation-N)]` (N ∈ {100,200,300})
+- `shadow-md / shadow-sm / shadow-lg / shadow-xl / shadow-2xl` → `shadow-[var(--elevation-N)]` (N ∈ {100,200},+`-hover` 變體;無 300)
 
 OK (these are OUR approved tokens, not shadcn aliases):
 - `bg-muted` (semantic.css keeps --muted as real token)
@@ -695,7 +695,7 @@ End: `N specs checked, M hardcoded violations, top 5: [list]`. Under 400 words. 
 
 ---
 
-## 21. Stories / consumer code 手刻繞 DS canonical(視覺對齊盲點的可機械化前哨)
+## L1. Stories / consumer code 手刻繞 DS canonical(視覺對齊盲點的可機械化前哨)(legacy cross-ref — 不在 SKILL.md dim table;原佔 dim 21 slot,renumber 避免與現行 dim 21「連續 item list wrapper gap」撞號)
 
 **Type**: Absolute
 **Canonical source**: `.claude/rules/ui-development.md`「Story / consumer code 禁止手刻既有 DS 元件已支援的 pattern」+ 元件 spec.md(提供的 API)
@@ -753,7 +753,7 @@ End: `N files checked, V violations by signal: A=?, B=?, C=?, D=?, E=?. Top 5 wo
 
 # Group H — Principle self-audit (D6 子維,session-learned 2026-04-22)
 
-## 22. D6e Predicate coherence(對齊 CLAUDE.md Meta-Pattern M9)
+## L2. D6e Predicate coherence(對齊 CLAUDE.md Meta-Pattern M9)(legacy cross-ref — 不在 SKILL.md dim table;原佔 dim 22 slot,renumber 避免與現行 dim 22「視覺容器 inner breathing」撞號)
 
 **Type**: Consistency
 **Canonical source**: `.claude/skills/design-system-audit/references/principle-audit-protocol.md` → D6e Predicate coherence scan;CLAUDE.md `# Meta-Pattern 預警` M9(Predicate Self-Test)
@@ -791,7 +791,7 @@ Q4. **Empty category** — predicate 有 category 但 example 表沒 real case?
 End: `N predicate specs scanned, V1/V2/V3/V4 violations by Q. Top offenders: [list]`. Under 600 words. Don't fix.
 ```
 
-## 23. Benchmark-First discipline(對齊 CLAUDE.md Meta-Pattern M8)
+## L3. Benchmark-First discipline(對齊 CLAUDE.md Meta-Pattern M8)(legacy cross-ref — 不在 SKILL.md dim table;原佔 dim 23 slot,renumber 避免與現行 dim 23「Controlled / Uncontrolled dual-mode」撞號)
 
 **Type**: Consistency
 **Canonical source**: CLAUDE.md `# Meta-Pattern 預警` M8(訂 canonical 前必 benchmark 至少 3 家 world-class);principle-audit-protocol.md D6e Q3
@@ -1257,4 +1257,61 @@ Report ONLY violations。Format:
 - `<Component>: spec.md L<N> 寫「<drift keyword>」 vs <X>.tsx L<M> 已 token-ified `<actual className>`(spec 漏改)`
 
 End: `N components checked, M reverse drift gaps.` Under 400 words. Don't fix.
+```
+
+## 55. Token cross-namespace mapping integrity(PURE-JUDGMENT,2026-05-31 reclassify — 原誤標 HOOK 無 hook)
+
+**Type**: Absolute / **Canonical**: `packages/design-system/src/tokens/color/semantic.css` 12-hue interaction mapping / **Home**: color.spec.md
+
+```
+Your job(NO-SAMPLE):讀 semantic.css 的 12-hue interaction token mapping(約 L246-273),逐 hue 驗 semantic
+→primitive step 正確一致(eg. primary→-6 / info→-5 / error→-7 / success→-1 / warning→-7 + hover/active step)。
+Enumerate 全 12 hue。Report 任何 mapping 不一致 / 缺 hue / step 錯 with semantic.css:line。End:`12 hue checked, M mapping gaps`。Don't fix.
+```
+
+## 62. Fork Netlify onboarding canonical(PURE-JUDGMENT,2026-05-31 補 — infra-audit self-finding 漏)
+
+**Type**: Absolute / **Canonical**: `template/ds-product-template/{netlify.toml,.storybook/manager-head.html,CLAUDE.md}` + `scripts/setup-netlify-access.mjs` + `build-published-template-mirror.mjs` / **Home**: scenario-definition.md
+
+```
+Your job(NO-SAMPLE):驗 fork user 從 published template 起手到首次部署的 onboarding 全鏈完整且正確。
+Enumerate + Read(全部,非 sample):template/ds-product-template/ 全 27 file 中的 netlify.toml / manager-head.html /
+CLAUDE.md Access-control 段 / package.json deploy scripts / setup-netlify-access.mjs。對每環節驗:
+1. netlify.toml build/publish/headers 正確(consumer 直接能 deploy)
+2. Basic Password / Access-control 機制有 documented plain-Chinese 引導
+3. mirror build 真把這些 inject 到 published(跑 build-published-template-mirror.mjs --out 驗 0 leak + 檔齊)
+4. CLAUDE.md 對 fork user 的 setup 步驟無斷點 / 斷點有具體中文引導
+Report file:line gaps。End:`N onboarding 環節 checked, M gaps`。Don't fix.
+```
+
+## 66. Cross-repo dispatch + visual parity(PURE-JUDGMENT,2026-05-31 補)
+
+**Type**: Absolute / **Canonical**: `release.yml` dispatch steps + `template/sync-design-system.yml` + `composition-fidelity.yml` + `dogfood-prepublish-verify.mjs` + `scripts/visual-assertions.json` / **Home**: scenario-definition.md mirror chain
+
+```
+Your job(NO-SAMPLE):驗 DS push main → npm publish → fork repo 取得更新 → visual parity 整鏈無斷。
+Enumerate + Read:release.yml(publish + dispatch)/ mirror workflow / sync-design-system.yml(fork 端接收)/
+composition-fidelity visual-diff scenarios(全 N scenario)/ dogfood-prepublish。對每環節驗 trigger event type 正確、
+無 PAT scope 漏、visual parity scenario 覆蓋 stakeholder flow。Report file:line。End:`N 環節, M gaps`。Don't fix.
+```
+
+## 68. Stories-vs-spec drift(PURE-JUDGMENT,2026-05-31 補)
+
+**Type**: Absolute / **Canonical**: `@canonical-pattern` / `@anti-pattern` markers + 各 component spec.md / **Home**: 該 component spec.md
+
+```
+Your job(NO-SAMPLE 全 component):驗 stories 標的 @canonical-pattern / @anti-pattern 與 spec.md 宣告一致,
+且 anatomy/principles 教的 pattern 未與 spec「禁止事項」矛盾。Enumerate 全 83 component。Report file:line drift。
+End:`N components, M drift`。Don't fix.
+```
+
+## 72. DS API surface tightening(PURE-JUDGMENT,2026-05-31 補)
+
+**Type**: Watch / **Canonical**: per-component API surface + `tightening-roadmap.md`(若存在;不存在則以 props-naming.md + 各 spec API 段為準)/ **Home**: 該 component spec.md API 段
+
+```
+Your job(NO-SAMPLE 全 component):per-component review 公開 API surface 是否過寬 / 漏緊(eg. CircularProgress
+size?:number 該否限 token tier、prop 命名違 props-naming canonical、escape-hatch prop 該收)。Enumerate 全 component
+export interface。Report over-broad / mis-named API with file:line + 建議 tighten 方向(propose only,不自動改 = SSOT-UI/UX)。
+End:`N components, M API-surface concerns`。Don't fix。
 ```

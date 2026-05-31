@@ -78,6 +78,23 @@ detect_mode() {
 完整跑,**no sample / no escape**(對齊 `feedback_audit_full_sweep_not_sample.md` + `check_audit_sample_escape.sh` BLOCKER)。
 每 dim sub-agent prompt 必含「DS-wide 全盤,禁 sample top N」。
 
+**PURE-JUDGMENT dim 真跑證據強制(2026-05-30 generalize,user 問「包括所有 infra 稽核?」)**:judgment dim(無 deterministic script / write-time hook 兜底者,含 infra 62/66/68/72 fork-onboarding/runtime/API-surface)report 必逐 dim show「DS-wide N files scanned + file:line findings / 或『0 after 全掃』」真跑證據,**禁只 mention dim 號**。report-validator `check_audit_post_report_validator.sh` Validator G 機械強制(evidence marker 數 < judgment dim 數 = BLOCKER)。DETERMINISTIC(22)+ HOOK(42)dim 由 CI / write-time hook 兜底(含 22/26 infra dim),不在此 risk。
+
+### A.1b — Story-claim-vs-code adversarial verification(MANDATORY,NO-SAMPLE,per-component)
+
+**2026-05-30 anchor(user verbatim 質問「之前他媽都在偷懶?」)**:獨立 adversarial 再審抓到 **403 findings / 64 單元 / 0 全乾淨**,其中 **202 個 FALSE_CLAIM**(anatomy/a11y/principles/spec 系統性記載 code 根本沒有的行為:Calendar 宣稱方向鍵導覽 / Tooltip·HoverCard 宣稱 focus trap / Alert 記不存在的 `actions` prop / Select 宣稱「用原生 select」但桌機自建 cmdk / AspectRatio spec 說「無 wrapper」但 code wrap)。**根因**:前期 audit 把 story-content dim(12/24/25/30/43 等)當「散文層 looks-fine 掃」跑,**沒 adversarial 讀 .tsx(+ wrap 的 lib)逐句比對宣稱**。這是「偷懶」的具體 failure mode。
+
+**為何不能只靠 deterministic grep**:2026-05-30 嘗試建 `audit-anatomy-prop-existence.mjs`(已刪除不存在)機械驗 prop-existence,但 **prop passthrough(元件 `...props` 轉發 Radix/react-day-picker)使 naive grep 必 over-flag 合法 prop** → 不可靠 → 刪除。**結論:FALSE_CLAIM 驗證本質需 LLM 讀 source 判斷,無法純 grep gate → 故必用「強制 + 報告驗證確認真跑」的機制保證**。
+
+**強制流程**(deep-audit 每次必跑,no skip):
+1. **per-component(NO-SAMPLE,全 62 component + 全 pattern)** dispatch adversarial agent。
+2. 每 agent 必 **Read 元件 .tsx + 其 wrap 的 lib(Radix/cmdk/react-day-picker/sonner 等)source**,對該元件**所有** anatomy / a11y / principles / spec 宣稱**逐句**比對:鍵盤 map / ARIA role / focus 行為 / prop 存在性 / 視覺 token / 預設值 / native-vs-custom。
+3. **「自上次 audit 無 code 改動」≠ 可跳過** —— content 宣稱可在 code 沒變下就是假的(前期正是用此藉口跳過 = 違規)。
+4. output per-component:`{component, claimsVerified: N, falseClaims: [{fileLine, 宣稱, 真實 code 行為}]}`。
+5. findings 併入 A.2 triage(FALSE_CLAIM 對齊 doc-to-code = autonomous;substantive design-language tension = HOLD propose)。
+
+**完成 gate**:report 必含**每個** component 的 story-vs-code verdict(claimsVerified count + falseClaims list)。report-validator hook `check_audit_post_report_validator.sh` Validator F 檢查此 per-component coverage,缺 = BLOCKER(見 Mechanical enforcement)。
+
 ### A.2 — Triage findings → 中文人話 propose SSOT-UI/UX / autonomous non-SSOT
 
 **Scope classifier**(critical,先過):
@@ -235,6 +252,7 @@ Send via `codex exec`(local CLI per M31 Step 0.4)或 cloud `@codex` 後序。
 |---|---|---|
 | **CP-P0** | Phase 0 結束 | Print detected mode(ds-repo / fork-user-repo),mode = non-ds 直接 exit;確認 user 跑對 repo |
 | **CP-A0** | A.0 結束 | 全盤閱讀清單給 user 看(列 N file read,per detected mode 切 scope),禁未讀就進 A.1 |
+| **CP-A1b** | A.1b 結束 | **每個** component/pattern 都有 story-vs-code adversarial verdict(讀 .tsx + wrap lib 逐句比對宣稱);**禁** 用「無 code 改動」跳過任一單元。缺任一 component verdict = 不可進 A.2(2026-05-30 403-finding 偷懶 anchor)|
 | **CP-A2** | A.2 SSOT-UI/UX propose | 中文人話 + 4-Q gate;**STOP** 等 user A/B 才動 code(fork-user-repo mode:propose scope 限 `apps/**`,禁 DS source)|
 | **CP-B0** | B.0 codex transport | 3-test 全 ❌ + cwd=fork → **auto-fallback Phase A only 印中文**,不 interactive ASK;cwd=ds-repo → 報 user;禁 Explore 替身 |
 | **CP-B4** | B.4 cite battle | evidence 對等 → STOP 等 user 拍板,**禁** AI 自決誰勝 |

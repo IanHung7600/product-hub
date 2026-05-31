@@ -38,7 +38,7 @@ CONTENT=$(echo "$INPUT" | jq -r '.tool_input.new_string // .tool_input.content /
 if echo "$CONTENT" | grep -qE '@addon-subdir-skip:'; then exit 0; fi
 
 # Find relative subdir imports `./<dir>/*`
-RELATIVE_IMPORTS=$(echo "$CONTENT" | grep -oE "from\s+['\"]\\./[a-zA-Z][a-zA-Z0-9_-]+/[a-zA-Z][a-zA-Z0-9_./-]*['\"]" | sed -E "s|^from\s+['\"]\./([^/]+)/.*['\"]$|\\1|" | sort -u)
+RELATIVE_IMPORTS=$(echo "$CONTENT" | grep -oE "from[[:space:]]+['\"]\\./[a-zA-Z][a-zA-Z0-9_-]+/[a-zA-Z][a-zA-Z0-9_./-]*['\"]" | sed -E "s|^from[[:space:]]+['\"]\./([^/]+)/.*['\"]\$|\\1|" | sort -u)
 
 [ -z "$RELATIVE_IMPORTS" ] && exit 0
 
