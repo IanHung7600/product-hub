@@ -85,3 +85,9 @@ User 說以下 → 繼續 edit 不 push main:
 - Mindset #1「對標世界級」≠ 對標「multi-reviewer team workflow」。也不等於「無 review push main」。
 - M21「Premature abstraction」延伸:**Premature workflow ceremony 也算**(branch + PR 是 multi-dev ceremony,solo 不需多 branch)
 - M14 AUTO integrate:5-layer 完成才 stop;不 deferred / 不分 session
+
+## 2026-06-01 — Release publish 連環 blocker → 必跑 pre-tag preflight
+
+**Why**:beta.43 publish 連踩 3 個 blocker(各 CI fail 一次才修):(1) 只 bump `packages/design-system/package.json`,漏跑 `scripts/sync-version-to-all-manifests.mjs`(同步 storybook-config + plugin.json + marketplace metadata/plugin = 5 manifest)→ release.yml「Version sync across 5 manifests」BLOCKER。(2) `.claude/hooks/lib/*.sh` 改過沒重 sync → `scripts/sync-ds-canonical.mjs` mirror drift → dogfood Step 0 擋。(3) dogfood(上一個的下游)。
+
+**How to apply**:M28 SSOT propagation(CLAUDE.md `# Git solo-work canonical` step 5.5)bump 版本後、**push tag 前必跑完整 pre-tag preflight 本地全過**才 tag:`tsc -b` + `audit-content-quality --check` + `story-quality:check` + `sync-governance-counters --check` + `sync-version-to-all-manifests.mjs` + `sync-ds-canonical.mjs` + `dogfood-prepublish-verify.mjs` + build-storybook + smoke。全過再 tag — 避免 tag→CI fail→re-tag 的 ~8min round-trip。npm 版本不可變;publish 前未上架可 `gh run cancel` + 修 + 重 tag 同版本。**publish 後驗證看 `npm view <pkg> version` 真值,不靠 CI job success**(beta.39-41 曾 job-pass 但 silent 沒 publish)。[[feedback_audit_discipline_full_sweep_deterministic_preflight]]
