@@ -192,7 +192,7 @@ export const Overview = {
                 ['solid', 'boolean', 'false', '深底白字模式（step-6 背景 + 白色前景，yellow 例外）'],
                 ['status', "'online' | 'away' | 'busy' | 'offline'", '—', '在線狀態 dot（presence），顯示在右下角；與 badgeCount 擇一'],
                 ['badgeCount', 'number', '—', '未讀 / 通知計數 badge，顯示在右上角（消費 Badge critical，>99 顯示 99+）；與 status 擇一'],
-                ['hoverCard', 'ReactNode', '—', 'hover 時彈出的內容（如 NameCard），person avatar 預設必帶'],
+                ['hoverCard', 'ReactNode', '—', 'hover 時彈出的內容（如 ProfileCard），person avatar 預設必帶'],
               ].map(([p, t, d, desc]) => (
                 <tr key={p}><Td mono>{p}</Td><Td mono>{t}</Td><Td mono>{d}</Td><Td>{desc}</Td></tr>
               ))}
@@ -673,7 +673,7 @@ export const StateBehavior = {
 
       <div className="flex flex-col gap-1">
         <H3>Status presence dot(線上 / 離開 / 忙碌 / 離線)</H3>
-        <Desc>傳 status prop 在 Avatar 右下角加狀態點,尺寸為 avatar 的 28%(clamp 8–16px),色彩語意對齊 Slack / Teams 業界共識(見 NameCard ColorMatrix「四種狀態對應色彩」)。狀態本身為唯讀,Avatar 不擁有切換邏輯。</Desc>
+        <Desc>傳 status prop 在 Avatar 右下角加狀態點,尺寸為 avatar 的 28%(clamp 8–16px),色彩語意對齊 Slack / Teams 業界共識(見 ProfileCard ColorMatrix「四種狀態對應色彩」)。狀態本身為唯讀,Avatar 不擁有切換邏輯。</Desc>
       </div>
       <div className="flex items-center gap-6">
         {(['online', 'away', 'busy', 'offline'] as const).map(s => (

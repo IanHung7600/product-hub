@@ -3,14 +3,14 @@ import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import LinkTo from '@storybook/addon-links/react'
 import { MessageCircle, Phone, ChevronDown } from 'lucide-react'
-import { NameCard } from './name-card'
+import { ProfileCard } from './profile-card'
 import { Avatar } from '@/design-system/components/Avatar/avatar'
 import { Button } from '@/design-system/components/Button/button'
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/design-system/components/HoverCard/hover-card'
 import { HOVER_DELAY_RICH_MS, HOVER_DELAY_CLOSE_MS } from '@/design-system/tokens/motion/motion'
 
 const meta: Meta = {
-  title: 'Design System/Internal/NameCard/設計原則',
+  title: 'Design System/Internal/ProfileCard/設計原則',
   parameters: { layout: 'padded' },
 }
 export default meta
@@ -56,7 +56,7 @@ function InlineHoverExample() {
         <span className="text-body text-fg-muted">留言：「這版 spacing 看起來好多了！」</span>
       </span>
       <HoverCardContent align="start" className="bg-surface-raised rounded-lg border border-border" style={{ boxShadow: 'var(--elevation-200)' }}>
-        <NameCard
+        <ProfileCard
           name="Alice Chen"
           avatar={{ src: AVATAR_URL, alt: 'Alice' }}
           subtitle="Product Designer｜D-0042"
@@ -72,7 +72,7 @@ function InlineHoverExample() {
 
 // ── 定位與分界 ───────────────────────────────────────────────────────────────
 
-// ── WhenToUse — 何時使用 NameCard ──────────────────────
+// ── WhenToUse — 何時使用 ProfileCard ──────────────────────
 
 // ── 觸發情境 ───────────────────────────────────────────────────────────────
 
@@ -85,23 +85,23 @@ export const UsageGuidance: Story = {
     <div className="flex flex-col gap-12">
       {/* 何時用 — 原 WhenToUse */}
       <div className="prose prose-sm max-w-prose">
-      <p>適用情境見<LinkTo kind="Design System/Internal/NameCard/展示" name="Default"><span className="text-primary hover:underline font-medium cursor-pointer">展示頁</span></LinkTo>的真實業務場景範例。</p>
+      <p>適用情境見<LinkTo kind="Design System/Internal/ProfileCard/展示" name="Default"><span className="text-primary hover:underline font-medium cursor-pointer">展示頁</span></LinkTo>的真實業務場景範例。</p>
       <p>判斷時對照 spec.md「何時用 / 何時不用」段落。</p>
     </div>
 
       {/* vs 近親 — VsAvatarRule — 原 VsAvatarRule */}
       <div>
       <Rule
-        title="NameCard — 「hover 展開詳情」的人員資訊卡"
-        note="@mention、PR reviewer、留言者 avatar 等場景:使用者看到頭像想知道「這人是誰」,hover 彈出 NameCard。卡內有 status、action button（Chat / Call）、結構化欄位、View more"
+        title="ProfileCard — 「hover 展開詳情」的人員資訊卡"
+        note="@mention、PR reviewer、留言者 avatar 等場景:使用者看到頭像想知道「這人是誰」,hover 彈出 ProfileCard。卡內有 status、action button（Chat / Call）、結構化欄位、View more"
       >
         <InlineHoverExample />
-        <Label>↑ hover avatar 彈出 NameCard（典型 @mention 互動）</Label>
+        <Label>↑ hover avatar 彈出 ProfileCard（典型 @mention 互動）</Label>
       </Rule>
 
       <Rule
-        title="❌ 單純顯示名字用 NameCard → 過重"
-        note="列表項目只顯示名字 + 頭像時,用 Avatar + Text 就好。NameCard 是 hover 才展開的詳情卡,不是 list item 樣式"
+        title="❌ 單純顯示名字用 ProfileCard → 過重"
+        note="列表項目只顯示名字 + 頭像時,用 Avatar + Text 就好。ProfileCard 是 hover 才展開的詳情卡,不是 list item 樣式"
       >
         <div className="flex items-center gap-2">
           <Avatar src={AVATAR_URL} alt="Alice" size={24} />
@@ -111,8 +111,8 @@ export const UsageGuidance: Story = {
       </Rule>
 
       <Rule
-        title="❌ 點擊進 profile 頁用 NameCard → 應該用 link"
-        note="NameCard 是 hover 預覽,不承載 navigation。點名字進 profile 頁用 <a> 或 router Link,不要包在 HoverCard 裡"
+        title="❌ 點擊進 profile 頁用 ProfileCard → 應該用 link"
+        note="ProfileCard 是 hover 預覽,不承載 navigation。點名字進 profile 頁用 <a> 或 router Link,不要包在 HoverCard 裡"
       >
         <Label warn>（範例省略）navigation 用 link,不要 hover 才給 profile 入口</Label>
       </Rule>
@@ -134,10 +134,10 @@ export const TriggerContextRule: Story = {
 
       <Rule
         title="✅ 頁面內直接 block — 人員資訊是主要內容"
-        note="團隊成員詳情頁、「關於作者」區塊等場景:NameCard 可直接作為頁面區塊嵌入,不需 hover 觸發"
+        note="團隊成員詳情頁、「關於作者」區塊等場景:ProfileCard 可直接作為頁面區塊嵌入,不需 hover 觸發"
       >
         <div className="border border-border rounded-lg">
-          <NameCard
+          <ProfileCard
             name="Alice Chen"
             avatar={{ src: AVATAR_URL, alt: 'Alice' }}
             subtitle="Product Designer｜D-0042"
@@ -145,7 +145,7 @@ export const TriggerContextRule: Story = {
             defaultFieldValues={{ id: 'YHANAX', employeeNumber: '1234567' }}
           />
         </div>
-        <Label>↑ 「關於作者」section：NameCard 直接嵌入頁面</Label>
+        <Label>↑ 「關於作者」section：ProfileCard 直接嵌入頁面</Label>
       </Rule>
     </div>
   ),
@@ -158,15 +158,15 @@ export const FixedWidthRule: Story = {
   render: () => (
     <div>
       <Rule
-        title="NameCard 永遠 320px，不隨內容伸縮"
-        note="HoverCard 浮層寬度由 NameCard 決定。若寬度隨內容變化,使用者在不同人員的卡之間切換時,浮層會左右跳動,體驗破碎。固定寬度保證穩定預測。對照 Material Snackbar 固定 344px,世界級 DS 一致採「單一元件 設計準則 寬度固定」策略"
+        title="ProfileCard 永遠 320px，不隨內容伸縮"
+        note="HoverCard 浮層寬度由 ProfileCard 決定。若寬度隨內容變化,使用者在不同人員的卡之間切換時,浮層會左右跳動,體驗破碎。固定寬度保證穩定預測。對照 Material Snackbar 固定 344px,世界級 DS 一致採「單一元件 設計準則 寬度固定」策略"
       >
         <div className="flex flex-col gap-3">
           <div className="border border-border rounded-lg">
-            <NameCard name="Bob" avatar={{ src: AVATAR_URL, alt: 'Bob' }} subtitle="Engineering" status="online" />
+            <ProfileCard name="Bob" avatar={{ src: AVATAR_URL, alt: 'Bob' }} subtitle="Engineering" status="online" />
           </div>
           <div className="border border-border rounded-lg">
-            <NameCard
+            <ProfileCard
               name="Alice Chen"
               avatar={{ src: AVATAR_URL, alt: 'Alice' }}
               subtitle="Product Designer｜Design Systems Lead"
@@ -184,7 +184,7 @@ export const FixedWidthRule: Story = {
         title="❌ 手動覆蓋 w-[xxx]"
         note="每張卡寬度不一樣 = 整個產品的人員預覽體驗不一致。固定寬度是 設計準則 設計決策,不建議 consumer 覆蓋"
       >
-        <Label warn>（設計規則）寬度是 NameCard 的元件級常數,不屬於可調參數</Label>
+        <Label warn>（設計規則）寬度是 ProfileCard 的元件級常數,不屬於可調參數</Label>
       </Rule>
     </div>
   ),
@@ -202,10 +202,10 @@ export const SectionRule: Story = {
       >
         <div className="flex items-center gap-4 flex-wrap">
           <div className="border border-border rounded-lg">
-            <NameCard name="Alice Chen" avatar={{ src: AVATAR_URL, alt: 'Alice' }} subtitle="Designer" />
+            <ProfileCard name="Alice Chen" avatar={{ src: AVATAR_URL, alt: 'Alice' }} subtitle="Designer" />
           </div>
           <div className="border border-border rounded-lg">
-            <NameCard
+            <ProfileCard
               name="Alice Chen"
               avatar={{ src: AVATAR_URL, alt: 'Alice' }}
               subtitle="Designer"

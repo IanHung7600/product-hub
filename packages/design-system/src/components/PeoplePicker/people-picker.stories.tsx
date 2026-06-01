@@ -18,8 +18,8 @@ const meta: Meta = {
 export default meta
 type Story = StoryObj
 
-// PersonData sample 含 NameCard 重要資訊(status / statusMessage / fields)—
-// canonical:所有 person avatar hover 都應 render 完整資訊(name-card.spec.md)。
+// PersonData sample 含 ProfileCard 重要資訊(status / statusMessage / fields)—
+// canonical:所有 person avatar hover 都應 render 完整資訊(profile-card.spec.md)。
 const samplePeople = [
   {
     name: 'Alice Chen', avatarUrl: 'https://i.pravatar.cc/48?u=alice', description: 'Design｜D-0042｜EMP-1001',
@@ -54,7 +54,7 @@ const samplePeople = [
   {
     name: 'Fiona Lee', avatarUrl: 'https://i.pravatar.cc/48?u=fiona', description: 'Design｜D-0056｜EMP-1006',
     status: 'online' as const,
-    statusMessage: 'Working on NameCard v3 refactor',
+    statusMessage: 'Working on ProfileCard v3 refactor',
     fields: [{ label: 'ID', value: 'FLEE' }, { label: 'Employee number', value: 'EMP-1006' }],
   },
 ]

@@ -48,7 +48,7 @@ Consumer 在 JSX 裡明確放置分隔線的場景：
 元件內部固定存在的結構性分隔：
 - Dialog Header/Footer
 - Sidebar Header/Footer
-- NameCard 各 section
+- ProfileCard 各 section
 - SelectMenu 搜尋框下方
 
 為什麼：這些分隔線是元件自身結構的一部分（如視窗標題列底線），不由 consumer 控制，不需要語意標記。

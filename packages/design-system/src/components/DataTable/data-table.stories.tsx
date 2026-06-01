@@ -23,8 +23,8 @@ import './column-types' // ColumnMeta declaration merging
 // ── Sample Data ──────────────────────────────────────────────────────────────
 
 // ── Person sample data canonical ──
-// 對齊 NameCard.stories「Default」預設呈現:name + subtitle + status + statusMessage + fields
-// avatar.spec.md DS-wide:所有 person avatar hover 必出現 NameCard,展示資訊一致(不可精簡)
+// 對齊 ProfileCard.stories「Default」預設呈現:name + subtitle + status + statusMessage + fields
+// avatar.spec.md DS-wide:所有 person avatar hover 必出現 ProfileCard,展示資訊一致(不可精簡)
 import type { PersonData } from '@/design-system/components/PeoplePicker/person-display'
 
 const SELLERS: PersonData[] = [
@@ -459,9 +459,9 @@ const TAG_OPTIONS = [
   { value: 'archived', label: '已封存' },
 ]
 // SAMPLE_PEOPLE 完整 PersonData(2026-05-06 v11):每筆都有 default field values(email/phone/
-// department/location)+ status + statusMessage,讓 NameCard hoverCard 永遠完整顯示一致。
-// 對齊 NameCard always-render canonical(NAMECARD_DEFAULT_FIELD_KEYS SSOT)。
-// **2026-05-07 v15.7**:NameCard default fields 改 ['id', 'employeeNumber'] only。
+// department/location)+ status + statusMessage,讓 ProfileCard hoverCard 永遠完整顯示一致。
+// 對齊 ProfileCard always-render canonical(NAMECARD_DEFAULT_FIELD_KEYS SSOT)。
+// **2026-05-07 v15.7**:ProfileCard default fields 改 ['id', 'employeeNumber'] only。
 // Email / Phone / Department / Location 透過 `fields` array opt-in。
 const SAMPLE_PEOPLE: PersonData[] = [
   {

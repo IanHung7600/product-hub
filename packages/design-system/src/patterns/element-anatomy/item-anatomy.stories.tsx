@@ -12,18 +12,18 @@ import { SelectionItem } from '@/design-system/components/SelectionControl/selec
 import { Checkbox } from '@/design-system/components/Checkbox/checkbox'
 import { Tag } from '@/design-system/components/Tag/tag'
 import { Avatar, type AvatarData } from '@/design-system/components/Avatar/avatar'
-import { NameCard, NameCardDefaultActions } from '@/design-system/components/NameCard/name-card'
+import { ProfileCard, ProfileCardDefaultActions } from '@/design-system/components/ProfileCard/profile-card'
 
 /** Person avatar hover canonical helper — avatar.spec.md DS-wide rule:
- *  name-card.spec.md 重要資訊 canonical(status / statusMessage / fields 皆必含) */
+ *  profile-card.spec.md 重要資訊 canonical(status / statusMessage / fields 皆必含) */
 const personHover = (name: string, subtitle?: string) => (
-  <NameCard
+  <ProfileCard
     name={name}
     subtitle={subtitle ?? 'Design｜D-0042｜EMP-1001'}
     avatar={{ alt: name }}
     status="online"
     statusMessage="Out of Office: Back on Monday!"
-    actions={<NameCardDefaultActions />}
+    actions={<ProfileCardDefaultActions />}
     fields={[
       { label: 'ID', value: 'YHANAX' },
       { label: 'Employee number', value: '1234567' },

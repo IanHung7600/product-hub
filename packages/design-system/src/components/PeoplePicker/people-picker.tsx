@@ -12,7 +12,7 @@ import { Avatar } from '@/design-system/components/Avatar/avatar'
 import { Tag } from '@/design-system/components/Tag/tag'
 import { Select } from '@/design-system/components/Select/select'
 import { Combobox } from '@/design-system/components/Combobox/combobox'
-import { PersonDisplay, MultiPersonDisplay, PersonAvatarTag, buildPersonNameCard, resolvePerson, type PersonValue } from './person-display'
+import { PersonDisplay, MultiPersonDisplay, PersonAvatarTag, buildPersonProfileCard, resolvePerson, type PersonValue } from './person-display'
 import {
   getAvatarStackVisibleCount,
   AVATAR_STACK_AVATAR_PX,
@@ -271,7 +271,7 @@ const PeoplePicker = React.forwardRef<HTMLDivElement, PeoplePickerProps>(functio
               // Combobox tagRenderer slot,SSOT = Tag primitive 視覺(per codex Round 3 verdict)。
               // 人名 99% < 25 chars 不觸發 cap;極端長名(複數姓 + middle name)觸發 ellipsis 是合理 UX。
               avatar={pillShowAvatar
-                ? <Avatar src={p.avatarUrl} alt={p.name} size={16} hoverCard={buildPersonNameCard(p)} />
+                ? <Avatar src={p.avatarUrl} alt={p.name} size={16} hoverCard={buildPersonProfileCard(p)} />
                 : undefined}
               onDismiss={onRemove}
             >
@@ -400,7 +400,7 @@ const PeoplePicker = React.forwardRef<HTMLDivElement, PeoplePickerProps>(functio
                 src={p.avatarUrl}
                 alt={p.name}
                 size={16}
-                hoverCard={buildPersonNameCard(p)}
+                hoverCard={buildPersonProfileCard(p)}
               />
             }
             onDismiss={() => {

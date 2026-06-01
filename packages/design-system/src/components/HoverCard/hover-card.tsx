@@ -11,7 +11,7 @@ import { OVERLAY_SIDE_OFFSET } from "@/design-system/tokens/elevation/overlay-ge
  *
  * **不含視覺樣式**——bg、border、shadow、padding 由 consumer 決定：
  * - OverflowIndicator：深色 Tooltip 樣式（bg-tooltip + data-theme="dark"）
- * - NameCard：亮色 Card 樣式（bg-surface-raised + elevation-200）
+ * - ProfileCard：亮色 Card 樣式（bg-surface-raised + elevation-200）
  *
  * 只提供：z-index、動畫、sideOffset。
  */
@@ -27,7 +27,7 @@ const HoverCardContent = React.forwardRef<
   // HoverCardPrimitive.Portal(2026-04-23):把 Content 搬到 `document.body`。
   // 不 Portal 時 Content 會 DOM-nested 在 trigger subtree,如 trigger 位於 OverflowIndicator
   // `data-theme="dark"` tooltip 內部 → Avatar 自帶 HoverCard 的 Content 也卡在 dark subtree,
-  // CSS var(--foreground) 繼承 dark 值 → NameCard 內部文字變 white 看不見(user 抓的 bug)。
+  // CSS var(--foreground) 繼承 dark 值 → ProfileCard 內部文字變 white 看不見(user 抓的 bug)。
   // Portal 到 body 讓 CSS 繼承 chain 從 app root data-theme 起算,不受 trigger subtree 污染。
   //
   // collisionPadding=12:Radix / browser 內部 1-2px rounding 讓 visual padding 比 prop 值少 1-2px。

@@ -42,7 +42,7 @@ PeoplePicker 是**人員選擇器**——專為「從人員清單中選一個或
 | 一般分類選擇（非人員）| `Select` / `Combobox` | PeoplePicker 專為人員設計，有 Avatar prefix |
 | 單選純文字選項（狀態 / 類別）| `Select` | PeoplePicker 開銷較大，靠 Avatar 識別；非人員用 Select |
 | 多選非人員 tag | `Combobox` | Combobox 是通用多選，無 Avatar 假設 |
-| 只顯示單一人員（不需選擇）| `NameCard` + `Avatar` | PeoplePicker 是選擇器，純展示用 NameCard |
+| 只顯示單一人員（不需選擇）| `ProfileCard` + `Avatar` | PeoplePicker 是選擇器，純展示用 ProfileCard |
 | 顯示整個 team 成員列表 | `Avatar.Group` / 自訂 list | PeoplePicker 是「選人」介面，不是「展示 team」 |
 
 ---
@@ -240,7 +240,7 @@ PeoplePicker 是 **composite 元件**(內部 wrap `<Select>`(single)/ `<Combobox
 - `../Combobox/combobox.spec.md` — 非人員多選的對應元件
 - `../SelectMenu/select-menu.tsx` — PeoplePicker edit mode 的浮層選單（內部消費）
 - `../Avatar/avatar.spec.md` — 選項與已選值的 Avatar 視覺
-- `../NameCard/name-card.spec.md` — 純顯示人員資訊的對應元件（非選擇器）
+- `../ProfileCard/profile-card.spec.md` — 純顯示人員資訊的對應元件（非選擇器）
 - `../Field/field-controls.spec.md` — Field Control 共用規則
 
 ## A11y 預設

@@ -339,7 +339,7 @@ export interface ItemContentProps extends Omit<React.HTMLAttributes<HTMLDivEleme
   descriptionBreakWords?: boolean
   /**
    * Label truncate (default `true`, 對齊 row-item 大宗 idiom)。
-   * Opt-out(`false`)for card-like consumers(e.g. NameCard label 允許 wrap)。
+   * Opt-out(`false`)for card-like consumers(e.g. ProfileCard label 允許 wrap)。
    * World-class 對照:Material `ListItemText primaryTypographyProps.noWrap` default true。
    */
   labelTruncate?: boolean

@@ -3,7 +3,7 @@
 //   純行為 primitive(基於 Radix HoverCard),不含視覺樣式。bg / border /
 //   shadow / padding / size 全由 consumer 透過 className 決定;無 own variant /
 //   state / size。Overview + VisualVariants 兩個 story 已涵蓋 consumer 兩種
-//   常見視覺(NameCard 亮色 vs OverflowIndicator 深色 tooltip)。
+//   常見視覺(ProfileCard 亮色 vs OverflowIndicator 深色 tooltip)。
 import type { Meta, StoryObj } from '@storybook/react'
 import { HoverCard, HoverCardTrigger, HoverCardContent } from './hover-card'
 import { Avatar } from '@/design-system/components/Avatar/avatar'
@@ -37,7 +37,7 @@ export const Overview: Story = {
               </div>
             </HoverCardContent>
           </HoverCard>
-          <span className="text-caption text-fg-muted">← hover Avatar 彈出 NameCard(可點按鈕)</span>
+          <span className="text-caption text-fg-muted">← hover Avatar 彈出 ProfileCard(可點按鈕)</span>
         </div>
       </div>
 
@@ -80,7 +80,7 @@ export const VisualVariants: Story = {
   render: () => (
     <div className="flex flex-col gap-8">
       <div>
-        <H3>亮色 Card 樣式(NameCard pattern)</H3>
+        <H3>亮色 Card 樣式(ProfileCard pattern)</H3>
         <Desc>人員資訊卡、內容預覽等可互動浮層。使用 `bg-surface-raised + elevation-200 + rounded-lg + border`。</Desc>
         <div className="flex items-center gap-6">
           <HoverCard>
@@ -121,7 +121,7 @@ export const VisualVariants: Story = {
           <table className="text-caption border-collapse">
             <thead><tr><Th>Consumer</Th><Th>視覺風格</Th><Th>典型用途</Th></tr></thead>
             <tbody>
-              <tr><Td>NameCard</Td><Td mono>亮色 Card(bg-surface-raised + elevation-200)</Td><Td>人員 / 組織 / 文件預覽</Td></tr>
+              <tr><Td>ProfileCard</Td><Td mono>亮色 Card(bg-surface-raised + elevation-200)</Td><Td>人員 / 組織 / 文件預覽</Td></tr>
               <tr><Td>OverflowIndicator</Td><Td mono>深色 Tooltip(bg-tooltip + data-theme dark)</Td><Td>+N 溢出清單</Td></tr>
               <tr><Td>Custom</Td><Td>Consumer 自訂</Td><Td>任何需要可互動 hover 浮層的場景</Td></tr>
             </tbody>

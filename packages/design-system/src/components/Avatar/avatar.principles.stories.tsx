@@ -5,7 +5,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { Settings, Bell, Home } from 'lucide-react'
 import { Avatar } from './avatar'
 import { MenuItem } from '@/design-system/components/Menu/menu-item'
-import { NameCard, NameCardDefaultActions } from '@/design-system/components/NameCard/name-card'
+import { ProfileCard, ProfileCardDefaultActions } from '@/design-system/components/ProfileCard/profile-card'
 
 const meta: Meta = {
   title: 'Design System/Components/Avatar/設計原則',
@@ -180,24 +180,24 @@ export const WithBadgeOverlayRule: Story = {
 }
 
 export const HoverCardIntegrationRule: Story = {
-  name: 'Avatar + NameCard 整合',
+  name: 'Avatar + ProfileCard 整合',
   render: () => (
     <div>
       <Rule
-        title="人員 Avatar 的 hover 預覽必須用 NameCard"
-        note="NameCard 是 DS 設計準則 人員 hover 內容元件(avatar + name + subtitle + actions + status + fields 統一佈局)。Avatar 的 hoverCard prop 接 NameCard,不可手刻 JSX — 手刻會漂移出 NameCard 對齊 / 間距 / status token 規則"
+        title="人員 Avatar 的 hover 預覽必須用 ProfileCard"
+        note="ProfileCard 是 DS 設計準則 人員 hover 內容元件(avatar + name + subtitle + actions + status + fields 統一佈局)。Avatar 的 hoverCard prop 接 ProfileCard,不可手刻 JSX — 手刻會漂移出 ProfileCard 對齊 / 間距 / status token 規則"
       >
         <Avatar
           alt="Ada Chen"
           size={40}
           hoverCard={
-            <NameCard
+            <ProfileCard
               name="Ada Chen"
               subtitle="Design Engineer · 台北"
               avatar={{ alt: 'Ada Chen' }}
               status="online"
               statusMessage="Out of Office: Back on Monday!"
-              actions={<NameCardDefaultActions />}
+              actions={<ProfileCardDefaultActions />}
               fields={[
                 { label: 'ID', value: 'YHANAX' },
                 { label: 'Employee number', value: '1234567' },
@@ -206,18 +206,18 @@ export const HoverCardIntegrationRule: Story = {
             />
           }
         />
-        <Label>↑ hover avatar 彈出 NameCard(action 列:Chat + Audio call 設計準則)</Label>
+        <Label>↑ hover avatar 彈出 ProfileCard(action 列:Chat + Audio call 設計準則)</Label>
       </Rule>
 
       <Rule
         title="❌ 關鍵資訊只靠 hover 顯示(觸控裝置看不到)"
-        note="NameCard hover 本身用法沒錯,問題是「資訊的唯一出口」。觸控裝置無 hover 能力,若必看資訊(狀態角色、是否離職、權限等)只出現在 hover 浮層裡,平板 / 手機使用者完全錯過。hover 是**補充資訊**管道,不是**關鍵資訊**唯一載體"
+        note="ProfileCard hover 本身用法沒錯,問題是「資訊的唯一出口」。觸控裝置無 hover 能力,若必看資訊(狀態角色、是否離職、權限等)只出現在 hover 浮層裡,平板 / 手機使用者完全錯過。hover 是**補充資訊**管道,不是**關鍵資訊**唯一載體"
       >
         <div className="flex items-start gap-8">
           <div className="flex flex-col gap-2">
             <Avatar alt="Alex Wang" size={48}
               hoverCard={
-                <NameCard name="Alex Wang" subtitle="Engineer · 已離職" onViewMore={() => {}} />
+                <ProfileCard name="Alex Wang" subtitle="Engineer · 已離職" onViewMore={() => {}} />
               }
             />
             <Label warn>❌ 「已離職」只出現在 hover 內 — 觸控使用者看不到,可能誤發訊息給已離職成員</Label>

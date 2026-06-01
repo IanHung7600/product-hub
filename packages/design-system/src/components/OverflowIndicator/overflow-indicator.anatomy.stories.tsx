@@ -12,16 +12,16 @@ import { useState } from 'react'
 import { OverflowIndicator } from './overflow-indicator'
 import { Tag } from '@/design-system/components/Tag/tag'
 import { Avatar } from '@/design-system/components/Avatar/avatar'
-import { NameCard, NameCardDefaultActions } from '@/design-system/components/NameCard/name-card'
+import { ProfileCard, ProfileCardDefaultActions } from '@/design-system/components/ProfileCard/profile-card'
 
 const personHover = (name: string) => (
-  <NameCard
+  <ProfileCard
     name={name}
     subtitle="Design｜D-0042｜EMP-1001"
     avatar={{ alt: name }}
     status="online"
     statusMessage="Out of Office: Back on Monday."
-    actions={<NameCardDefaultActions />}
+    actions={<ProfileCardDefaultActions />}
     fields={[
       { label: 'ID', value: 'YHANAX' },
       { label: 'Employee number', value: '1234567' },
@@ -542,7 +542,7 @@ export const Accessibility = {
   render: () => (
     <div className="max-w-3xl text-body text-fg-secondary">
       <h3 className="text-h5 text-foreground mb-2">無障礙設計</h3>
-      <p className="whitespace-pre-line">{"摘要:\n\n  ARIA / Pattern  :對齊 [W3C ARIA Authoring Practices Guide](https://www.w3.org/WAI/ARIA/apg/patterns/) 對應 pattern。\n\n  互動行為  :\n\n  +N trigger 是 passive 計數 span（cursor-default，無 tabIndex / role / Enter handler）。HoverCard 在 hover 或 trigger 取得 focus 時自動展開，沒有「按 Enter 開選單」的鍵盤指令，也沒有 click 切換。\n\n  Focus  :trigger 本身不是 tab stop；HoverCard 內展開的可互動內容（人員 tag / NameCard）由各自內容元件負責 focus 管理。\n\n  驗證  :Storybook a11y addon panel 應 0 critical violation；HoverCard 內容透過 hover 或 focus 自動顯示（非鍵盤指令觸發）。WCAG AA contrast ≥ 4.5:1（text）/ 3:1（UI）。"}</p>
+      <p className="whitespace-pre-line">{"摘要:\n\n  ARIA / Pattern  :對齊 [W3C ARIA Authoring Practices Guide](https://www.w3.org/WAI/ARIA/apg/patterns/) 對應 pattern。\n\n  互動行為  :\n\n  +N trigger 是 passive 計數 span（cursor-default，無 tabIndex / role / Enter handler）。HoverCard 在 hover 或 trigger 取得 focus 時自動展開，沒有「按 Enter 開選單」的鍵盤指令，也沒有 click 切換。\n\n  Focus  :trigger 本身不是 tab stop；HoverCard 內展開的可互動內容（人員 tag / ProfileCard）由各自內容元件負責 focus 管理。\n\n  驗證  :Storybook a11y addon panel 應 0 critical violation；HoverCard 內容透過 hover 或 focus 自動顯示（非鍵盤指令觸發）。WCAG AA contrast ≥ 4.5:1（text）/ 3:1（UI）。"}</p>
     </div>
   ),
 }

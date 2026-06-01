@@ -85,7 +85,7 @@ Tag 是 inline label，用於分類標籤、狀態標記、多選已選值。不
 |------|------|------|
 | 通知計數 / 狀態紅點 | `Badge` | Badge 較小、適合 overlay、主要傳達數量或「有新東西」 |
 | 互動式 filter（可點擊切換）| `Chip` | Tag 是純顯示，Chip 是可點擊控件 |
-| Person 顯示（name + avatar）| `NameCard` / `Avatar + Text` | Tag 是單行 inline label，不承載人員資訊 |
+| Person 顯示（name + avatar）| `ProfileCard` / `Avatar + Text` | Tag 是單行 inline label，不承載人員資訊 |
 | 可搜尋的多選入口 | `Combobox`（內部會渲染 Tag 陣列）| Combobox 才是選擇器，Tag 是選擇後的結果 |
 
 ---
@@ -272,7 +272,7 @@ Tag 是**純視覺 indicator**(非互動 control,互動版本是 Chip),預設 AR
 - `../Badge/badge.spec.md` — 通知計數 / 狀態紅點（overlay 場景）
 - `../Chip/chip.spec.md` — 可互動 filter（Tag 的互動版本）
 - `../Combobox/combobox.spec.md` — 多選場景會渲染 Tag 陣列
-- `../NameCard/name-card.spec.md` — 人員資訊顯示
+- `../ProfileCard/profile-card.spec.md` — 人員資訊顯示
 
 ## 被引用(auto-maintained,Dim 3 reciprocal audit)
 

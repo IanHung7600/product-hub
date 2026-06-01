@@ -97,7 +97,7 @@ Dialog / Sheet / Popover / Tooltip / HoverCard / Coachmark / Command / SelectMen
 
 ### Page-composite(頁面內 composite,無 overlay 性質)
 
-Tabs / Accordion / DataTable / Calendar / Carousel / Breadcrumb / Sidebar / NameCard / FileItem / FileUpload / FileViewer / OverflowIndicator
+Tabs / Accordion / DataTable / Calendar / Carousel / Breadcrumb / Sidebar / ProfileCard / FileItem / FileUpload / FileViewer / OverflowIndicator
 
 **共同約束**:
 - 消費多個 row primitive 或 self-contained primitive

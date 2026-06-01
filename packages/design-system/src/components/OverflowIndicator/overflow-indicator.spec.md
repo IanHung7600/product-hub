@@ -39,7 +39,7 @@ OverflowIndicator 是 **`+N` 溢出指示器 + HoverCard 顯示隱藏內容**—
 
 溢出內容**可能需要互動**——而非純文字提示：
 
-- **人員 +N**：hover 清單中每個人可能需要 tag dismiss 或 hover 該人再看 NameCard（nested HoverCard）
+- **人員 +N**：hover 清單中每個人可能需要 tag dismiss 或 hover 該人再看 ProfileCard（nested HoverCard）
 - **Tag +N**：hover 清單中每個 tag 可能需要個別 dismiss
 - **一般 +N**：穩定顯示、使用者可把滑鼠移到浮層上閱讀
 
@@ -113,7 +113,7 @@ OverflowIndicator 是 **composite**(HoverCard trigger + tag-styled `+N` span + H
 
 **互動行為**:trigger 為 `+N` 計數 span,**keyboard-focusable**(`tabIndex=0` + `role="button"` + `aria-haspopup="dialog"`,對齊 Avatar hoverCard canonical),HoverCard 在 hover 或 trigger 取得 focus 時自動展開——無「按 Enter 開選單」的鍵盤指令,也沒有 click 切換。(2026-06-01 #13:原設計純 passive 不可聚焦 → 鍵盤使用者無法開啟 HoverCard 看溢出內容,違 WCAG 2.1.1;改 focusable)
 
-**Focus**:trigger 是 tab stop(keyboard 可達 + focus-visible ring,讓鍵盤使用者也能 focus 開啟 HoverCard 看溢出內容);HoverCard 內展開的可互動內容(如人員 tag / NameCard)由各自的內容元件負責 focus 管理。
+**Focus**:trigger 是 tab stop(keyboard 可達 + focus-visible ring,讓鍵盤使用者也能 focus 開啟 HoverCard 看溢出內容);HoverCard 內展開的可互動內容(如人員 tag / ProfileCard)由各自的內容元件負責 focus 管理。
 
 **驗證**:Storybook a11y addon panel 應 0 critical violation;HoverCard 內容透過 hover 或 focus 自動顯示(非鍵盤指令觸發)。WCAG AA contrast ≥ 4.5:1(text)/ 3:1(UI)。
 

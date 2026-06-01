@@ -11,7 +11,7 @@ import { Input } from '@/design-system/components/Input/input'
 import { Avatar } from '@/design-system/components/Avatar/avatar'
 import { Switch } from '@/design-system/components/Switch/switch'
 import { MenuItem } from '@/design-system/components/Menu/menu-item'
-import { NameCard, NameCardDefaultActions } from '@/design-system/components/NameCard/name-card'
+import { ProfileCard, ProfileCardDefaultActions } from '@/design-system/components/ProfileCard/profile-card'
 import { ItemSuffix } from '@/design-system/patterns/element-anatomy/item-anatomy'
 
 /**
@@ -150,7 +150,7 @@ export const LongContent = {
   name: '長內容',
   render: () => {
     // 30 avatar + title + description(ROLE｜EMP_ID｜EMP_NUM,full-width 「｜」 separator)
-    // 對齊 user 要求 + NameCard 資訊量:
+    // 對齊 user 要求 + ProfileCard 資訊量:
     //   - avatar:real photo src(pravatar seed 確保每人不同面孔)
     //   - title:name(body font-medium)
     //   - description:「職稱｜員編｜工號」格式(text-caption text-fg-secondary = neutral-8)
@@ -215,20 +215,20 @@ export const LongContent = {
                   role="listitem"
                   className="flex items-center gap-3 py-2 px-[var(--layout-space-loose)] rounded-md hover:bg-neutral-hover"
                 >
-                  {/* Person avatar canonical:hover 必出現 NameCard(DS-wide rule,見 avatar.spec.md)
+                  {/* Person avatar canonical:hover 必出現 ProfileCard(DS-wide rule,見 avatar.spec.md)
                       世界級 Slack / Figma / Linear / Notion 的 person avatar 全預設 hover → profile popover */}
                   <Avatar
                     size={40}
                     src={`https://i.pravatar.cc/80?u=${m.empNum}`}
                     alt={m.name}
                     hoverCard={
-                      <NameCard
+                      <ProfileCard
                         name={m.name}
                         avatar={{ src: `https://i.pravatar.cc/80?u=${m.empNum}`, alt: m.name }}
                         subtitle={`${roles[i % roles.length]}｜${m.empId}`}
                         status={(['online','busy','away','offline'] as const)[i % 4]}
                         statusMessage="Out of Office: Back on Monday!"
-                        actions={<NameCardDefaultActions />}
+                        actions={<ProfileCardDefaultActions />}
                         fields={[
                           { label: 'ID', value: m.empNum },
                           { label: 'Employee number', value: m.empId },
@@ -333,19 +333,19 @@ export const ListBody = {
                   role="listitem"
                   className="flex items-center gap-3 py-2 px-[var(--layout-space-loose)] rounded-md hover:bg-neutral-hover"
                 >
-                  {/* Person avatar canonical:hover 必出現 NameCard */}
+                  {/* Person avatar canonical:hover 必出現 ProfileCard */}
                   <Avatar
                     size={40}
                     src={`https://i.pravatar.cc/80?u=${m.empNum}`}
                     alt={m.name}
                     hoverCard={
-                      <NameCard
+                      <ProfileCard
                         name={m.name}
                         avatar={{ src: `https://i.pravatar.cc/80?u=${m.empNum}`, alt: m.name }}
                         subtitle={`${m.role}｜${m.empId}`}
                         status={(['online','busy','away','offline'] as const)[i % 4]}
                         statusMessage="Out of Office: Back on Monday!"
-                        actions={<NameCardDefaultActions />}
+                        actions={<ProfileCardDefaultActions />}
                         fields={[
                           { label: 'ID', value: m.empNum },
                           { label: 'Employee number', value: m.empId },

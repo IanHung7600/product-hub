@@ -28,7 +28,7 @@ benchmark:
 ## 何時用
 
 - **Profile / detail panel 的屬性列表**：使用者資料（Email / Phone / Role / Created at）
-- **NameCard 的 info fields**：HoverCard 內的次要資訊展示
+- **ProfileCard 的 info fields**：HoverCard 內的次要資訊展示
 - **固定資訊展示**：產品規格、訂單明細、設定值（唯讀）
 - **HTML 語義為 `dl` + `dt` + `dd`**：對 screen reader 明確表達「屬性-值」關係
 
@@ -50,7 +50,7 @@ benchmark:
 
 | direction | Layout | 典型情境 | 世界級對照 |
 |-----------|--------|---------|-----------|
-| `vertical`(預設)| label 在上 / value 在下 | NameCard detail、sidebar 長 value(地址、bio) | Atlassian DescriptionList、Polaris DescriptionList |
+| `vertical`(預設)| label 在上 / value 在下 | ProfileCard detail、sidebar 長 value(地址、bio) | Atlassian DescriptionList、Polaris DescriptionList |
 | `horizontal` | label 左 / value 右對齊 | **file info panel / 訂單詳情 / settings summary**(短 value 的 metadata 列) | Google Drive file info、Notion file panel、iOS Settings | <!-- @benchmark-unverified: see frontmatter benchmark list for canonical DS source URL -->
 
 **判斷法**:
@@ -118,8 +118,8 @@ benchmark:
 
 | 值 | 用途 |
 |---|---|
-| `1`(預設)| 垂直堆疊,適合窄容器(NameCard、sidebar detail)|
-| `2` | 兩欄並排,適合中等寬度(NameCard info fields)|
+| `1`(預設)| 垂直堆疊,適合窄容器(ProfileCard、sidebar detail)|
+| `2` | 兩欄並排,適合中等寬度(ProfileCard info fields)|
 | `3` | 三欄,適合寬容器(detail panel)|
 
 Horizontal 模式永遠單欄(label + value 排列就是橫向,不再有欄概念)。
@@ -204,7 +204,7 @@ DescriptionList 是**唯讀 label / value 資料呈現**(非互動 / 非 variant
 
 - `../Field/field.spec.md` — 表單輸入（需要編輯的對應元件）
 - `../DataTable/data-table.spec.md` — 多筆同結構資料（table 對應）
-- `../NameCard/name-card.spec.md` — NameCard info fields 的消費者
+- `../ProfileCard/profile-card.spec.md` — ProfileCard info fields 的消費者
 - `../../tokens/layoutSpace/layoutSpace.spec.md` — 垂直 gap 的 density 感知 token
 
 ## 被引用(auto-maintained,Dim 3 reciprocal audit)

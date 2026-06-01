@@ -11,7 +11,7 @@
 // 在主檔 SSOT-bearing API 邊界處,本檔屬機械搬移。
 import { nakedCellRowModeAlign } from '@/design-system/components/Field/field-wrapper'
 import type { SelectOption } from '@/design-system/components/Select/select'
-import { buildPersonNameCard, resolvePerson, type PersonValue } from './person-display'
+import { buildPersonProfileCard, resolvePerson, type PersonValue } from './person-display'
 
 // ── Tag wrapper className SSOT ──────────────────────────────────────────────
 //
@@ -58,7 +58,7 @@ export function getPeoplePickerTagWrapperClass(selectedCount: number): string {
 // menu 時 dropdown row 只顯純文字 name(資訊弱)— 現透過 wrapper schema unify 直接帶 avatar /
 // description 給 SelectMenu primitive 渲。
 //
-// 2026-05-18 fix(per user directive「所有 avatar hover 都要 NameCard」+ avatar.spec.md
+// 2026-05-18 fix(per user directive「所有 avatar hover 都要 ProfileCard」+ avatar.spec.md
 // DS-wide canonical):dropdown menu items Avatar 必帶 hoverCard,跟 PersonDisplay / Tag
 // avatar 對齊。漏掉 = user 抓「PeoplePicker 選單內 avatar 沒有 namecard」。
 export function personToSelectOption(person: PersonValue): SelectOption {
@@ -66,7 +66,7 @@ export function personToSelectOption(person: PersonValue): SelectOption {
   return {
     value: p.name,
     label: p.name,
-    avatar: { src: p.avatarUrl, alt: p.name, hoverCard: buildPersonNameCard(p) },
+    avatar: { src: p.avatarUrl, alt: p.name, hoverCard: buildPersonProfileCard(p) },
     description: p.description,
   }
 }

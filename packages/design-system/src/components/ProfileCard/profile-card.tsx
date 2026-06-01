@@ -9,25 +9,25 @@ import { ScrollArea } from '@/design-system/components/ScrollArea/scroll-area'
 import { ItemContent } from '@/design-system/patterns/element-anatomy/item-anatomy'
 
 /**
- * NameCardDefaultActions — canonical 預設 action 組合
+ * ProfileCardDefaultActions — canonical 預設 action 組合
  *
  * ── 為什麼需要 export ──
- * NameCard 的 action 列在世界級 chat/contact app 是「關係型快速動作」的 canonical
+ * ProfileCard 的 action 列在世界級 chat/contact app 是「關係型快速動作」的 canonical
  * (Slack / iMessage / LinkedIn / Figma 皆如此):**Chat / Message + Audio call**。
- * 跨 consumer(avatar.principles / name-card.stories / future product code)應該用
+ * 跨 consumer(avatar.principles / profile-card.stories / future product code)應該用
  * 同一組預設,避免每個範例各自發明 action 組合,讓 reader 誤以為 action 會隨情境自動變。
  *
- * ── 使用方式(hover context 必含 onViewMore,見 name-card.spec.md 「View more」節)──
- *   <NameCard name="..." actions={<NameCardDefaultActions />} onViewMore={...} />
+ * ── 使用方式(hover context 必含 onViewMore,見 profile-card.spec.md 「View more」節)──
+ *   <ProfileCard name="..." actions={<ProfileCardDefaultActions />} onViewMore={...} />
  *
  * ── 何時要換成自訂 action ──
  * - Single-action 情境(只要「傳訊息」)→ consumer 傳 `<Button>傳訊息</Button>`
  * - 特定情境的 action(管理員「撤銷邀請」/ HR「離職管理」)→ consumer 自訂
- * - 非人員關係動作(「訂購此商品」)→ 根本不應該用 NameCard
+ * - 非人員關係動作(「訂購此商品」)→ 根本不應該用 ProfileCard
  *
  * Chat + Audio call 是 **default**,不是 **only**——consumer 可覆寫,但需有明確理由。
  */
-export const NameCardDefaultActions = () => (
+export const ProfileCardDefaultActions = () => (
   <>
     <Button variant="tertiary" size="sm" startIcon={MessageCircle}>Chat</Button>
     <Button variant="tertiary" size="sm" startIcon={Phone} endIcon={ChevronDown}>Audio call</Button>
@@ -35,7 +35,7 @@ export const NameCardDefaultActions = () => (
 )
 
 /**
- * NameCard — 人員 HoverCard 的內容元件
+ * ProfileCard — 人員 HoverCard 的內容元件
  *
  * ── Status 對齊 Avatar presence canonical(2026-04-20) ──
  * status type = `online | away | busy | offline`,跟 Avatar 的 presence prop 對齊
@@ -71,14 +71,14 @@ const STATUS_LABEL: Record<StatusType, string> = {
 }
 
 /**
- * NameCard SSOT — 預設 field keys(v11 always-render canonical,2026-05-06)
+ * ProfileCard SSOT — 預設 field keys(v11 always-render canonical,2026-05-06)
  *
  * ── 為什麼 SSOT ──
  * User explicit rule:「所有 namecard 預設顯示的資訊都是要一樣完整的」。前 v10 props
  * 全 optional + body conditional render → consumer 漏傳 fields 視覺缺 section,每個範例
  * 各自不一致(同 person 在 DataTable / PeoplePicker / avatar.principles 看起來不同)。
  *
- * v11 canonical:NameCard **always** renders 4 default sections regardless of consumer 是否
+ * v11 canonical:ProfileCard **always** renders 4 default sections regardless of consumer 是否
  * 傳資料 — 缺 data → 對應 DescriptionItem 顯 `EMPTY_PLACEHOLDER`("—"),section 結構不收合。
  * 視覺結構 SSOT 在此元件,不依賴 consumer。
  *
@@ -95,16 +95,16 @@ const STATUS_LABEL: Record<StatusType, string> = {
 // Email / Phone / Department / Location 等其他 description 一律 opt-in by consumer 透過
 // `fields` array prop。對齊 user 明確「應該確保所有都只有這兩個,因為我並沒有要求你要選其他的」。
 export const NAMECARD_DEFAULT_FIELD_KEYS = ['id', 'employeeNumber'] as const
-type NameCardDefaultFieldKey = typeof NAMECARD_DEFAULT_FIELD_KEYS[number]
+type ProfileCardDefaultFieldKey = typeof NAMECARD_DEFAULT_FIELD_KEYS[number]
 
-const DEFAULT_FIELD_LABEL: Record<NameCardDefaultFieldKey, string> = {
+const DEFAULT_FIELD_LABEL: Record<ProfileCardDefaultFieldKey, string> = {
   id: 'ID',
   employeeNumber: 'Employee number',
 }
 
 const FIELD_PLACEHOLDER = '—'
 
-export interface NameCardProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface ProfileCardProps extends React.HTMLAttributes<HTMLDivElement> {
   name: string
   avatar?: AvatarData
   subtitle?: string
@@ -121,13 +121,13 @@ export interface NameCardProps extends React.HTMLAttributes<HTMLDivElement> {
    * Default field 的真實值。Object key = NAMECARD_DEFAULT_FIELD_KEYS 之一。
    * 缺 key → render placeholder。Dev mode 會 console.warn 提醒消費者補資料。
    */
-  defaultFieldValues?: Partial<Record<NameCardDefaultFieldKey, React.ReactNode>>
+  defaultFieldValues?: Partial<Record<ProfileCardDefaultFieldKey, React.ReactNode>>
   onViewMore?: () => void
   viewMoreLabel?: string
 }
 
 // code-quality-allow: long-function — foundational composite main body — 拆 sub-fn 會複雜化 local state / ref / context binding
-const NameCard = React.forwardRef<HTMLDivElement, NameCardProps>(
+const ProfileCard = React.forwardRef<HTMLDivElement, ProfileCardProps>(
   (
     {
       name,
@@ -174,7 +174,7 @@ const NameCard = React.forwardRef<HTMLDivElement, NameCardProps>(
       if (legacyEntry) {
         // eslint-disable-next-line no-console
         console.warn(
-          `[NameCard] "${name}":legacy pattern — fields[].label="${legacyEntry.label}" ` +
+          `[ProfileCard] "${name}":legacy pattern — fields[].label="${legacyEntry.label}" ` +
           `is a default field. Migrate to defaultFieldValues={{ id, employeeNumber }} prop ` +
           `to align with NAMECARD_DEFAULT_FIELD_KEYS canonical.`,
         )
@@ -185,14 +185,14 @@ const NameCard = React.forwardRef<HTMLDivElement, NameCardProps>(
     if (process.env.NODE_ENV !== 'production' && !defaultFieldValues) {
       // eslint-disable-next-line no-console
       console.warn(
-        `[NameCard] "${name}":no defaultFieldValues passed — sections will render placeholders. ` +
+        `[ProfileCard] "${name}":no defaultFieldValues passed — sections will render placeholders. ` +
         `Pass at least { id, employeeNumber } via defaultFieldValues prop. ` +
         `For other description items (email/phone/department/location etc),use \`fields\` prop array.`,
       )
     }
 
     // Layout canonical(2026-04-23):Header + Actions 固定上,Body(status + fields)可捲動,
-    // View more 固定下。**NameCard 自己約束高度**,不依賴 consumer HoverCardContent 設 flex:
+    // View more 固定下。**ProfileCard 自己約束高度**,不依賴 consumer HoverCardContent 設 flex:
     //   - `max-h-[var(--radix-hover-card-content-available-height,...)]`:HoverCard / Popover
     //     context 自動繼承 Radix viewport-aware 變數;standalone 落到 100vh fallback
     //   - 內部 `flex flex-col + overflow-hidden`:Header(shrink-0)+ Body(flex-1 min-h-0 ScrollArea)
@@ -219,7 +219,7 @@ const NameCard = React.forwardRef<HTMLDivElement, NameCardProps>(
               status={status}
               className="shrink-0"
             />
-            {/* NameCard typography:label body-lg(16/1.5) + desc body(14/1.5) = reading mode + size="lg"。
+            {/* ProfileCard typography:label body-lg(16/1.5) + desc body(14/1.5) = reading mode + size="lg"。
                 labelClassName escape hatch 加 font-medium(card context 語意)+ labelTruncate=false 允許 wrap。 */}
             <ItemContent
               label={name}
@@ -247,7 +247,7 @@ const NameCard = React.forwardRef<HTMLDivElement, NameCardProps>(
             **v12 rule**(per user 拍板「不應該顯示『狀態沒有被設定』,production 每 user 一定有
             presence state,undefined 頂多是 loading transient 還沒讀到」):status undefined →
             隱藏整 status badge + status message block(loading 期間 skip),禁 render「Status not
-            set」這種 placeholder(語義錯,user presence 不會「沒設定」)。**NameCard-specific 不外推
+            set」這種 placeholder(語義錯,user presence 不會「沒設定」)。**ProfileCard-specific 不外推
             至 DS 其他元件**(FileItem / DescriptionList / DataTable cell 各自 placeholder 邏輯
             unrelated)。Fields section 仍 always-render(info schema 性質)。 */}
         <ScrollArea className="flex-1 min-h-0 border-t border-divider">
@@ -295,12 +295,12 @@ const NameCard = React.forwardRef<HTMLDivElement, NameCardProps>(
     )
   },
 )
-NameCard.displayName = 'NameCard'
+ProfileCard.displayName = 'ProfileCard'
 
 // Story auto-compile metadata — Phase 1 mechanical migration(2026-04-24)
 // Phase 2 fill needed: purpose descriptions + when rationale + world-class refs
 export const nameCardMeta = {
-  component: 'NameCard',
+  component: 'ProfileCard',
   family: null, // non-family composite / overlay / layout
   variants: {
 
@@ -316,4 +316,4 @@ export const nameCardMeta = {
   },
 } as const
 
-export { NameCard }
+export { ProfileCard }

@@ -105,7 +105,7 @@ export const ColsMatrix: Story = {
     <div className="flex flex-col gap-8">
       <div>
         <H3>cols=1(預設,窄容器)</H3>
-        <Desc>垂直堆疊,適合 NameCard、sidebar detail 等窄容器。</Desc>
+        <Desc>垂直堆疊,適合 ProfileCard、sidebar detail 等窄容器。</Desc>
         <div className="border border-border rounded-lg p-4 max-w-xs">
           <DescriptionList cols={1}>
             <DescriptionItem label="Email">user@example.com</DescriptionItem>
@@ -117,7 +117,7 @@ export const ColsMatrix: Story = {
 
       <div>
         <H3>cols=2(中等寬度)</H3>
-        <Desc>兩欄並排,適合 NameCard info fields / detail panel。</Desc>
+        <Desc>兩欄並排,適合 ProfileCard info fields / detail panel。</Desc>
         <div className="border border-border rounded-lg p-4 max-w-lg">
           <DescriptionList cols={2}>
             <DescriptionItem label="姓名">Ada Chen</DescriptionItem>

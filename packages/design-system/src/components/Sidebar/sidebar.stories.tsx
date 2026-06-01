@@ -23,7 +23,7 @@ import {
 import { TreeView, TreeItem } from '@/design-system/components/TreeView/tree-view'
 import { ItemAvatar, ItemLabel } from '@/design-system/patterns/element-anatomy/item-anatomy'
 import { Avatar } from '@/design-system/components/Avatar/avatar'
-import { NameCard, NameCardDefaultActions } from '@/design-system/components/NameCard/name-card'
+import { ProfileCard, ProfileCardDefaultActions } from '@/design-system/components/ProfileCard/profile-card'
 import { ChromeHeader } from '@/design-system/patterns/header-canonical/chrome-header'
 
 const meta: Meta = {
@@ -74,7 +74,7 @@ const WorkspaceBrand = () => (
  */
 // a11y(2026-04-25 nested-interactive fix):user footer 用 <div role='group'>,避免
 // 外層 button + 內層 Avatar hoverCard focusable trigger 構成 nested-interactive。
-// Avatar hoverCard 本身已是 keyboard accessible 入口(Tab 直接到 Avatar → 開 NameCard
+// Avatar hoverCard 本身已是 keyboard accessible 入口(Tab 直接到 Avatar → 開 ProfileCard
 // 取得 profile actions)。世界級 Slack / Linear user footer 亦 row 非 button,靠
 // inner avatar / menu-button 明確 disclosure。
 // @canonical-pattern: sidebar-menu-button-with-avatar
@@ -90,13 +90,13 @@ const UserFooter = () => (
             alt="Alan Chen"
             color="blue"
             hoverCard={
-              <NameCard
+              <ProfileCard
                 name="Alan Chen"
                 subtitle="Design｜D-0042｜EMP-1001"
                 avatar={{ alt: 'Alan Chen', color: 'blue' }}
                 status="online"
                 statusMessage="Out of Office: Back on Monday!"
-                actions={<NameCardDefaultActions />}
+                actions={<ProfileCardDefaultActions />}
                 fields={[
                   { label: 'ID', value: 'YHANAX' },
                   { label: 'Employee number', value: '1234567' },

@@ -7,7 +7,7 @@
       "scripts/composition-fidelity-visual-diff.mjs",
       "product-workspace apps/template/src/AllDsComponents.stories.tsx (DsCanonicalPortal)"
     ],
-    "generatedAt": "2026-05-31T10:10:43.088Z"
+    "generatedAt": "2026-06-01T05:02:23.268Z"
   },
   "components": {
     "accordion": {
@@ -856,7 +856,7 @@
     "hovercard": {
       "tiers": {
         "展示": [
-          "design-system-internal-hovercard-展示--person-name-card",
+          "design-system-internal-hovercard-展示--person-profile-card",
           "design-system-internal-hovercard-展示--link-preview",
           "design-system-internal-hovercard-展示--overflow-list",
           "design-system-internal-hovercard-展示--repo-card",
@@ -953,30 +953,6 @@
         "設計原則": [
           "design-system-internal-menu-設計原則--usage-guidance",
           "design-system-internal-menu-設計原則--composition-rules"
-        ]
-      },
-      "openSnapshotIds": [],
-      "exception": null
-    },
-    "namecard": {
-      "tiers": {
-        "展示": [
-          "design-system-internal-namecard-展示--default"
-        ],
-        "設計規格": [
-          "design-system-internal-namecard-設計規格--overview",
-          "design-system-internal-namecard-設計規格--inspector",
-          "design-system-internal-namecard-設計規格--section-matrix",
-          "design-system-internal-namecard-設計規格--color-matrix",
-          "design-system-internal-namecard-設計規格--hover-card-integration",
-          "design-system-internal-namecard-設計規格--state-behavior",
-          "design-system-internal-namecard-設計規格--accessibility"
-        ],
-        "設計原則": [
-          "design-system-internal-namecard-設計原則--usage-guidance",
-          "design-system-internal-namecard-設計原則--trigger-context-rule",
-          "design-system-internal-namecard-設計原則--fixed-width-rule",
-          "design-system-internal-namecard-設計原則--section-rule"
         ]
       },
       "openSnapshotIds": [],
@@ -1106,6 +1082,30 @@
       "openSnapshotIds": [
         "design-system-components-popover-展示--open-snapshot"
       ],
+      "exception": null
+    },
+    "profilecard": {
+      "tiers": {
+        "展示": [
+          "design-system-internal-profilecard-展示--default"
+        ],
+        "設計規格": [
+          "design-system-internal-profilecard-設計規格--overview",
+          "design-system-internal-profilecard-設計規格--inspector",
+          "design-system-internal-profilecard-設計規格--section-matrix",
+          "design-system-internal-profilecard-設計規格--color-matrix",
+          "design-system-internal-profilecard-設計規格--hover-card-integration",
+          "design-system-internal-profilecard-設計規格--state-behavior",
+          "design-system-internal-profilecard-設計規格--accessibility"
+        ],
+        "設計原則": [
+          "design-system-internal-profilecard-設計原則--usage-guidance",
+          "design-system-internal-profilecard-設計原則--trigger-context-rule",
+          "design-system-internal-profilecard-設計原則--fixed-width-rule",
+          "design-system-internal-profilecard-設計原則--section-rule"
+        ]
+      },
+      "openSnapshotIds": [],
       "exception": null
     },
     "progressbar": {

@@ -145,7 +145,7 @@ export const LayoutRule: Story = {
     <div>
       <Rule
         title="cols=1(vertical stack)— 長清單、窄容器、mobile-friendly"
-        note="label 在上、value 在下的垂直堆疊 → 適合 sidebar、NameCard、mobile detail view。Value 可以佔滿整行寬,長文字不壓迫"
+        note="label 在上、value 在下的垂直堆疊 → 適合 sidebar、ProfileCard、mobile detail view。Value 可以佔滿整行寬,長文字不壓迫"
       >
         <Frame className="max-w-xs">
           <DescriptionList cols={1}>
