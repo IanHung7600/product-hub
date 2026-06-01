@@ -257,9 +257,11 @@ export const Overview = {
                 ['startIcon', 'LucideIcon', '—', '左側 icon，loading 時替換為 spinner'],
                 ['endIcon', 'LucideIcon', '—', '右側 icon（方向指示，如 ChevronDown）'],
                 ['badge', 'ReactNode', '—', '右側 badge（通知計數）'],
+                ['overlayBadge', 'ReactNode', '—', '角標疊於 icon 右上（僅 iconOnly=true；對齊 Material BadgedBox）'],
                 ['iconOnly', 'boolean', 'false', '正方形模式，需搭配 aria-label'],
                 ['loading', 'boolean', 'false', 'CircularProgress(indeterminate)+ 自動 disabled + aria-busy'],
                 ['fullWidth', 'boolean', 'false', '撐滿父容器'],
+                ['dismiss', 'boolean', 'false', 'X close 視覺弱化（強制 variant=text + iconOnly=true）'],
                 ['asChild', 'boolean', 'false', '透過 Radix Slot 套用至子元件'],
               ].map(([p, t, d, desc]) => (
                 <tr key={p}><Td mono>{p}</Td><Td mono>{t}</Td><Td mono>{d}</Td><Td>{desc}</Td></tr>
