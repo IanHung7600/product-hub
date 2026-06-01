@@ -94,7 +94,7 @@ interface CalendarEvent {
   title: string
   start: string | Date       // ISO "YYYY-MM-DDTHH:mm" 或 "YYYY-MM-DD"(all-day)
   end: string | Date
-  allDay?: boolean            // true = 跨整日,渲染為橫跨數欄的 tile
+  allDay?: boolean            // true = 全天事件,渲染為頂端全天長條(淡底 + 左 accent 條);多日事件在每個涵蓋日各顯示一條
   color?: 'blue' | 'green' | 'orange' | 'purple' | 'red' | 'yellow'  // DS primitive 色名(對照 Tag / Badge)
   metadata?: Record<string, unknown>   // 自由資料,renderEventTile 讀
 }
@@ -112,7 +112,7 @@ interface CalendarEvent {
 ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼────────────────────┤
 │ 29* │ 30* │ 31* │  1  │  2  │  3  │  4  │   ← 月 grid row
 │     │     │     │event│event│     │event│
-│     │     │     │█mtg │█vac │     │█dl  │      event tile(橫跨)
+│     │     │     │█mtg │▌vac │     │█dl  │      event tile / ▌=全天長條(左 accent)
 ├─────┼─────┼─────┼─────┼─────┼─────┼─────┤
 │  5  │  6  │  7  │  8  │  9  │ 10  │ 11  │
 │event│     │     │     │event│     │     │
@@ -134,7 +134,7 @@ interface CalendarEvent {
 ### Event tile 規則
 
 - **一般 event(timed)**:`{color}-subtle` 底色 + `{color}-text` 文字,圓角 + 緊湊 padding + truncate(單行)
-- **All-day event**:同一般 tile 但橫跨多 cell(grid-column span)
+- **All-day event**(2026-06-01 補實作):淡底 tile + 左側實心 accent 條(`color-6`)+ `font-medium`,排在 cell 事件區頂端(`allDay` 事件排序在有時間事件之前);多日全天事件靠日期範圍 filter 在每個涵蓋日各顯示一條(非單一橫跨多欄的 grid-column span bar——month view per-cell 模型不做跨欄絕對定位)
 - **Hover tile**:用 `{color}-hover` 微暗化表示可點擊
 - **超出 tile 限制**:每格最多顯示 3 筆事件,超出顯示「+N more」弱化計數文字(對齊 Google Calendar),目前不可點擊(點擊展開 popover 列表為後續增量)
 

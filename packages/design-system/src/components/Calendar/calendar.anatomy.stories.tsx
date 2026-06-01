@@ -166,8 +166,8 @@ export const ColorMatrix: Story = {
                 </tr>
                 <tr>
                   <Td>All-day event</Td>
-                  <Td mono>同上 + grid-column span(橫跨多 cell)</Td>
-                  <Td>實作用 absolute 或 grid span(MVP 暫以日精度 filter 顯示於各 cell)</Td>
+                  <Td mono>同上 + border-l-[3px] border-[var(--color-{`{color}`}-6)] · font-medium</Td>
+                  <Td>2026-06-01 補實作:淡底 + 左側實心 accent 條 + medium,排序在有時間事件之前(cell 頂端);多日全天事件以日精度 filter 在每個涵蓋日各顯示一條</Td>
                 </tr>
                 <tr>
                   <Td>Hover tile</Td>

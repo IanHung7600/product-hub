@@ -108,6 +108,18 @@ const EVENT_COLOR_CLASSES: Record<NonNullable<CalendarEvent['color']>, string> =
   yellow: 'bg-[var(--color-yellow-1)] text-[var(--color-yellow-7)] hover:bg-[var(--color-yellow-2)]',
 }
 
+// 2026-06-01 allDay 補實作(user 拍板 A):全天事件 = 淡底 tile + 左側實心 accent 條(color-6)+ medium,
+// 視覺上明確區分「全天長條」vs 有時間事件。用 accent border 而非 solid fill 以保文字對比安全(yellow 等淺色不致白字失對比)。
+// 對齊 Google Calendar / Outlook「全天事件以強調條呈現於頂端」慣例。
+const EVENT_ALLDAY_ACCENT: Record<NonNullable<CalendarEvent['color']>, string> = {
+  blue: 'border-l-[3px] border-[var(--color-blue-6)]',
+  green: 'border-l-[3px] border-[var(--color-green-6)]',
+  orange: 'border-l-[3px] border-[var(--color-deep-orange-6)]',
+  purple: 'border-l-[3px] border-[var(--color-purple-6)]',
+  red: 'border-l-[3px] border-[var(--color-deep-orange-6)]',
+  yellow: 'border-l-[3px] border-[var(--color-yellow-6)]',
+}
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 function coerceDate(value: string | Date): Date {
@@ -292,7 +304,8 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(function Calend
             {days.slice(rowIdx * 7, rowIdx * 7 + 7).map((date) => {
               const inMonth = isSameMonth(date, refDate)
               const isToday = isSameDay(date, today)
-              const dayEvents = eventsOnDate(events, date)
+              // 2026-06-01 allDay:全天事件排 cell 頂端(對齊 Google Calendar 全天列在上)
+              const dayEvents = eventsOnDate(events, date).slice().sort((a, b) => Number(b.allDay ?? false) - Number(a.allDay ?? false))
               const visibleEvents = dayEvents.slice(0, MAX_TILES_PER_CELL)
               const overflowCount = dayEvents.length - visibleEvents.length
 
@@ -333,7 +346,11 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(function Calend
               {/* Event tiles */}
               <div className="flex flex-col gap-0.5 min-h-0">
                 {visibleEvents.map((event) => {
-                  const colorClass = EVENT_COLOR_CLASSES[event.color ?? 'blue']
+                  const ec = event.color ?? 'blue'
+                  // 2026-06-01 allDay:淡底 + 左 accent 條 + medium = 「全天長條」視覺(區分有時間事件)
+                  const colorClass = event.allDay
+                    ? cn(EVENT_COLOR_CLASSES[ec], EVENT_ALLDAY_ACCENT[ec], 'font-medium')
+                    : EVENT_COLOR_CLASSES[ec]
                   if (renderEventTile) {
                     return (
                       <div
