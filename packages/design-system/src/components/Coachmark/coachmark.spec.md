@@ -201,7 +201,7 @@ Previous(可選)→ Skip(可選)→ Next / Done。對齊 Ant Tour / Intercom con
 ## A11y 預設
 
 - **焦點管理**:Coachmark **刻意抑制開啟時的自動 focus**(`onOpenAutoFocus` preventDefault),焦點停在 trigger——避免使用者還在讀 body 時 CTA 被 auto-focus 偷觸發(按 Enter 誤推進);想推進者自行 tab 到 CTA。關閉時焦點 return to trigger(Radix 預設 `onCloseAutoFocus`,未 override)
-- **Esc 關閉**:預設啟用(= Skip 行為)——user 按 Esc 等同 skip,尊重退出意願
+- **Esc 關閉**:預設啟用——user 按 Esc 透過 Radix `onOpenChange` 關閉浮層(效果等同退出),**不觸發 `onSkip` callback**(Esc 是「關閉浮層」非「明確 skip」;若需區分 Esc-退出 vs Skip-按鈕 的追蹤事件,consumer 在 Skip 按鈕的 `onSkip` 處理)
 - **ARIA**:trigger 自動 `aria-expanded` / `aria-controls`,content `role="dialog"`(Radix 預設)
 - **Step 計數 tabular-nums**:螢幕閱讀器讀「2 of 3」語意清楚
 

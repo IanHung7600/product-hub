@@ -179,7 +179,7 @@ Subtle vs Solid 的完整 variant × theme class 對照見 anatomy `ColorMatrix`
 
 ## 邊界案例
 
-- **Disabled(dismiss button)**:Alert 本身無 `disabled` prop(持久通知不該被禁用),但 dismiss close X 為 `<Button iconOnly dismiss size="xs" />`,自動繼承 Button disabled 視覺(`text-fg-disabled` + `cursor-not-allowed` + 無 hover bg);實務場景:後台正在執行 close action(API in-flight)時 consumer 可 disable button 防 double-click,fg token 走 Button SSOT 不在 Alert 加層。
+- **Disabled(dismiss button)**:Alert **不提供 dismiss 停用 API**——banner dismiss 恆可用(對齊 Polaris / Material Banner:通知關閉鈕應永遠可按)。Alert 本身亦無 `disabled` prop(持久通知不該被禁用)。若需防止 close action(API in-flight)被雙擊,consumer 在 `onDismiss` 內自行 debounce / 加上層鎖,不在 UI 層加 disable(`<Button dismiss>` 不暴露 disabled 透傳)。
 - **Loading**:Alert 本身不需 loading state(非 async surface);若 Alert body action row 內 CTA 在 async 動作中,該 Button 自己處理 `loading` prop。
 - **Empty / icon-only**:Alert 必有 `title`(API contract),無 empty 場景;若無 description 則僅顯示 title + icon,layout 自動收斂。
 

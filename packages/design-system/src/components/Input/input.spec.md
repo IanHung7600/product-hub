@@ -132,6 +132,8 @@ Input 有兩個 visual chrome variant,**獨立於 mode**(mode 是 state,variant 
 
 **判斷法**:Input 放在表單或 Field 內 → `default`;放在 Toolbar chrome 或 page-body inline → `bare`。
 
+> **內部 variant `naked`(@internal,非公開)**：`FieldVariant` 型別含第三值 `'naked'`(完全無 chrome / border / focus ring),但**不是公開 Input variant**——單獨使用無視覺邊界,**不可 standalone**。僅供 DS 內部 cell-as-input 組合(host cell 自管 border + focus visual;正被 `FieldSurfaceContext='table-cell'` 取代）。consumer 只用 `default` / `bare`。對齊 public-vs-internal canonical（`ui-development.md`：能直接被使用且用在合理地方才公開）。
+
 **`bare` 使用情境的 canonical 要求**:
 - 外層 chrome 必須已提供「這是可編輯」的 affordance(Toolbar 的 icon / prop label / row structure);否則 user 看不到 input chrome 找不到可編輯位置
 - 保留 DS field-height(`h-field-sm/md/lg`)、typography、icon tier、error 視覺——**bare 只動 chrome 不動 sizing**

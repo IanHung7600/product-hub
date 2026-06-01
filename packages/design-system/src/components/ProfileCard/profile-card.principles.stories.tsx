@@ -122,21 +122,21 @@ export const UsageGuidance: Story = {
 }
 
 export const TriggerContextRule: Story = {
-  name: '何時配 HoverCard、何時放頁面內',
+  name: '觸發點：avatar hover（不作 standalone）',
   render: () => (
     <div>
       <Rule
-        title="✅ 配 HoverCard — 人員資訊是次要資訊（需要才展開）"
-        note="留言列表、@mention、PR reviewer list 等場景:主要內容是留言 / PR / commit,人員資訊 hover 才出現,不佔版面"
+        title="✅ 唯一觸發點 — avatar hover 顯示 HoverCard 內容"
+        note="留言列表、@mention、PR reviewer list、Sidebar 使用者列等場景:主要內容是留言 / PR / commit,hover avatar 才浮出人員詳情,不佔版面。ProfileCard 的觸發點只有 avatar,沒有別的。"
       >
         <InlineHoverExample />
       </Rule>
 
       <Rule
-        title="✅ 頁面內直接 block — 人員資訊是主要內容"
-        note="團隊成員詳情頁、「關於作者」區塊等場景:ProfileCard 可直接作為頁面區塊嵌入,不需 hover 觸發"
+        title="❌ 不要當 standalone 頁面區塊嵌入"
+        note="ProfileCard 是 avatar hover 觸發的 HoverCard 內容模板,不是獨立 Card primitive——缺浮層外殼(radius / border / shadow)與定位邏輯。需要頁面內人員卡佈局時,請用 avatar hoverCard,或自組 Surface / 專屬元件。詳 spec.md「禁止事項」。"
       >
-        <div className="border border-border rounded-lg">
+        <div className="border border-dashed border-error rounded-lg opacity-60">
           <ProfileCard
             name="Alice Chen"
             avatar={{ src: AVATAR_URL, alt: 'Alice' }}
@@ -145,7 +145,7 @@ export const TriggerContextRule: Story = {
             defaultFieldValues={{ id: 'YHANAX', employeeNumber: '1234567' }}
           />
         </div>
-        <Label>↑ 「關於作者」section：ProfileCard 直接嵌入頁面</Label>
+        <Label warn>↑ 反例:直接嵌頁面缺浮層外殼 + 繞過 avatar 觸發語意</Label>
       </Rule>
     </div>
   ),
