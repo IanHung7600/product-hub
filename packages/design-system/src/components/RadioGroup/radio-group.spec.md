@@ -1,6 +1,6 @@
 ---
 component: RadioGroup
-family: 4
+family: self-contained
 variants: {}
 sizes:
   sm:

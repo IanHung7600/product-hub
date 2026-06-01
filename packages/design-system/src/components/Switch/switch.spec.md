@@ -1,6 +1,6 @@
 ---
 component: Switch
-family: 4
+family: self-contained
 variants: {}
 sizes:
   sm:
