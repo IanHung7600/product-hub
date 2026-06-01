@@ -670,7 +670,7 @@ export interface FileViewerLabels {
   descriptionPlaceholderEdit?: string
   /** Detail section — file info section heading */
   fileInfoHeading?: string
-  /** Filmstrip tablist ARIA label */
+  /** Filmstrip group ARIA label（role="group" + thumb button + aria-current,非 tablist）*/
   filmstripLabel?: string
   /** Previous-file nav button ARIA label */
   previousFile?: string

@@ -190,7 +190,7 @@ function buildEndContent(
     <>
       {badge}
       {EndIcon && <EndIcon size={iconPx} className="text-fg-muted" aria-hidden />}
-      {shortcut && <span className="text-caption text-fg-muted">{shortcut}</span>}
+      {shortcut && <span className="text-caption text-fg-muted tracking-shortcut">{shortcut}</span>}
     </>
   )
 }
@@ -211,7 +211,8 @@ interface DropdownMenuItemProps
   badge?: React.ReactNode
   /** 後綴指示型 icon（LucideIcon），fg-muted */
   endIcon?: LucideIcon
-  /** 鍵盤快捷鍵 */
+  /** 鍵盤快捷鍵提示(canonical)——渲染進 MenuItem `endContent` 正規後綴 slot。
+   *  替代方案是 `<DropdownMenuShortcut>` child(composition escape-hatch);**同 item 勿混用**。 */
   shortcut?: string
   /** 單選選中（bg-neutral-selected，持續選中狀態）*/
   selected?: boolean
@@ -429,10 +430,14 @@ const DropdownMenuRadioItem = React.forwardRef<
 DropdownMenuRadioItem.displayName = DropdownMenuPrimitive.RadioItem.displayName
 
 // ── Shortcut（鍵盤快捷鍵提示，ml-auto 靠右）──
-// 作為 MenuItem children 的後綴,視覺為 fg-muted 小字。
+// **Canonical 是 `<DropdownMenuItem shortcut="⌘C">`** prop —— 走 MenuItem `endContent` 正規後綴 slot
+// (跟 badge / endIcon 同槽、gap/對齊一致)。本 child 是 **composition escape-hatch**(對齊 shadcn
+// DropdownMenuShortcut idiom),供需手動 compose children 的少數場景;它用 `ml-auto` 塞在 children
+// 內(繞過 endContent slot)。**同一 item 只用一種,勿混用**(見 spec.md 禁止事項)。
+// 視覺統一:text-caption + tracking-shortcut + fg-muted(對齊 prop 後綴 + CommandShortcut)。
 const DropdownMenuShortcut = ({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
   <span
-    className={cn('ml-auto text-footnote text-fg-muted tracking-shortcut', className)}
+    className={cn('ml-auto text-caption text-fg-muted tracking-shortcut', className)}
     {...props}
   />
 )
