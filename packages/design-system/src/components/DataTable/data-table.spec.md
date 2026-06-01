@@ -25,7 +25,7 @@ TanStack Table 負責邏輯，DataTable 負責視覺與互動。
 簡單展示場景也用 DataTable（最少 config），不另外維護靜態 Table。
 底層使用 `<div>` + ARIA role，不用語義 `<table>`——虛擬捲動需要絕對定位 row，且未來 frozen column 需要獨立 scroll 區域，`<table>` 的佈局模型兩者都不支援。
 
-**不是試算表**——不做公式計算、不做跨 cell 選取。
+**預設不是試算表**——預設模式不做公式計算、不做跨 cell 選取(定位是「資料展示 + row 操作」,非 Excel)。但提供 **opt-in `spreadsheetMode` prop**:啟用後支援方向鍵跨 cell 導覽 + cell editing(見「鍵盤」段 L504-507),給確實需要 Excel-like 編輯的 productivity 場景。預設關閉以保持單純。(2026-06-01:原定位「不是試算表」與已 ship 的 `spreadsheetMode` opt-in 自相矛盾,改為「預設不是 + 可 opt-in」對齊 code;user 拍板保留功能)
 
 **Layout Family**：非上述 family — composite / multi-section（多區塊組合，自 own layout）。
 
