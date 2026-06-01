@@ -75,6 +75,11 @@ export const Inspector: InspectorStory = {
     description: '收到新訊息時立即提醒',
   },
   argTypes: {
+    mode: {
+      control: 'radio',
+      options: ['edit', 'display', 'readonly', 'disabled'],
+      description: 'Field mode;display 渲純展示 ✓/—(語意由 context 提供)',
+    },
     size: {
       control: 'radio',
       options: ['sm', 'md', 'lg'],

@@ -22,7 +22,8 @@ export const Modes: Story = {
       </div>
       <div>
         <h3 className="text-body font-bold text-foreground mb-2">display</h3>
-        <Switch mode="display" checked aria-label="啟用通知(display mode demo)" />
+        <Switch mode="display" checked />
+        <p className="text-caption text-fg-muted mt-1">純視覺 ✓ / —；語意由 context（如 DataTable 表頭 + 行標籤）提供，display 不暴露獨立 aria-label。需螢幕報讀器可讀請用 edit / readonly。</p>
       </div>
       <div>
         <h3 className="text-body font-bold text-foreground mb-2">readonly</h3>
