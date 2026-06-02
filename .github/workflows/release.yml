@@ -31,6 +31,13 @@ on:
           - repoint-latest
           - clear-latest
 
+# 2026-06-02 防「同一 tag 重複觸發 / 重試」的多 run 並行搶發 npm → 序列化(同 group 一次只跑一個,
+# 後到的排隊等前一個發完;配套下方 publish step 的冪等 guard → 後到 run 看到版本已存在就 skip 綠燈,
+# 不再 E403 跳紅）。cancel-in-progress: false = 絕不中途砍正在發版的 run。
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   smoke-shard:
     name: Storybook FULL smoke shard ${{ matrix.shard }}/4
@@ -146,10 +153,25 @@ jobs:
           else DIST_TAG=latest; fi
           echo "Publishing with dist-tag: $DIST_TAG"
 
+          # 冪等 publish:發版前先查該版本是否已在 npm。已存在 → skip + 綠燈(重複觸發 / 重試 run
+          # 不再撞 E403「cannot publish over previously published version」跳假紅);不存在 → 才 publish。
+          # Root cause(2026-06-02):同一 tag GitHub 會重複觸發多 run(beta.43=4 / beta.45=3 / beta.46=2),
+          # 舊 step 無 guard → 第二個必 E403 紅。配合上方 concurrency 序列化 → 後到 run 必看到已發 → skip。
+          publish_if_new() {
+            local pkg="$1" ver
+            ver=$(node -p "require('./package.json').version")
+            if npm view "${pkg}@${ver}" version >/dev/null 2>&1; then
+              echo "⏭  ${pkg}@${ver} 已發佈 → skip(冪等,非錯誤）"
+            else
+              echo "📦 publishing ${pkg}@${ver} --tag $DIST_TAG"
+              npm publish --access public --tag "$DIST_TAG"
+            fi
+          }
+
           cd packages/design-system
-          npm publish --access public --tag $DIST_TAG
+          publish_if_new "@qijenchen/design-system"
           cd ../storybook-config
-          npm publish --access public --tag $DIST_TAG
+          publish_if_new "@qijenchen/storybook-config"
 
       # 2026-05-29 RC3 fix(codex dual-track 共識):pre-1.0 beta-only 套件,`latest` 必自動跟最新 beta。
       # 否則 latest 停在舊版 → consumer sync-design-system `npm update`(target latest)+ 裸 `npm i` 拿舊版
