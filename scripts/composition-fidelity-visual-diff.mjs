@@ -2,8 +2,10 @@
 /**
  * composition-fidelity-visual-diff.mjs
  *
- * Mechanical mechanism for「DS canonical render 跟 consumer (product-workspace) render 必 visual-identical」
- * Per user 2026-05-27 directive「mechanical 機制讓未來所有 DS components 在 product-workspace 渲染必跟 DS canonical 一致 可被驗證(byte-identity 不夠,visual diff)」
+ * Composition fidelity(2026-05-27 初版 / 2026-06-02 conformance-model 修正,SSOT: .claude/references/composition-fidelity.md)
+ * Consumer 對 DS 用法正確性「主要由靜態 conformance 驗」(對齊 Polaris/Atlassian/Carbon lint);本 script 的 pixel/DOM
+ * identity diff 是「明確 opt-in」(只比標 @composition-fidelity-mode 的 mapping,用於忠實複製 replica / same-story 回歸)。
+ * 單獨 @story-baseline = conformance 意圖,不做 identity diff。禁拿產品範本(內容刻意不同)pixel 比 DS showcase(反 pattern)。
  *
  * Mapping SSOT:consumer story file 的 `// @story-baseline: <DS-story-id>` marker
  *
@@ -399,7 +401,12 @@ for (const m of identityMappings) {
   //   - DOM diff = secondary structural ground truth(catches drift pixel cannot see + vice versa)
   //   - any layer FAIL = overall FAIL(union semantics)
   let domVerdict = { status: 'SKIP', reason: 'no DOM snapshot captured' }
-  if (baselineDom && consumerDom) {
+  if (m.mode === 'shell-only') {
+    // 2026-06-03 修:shell-only 只在 pixel 層遮罩 inner content(白 div overlay),DOM 仍含被遮的內容元素 →
+    // DOM signature diff 會對 by-design 不同的內容 false-positive(等於遮罩沒生效到 DOM)。shell-only 語意 =
+    // 只比遮罩後的視覺殼,故 DOM diff 在此模式無意義 → SKIP,只由 masked pixel 決定 verdict。
+    domVerdict = { status: 'SKIP', reason: 'shell-only mode: DOM diff skipped (content masked at pixel layer only; DOM-diff would false-positive on intentionally-different inner content)' }
+  } else if (baselineDom && consumerDom) {
     const dd = domDiff(baselineDom, consumerDom)
     // Threshold:0 missing/extra/style drift = clean。Any > 0 = potential drift。
     // For template-vs-canonical scope: missing/extra > 5 OR styleDrifts > 20 = FAIL

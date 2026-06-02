@@ -74,7 +74,7 @@ if [ -n "$TRANSCRIPT_PATH" ] && [ -f "$TRANSCRIPT_PATH" ]; then
   fi
 fi
 
-# ── Mechanism 6: Completeness-claim without DS-wide scan gate(2026-06-03 user-authorized)──
+# ── Mechanism 7: Completeness-claim without DS-wide scan gate(2026-06-03 user-authorized)──
 # Why: 重複 failure mode — AI 在「剛做完那件事」邊界就宣告「全做完/全部完成」,沒先跑 M10
 #   「改一處看三處」全庫 stale-ref 掃描 → user 問「真的做完?」才補掃出 loose end(CF model 漏 3 ref
 #   / iceberg 等)。觸發器該是「我要宣告全做完」自己,不是 user pushback。
@@ -494,7 +494,7 @@ if [ "${CRITICAL_CODEX_TRANSPORT:-0}" = "1" ] && [ -n "$LAST_ASSISTANT" ]; then
   fi
 fi
 
-# ── BLOCKER for Mechanism 6 completeness-claim-without-scan(2026-06-03 user-authorized)──
+# ── BLOCKER for Mechanism 7 completeness-claim-without-scan(2026-06-03 user-authorized)──
 if [ "${CRITICAL_COMPLETENESS:-0}" = "1" ] && [ -n "$LAST_ASSISTANT" ]; then
   COMPLETE_HASH=$(echo "$LAST_ASSISTANT" | tail -c 200 | shasum -a 256 | cut -c1-16)
   LAST_BLOCKED_COMPLETE_FILE="$PROJECT_DIR/.claude/logs/.last-blocked-completeness.txt"
@@ -503,7 +503,7 @@ if [ "${CRITICAL_COMPLETENESS:-0}" = "1" ] && [ -n "$LAST_ASSISTANT" ]; then
   if [ "$COMPLETE_HASH" != "$LAST_BLOCKED_COMPLETE" ]; then
     echo "$COMPLETE_HASH" > "$LAST_BLOCKED_COMPLETE_FILE" 2>/dev/null || true
     REASON=$(printf '%s' \
-      "🚨 COMPLETENESS-CLAIM-WITHOUT-SCAN BLOCKER(M6,2026-06-03 user-authorized):你宣告「全做完/全部完成」+ 本 turn 實質多檔改動,但無「全庫掃描」證據。per self-verify.md Pre-final + M10「改一處看三處」+ mindset #6:宣告全做完前必先自己跑 (1) DS-wide stale-ref grep(對你改的東西掃連帶 reference)(2) claim-verify 表(每『done』對應證據)。立刻補跑 OR 把『全做完』改成『核心做完,完整性掃描待跑』。否則 turn 不結束。" \
+      "🚨 COMPLETENESS-CLAIM-WITHOUT-SCAN BLOCKER(M7,2026-06-03 user-authorized):你宣告「全做完/全部完成」+ 本 turn 實質多檔改動,但無「全庫掃描」證據。per self-verify.md Pre-final + M10「改一處看三處」+ mindset #6:宣告全做完前必先自己跑 (1) DS-wide stale-ref grep(對你改的東西掃連帶 reference)(2) claim-verify 表(每『done』對應證據)。立刻補跑 OR 把『全做完』改成『核心做完,完整性掃描待跑』。否則 turn 不結束。" \
       "本機制起因:重複 failure — user 每次問『真的全做完?』我才補掃出 loose end(CF model 漏 3 ref / iceberg)。觸發器改成『宣告完成』本身,非 user pushback。")
     printf '{"decision":"block","reason":%s}\n' "$(printf '%s' "$REASON" | jq -Rs .)"
     exit 0

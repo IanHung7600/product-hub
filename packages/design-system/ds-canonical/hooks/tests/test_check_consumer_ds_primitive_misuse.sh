@@ -8,7 +8,7 @@
 #            排除 `packages/design-system/src/` + `node_modules/`
 #   - Content:tool_input.new_string // tool_input.content
 #   - Global escape:content 含 `@ds-misuse-allow:` → silent exit 0
-#   - 6 anti-patterns(P1-P5 任何 .tsx/.ts;P6 僅 .stories.tsx):
+#   - 7 anti-patterns(P1-P5 + P8 任何 .tsx/.ts;P6 僅 .stories.tsx):
 #       P1 <DS.CircularProgress size={N}> literal number override default 24
 #       P2 <DS.RadioGroupItem> 沒 wrap SelectionItem 且無 label=
 #       P3 <DS.DataTable columns={[single-col]}> minimal one-column
@@ -191,6 +191,32 @@ expect_silent "19. P6 nearmiss story <Dialog defaultOpen> → silent"
 # 20. POSITIVE:Edit tool 走 tool_input.new_string,anti-pattern → BLOCK
 run_hook "$PROD_TSX" 'export const L = () => <DS.CircularProgress size={48} />' "Edit"
 expect_block "20. Edit(new_string)<CircularProgress size={48}> → BLOCK"
+
+# ── P8 硬寫色值/字級/shadow 繞 token(broad-vs-narrow symmetry,2026-06-02 CF conformance 主防線)──
+
+# 21. POSITIVE:硬寫 hex 色 bg-[#hex] → BLOCK
+run_hook "$PROD_TSX" 'export const C = () => <div className="bg-[#3b82f6] text-white">x</div>'
+expect_block "21. P8 硬寫 hex 色 bg-[#hex] → BLOCK"
+
+# 22. NEGATIVE over-broad guard:用 token bg-[var(--color-blue-6)] → silent
+run_hook "$PROD_TSX" 'export const C = () => <div className="bg-[var(--color-blue-6)] text-body">x</div>'
+expect_silent "22. P8 nearmiss bg-[var(--color-blue-6)] + text-body → silent"
+
+# 23. POSITIVE:硬寫字級 text-[14px] → BLOCK
+run_hook "$PROD_TSX" 'export const C = () => <p className="text-[14px]">x</p>'
+expect_block "23. P8 硬寫字級 text-[14px] → BLOCK"
+
+# 24. POSITIVE:raw shadow-md → BLOCK
+run_hook "$PROD_TSX" 'export const C = () => <div className="shadow-md rounded">x</div>'
+expect_block "24. P8 raw shadow-md → BLOCK"
+
+# 25. NEGATIVE:用 elevation token shadow-[var(--elevation-100)] → silent
+run_hook "$PROD_TSX" 'export const C = () => <div className="shadow-[var(--elevation-100)] rounded">x</div>'
+expect_silent "25. P8 nearmiss shadow-[var(--elevation-100)] → silent"
+
+# 26. NEGATIVE over-broad guard:arbitrary 非色/字級值(max-w-[600px] / grid layout)不該誤攔 → silent
+run_hook "$PROD_TSX" 'export const C = () => <div className="max-w-[600px] grid-cols-[1fr_2fr]">x</div>'
+expect_silent "26. P8 nearmiss max-w-[600px]/grid-cols-[...](非色字 shadow)→ silent"
 
 echo ""
 echo "=== Summary ==="

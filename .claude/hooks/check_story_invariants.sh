@@ -552,7 +552,7 @@ rule_story_archetype_registry() {
     */Sidebar/*|*/DataTable/*|*/header-canonical/*|*/Dialog/*|*/Sheet/*|*/Popover/*) return 0 ;;
   esac
 
-  local REGISTRY=".claude/references/story-baseline-registry.json"
+  local REGISTRY="${CLAUDE_PROJECT_DIR:-.}/.claude/references/story-baseline-registry.json"
   [ -f "$REGISTRY" ] || return 0
 
   local CONTENT=""
