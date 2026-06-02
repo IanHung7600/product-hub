@@ -534,7 +534,7 @@ rule_story_baseline_reference() {
 # `.claude/references/story-baseline-registry.json` antiPatterns regex,逐條 scan 寫入內容。
 # Severity=block → record_worst 2;severity=warn → stderr only。Allowlist
 # `// @story-baseline-allow: <reason>` 整檔豁免。
-# Ship as warn mode first(2026-05-20),確認 zero existing violation 才升 P0 BLOCKER。
+# 2026-06-02 升 P0 BLOCKER(block-severity antiPattern):DS + consumer 全掃確認零現有違規後升級。
 
 rule_story_archetype_registry() {
   case "$TOOL" in
@@ -592,8 +592,7 @@ rule_story_archetype_registry() {
         echo "   修法:Read baseline story + helpers,抄 production archetype。" >&2
         echo "   或加 \`// @story-baseline-allow: <reason>\` 檔頭豁免(audit-logged)。" >&2
         echo "   詳 .claude/rules/meta-patterns.md M35 + memory/feedback_nearest_same_purpose_canonical.md" >&2
-        # Ship as warn first(2026-05-20):not record_worst 2,exit 0
-        # Future:zero existing violation → 改 record_worst 2 升 P0 BLOCKER
+        record_worst 2  # 2026-06-02 升 P0 BLOCKER:DS + consumer(ds-product-template)全掃確認零現有違規後升級(原 2026-05-20 ship-as-warn 的 TODO 條件達成);只 block-severity antiPattern(warn-severity 仍 stderr-only)
       fi
     done <<< "$PATTERNS"
   done

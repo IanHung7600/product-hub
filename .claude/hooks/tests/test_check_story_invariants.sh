@@ -10,10 +10,11 @@
 #   R5 name_jargon(PostToolUse;reads disk;L<n> layer / canonical / 中英夾雜 jargon)
 #   R6 description_jargon(PostToolUse;TS generic in description: → stderr warn)
 #   R7 story_baseline_reference(PreToolUse;wrap Sidebar/ChromeHeader/DataTable 無 baseline marker → stderr warn)
-#   R8 story_archetype_registry(PreToolUse;讀 .claude/references/story-baseline-registry.json,warn-only)
+#   R8 story_archetype_registry(PreToolUse;讀 .claude/references/story-baseline-registry.json;
+#      block-severity antiPattern → P0 record_worst 2,2026-06-02 升 P0)
 #
 # Test 重點:silent skip / 各 rule fire / allowlist marker escape。
-# 不測 R3/R8(需 spec.md 或 registry 完整 fixture,scope 超 batch A)。
+# 不測 R3(需 spec.md frontmatter);R8 P0 block-severity 已測(#11,2026-06-02)。
 
 set -u
 
@@ -194,11 +195,25 @@ STORIES_APP="/foo/my-project/packages/design-system/src/components/AppShell/app-
 run_hook "PreToolUse" "Write" "$STORIES_APP" '
 export const Default = () => (
   <Sidebar>
-    <SidebarHeader><span>Acme</span></SidebarHeader>
+    <SidebarHeader><WorkspaceBrand /></SidebarHeader>
   </Sidebar>
 );
 '
 expect_warn "10. R7 wrap <Sidebar> no @story-baseline → stderr warn" "R7 story_baseline_reference"
+
+# 11. R8 archetype registry P0(2026-06-02 升 P0;DS+consumer 零違規確認後升級):
+#     wrap <Sidebar> + simplified <SidebarHeader><span> mock(registry block-severity antiPattern)→ BLOCK
+#     有 @story-baseline marker(R7 missing-marker 不 fire)→ exit 2 純由 R8 record_worst 2 造成
+STORIES_R8="/foo/my-project/packages/design-system/src/components/AppShell/app-shell-r8.stories.tsx"
+run_hook "PreToolUse" "Write" "$STORIES_R8" '
+// @story-baseline: @qijenchen/design-system/components/Sidebar/sidebar.stories.tsx#IconCollapse
+export const Default = () => (
+  <Sidebar>
+    <SidebarHeader><span>Acme</span></SidebarHeader>
+  </Sidebar>
+);
+'
+expect_block "11. R8 simplified-mock <SidebarHeader><span> → P0 BLOCK" "R8 story_archetype_registry"
 
 echo ""
 echo "=== Summary ==="

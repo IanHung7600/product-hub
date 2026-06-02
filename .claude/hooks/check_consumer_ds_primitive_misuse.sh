@@ -72,6 +72,15 @@ if echo "$CONTENT" | grep -qE '<DS\.Empty[^>]+title=' && \
   VIOLATIONS="${VIOLATIONS}  - <Empty title=...> 無 icon 無 description = 違反 Empty.tsx:11「預設只需 description」minimal mock looks weird\n"
 fi
 
+# Pattern 8: 硬寫色值 / 字級 / shadow 繞過 DS token(2026-06-02 CF conformance-model 補主防線 —
+# composition-fidelity 從 pixel-identity 收窄成 identity-opt-in 後,「consumer 用對 DS token」改由靜態
+# conformance 防線保證,對齊 Polaris stylelint-polaris / Atlassian eslint-plugin / Carbon stylelint。
+# 既有 check_layout_space_magic_numbers 守「間距」;此 pattern 補「色值/字級/shadow」缺口。
+# 零誤判優先:只抓 hardcoded(`-[var(--...)]` token 用法不匹配)。
+if echo "$CONTENT" | grep -qE '\b[a-z][a-z-]*-\[(#[0-9a-fA-F]{3,8}|rgb|rgba|hsl|hsla)[(]?|\btext-\[[0-9]|\bshadow-(sm|md|lg|xl|2xl)\b'; then
+  VIOLATIONS="${VIOLATIONS}  - 硬寫色值/字級/shadow 繞過 DS token(bg-[#hex] / text-[14px] / shadow-md)→ 改 semantic color token / text-body 等 typography token / shadow-[var(--elevation-N)](per ui-development.md「Tailwind 5 條核心」rule 3)\n"
+fi
+
 # Pattern 6: Overlay trigger without defaultOpen state for visual demo
 # (Skip in production .tsx; only enforce in .stories.tsx where visual snapshot matters)
 if echo "$FILE" | grep -qE '\.stories\.tsx$'; then

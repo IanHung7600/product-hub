@@ -132,10 +132,11 @@ const PageContent = ({ title, description }: { title: string; description: React
       <div className="max-w-2xl">
         <p className="text-body text-fg-secondary mb-6">{description}</p>
         <div className="grid grid-cols-2 gap-4">
-          {['專案數量', '團隊成員', '本週提交', '待處理'].map((t) => (
+          {/* 固定值(非 Math.random)— story 是 visual baseline,必確定性,否則每次 build 像素不同 = composition-fidelity / visual regression 無法比對(2026-06-02 fix)*/}
+          {([['專案數量', 24], ['團隊成員', 8], ['本週提交', 47], ['待處理', 3]] as const).map(([t, v]) => (
             <div key={t} className="rounded-lg border border-divider bg-surface p-4">
               <p className="text-caption text-fg-muted">{t}</p>
-              <p className="text-h5 font-semibold mt-1">{Math.floor(Math.random() * 100)}</p>
+              <p className="text-h5 font-semibold mt-1">{v}</p>
             </div>
           ))}
         </div>
