@@ -262,7 +262,7 @@ export const SizeMatrix: Story = {
     <div className="flex flex-col gap-10">
       <div>
         <H3>三種 Size — 對齊 field-height 系統</H3>
-        <Desc>Field 的 size 透過 context 傳遞給 input-class control(Input / NumberInput / Select),控制其內部高度對齊 `--field-height-*` tier(見 uiSize.spec.md)。Slider / Switch / Checkbox 等 primitive 維持原生尺寸不讀 context size(見 field.spec.md「為什麼 primitive 不自己變高」),其行高節奏改由 Field control-area 的 min-h-field-{size} 提供——同一 Field 內所有 control 因此自動對齊高度。</Desc>
+        <Desc>Field 的 size 透過 context 傳遞給 input-class control(Input / NumberInput / Select),控制其內部高度對齊 `--field-height-*` tier(見 uiSize.spec.md)。Slider / Switch / Checkbox 等 primitive 維持原生尺寸不讀 context size(見 field.spec.md「為什麼 primitive 不自己變高」),其行高節奏改由 Field control-area 的 min-h-field-{'{size}'} 提供——同一 Field 內所有 control 因此自動對齊高度。</Desc>
         <div className="grid grid-cols-3 gap-6">
           {(['sm', 'md', 'lg'] as const).map(size => (
             <div key={size} className="border border-dashed border-divider rounded-md p-4">
