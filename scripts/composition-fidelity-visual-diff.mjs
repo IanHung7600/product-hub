@@ -395,11 +395,11 @@ for (const m of identityMappings) {
   const effectiveThreshold = m.threshold ?? THRESHOLD_PCT
   const pixelPassed = diffPct <= effectiveThreshold
 
-  // v4 2026-05-27 dual-track: DOM signature diff(EXPAND not REPLACE pixel layer)
-  // Per feedback_ai_self_audit_unreliable_mechanical_primary_2026_05_27.md:
-  //   - pixel diff = primary visual ground truth
-  //   - DOM diff = secondary structural ground truth(catches drift pixel cannot see + vice versa)
-  //   - any layer FAIL = overall FAIL(union semantics)
+  // dual-track: pixel + DOM signature(EXPAND not REPLACE pixel layer)
+  //   - pixel diff = visual ground truth;DOM diff = structural ground truth(catches drift pixel cannot see)
+  //   - 預設 union(任一 layer FAIL = overall FAIL);**例外:shell-only 模式 skip DOM diff**(2026-06-03,
+  //     見下方 — DOM 仍含被遮內容會 false-positive,故 shell-only 只由 masked pixel 決定 verdict)
+  //   - identity diff 整體是 opt-in(只跑標 @composition-fidelity-mode 的 mapping;單獨 @story-baseline = conformance)
   let domVerdict = { status: 'SKIP', reason: 'no DOM snapshot captured' }
   if (m.mode === 'shell-only') {
     // 2026-06-03 修:shell-only 只在 pixel 層遮罩 inner content(白 div overlay),DOM 仍含被遮的內容元素 →

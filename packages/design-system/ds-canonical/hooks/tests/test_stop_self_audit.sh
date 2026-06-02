@@ -84,6 +84,13 @@ T8="$USER_MSG
 {"message":{"role":"assistant","content":[{"type":"text","text":"全部做完了,已全庫掃描確認無 loose end。"}]}}'
 run_test "Test 8: M7 完整性宣告+多改+有全庫掃描 → no block" 0 "$T8"
 
+# Test 9: M7 negation 排除 — 含「全做完」字串但是 disclaimer(還沒說全做完)+ 多改 + 無掃描 → NO block
+T9="$USER_MSG
+"'{"message":{"role":"assistant","content":[{"type":"tool_use","name":"Edit","input":{}}]}}
+{"message":{"role":"assistant","content":[{"type":"tool_use","name":"Write","input":{}}]}}
+{"message":{"role":"assistant","content":[{"type":"text","text":"還沒說「全做完」——等 beta.51 落地 + 最後掃過才有資格。核心做完,完整性掃描待跑。"}]}}'
+run_test "Test 9: M7 negation disclaimer(還沒說全做完)→ no block" 0 "$T9"
+
 # Cleanup state file
 rm -f "$PROJECT_DIR"/.claude/logs/.last-blocked-*.txt 2>/dev/null
 

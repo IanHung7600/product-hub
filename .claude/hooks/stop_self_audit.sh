@@ -81,7 +81,10 @@ fi
 #   per self-verify.md Pre-final + meta-patterns M10 + mindset #6「tell me once」。
 if [ "${LAST_USER_LINE:-0}" -gt 0 ] && [ -n "$LAST_ASSISTANT" ]; then
   COMPLETION_CLAIM_RE='(全做完|全部做完|都做完了|全部完成|所有任務.{0,6}(做完|完成)|100%.{0,4}完整|真的.{0,4}做完|全做到完)'
-  if echo "$LAST_ASSISTANT" | grep -qE "$COMPLETION_CLAIM_RE"; then
+  # 否定/免責排除(對齊 Mechanism 1 RETRACT_RE 精神,2026-06-03 修 M7 自身 false-positive):
+  # 宣告含「還沒說全做完」「沒資格說全做完」「核心做完…待跑」「等 X 才全做完/落地」等 disclaimer = 非完成宣告 → 不 fire。
+  COMPLETION_NEG_RE='(還沒.{0,6}(說|宣告|算|到)|沒.{0,3}(說|算|資格).{0,8}(全做完|完整)|未.{0,3}全做完|不(敢|算|是|該).{0,6}全做完|核心做完|完整性(掃描)?待|待.{0,4}(跑|落地|驗)|等.{0,18}(才|再).{0,8}(全做完|完整|落地|上架)|尚未.{0,4}完成)'
+  if echo "$LAST_ASSISTANT" | grep -qE "$COMPLETION_CLAIM_RE" && ! echo "$LAST_ASSISTANT" | grep -qE "$COMPLETION_NEG_RE"; then
     THIS_TURN_FULL=$(tail -n +$((LAST_USER_LINE+1)) "$TRANSCRIPT_PATH" 2>/dev/null)
     EDIT_COUNT=$(echo "$THIS_TURN_FULL" | grep -oE '"name":"(Edit|Write|MultiEdit)"' | wc -l | tr -d ' ')
     HAS_COMMIT=$(echo "$THIS_TURN_FULL" | grep -cE 'git commit|git merge --ff')
