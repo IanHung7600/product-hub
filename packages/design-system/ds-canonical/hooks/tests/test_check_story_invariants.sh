@@ -262,6 +262,21 @@ export const Unrelated = () => (
 '
 expect_pass_silent "14. R8 正確多行 ChromeHeader + 遠處無關 flex-1(>160 字)→ 不誤判"
 
+# 15. R8 disk @story-baseline-allow 豁免(2026-06-03 回歸防護,fragment-vs-file bug class,對抗稽核抓到):
+#     檔頭有 @story-baseline-allow 的 disk 檔 + Edit 只送無 marker 片段(含 antiPattern)→ R8 不擋
+#     (補查整檔 disk head;修前只查片段 → 編輯有 marker 的 story 任一非 marker 行就被 R8 誤擋)。
+#     斷言 EXIT=0(R8 未 record_worst 2);R7 anti-pattern stderr 警告與否不影響此斷言。
+DISK_STORY_R8="$TMP_DIR/r8-disk-allow.stories.tsx"
+printf '%s\n' "// @story-baseline-allow: legacy migration RFC-123" "export const X = () => (<Sidebar><SidebarHeader><span>A</span></SidebarHeader></Sidebar>)" > "$DISK_STORY_R8"
+run_hook "PreToolUse" "Edit" "$DISK_STORY_R8" '  <SidebarHeader><span>Acme</span></SidebarHeader>'
+if [ "$EXIT" = "0" ]; then
+  echo "  PASS  15. R8 disk @story-baseline-allow + Edit 無 marker 片段 → R8 不擋(回歸防護)"; PASS=$((PASS+1))
+else
+  echo "  FAIL  15. R8 disk marker exempt (expected exit 0, got exit=$EXIT)"
+  echo "  --- stderr ---"; echo "$STDERR_TEXT" | sed 's/^/    /'; echo "  --- end ---"
+  FAIL=$((FAIL+1)); FAILED_TESTS="${FAILED_TESTS}\n  - 15. R8 disk marker"
+fi
+
 echo ""
 echo "=== Summary ==="
 echo "Passed: $PASS / $((PASS + FAIL))"

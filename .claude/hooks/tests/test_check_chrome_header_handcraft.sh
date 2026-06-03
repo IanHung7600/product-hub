@@ -101,6 +101,17 @@ export const Bar = () => (
 '
 expect_warn "5. handcraft signature → warn" "CHROME HEADER HANDCRAFT"
 
+# 5b. 2026-06-03 回歸防護(同 R8 multiline bug class,對抗稽核抓到):h-[chrome-header-height] 與
+#     border-divider 跨多行 className(真實 JSX 格式)→ warn。修前 grep 逐行 + [^"]* 跨屬性 → 多行靜默漏。
+run_hook_write "/repo/packages/design-system/src/components/Baz/baz.tsx" '
+export const Baz = () => (
+  <div className="h-[var(--chrome-header-height)]
+    flex items-center px-loose
+    border-b border-divider" />
+)
+'
+expect_warn "5b. handcraft 多行 className → warn(回歸防護)" "CHROME HEADER HANDCRAFT"
+
 # 6. Escape allowlist → silent
 run_hook_write "/repo/packages/design-system/src/components/Bar/bar.tsx" '// @chrome-header-handcraft-allow: tabs cva pattern
 export const Bar = () => (

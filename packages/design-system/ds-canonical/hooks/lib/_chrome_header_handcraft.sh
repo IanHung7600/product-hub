@@ -55,7 +55,10 @@ if echo "$NEW_CONTENT" | grep -qE '@chrome-header-handcraft-allow:'; then
 fi
 
 # Detect handcraft signature: h-[var(--chrome-header-height)] paired with border-b border-divider
-HANDCRAFT_HIT=$(echo "$NEW_CONTENT" | grep -cE 'h-\[var\(--chrome-header-height\)\][^"]*border-b[^"]*border-divider' || true)
+# 2026-06-03 修(同 R8 multiline bug class,對抗稽核抓到):tr 換行→空格 flatten。真實 JSX className
+# 跨行(h-[...] 與 border-b 分行)+ [^"]* 跨屬性匹配 → 不 flatten 的話多行靜默漏(現 warn-only,但
+# Phase 3 升 P0 後會 false-negative)。tr 後整段成單行,[^"]* 才能跨原換行匹配。
+HANDCRAFT_HIT=$(echo "$NEW_CONTENT" | tr '\n' ' ' | grep -cE 'h-\[var\(--chrome-header-height\)\][^"]*border-b[^"]*border-divider' || true)
 
 if [ "$HANDCRAFT_HIT" -gt "0" ]; then
   printf '⚠️ CHROME HEADER HANDCRAFT(soft P1,Phase 3 將升 P0):\n' >&2

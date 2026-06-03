@@ -566,8 +566,13 @@ rule_story_archetype_registry() {
     CONTENT=$(echo "$INPUT" | jq -r '.tool_input.new_string // ""')
   fi
 
-  # Allow override
+  # Allow override — 2026-06-03 修(同 fragment-vs-file bug class,對抗稽核抓到):Edit 只送 new_string
+  # 片段,@story-baseline-allow marker 在檔頭(不在每次 edit 片段)→ 編輯有 marker 的 story 任一非
+  # marker 行就被 R8 誤擋。補查整檔 disk head(對齊 R7 L499 disk-check 做法)。
   if echo "$CONTENT" | head -10 | grep -qE '@story-baseline-allow:'; then
+    return 0
+  fi
+  if [ -f "$FILE_PATH" ] && head -10 "$FILE_PATH" 2>/dev/null | grep -qE '@story-baseline-allow:'; then
     return 0
   fi
 
