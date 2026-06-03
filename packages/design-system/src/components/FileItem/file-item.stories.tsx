@@ -5,6 +5,9 @@ import { Trash2, ChevronDown } from 'lucide-react'
 import { FileItem } from './file-item'
 import { Button } from '@/design-system/components/Button/button'
 import { FileViewer, type FileInfo } from '@/design-system/components/FileViewer/file-viewer'
+// upload-manager 面板消費 overlay-surface header SSOT(非手刻)—— 跟 Popover/Dialog 同一個 header primitive
+import { SurfaceHeader } from '@/design-system/patterns/overlay-surface/overlay-surface'
+import { PopoverTitle } from '@/design-system/components/Popover/popover'
 
 // 錯誤 description 範例(含 clickable "View log"):consumer 自由 ReactNode,通常用底線 link 表 clickable
 const errorDescWithLog = (
@@ -211,12 +214,13 @@ export const CompactMixed = {
 export const UploadManagerSurface = {
   name: 'Upload manager · 豐富(無邊框)',
   render: () => (
-    <div className="max-w-md rounded-md border border-divider bg-surface shadow-[var(--elevation-200)]">
-      {/* header:上傳進度標題列。px loose 與下方 item 內容左緣切齊 */}
-      <div className="flex items-center justify-between px-[var(--layout-space-loose)] py-2 border-b border-divider">
-        <span className="text-body font-medium text-foreground">正在上傳 3 個項目</span>
-        <Button size="xs" iconOnly variant="text" startIcon={ChevronDown} aria-label="收合" onClick={noop} />
-      </div>
+    <div className="max-w-md flex flex-col rounded-lg border border-border bg-surface-raised shadow-[var(--elevation-200)]">
+      {/* header 消費 overlay-surface SurfaceHeader + PopoverTitle(輕量浮層 chrome SSOT,非手刻):
+          px-loose py-tight + border-b + chevron(variant=text → 自動 data-unbounded → 套 slot 負 my trick)*/}
+      <SurfaceHeader className="justify-between [--chrome-slot-h:1.25rem]">
+        <div className="flex-1 min-w-0"><PopoverTitle>正在上傳 3 個項目</PopoverTitle></div>
+        <Button iconOnly variant="text" size="sm" startIcon={ChevronDown} aria-label="收合" onClick={noop} />
+      </SurfaceHeader>
       {/* rich list:px loose(16px,對齊 header);py + gap 都 tight(12px)= 垂直對稱 */}
       <div className="flex flex-col gap-[var(--layout-space-tight)] px-[var(--layout-space-loose)] py-[var(--layout-space-tight)]">
         <FileItem mode="rich" surface="upload-manager" name="Alan Profile.png" status="uploading" progress={40}
@@ -235,12 +239,12 @@ export const UploadManagerSurface = {
 export const UploadManagerCompactSurface = {
   name: 'Upload manager · 精簡(無邊框)',
   render: () => (
-    <div className="max-w-md rounded-md border border-divider bg-surface shadow-[var(--elevation-200)]">
-      {/* header:px loose 與下方 item 內容左緣切齊 */}
-      <div className="flex items-center justify-between px-[var(--layout-space-loose)] py-2 border-b border-divider">
-        <span className="text-body font-medium text-foreground">同步 3 個檔案</span>
-        <Button size="xs" iconOnly variant="text" startIcon={ChevronDown} aria-label="收合" onClick={noop} />
-      </div>
+    <div className="max-w-md flex flex-col rounded-lg border border-border bg-surface-raised shadow-[var(--elevation-200)]">
+      {/* header 消費同一個 overlay-surface SurfaceHeader + PopoverTitle SSOT(同 rich panel)*/}
+      <SurfaceHeader className="justify-between [--chrome-slot-h:1.25rem]">
+        <div className="flex-1 min-w-0"><PopoverTitle>同步 3 個檔案</PopoverTitle></div>
+        <Button iconOnly variant="text" size="sm" startIcon={ChevronDown} aria-label="收合" onClick={noop} />
+      </SurfaceHeader>
       {/* compact list:px loose(16)。上下不對稱 = 「12 − item 那側留白」:
           pt-1(4px,item 文字上方自帶 8px → 4+8=12);pb-tight(12px,進度條 absolute 貼底、下方無 item 留白 → 容器補滿 12)。
           列間 gap-1(4px,密集列)。詳 spec「為何 compact container 上下不對稱」。 */}

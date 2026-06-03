@@ -290,6 +290,9 @@ upload-manager 的 completed(100% bar + ✓)屬「剛完成的 upload session」
 
 `surface=upload-manager` 的 FileItem list 裝在獨立浮層面板(header + 列表),item 拿掉的左右 / 上下邊距改由容器負責:
 
+- **面板殼 + header 必消費 overlay-surface SSOT(禁手刻)**:殼用 Popover 同款 chrome token `rounded-lg border border-border bg-surface-raised shadow-[var(--elevation-200)]`;header 用 `<SurfaceHeader className="justify-between [--chrome-slot-h:1.25rem]">` + `<PopoverTitle>`(輕量浮層 header SSOT,跟 Popover/Dialog 同一個 primitive,padding = px-loose py-tight + border-b + unbounded-slot 負 my trick)。**禁手刻 `<div px-loose py-2 border-b>`**(2026-06-03 user 抓 drift:py-2≠py-tight / rounded-md≠lg / border-divider≠border / bg-surface≠raised)。
+- FileItem list body 走 **「List-as-region in overlay body」canonical**(見 popover.tsx):不用 generic SurfaceBody(其對稱 py-tight 會跟 compact item 自身 py-2 疊加),改用下列 list-specific padding。
+
 - **左右**:一律 `px-[var(--layout-space-loose)]`(16px,item 內容左緣對齊 header 標題)。
 - **上下:目標 = 邊緣到 item「ink」(可見內容)距離 `var(--layout-space-tight)`(12px),兩 mode + 上下都一致**。通則:**容器該側 padding = 12 − item 在該側自己的留白(ink inset)**。
   - **rich**:item 上下 ink inset 皆 0(avatar 頂、bar/content 底貼齊)→ container `py-[var(--layout-space-tight)]`(12px / 12px 對稱)。
