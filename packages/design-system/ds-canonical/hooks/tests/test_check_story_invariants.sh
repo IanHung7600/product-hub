@@ -277,6 +277,43 @@ else
   FAIL=$((FAIL+1)); FAILED_TESTS="${FAILED_TESTS}\n  - 15. R8 disk marker"
 fi
 
+# 16. R9 hand-craft overlay/chrome header(2026-06-04 codify per upload-manager 面板 drift):
+#     story 內手刻 <div px-[var(--layout-space-loose)] ... border-b border-divider> → P0 BLOCK
+run_hook "PreToolUse" "Write" "$TMP_DIR/r9-handcraft.stories.tsx" '
+export const Panel = () => (
+  <div className="max-w-md rounded-lg border bg-surface shadow-[var(--elevation-200)]">
+    <div className="flex items-center justify-between px-[var(--layout-space-loose)] py-2 border-b border-divider">
+      <span className="text-body font-medium">正在上傳 3 個項目</span>
+    </div>
+  </div>
+);
+'
+expect_block "16. R9 手刻 <div px-loose border-b border-divider> overlay header → P0 BLOCK" "R9 hand-craft overlay"
+
+# 17. R9 false-positive 防護:正確消費 SurfaceHeader + PopoverTitle → 不擋(silent)
+run_hook "PreToolUse" "Write" "$TMP_DIR/r9-correct.stories.tsx" '
+export const Panel = () => (
+  <div className="max-w-md flex flex-col rounded-lg border-border bg-surface-raised shadow-[var(--elevation-200)]">
+    <SurfaceHeader className="justify-between [--chrome-slot-h:1.25rem]">
+      <div className="flex-1 min-w-0"><PopoverTitle>正在上傳 3 個項目</PopoverTitle></div>
+    </SurfaceHeader>
+  </div>
+);
+'
+expect_pass_silent "17. R9 正確消費 SurfaceHeader+PopoverTitle → 不誤判"
+
+# 18. R9 false-positive 防護:doc-table row 用 px-4(非 loose token)+ border-b → 不擋
+run_hook "PreToolUse" "Write" "$TMP_DIR/r9-doctable.stories.tsx" '
+export const Tbl = () => (<div className="px-4 py-2.5 border-b border-divider bg-neutral-hover">表頭列</div>);
+'
+expect_pass_silent "18. R9 doc-table px-4 + border-b(非 loose token)→ 不誤判"
+
+# 19. R9 escape:檔頭 @story-baseline-allow → 不擋
+run_hook "PreToolUse" "Write" "$TMP_DIR/r9-allow.stories.tsx" '// @story-baseline-allow: legacy panel demo
+export const P = () => (<div className="px-[var(--layout-space-loose)] py-2 border-b border-divider" />);
+'
+expect_pass_silent "19. R9 @story-baseline-allow 豁免 → 不擋"
+
 echo ""
 echo "=== Summary ==="
 echo "Passed: $PASS / $((PASS + FAIL))"

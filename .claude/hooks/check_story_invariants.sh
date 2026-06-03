@@ -612,6 +612,41 @@ rule_story_archetype_registry() {
   done
 }
 
+# ─────────────────────────────────────────────────────────────────────────────
+# R9 — hand-craft overlay / chrome header(2026-06-04 codify per upload-manager 面板 drift)
+# Story 內手刻 `<div ... px-[var(--layout-space-loose)] ... border-b border-divider ...>`
+# = 浮層 / chrome header signature → 必消費 SurfaceHeader / PopoverHeader / DialogHeader primitive。
+# 零誤判簽名(DS-wide 量測:px-loose + border-b border-divider 同 div 僅手刻 overlay header 用 —
+# doc-table row 用 px-4 硬寫;真 overlay header 寫 `<SurfaceHeader>`,className 不外露)。
+# Anchor:upload-manager 面板原手刻 `<div px-loose py-2 border-b border-divider>`(py-2≠py-tight /
+# 殼 rounded-md≠lg / border-divider≠border / bg-surface≠raised),既有 3 道網全漏:
+#   R1-C(要 div 有 absolute + 附近 onClose/dismiss)、_chrome_header_handcraft(skip stories +
+#   只比 h-[chrome-header-height] signature)、R7/R8(只比已註冊 primitive 名)。adversarial workflow 確認。
+# ─────────────────────────────────────────────────────────────────────────────
+rule_handcraft_overlay_header() {
+  # skip primitive / overlay 家(它們定義 / 示範 header primitive 本身)
+  case "$FILE_PATH" in
+    */overlay-surface/*|*/header-canonical/*|*/ChromeHeader/*|*/Dialog/*|*/Sheet/*|*/Popover/*|*/Coachmark/*|*/Tabs/*) return 0 ;;
+  esac
+  # allow escape(檔頭 OR 本次片段)
+  if echo "$NEW_CONTENT" | head -10 | grep -qE '@story-baseline-allow:'; then return 0; fi
+  if [ -f "$FILE_PATH" ] && head -10 "$FILE_PATH" 2>/dev/null | grep -qE '@story-baseline-allow:'; then return 0; fi
+  local FLAT
+  FLAT=$(echo "$NEW_CONTENT" | tr '\n' ' ')
+  if echo "$FLAT" | grep -qE '<div[^>]*px-\[var\(--layout-space-loose\)\][^>]*border-b border-divider|<div[^>]*border-b border-divider[^>]*px-\[var\(--layout-space-loose\)\]'; then
+    {
+      echo "❌ R9 hand-craft overlay / chrome header:${FILE_PATH}"
+      echo "   偵測到 <div ... px-[var(--layout-space-loose)] ... border-b border-divider> = 手刻浮層 / chrome header。"
+      echo "   必消費 <SurfaceHeader>(patterns/overlay-surface)/ <PopoverHeader> / <DialogHeader>;"
+      echo "   面板殼用 Popover 同款 chrome token(rounded-lg border-border bg-surface-raised elevation-200)。"
+      echo "   理由:px-loose + divider border 的 header chrome 是 overlay-surface SSOT(px-loose py-tight + border-b);手刻 = drift。"
+      echo "   Anchor:2026-06-04 upload-manager 面板手刻 header(py-2≠py-tight / 殼 token 全偏),user 抓。"
+      echo "   豁免:檔頭加 // @story-baseline-allow: <reason>。"
+    } >&2
+    record_worst 2
+  fi
+}
+
 # ─── Run rules ───
 rule_anatomy
 rule_slot_split
@@ -621,5 +656,6 @@ rule_name_jargon
 rule_description_jargon
 rule_story_baseline_reference
 rule_story_archetype_registry
+rule_handcraft_overlay_header
 
 exit $WORST
