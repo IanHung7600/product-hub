@@ -131,7 +131,7 @@ Avatar **固定 48px square**,不隨 content 高度變化。content(label + desc
 **upload-manager 面板 composition canonical**(2026-06-03 user 校準,consumer 組面板用):
 
 - **左右 padding**:compact / rich **一律 `px-[var(--layout-space-loose)]`(16px)** → item 內容左緣跟 header 標題切齊(避免雙重 L/R)。
-- **上下 padding == 列間 gap(每種 list 內對稱 = 最整齊)**,但兩 mode 取不同值:**compact list → `4px`**(`py-1` + `gap-1`,密集文字列);**rich list → `var(--layout-space-loose)`(16px)**(`py-[var(--layout-space-loose)]` + `gap-[var(--layout-space-loose)]`,卡片 + 48 縮圖列需更大呼吸)。
+- **上下 padding == 列間 gap(每種 list 內垂直對稱 = 最整齊)**,但兩 mode 取不同值:**compact list → `4px`**(`py-1` + `gap-1`,密集文字列);**rich list → `var(--layout-space-tight)`(12px)**(`py-[var(--layout-space-tight)]` + `gap-[var(--layout-space-tight)]`,卡片 + 48 縮圖列)。左右則**不**跟上下相等:一律 loose(16px),故 rich = 「左右 16 / 上下+gap 12」、compact = 「左右 16 / 上下+gap 4」。
 - **item 只控「容器不該管的內距」**:compact `py-2`(純文字列高來源,無 avatar 撐高)/ rich `0`(列高靠 avatar 48);左右一律交給面板。
 
 ## 邊框 / 背景(AR15-21 canonical,2026-04-21 · 2026-04-22 擴充)

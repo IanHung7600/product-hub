@@ -205,7 +205,7 @@ export const CompactMixed = {
 
 // surface="upload-manager":Google Drive / Dropbox 背景上傳 box。面板組合 canonical(2026-06-03 圖五 user 校準):
 //   - 面板左右 padding 一律 loose(16px)→ item 內容左緣跟 header 標題切齊(compact/rich 同)
-//   - 面板「上下 padding == 列間 gap」(每 list 內對稱);rich list 兩值都 loose(16px,卡片+縮圖需大呼吸)
+//   - 面板「上下 padding == 列間 gap」(每 list 內垂直對稱);rich list 兩值都 tight(12px),compact 兩值都 4px
 //   - rich item 拿掉全部 padding(px-0 py-0,列高靠 avatar 48);左右交給面板,避免雙重 L/R。對比 surface=form 的 border card。
 export const UploadManagerSurface = {
   name: 'Upload manager · 豐富(無邊框)',
@@ -216,8 +216,8 @@ export const UploadManagerSurface = {
         <span className="text-body font-medium text-foreground">正在上傳 3 個項目</span>
         <Button size="xs" iconOnly variant="text" startIcon={ChevronDown} aria-label="收合" onClick={noop} />
       </div>
-      {/* rich list:px / py / gap 全 loose(16px)= 對稱,卡片+48 縮圖列需大呼吸 */}
-      <div className="flex flex-col gap-[var(--layout-space-loose)] px-[var(--layout-space-loose)] py-[var(--layout-space-loose)]">
+      {/* rich list:px loose(16px,對齊 header);py + gap 都 tight(12px)= 垂直對稱 */}
+      <div className="flex flex-col gap-[var(--layout-space-tight)] px-[var(--layout-space-loose)] py-[var(--layout-space-tight)]">
         <FileItem mode="rich" surface="upload-manager" name="Alan Profile.png" status="uploading" progress={40}
           description="5.7 MB of 7.5 MB" thumbnailSrc="https://i.pravatar.cc/80?u=alan" actions={deleteBtn} />
         <FileItem mode="rich" surface="upload-manager" name="Q1 營收報表.xlsx" status="completed"
