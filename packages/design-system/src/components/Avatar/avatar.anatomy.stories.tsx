@@ -36,7 +36,7 @@ type VariantKey = 'subtle' | 'solid'
 
 // 與 Tag 元件完全對齊：**消費 categorical-color SSOT**(strip `var()` 取顯示用 token 名),
 // key X 一律對 `--color-X-*`(1:1,零 offset)。subtle = step-1 底 + step-7 字,solid = step-6 底
-// + on-emphasis 配對字(亮 hue yellow/amber/orange/lime → --on-emphasis-inverse 深字;green 白字例外)。neutral 非色相,Avatar 用 --muted 自處理。
+// + on-emphasis 配對字(亮 hue yellow/amber/orange/lime → --on-emphasis-dark 深字;green 白字例外)。neutral 非色相,Avatar 用 --muted 自處理。
 // 2026-06-04 SSOT 重構後 anatomy 表機械衍生,永遠與 tsx COLOR_MAP 1:1 無漂移(M17)。
 const stripVar = (s: string) => s.replace(/^var\(/, '').replace(/\)$/, '')
 const hueTokens = (m: Record<CategoricalHue, { bg: string; text: string }>) =>

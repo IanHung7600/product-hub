@@ -30,7 +30,7 @@ import { useFieldContext, useTableIsScrolling } from '@/design-system/components
 // ── 色彩 ──
 // **消費 categorical-color SSOT**(CAT_SUBTLE_TOKENS / CAT_SOLID_TOKENS,key X 一律對 `--color-X-*`,
 // 1:1 零 offset)。subtle=step-1 底 + step-7 字;solid=step-6 全色底 + on-emphasis 字
-//(亮 hue yellow/amber/orange/lime 用 --on-emphasis-inverse 深字;green 白字例外)。neutral 非色相,自處理(subtle=muted、solid=neutral-9)。
+//(亮 hue yellow/amber/orange/lime 用 --on-emphasis-dark 深字;green 白字例外)。neutral 非色相,自處理(subtle=muted、solid=neutral-9)。
 // 2026-06-04 修:原 `red` 誤接 `--color-deep-orange-*`(red=品牌紅 hue-25 ≠ deep-orange);
 // 改消費 SSOT 後 red→`--color-red-*`,並補齊全 12 色相。
 type ColorKey = CategoricalColor

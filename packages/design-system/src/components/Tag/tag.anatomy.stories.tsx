@@ -438,7 +438,7 @@ export const ColorMatrix = {
       <div className="flex flex-col gap-1">
         <H3>Variant 色彩對照</H3>
         <Desc>
-          Tag 無 hover/active 狀態（非互動元件），只有單一色彩組合。Subtle 模式有色 variant 文字用 --color-&#123;hue&#125;-7 primitive（step-7，不隨 dark mode 反轉），neutral 用 foreground。Solid 模式 step-6 背景 + on-emphasis 配對文字:夠深的 hue 用白字（--on-emphasis），亮色 hue（yellow/amber/orange/lime）用深字（--on-emphasis-inverse），green 維持白字（documented exception）。色塊即時渲染，切 dark mode 自動更新。
+          Tag 無 hover/active 狀態（非互動元件），只有單一色彩組合。Subtle 模式有色 variant 文字用 --color-&#123;hue&#125;-7 primitive（step-7，不隨 dark mode 反轉），neutral 用 foreground。Solid 模式 step-6 背景 + on-emphasis 配對文字:夠深的 hue 用白字（--on-emphasis），亮色 hue（yellow/amber/orange/lime）用深字（--on-emphasis-dark），green 維持白字（documented exception）。色塊即時渲染，切 dark mode 自動更新。
         </Desc>
       </div>
 

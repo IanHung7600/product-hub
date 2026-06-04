@@ -149,17 +149,17 @@ Tag 是 inline label，用於分類標籤、狀態標記、多選已選值。不
 | blue | `--color-blue-1` | `--color-blue-7` | `--color-blue-6` | `--on-emphasis`（白） |
 | green | `--color-green-1` | `--color-green-7` | `--color-green-6` | `--on-emphasis`（白）★ |
 | deep-orange | `--color-deep-orange-1` | `--color-deep-orange-7` | `--color-deep-orange-6` | `--on-emphasis`（白） |
-| yellow | `--color-yellow-1` | `--color-yellow-7` | `--color-yellow-6` | **`--on-emphasis-inverse`（深）** |
+| yellow | `--color-yellow-1` | `--color-yellow-7` | `--color-yellow-6` | **`--on-emphasis-dark`（深）** |
 | red | `--color-red-1` | `--color-red-7` | `--color-red-6` | `--on-emphasis`（白） |
-| orange | `--color-orange-1` | `--color-orange-7` | `--color-orange-6` | **`--on-emphasis-inverse`（深）** |
-| amber | `--color-amber-1` | `--color-amber-7` | `--color-amber-6` | **`--on-emphasis-inverse`（深）** |
-| lime | `--color-lime-1` | `--color-lime-7` | `--color-lime-6` | **`--on-emphasis-inverse`（深）** |
+| orange | `--color-orange-1` | `--color-orange-7` | `--color-orange-6` | **`--on-emphasis-dark`（深）** |
+| amber | `--color-amber-1` | `--color-amber-7` | `--color-amber-6` | **`--on-emphasis-dark`（深）** |
+| lime | `--color-lime-1` | `--color-lime-7` | `--color-lime-6` | **`--on-emphasis-dark`（深）** |
 | turquoise | `--color-turquoise-1` | `--color-turquoise-7` | `--color-turquoise-6` | `--on-emphasis`（白） |
 | indigo | `--color-indigo-1` | `--color-indigo-7` | `--color-indigo-6` | `--on-emphasis`（白） |
 | purple | `--color-purple-1` | `--color-purple-7` | `--color-purple-6` | `--on-emphasis`（白） |
 | magenta | `--color-magenta-1` | `--color-magenta-7` | `--color-magenta-6` | `--on-emphasis`（白） |
 
-**Solid 文字色規則（on-emphasis 配對,2026-06-04）**：依 step-6 底色明暗分桶，合規門檻 = WCAG **large/bold 3:1**（solid Tag 視為大粗字，user 拍板「以最低為原則」）。底夠深 → `--on-emphasis`（白）；底太亮(白字連 3:1 都不過)→ `--on-emphasis-inverse`（深，= `black-a85`，原 `warning-foreground` 改名）：**yellow / amber / orange / lime** 四個。**★ green 例外**：green-6 白字實測 2.47（連 3:1 都不過），但維持白字（沿用慣見「綠底白字」觀感）= documented exception，待日後評估是否調 green-6。**SSOT**：上表機械對應 `tokens/categorical-color.ts`（`CAT_SUBTLE` / `CAT_SOLID`，1:1 + 對比由 `categorical-color-invariants.mjs` I4 機械驗，green exempt）。
+**Solid 文字色規則（on-emphasis 配對,2026-06-04）**：依 step-6 底色明暗分桶，合規門檻 = WCAG **large/bold 3:1**（solid Tag 視為大粗字，user 拍板「以最低為原則」）。底夠深 → `--on-emphasis`（白）；底太亮(白字連 3:1 都不過)→ `--on-emphasis-dark`（深，= `black-a85`，原 `warning-foreground` 改名）：**yellow / amber / orange / lime** 四個。**★ green 例外**：green-6 白字實測 2.47（連 3:1 都不過），但維持白字（沿用慣見「綠底白字」觀感）= documented exception，待日後評估是否調 green-6。**SSOT**：上表機械對應 `tokens/categorical-color.ts`（`CAT_SUBTLE` / `CAT_SOLID`，1:1 + 對比由 `categorical-color-invariants.mjs` I4 機械驗，green exempt）。
 
 ### Dismiss 行為（Inline Action 客製）
 

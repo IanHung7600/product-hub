@@ -51,7 +51,7 @@ const tagVariants = cva(
 )
 
 // ── Solid variant 色彩（step-6 底 + on-emphasis 配對文字,消費 categorical-color SSOT）──
-// 白字 --on-emphasis(夠深的 hue)/ 深字 --on-emphasis-inverse(亮 hue:yellow/amber/orange/lime);green 白字例外。
+// 白字 --on-emphasis(夠深的 hue)/ 深字 --on-emphasis-dark(亮 hue:yellow/amber/orange/lime);green 白字例外。
 // **消費 categorical-color SSOT**(CAT_SOLID,1:1 色相)。neutral 非色相,用 neutral-9
 // + --inverse-fg（light=白字, dark=深字，自動反轉）自處理。
 const SOLID_CLASSES: Record<string, string> = {

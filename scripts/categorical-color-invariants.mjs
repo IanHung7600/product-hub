@@ -100,7 +100,7 @@ for (const tok of referenced) {
 
 // ── I4 Solid 文字對比:CAT_SOLID 每個 hue 的 on-solid 文字(白/深)實測對比必 ≥3:1(大粗字門檻)──
 //    2026-06-04 user「以最低為原則」= WCAG large/bold 3:1。white=--on-emphasis(Y=1),
-//    dark=--on-emphasis-inverse(=black-a85,15% 底色合成)。green 為 documented exception(知情違反,exempt)。
+//    dark=--on-emphasis-dark(=black-a85,15% 底色合成)。green 為 documented exception(知情違反,exempt)。
 //    機械驗 = oklch→相對亮度→contrast,禁肉眼。新增亮色 hue 配白字 → 此 gate 自動攔。
 const SOLID_TEXT_EXEMPT = new Set(['green']) // ★ user 拍板維持白字的知情例外
 const prim = readFileSync(PRIMITIVES, 'utf8')
@@ -118,7 +118,7 @@ const solidBlock = extractMapBlock('CAT_SOLID')
 for (const h of HUES) {
   const oklchs = [...prim.matchAll(new RegExp(`--color-${h}-6:\\s*oklch\\(([\\d.]+) ([\\d.]+) ([\\d.]+)\\)`, 'g'))].map((m) => [+m[1], +m[2], +m[3]])
   const entry = entryFor(solidBlock, h) || ''
-  const isDark = /on-emphasis-inverse/.test(entry) // 深字桶
+  const isDark = /on-emphasis-dark/.test(entry) // 深字桶
   if (SOLID_TEXT_EXEMPT.has(h)) { rec('I4', `CAT_SOLID.${h} 對比(documented exception,exempt)`, true); continue }
   let worst = Infinity
   for (const o of oklchs) {
