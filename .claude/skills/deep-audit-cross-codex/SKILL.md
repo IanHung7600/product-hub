@@ -80,7 +80,7 @@ detect_mode() {
 
 **PURE-JUDGMENT dim 真跑證據強制(2026-05-30 generalize,user 問「包括所有 infra 稽核?」)**:judgment dim(無 deterministic script / write-time hook 兜底者,含 infra 62/66/68/72 fork-onboarding/runtime/API-surface)report 必逐 dim show「DS-wide N files scanned + file:line findings / 或『0 after 全掃』」真跑證據,**禁只 mention dim 號**。report-validator `check_audit_post_report_validator.sh` Validator G 機械強制(evidence marker 數 < judgment dim 數 = BLOCKER)。DETERMINISTIC(22)+ HOOK(42)dim 由 CI / write-time hook 兜底(含 22/26 infra dim),不在此 risk。
 
-### A.1b — Story-claim-vs-code adversarial verification(MANDATORY,NO-SAMPLE,per-component)
+### A.1b — Claim-vs-code + docblock + spec-internal adversarial verification(MANDATORY,NO-SAMPLE,per-component)
 
 **2026-05-30 anchor(user verbatim 質問「之前他媽都在偷懶?」)**:獨立 adversarial 再審抓到 **403 findings / 64 單元 / 0 全乾淨**,其中 **202 個 FALSE_CLAIM**(anatomy/a11y/principles/spec 系統性記載 code 根本沒有的行為:Calendar 宣稱方向鍵導覽 / Tooltip·HoverCard 宣稱 focus trap / Alert 記不存在的 `actions` prop / Select 宣稱「用原生 select」但桌機自建 cmdk / AspectRatio spec 說「無 wrapper」但 code wrap)。**根因**:前期 audit 把 story-content dim(12/24/25/30/43 等)當「散文層 looks-fine 掃」跑,**沒 adversarial 讀 .tsx(+ wrap 的 lib)逐句比對宣稱**。這是「偷懶」的具體 failure mode。
 
@@ -90,6 +90,10 @@ detect_mode() {
 0. **機械 gate 先跑(deterministic,2026-06-02 加)**:`npm run typecheck:stories`(deterministic 抓 stories 的 `{var}`-undefined / prop 型別錯 —— **這是 SizeMatrix `{size}` crash 的真防線**;主 tsc -b exclude stories 故必跑此)+ `node scripts/storybook-smoke-test.mjs --full`(runtime crash render 掃)。先過才進 adversarial read。Anchor:2026-06-02 Field SizeMatrix `{size}` JSX-undefined crash 隨 beta.44 ship。**注**:smoke 全覆蓋 coverage-gate(防靜默-skip 假綠燈)attempted 但 CI server 規模化降級(~60 story 後 timeout 撞 20-min budget)→ **defer**(需 robust-server / browser-recycle + 可靠測試環境);故 typecheck:stories 是目前 deterministic 主防線。
 1. **per-component(NO-SAMPLE,全 62 component + 全 pattern)** dispatch adversarial agent。
 2. 每 agent 必 **Read 元件 .tsx + 其 wrap 的 lib(Radix/cmdk/react-day-picker/sonner 等)source**,對該元件**所有** anatomy / a11y / principles / spec 宣稱**逐句**比對:鍵盤 map / ARIA role / focus 行為 / prop 存在性 / 視覺 token / 預設值 / native-vs-custom。
+   **+ 2026-06-04 補兩 lens(Dim 15 cross-doc 明文涵蓋但前期被「散文 skim」漏的同 class failure;非抽樣、非無覆蓋,是「有 dim 淺跑」)**:
+   - **(a) 元件 `.tsx` 自己的 docblock / inline 註解 vs 同檔 code**:A.1b 原設計把 `.tsx` 當「真相來源」去驗別人(story/spec),**從不反驗它自己的註解** → docblock claim 的 padding / typography mode / hover / 行為 vs code 真實值,逐行比。
+   - **(b) spec 段落間描述性一致(spec-internal cross-section)**:A.1b 原驗 claim-vs-code,**不驗 spec-段-vs-段** → 同一 spec 內 Mode 表 typography 標籤 / padding 值 / gap 值 / surface 行為,跨 section 不可打架。
+   - **Anchor**:2026-06-04 user 抓「deep-audit 多次沒發現」—— tsx docblock(`閱讀模式 1.5` / `hover:bg-neutral-hover`,自 2026-04-23 stale)+ spec Mode 表 typography stale,全是 Dim 15 該抓、卻被當散文掃漏。納入此強制 adversarial(Validator F per-component 覆蓋率閘一併保證),不再可 skim。
 3. **「自上次 audit 無 code 改動」≠ 可跳過** —— content 宣稱可在 code 沒變下就是假的(前期正是用此藉口跳過 = 違規)。
 4. output per-component:`{component, claimsVerified: N, falseClaims: [{fileLine, 宣稱, 真實 code 行為}]}`。
 5. findings 併入 A.2 triage(FALSE_CLAIM 對齊 doc-to-code = autonomous;substantive design-language tension = HOLD propose)。
