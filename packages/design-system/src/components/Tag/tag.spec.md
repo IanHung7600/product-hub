@@ -1,34 +1,49 @@
 ---
 component: Tag
 family: 3
+# categorical 色相(裝飾性分類,非語意狀態)。每個 variant 1:1 對 `--color-{hue}-*` primitive,零 offset。
+# 語意(成功 / 錯誤 / 警告)由消費端內容與上下文決定,**不**由色名綁定 semantic token(見「禁止」段)。
+# 對齊 Ant Tag「preset 原始色相名」categorical 模型 + Atlassian「categorical 色 vs semantic 色分離」。
 variants:
   neutral:
     when: "通用分類、草稿、無特定語義（GitHub label default / Notion page tag untagged）"
     world-class: ["Polaris Tag default", "Atlassian Tag standard", "Ant Tag default"]
   blue:
-    when: "進行中、資訊提示、active 狀態（對應 --info）"
-    world-class: ["Atlassian Lozenge inProgress", "Jira status=in progress", "Linear status=in progress"]
-  red:
-    when: "錯誤、已封鎖、危險（對應 --error）"
-    world-class: ["Atlassian Lozenge removed", "Jira status=blocked", "Ant Tag color=red"]
+    when: "categorical 色相（--color-blue-*）— 分類 / 標記，常用於資訊類"
+    world-class: ["Ant Tag color=blue", "Notion tag color=blue", "Linear label color=blue"]
   green:
-    when: "成功、已完成、已核准（對應 --success）"
-    world-class: ["Atlassian Lozenge success", "Jira status=done", "GitHub label merged"]
+    when: "categorical 色相（--color-green-*）— 分類 / 標記，常用於完成 / 正向類"
+    world-class: ["Ant Tag color=green", "Notion tag color=green", "GitHub label merged"]
+  deep-orange:
+    when: "categorical 色相（--color-deep-orange-*，hue 38）— 暖橙紅分類"
+    world-class: ["Ant Tag color=volcano", "Notion tag color=orange", "Linear label color=orange"]
   yellow:
-    when: "警告、待審核、注意（對應 --warning）"
-    world-class: ["Atlassian Lozenge moved", "Jira status=review", "Ant Tag color=warning"]
+    when: "categorical 色相（--color-yellow-*，淺底深字）— 分類 / 標記，常用於注意類"
+    world-class: ["Ant Tag color=gold", "Notion tag color=yellow", "Linear label color=yellow"]
+  red:
+    when: "categorical 色相（--color-red-*，品牌紅家族 hue 25；≠ 語意 --error，與 deep-orange 無關）"
+    world-class: ["Ant Tag color=red", "Notion tag color=red", "Linear label color=red"]
+  orange:
+    when: "categorical 色相（--color-orange-*）— 分類 / 標記"
+    world-class: ["Ant Tag color=orange", "Notion tag color=orange", "Linear label color=orange"]
+  amber:
+    when: "categorical 色相（--color-amber-*，淺底深字）— 琥珀分類"
+    world-class: ["Ant Tag color=gold", "Notion tag color=yellow", "Linear label color=amber"]
+  lime:
+    when: "categorical 色相（--color-lime-*）— 黃綠分類"
+    world-class: ["Ant Tag color=lime", "Notion tag color=green", "Linear label color=lime"]
   turquoise:
-    when: "分類色（無固定語義）— 產品線 / 團隊區別標記"
-    world-class: ["GitHub label custom hex", "Notion tag color=teal", "Linear label color=turquoise"]
-  purple:
-    when: "分類色（無固定語義）— 產品線 / 團隊區別標記"
-    world-class: ["GitHub label custom hex", "Notion tag color=purple", "Linear label color=purple"]
-  magenta:
-    when: "分類色（無固定語義）— 產品線 / 團隊區別標記"
-    world-class: ["GitHub label custom hex", "Notion tag color=pink", "Linear label color=pink"]
+    when: "categorical 色相（--color-turquoise-*）— 產品線 / 團隊區別標記"
+    world-class: ["Ant Tag color=cyan", "Notion tag color=teal", "Linear label color=turquoise"]
   indigo:
-    when: "分類色（無固定語義）— 產品線 / 團隊區別標記"
-    world-class: ["GitHub label custom hex", "Notion tag color=blue", "Linear label color=indigo"]
+    when: "categorical 色相（--color-indigo-*）— 產品線 / 團隊區別標記"
+    world-class: ["Ant Tag color=geekblue", "Notion tag color=blue", "Linear label color=indigo"]
+  purple:
+    when: "categorical 色相（--color-purple-*）— 產品線 / 團隊區別標記"
+    world-class: ["Ant Tag color=purple", "Notion tag color=purple", "Linear label color=purple"]
+  magenta:
+    when: "categorical 色相（--color-magenta-*）— 產品線 / 團隊區別標記"
+    world-class: ["Ant Tag color=magenta", "Notion tag color=pink", "Linear label color=pink"]
 sizes:
   sm:
     when: "form field-height 28 / compact chrome / dialog / panel context"
@@ -92,23 +107,27 @@ Tag 是 inline label，用於分類標籤、狀態標記、多選已選值。不
 
 ## Color
 
-以色名命名，語義由消費端決定。建議用法與色彩系統的語義定義對齊。Prop 命名 `color`（對齊 MUI Chip / Ant Tag / Atlaskit Tag world-class 多數派 idiom）。 <!-- @benchmark-unverified: see frontmatter benchmark list for canonical DS source URL -->
+以色名命名，**色名即色相，語義由消費端內容與上下文決定**（categorical 色，非 semantic 狀態）。Prop 命名 `color`（對齊 MUI Chip / Ant Tag / Atlaskit Tag world-class 多數派 idiom）。**12 色相 1:1 對 color token 的 categorical 色相**（`--color-{hue}-*`），與 Avatar / Calendar event 共用同一組 SSOT（`tokens/categorical-color.ts`），名實一致零 offset。 <!-- @benchmark-cited: Ant Design Tag preset colors https://ant.design/components/tag#components-tag-demo-colorful (raw hue names) -->
 
-| Color | 建議用法 |
+| Color | categorical 色相 |
 |---------|----------|
-| `neutral`（預設） | 通用分類、草稿、無特定語義 |
-| `blue` | 進行中、資訊提示、active 狀態（對應 `--info`） |
-| `red` | 錯誤、已封鎖、危險（對應 `--error`） |
-| `green` | 成功、已完成、已核准（對應 `--success`） |
-| `yellow` | 警告、待審核、注意（對應 `--warning`） |
-| `turquoise` | 分類色（無固定語義） |
-| `purple` | 分類色（無固定語義） |
-| `magenta` | 分類色（無固定語義） |
-| `indigo` | 分類色（無固定語義） |
+| `neutral`（預設） | 通用分類、草稿、無特定語義（`--secondary` 底） |
+| `blue` | `--color-blue-*` |
+| `green` | `--color-green-*` |
+| `deep-orange` | `--color-deep-orange-*`（hue 38） |
+| `yellow` | `--color-yellow-*`（淺底深字） |
+| `red` | `--color-red-*`（品牌紅家族 hue 25） |
+| `orange` | `--color-orange-*` |
+| `amber` | `--color-amber-*`（淺底深字） |
+| `lime` | `--color-lime-*` |
+| `turquoise` | `--color-turquoise-*` |
+| `indigo` | `--color-indigo-*` |
+| `purple` | `--color-purple-*` |
+| `magenta` | `--color-magenta-*` |
 
-所有有色 variant 直接使用 primitive token（`--color-blue-*`、`--color-deep-orange-*` 等），不使用 semantic token（`--primary`、`--error`）。Tag 的「blue」代表藍色本身，不代表「主要操作」語義。
+所有有色 variant 直接使用 primitive token（`--color-blue-*` 等），不使用 semantic token（`--primary`、`--error`）。Tag 的「blue」代表藍色本身，不代表「主要操作」語義；「red」代表紅色（品牌紅 hue 25），**不代表 `--error`**。
 
-**注意**：`red` variant 使用 primitive `deep-orange`（`--color-deep-orange-*`）。
+**注意**：`red` 與語意 `--error` 完全無關 —— `--error` = `--color-deep-orange-6`（hue 38），而 `red` variant = `--color-red-*`（品牌紅 hue 25）。三者（`red` / `deep-orange` / `--error`）是各自獨立的色相 / 語意 token，**無映射關係**。2026-06-04 修正原「red variant 接 deep-orange」offset。
 
 ### 文字色
 
@@ -128,15 +147,19 @@ Tag 是 inline label，用於分類標籤、狀態標記、多選已選值。不
 |---|---|---|---|---|
 | neutral | `--secondary`（neutral-3） | `--foreground` | `--color-neutral-9` | `--inverse-fg` |
 | blue | `--color-blue-1` | `--color-blue-7` | `--color-blue-6` | white |
-| red | `--color-deep-orange-1` | `--color-deep-orange-7` | `--color-deep-orange-6` | white |
 | green | `--color-green-1` | `--color-green-7` | `--color-green-6` | white |
+| deep-orange | `--color-deep-orange-1` | `--color-deep-orange-7` | `--color-deep-orange-6` | white |
 | yellow | `--color-yellow-1` | `--color-yellow-7` | `--color-yellow-6` | **`--warning-foreground`** |
+| red | `--color-red-1` | `--color-red-7` | `--color-red-6` | white |
+| orange | `--color-orange-1` | `--color-orange-7` | `--color-orange-6` | white |
+| amber | `--color-amber-1` | `--color-amber-7` | `--color-amber-6` | **`--warning-foreground`** |
+| lime | `--color-lime-1` | `--color-lime-7` | `--color-lime-6` | white |
 | turquoise | `--color-turquoise-1` | `--color-turquoise-7` | `--color-turquoise-6` | white |
+| indigo | `--color-indigo-1` | `--color-indigo-7` | `--color-indigo-6` | white |
 | purple | `--color-purple-1` | `--color-purple-7` | `--color-purple-6` | white |
 | magenta | `--color-magenta-1` | `--color-magenta-7` | `--color-magenta-6` | white |
-| indigo | `--color-indigo-1` | `--color-indigo-7` | `--color-indigo-6` | white |
 
-**yellow 例外**：yellow solid 背景亮度高，白字對比不足，改用 `--warning-foreground`（深色文字）。
+**yellow / amber 例外**：yellow / amber solid 背景亮度高，白字對比不足，改用 `--warning-foreground`（深色文字）。**SSOT**：上表機械對應 `tokens/categorical-color.ts`（`CAT_SUBTLE` / `CAT_SOLID`），key X 一律 `--color-X-*`（1:1）。
 
 ### Dismiss 行為（Inline Action 客製）
 

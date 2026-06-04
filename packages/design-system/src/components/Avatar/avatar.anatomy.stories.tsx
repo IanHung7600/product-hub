@@ -7,6 +7,13 @@ import type { Meta } from '@storybook/react'
 import { useState } from 'react'
 import { Building2, Folder, Globe } from 'lucide-react'
 import { Avatar } from './avatar'
+import {
+  CATEGORICAL_HUES,
+  CAT_SUBTLE_TOKENS,
+  CAT_SOLID_TOKENS,
+  type CategoricalColor,
+  type CategoricalHue,
+} from '@/design-system/tokens/categorical-color'
 
 const meta: Meta = {
   title: 'Design System/Components/Avatar/設計規格',
@@ -20,37 +27,31 @@ export default meta
 
 type ModeKey = 'image' | 'icon' | 'text'
 type ShapeKey = 'circle' | 'square'
-type ColorKey = 'neutral' | 'blue' | 'red' | 'green' | 'yellow' | 'purple' | 'magenta' | 'turquoise' | 'indigo'
+type ColorKey = CategoricalColor // 'neutral' + 12 categorical 色相
 
-const ALL_COLORS: ColorKey[] = ['neutral', 'blue', 'red', 'green', 'yellow', 'purple', 'magenta', 'turquoise', 'indigo']
+const ALL_COLORS: ColorKey[] = ['neutral', ...CATEGORICAL_HUES]
 const PRESET_SIZES = [20, 24, 32, 40] as const
 
 type VariantKey = 'subtle' | 'solid'
 
-// 與 Tag 元件完全對齊：使用 primitive token（--color-blue-1 等），不用 semantic（--primary 等）
-// subtle = primitive step-1 背景 + step-7 前景，solid = step-6 背景 + 白字（yellow 例外）
+// 與 Tag 元件完全對齊：**消費 categorical-color SSOT**(strip `var()` 取顯示用 token 名),
+// key X 一律對 `--color-X-*`(1:1,零 offset)。subtle = step-1 底 + step-7 字,solid = step-6 底
+// + on-emphasis 字(yellow/amber 例外 --warning-foreground)。neutral 非色相,Avatar 用 --muted 自處理。
+// 2026-06-04 SSOT 重構後 anatomy 表機械衍生,永遠與 tsx COLOR_MAP 1:1 無漂移(M17)。
+const stripVar = (s: string) => s.replace(/^var\(/, '').replace(/\)$/, '')
+const hueTokens = (m: Record<CategoricalHue, { bg: string; text: string }>) =>
+  Object.fromEntries(
+    CATEGORICAL_HUES.map((h) => [h, { bg: stripVar(m[h].bg), text: stripVar(m[h].text) }]),
+  ) as Record<CategoricalHue, { bg: string; text: string }>
+
 const COLOR_TOKENS: Record<VariantKey, Record<ColorKey, { bg: string; text: string }>> = {
   subtle: {
-    neutral:   { bg: '--muted',               text: '--foreground' },
-    blue:      { bg: '--color-blue-1',        text: '--color-blue-7' },
-    red:       { bg: '--color-deep-orange-1', text: '--color-deep-orange-7' },
-    green:     { bg: '--color-green-1',       text: '--color-green-7' },
-    yellow:    { bg: '--color-yellow-1',      text: '--color-yellow-7' },
-    turquoise: { bg: '--color-turquoise-1',   text: '--color-turquoise-7' },
-    purple:    { bg: '--color-purple-1',      text: '--color-purple-7' },
-    magenta:   { bg: '--color-magenta-1',     text: '--color-magenta-7' },
-    indigo:    { bg: '--color-indigo-1',      text: '--color-indigo-7' },
+    neutral: { bg: '--muted', text: '--foreground' },
+    ...hueTokens(CAT_SUBTLE_TOKENS),
   },
   solid: {
-    neutral:   { bg: '--color-neutral-9',     text: '--inverse-fg' },
-    blue:      { bg: '--color-blue-6',        text: '--on-emphasis' },
-    red:       { bg: '--color-deep-orange-6', text: '--on-emphasis' },
-    green:     { bg: '--color-green-6',       text: '--on-emphasis' },
-    yellow:    { bg: '--color-yellow-6',      text: '--warning-foreground' },
-    turquoise: { bg: '--color-turquoise-6',   text: '--on-emphasis' },
-    purple:    { bg: '--color-purple-6',      text: '--on-emphasis' },
-    magenta:   { bg: '--color-magenta-6',     text: '--on-emphasis' },
-    indigo:    { bg: '--color-indigo-6',      text: '--on-emphasis' },
+    neutral: { bg: '--color-neutral-9', text: '--inverse-fg' },
+    ...hueTokens(CAT_SOLID_TOKENS),
   },
 }
 

@@ -3,6 +3,7 @@ import * as React from 'react'
 import { User } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { CAT_SUBTLE_TOKENS, CAT_SOLID_TOKENS, type CategoricalColor } from '@/design-system/tokens/categorical-color'
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '@/design-system/components/HoverCard/hover-card'
 import { HOVER_DELAY_RICH_MS, HOVER_DELAY_CLOSE_MS } from '@/design-system/tokens/motion/motion'
 import { Badge } from '@/design-system/components/Badge/badge'
@@ -27,34 +28,22 @@ import { useFieldContext, useTableIsScrolling } from '@/design-system/components
  */
 
 // ── 色彩 ──
-// 直接引用 primitive（bg=step-1, text=step-7），不經過語義層
-// solid：step-6 全色底 + 白色前景（yellow 例外用 --warning-foreground）
-// neutral solid：neutral-9 + --inverse-fg（自動反轉）
-type ColorKey = 'neutral' | 'blue' | 'red' | 'green' | 'yellow' | 'turquoise' | 'purple' | 'magenta' | 'indigo'
+// **消費 categorical-color SSOT**(CAT_SUBTLE_TOKENS / CAT_SOLID_TOKENS,key X 一律對 `--color-X-*`,
+// 1:1 零 offset)。subtle=step-1 底 + step-7 字;solid=step-6 全色底 + on-emphasis 字
+//(yellow/amber 例外用 --warning-foreground)。neutral 非色相,自處理(subtle=muted、solid=neutral-9)。
+// 2026-06-04 修:原 `red` 誤接 `--color-deep-orange-*`(red=品牌紅 hue-25 ≠ deep-orange);
+// 改消費 SSOT 後 red→`--color-red-*`,並補齊全 12 色相。
+type ColorKey = CategoricalColor
 type VariantKey = 'subtle' | 'solid'
 
 const COLOR_MAP: Record<VariantKey, Record<ColorKey, { bg: string; text: string }>> = {
   subtle: {
-    neutral:   { bg: 'var(--muted)',                text: 'var(--foreground)' },
-    blue:      { bg: 'var(--color-blue-1)',         text: 'var(--color-blue-7)' },
-    red:       { bg: 'var(--color-deep-orange-1)',  text: 'var(--color-deep-orange-7)' },
-    green:     { bg: 'var(--color-green-1)',        text: 'var(--color-green-7)' },
-    yellow:    { bg: 'var(--color-yellow-1)',       text: 'var(--color-yellow-7)' },
-    turquoise: { bg: 'var(--color-turquoise-1)',    text: 'var(--color-turquoise-7)' },
-    purple:    { bg: 'var(--color-purple-1)',       text: 'var(--color-purple-7)' },
-    magenta:   { bg: 'var(--color-magenta-1)',      text: 'var(--color-magenta-7)' },
-    indigo:    { bg: 'var(--color-indigo-1)',       text: 'var(--color-indigo-7)' },
+    neutral: { bg: 'var(--muted)', text: 'var(--foreground)' },
+    ...CAT_SUBTLE_TOKENS,
   },
   solid: {
-    neutral:   { bg: 'var(--color-neutral-9)',      text: 'var(--inverse-fg)' },
-    blue:      { bg: 'var(--color-blue-6)',         text: 'var(--on-emphasis)' },
-    red:       { bg: 'var(--color-deep-orange-6)',  text: 'var(--on-emphasis)' },
-    green:     { bg: 'var(--color-green-6)',        text: 'var(--on-emphasis)' },
-    yellow:    { bg: 'var(--color-yellow-6)',       text: 'var(--warning-foreground)' },
-    turquoise: { bg: 'var(--color-turquoise-6)',    text: 'var(--on-emphasis)' },
-    purple:    { bg: 'var(--color-purple-6)',       text: 'var(--on-emphasis)' },
-    magenta:   { bg: 'var(--color-magenta-6)',      text: 'var(--on-emphasis)' },
-    indigo:    { bg: 'var(--color-indigo-6)',       text: 'var(--on-emphasis)' },
+    neutral: { bg: 'var(--color-neutral-9)', text: 'var(--inverse-fg)' },
+    ...CAT_SOLID_TOKENS,
   },
 }
 

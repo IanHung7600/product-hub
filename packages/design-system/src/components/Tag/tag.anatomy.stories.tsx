@@ -8,6 +8,13 @@ import type { Meta } from '@storybook/react'
 import { useState } from 'react'
 import { Hash } from 'lucide-react'
 import { Tag } from './tag'
+import {
+  CATEGORICAL_HUES,
+  CAT_SUBTLE_TOKENS,
+  CAT_SOLID_TOKENS,
+  type CategoricalColor,
+  type CategoricalHue,
+} from '@/design-system/tokens/categorical-color'
 
 const meta: Meta = {
   title: 'Design System/Components/Tag/設計規格',
@@ -19,49 +26,50 @@ export default meta
    Types & Data
    ═══════════════════════════════════════════════════════════════════════════ */
 
-type VariantKey = 'neutral' | 'blue' | 'red' | 'green' | 'yellow' | 'turquoise' | 'purple' | 'magenta' | 'indigo'
+type VariantKey = CategoricalColor // 'neutral' + 12 categorical 色相
 type SizeKey = 'sm' | 'md' | 'lg'
 type ColorSpec = { bg: string; text: string; border: string }
 type SolidSpec = 'subtle' | 'solid'
 
-const VARIANTS: VariantKey[] = ['neutral', 'blue', 'red', 'green', 'yellow', 'turquoise', 'purple', 'magenta', 'indigo']
+// neutral + 全 12 色相(順序對齊 SSOT CATEGORICAL_HUES,1:1 對 primitives.css / color token 列)
+const VARIANTS: VariantKey[] = ['neutral', ...CATEGORICAL_HUES]
 const SIZES: SizeKey[] = ['sm', 'md', 'lg']
+
+// **TOKEN_MAP 由 categorical-color SSOT 機械衍生**(strip `var()` 取顯示用 token 名),
+// 確保 anatomy 文件表永遠與 cva 真實消費的 token 1:1,零未來漂移(M17 + 2026-06-04 SSOT 重構)。
+const stripVar = (s: string) => s.replace(/^var\(/, '').replace(/\)$/, '')
+const hueSpec = (m: Record<CategoricalHue, { bg: string; text: string }>) =>
+  Object.fromEntries(
+    CATEGORICAL_HUES.map((h) => [h, { bg: stripVar(m[h].bg), text: stripVar(m[h].text), border: 'transparent' }]),
+  ) as Record<CategoricalHue, ColorSpec>
 
 const TOKEN_MAP: Record<SolidSpec, Record<VariantKey, ColorSpec>> = {
   subtle: {
-    neutral:   { bg: '--secondary',            text: '--foreground',            border: 'transparent' },
-    blue:      { bg: '--color-blue-1',        text: '--color-blue-7',         border: 'transparent' },
-    red:       { bg: '--color-deep-orange-1', text: '--color-deep-orange-7',  border: 'transparent' },
-    green:     { bg: '--color-green-1',       text: '--color-green-7',        border: 'transparent' },
-    yellow:    { bg: '--color-yellow-1',      text: '--color-yellow-7',       border: 'transparent' },
-    turquoise: { bg: '--color-turquoise-1',   text: '--color-turquoise-7',    border: 'transparent' },
-    purple:    { bg: '--color-purple-1',      text: '--color-purple-7',       border: 'transparent' },
-    magenta:   { bg: '--color-magenta-1',     text: '--color-magenta-7',      border: 'transparent' },
-    indigo:    { bg: '--color-indigo-1',      text: '--color-indigo-7',       border: 'transparent' },
+    neutral: { bg: '--secondary', text: '--foreground', border: 'transparent' },
+    ...hueSpec(CAT_SUBTLE_TOKENS),
   },
   solid: {
-    neutral:   { bg: '--color-neutral-9',     text: '--inverse-fg',            border: 'transparent' },
-    blue:      { bg: '--color-blue-6',        text: 'white (#fff)',           border: 'transparent' },
-    red:       { bg: '--color-deep-orange-6', text: 'white (#fff)',           border: 'transparent' },
-    green:     { bg: '--color-green-6',       text: 'white (#fff)',           border: 'transparent' },
-    yellow:    { bg: '--color-yellow-6',      text: '--warning-foreground',   border: 'transparent' },
-    turquoise: { bg: '--color-turquoise-6',   text: 'white (#fff)',           border: 'transparent' },
-    purple:    { bg: '--color-purple-6',      text: 'white (#fff)',           border: 'transparent' },
-    magenta:   { bg: '--color-magenta-6',     text: 'white (#fff)',           border: 'transparent' },
-    indigo:    { bg: '--color-indigo-6',      text: 'white (#fff)',           border: 'transparent' },
+    neutral: { bg: '--color-neutral-9', text: '--inverse-fg', border: 'transparent' },
+    ...hueSpec(CAT_SOLID_TOKENS),
   },
 }
 
+// categorical 色相描述(裝飾性分類,非語意狀態)。2026-06-04 修:移除「red=錯誤/危險」等
+// 語意框架(red = 品牌紅 hue 25,跟語意 --error〔= deep-orange〕無關),改純色相 + primitive 指向。
 const VARIANT_DESC: Record<VariantKey, string> = {
-  neutral:   '通用分類、草稿、無特定語義',
-  blue:      '進行中、資訊提示、active 狀態',
-  red:       '錯誤、已封鎖、危險',
-  green:     '成功、已完成、已核准',
-  yellow:    '警告、待審核、注意',
-  turquoise: '分類色（無固定語義）',
-  purple:    '分類色（無固定語義）',
-  magenta:   '分類色（無固定語義）',
-  indigo:    '分類色（無固定語義）',
+  neutral:       '通用分類、草稿、無特定語義(secondary 底)',
+  blue:          'categorical 色相（--color-blue-*）',
+  green:         'categorical 色相（--color-green-*）',
+  'deep-orange': 'categorical 色相（--color-deep-orange-*，hue 38）',
+  yellow:        'categorical 色相（--color-yellow-*，淺底深字）',
+  red:           'categorical 色相（--color-red-*，品牌紅家族 hue 25；≠ 語意 --error）',
+  orange:        'categorical 色相（--color-orange-*）',
+  amber:         'categorical 色相（--color-amber-*，淺底深字）',
+  lime:          'categorical 色相（--color-lime-*）',
+  turquoise:     'categorical 色相（--color-turquoise-*）',
+  indigo:        'categorical 色相（--color-indigo-*）',
+  purple:        'categorical 色相（--color-purple-*）',
+  magenta:       'categorical 色相（--color-magenta-*）',
 }
 
 interface SizeSpec {

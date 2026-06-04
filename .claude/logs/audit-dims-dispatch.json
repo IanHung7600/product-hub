@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-31T11:13:49.455Z",
+  "generated": "2026-06-04T04:12:50.074Z",
   "ssotSource": ".claude/skills/design-system-audit/SKILL.md",
   "total": 88,
   "groups": {
@@ -636,7 +636,7 @@
     },
     {
       "n": 77,
-      "title": "Composition-fidelity visual diff (DS canonical vs consumer)",
+      "title": "Composition-fidelity:conformance-primary,pixel-identity opt-in",
       "group": "P",
       "groupName": "World-class tier(2026-05-17 加,codex 共識)"
     },

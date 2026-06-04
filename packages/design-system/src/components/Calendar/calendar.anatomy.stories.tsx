@@ -6,6 +6,7 @@
 //     已由 StateBehavior 5. 涵蓋)。
 import type { Meta, StoryObj } from '@storybook/react'
 import { Calendar, type CalendarEvent } from './calendar'
+import { CATEGORICAL_HUES } from '@/design-system/tokens/categorical-color'
 import { H3, Desc, Td, Th } from '@/design-system/stories-helpers/anatomy/anatomy-utils'
 
 const meta: Meta<typeof Calendar> = {
@@ -70,13 +71,11 @@ export const Inspector: Story = {
 export const ColorMatrix: Story = {
   name: '色彩對照表',
   render: () => {
-    const colorEvents: CalendarEvent[] = (
-      ['blue', 'green', 'orange', 'purple', 'red', 'yellow'] as const
-    ).map((c, i) => ({
+    const colorEvents: CalendarEvent[] = CATEGORICAL_HUES.map((c, i) => ({
       id: `c-${c}`,
       title: `${c} category`,
-      start: `${thisMonth}-${String(i + 3).padStart(2, '0')}`,
-      end: `${thisMonth}-${String(i + 3).padStart(2, '0')}`,
+      start: `${thisMonth}-${String(i + 2).padStart(2, '0')}`,
+      end: `${thisMonth}-${String(i + 2).padStart(2, '0')}`,
       color: c,
     }))
     return (
@@ -84,9 +83,10 @@ export const ColorMatrix: Story = {
         <div>
           <H3>事件類別色</H3>
           <Desc>
-            event color 對齊 Tag 的色票(blue / green / orange / purple / red / yellow)。
-            color 是**類別語意**(同 team / 同 project),非 severity。
-            註:目前 red 與 orange 共用同一組橙色票,畫面上呈現相同顏色,實際可區分的色相為 5 種(blue / green / orange(含 red) / purple / yellow)。
+            event color = 12 categorical 色相,**消費 categorical-color SSOT**,與 Tag / Avatar 共用同一組
+            (blue / green / deep-orange / yellow / red / orange / amber / lime / turquoise / indigo / purple / magenta)。
+            color 是**類別語意**(同 team / 同 project),非 severity。色名 1:1 對該色相的 `--color-*` primitive(零 offset);
+            2026-06-04 修正前 red 與 orange 都誤接 deep-orange,現各自獨立可區分。
           </Desc>
           <div className="h-[560px]">
             <Calendar events={colorEvents} />
@@ -162,7 +162,7 @@ export const ColorMatrix: Story = {
                 <tr>
                   <Td>一般 event(timed)</Td>
                   <Td mono>bg-[var(--color-{`{color}`}-1)] · text-[var(--color-{`{color}`}-7)] · rounded-md · px-1.5 py-0.5 · text-caption · truncate</Td>
-                  <Td>單行 tile,color 依事件類別。對齊 Tag / Badge 色階(step-1 淺底 / step-7 文字)。例外:red 共用 deep-orange 色票(bg-[var(--color-deep-orange-1)] · text-[var(--color-deep-orange-7)])</Td>
+                  <Td>單行 tile,color 依事件類別(12 categorical 色相,消費 categorical-color SSOT,與 Tag / Avatar 共用)。對齊 Tag 色階(step-1 淺底 / step-7 文字)。**色名 1:1 對 `--color-{`{hue}`}-*`,零 offset**(2026-06-04 修:原 red / orange 都誤接 deep-orange,改後 red→`--color-red-*`、orange→`--color-orange-*` 各自獨立)</Td>
                 </tr>
                 <tr>
                   <Td>All-day event</Td>

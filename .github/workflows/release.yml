@@ -101,6 +101,7 @@ jobs:
         run: |
           npx tsc -b
           node scripts/audit-orphan-tokens.mjs --check
+          node scripts/categorical-color-invariants.mjs
           node scripts/code-quality-audit.mjs --scope=packages/design-system/src/components --check
           node scripts/audit-content-quality.mjs --check
           node scripts/sync-governance-counters.mjs --check

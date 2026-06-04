@@ -95,7 +95,7 @@ interface CalendarEvent {
   start: string | Date       // ISO "YYYY-MM-DDTHH:mm" 或 "YYYY-MM-DD"(all-day)
   end: string | Date
   allDay?: boolean            // true = 全天事件,渲染為頂端全天長條(淡底 + 左 accent 條);多日事件在每個涵蓋日各顯示一條
-  color?: 'blue' | 'green' | 'orange' | 'purple' | 'red' | 'yellow'  // DS primitive 色名(對照 Tag / Badge)
+  color?: CategoricalHue     // 12 categorical 色相(消費 categorical-color SSOT,與 Tag / Avatar 共用);色名 1:1 對 --color-{hue}-*
   metadata?: Record<string, unknown>   // 自由資料,renderEventTile 讀
 }
 ```

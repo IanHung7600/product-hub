@@ -14,6 +14,7 @@ import {
   subMonths,
 } from 'date-fns'
 import { cn } from '@/lib/utils'
+import { CAT_EVENT, CAT_ACCENT, type CategoricalHue } from '@/design-system/tokens/categorical-color'
 import { Button } from '@/design-system/components/Button/button'
 import { SegmentedControl, SegmentedControlItem } from '@/design-system/components/SegmentedControl/segmented-control'
 
@@ -46,10 +47,11 @@ export interface CalendarEvent {
   end: string | Date
   allDay?: boolean
   /**
-   * 事件類別色。值為 DS primitive 色名(blue / green / orange / purple / red / yellow)。
-   * 對照 Badge / Tag 的 primitive color variants。
+   * 事件類別色(categorical 色相,1:1 對 `--color-{hue}-*`)。**消費 categorical-color SSOT**,
+   * 與 Tag / Avatar 共用同一組 12 色相。2026-06-04 修:原 `orange` 與 `red` 都誤接 deep-orange;
+   * 改消費 SSOT 後 orange→`--color-orange-*`、red→`--color-red-*`(品牌紅 hue 25),各自獨立。
    */
-  color?: 'blue' | 'green' | 'orange' | 'purple' | 'red' | 'yellow'
+  color?: CategoricalHue
   metadata?: Record<string, unknown>
 }
 
@@ -97,28 +99,12 @@ export interface CalendarProps extends Omit<React.HTMLAttributes<HTMLDivElement>
 }
 
 // ── Event tile color tokens ─────────────────────────────────────────────────
-// 對齊 Tag / Badge 的 primitive color system(見 `color.spec.md`)
-
-const EVENT_COLOR_CLASSES: Record<NonNullable<CalendarEvent['color']>, string> = {
-  blue: 'bg-[var(--color-blue-1)] text-[var(--color-blue-7)] hover:bg-[var(--color-blue-2)]',
-  green: 'bg-[var(--color-green-1)] text-[var(--color-green-7)] hover:bg-[var(--color-green-2)]',
-  orange: 'bg-[var(--color-deep-orange-1)] text-[var(--color-deep-orange-7)] hover:bg-[var(--color-deep-orange-2)]',
-  purple: 'bg-[var(--color-purple-1)] text-[var(--color-purple-7)] hover:bg-[var(--color-purple-2)]',
-  red: 'bg-[var(--color-deep-orange-1)] text-[var(--color-deep-orange-7)] hover:bg-[var(--color-deep-orange-2)]',
-  yellow: 'bg-[var(--color-yellow-1)] text-[var(--color-yellow-7)] hover:bg-[var(--color-yellow-2)]',
-}
-
-// 2026-06-01 allDay 補實作(user 拍板 A):全天事件 = 淡底 tile + 左側實心 accent 條(color-6)+ medium,
-// 視覺上明確區分「全天長條」vs 有時間事件。用 accent border 而非 solid fill 以保文字對比安全(yellow 等淺色不致白字失對比)。
-// 對齊 Google Calendar / Outlook「全天事件以強調條呈現於頂端」慣例。
-const EVENT_ALLDAY_ACCENT: Record<NonNullable<CalendarEvent['color']>, string> = {
-  blue: 'border-l-[3px] border-[var(--color-blue-6)]',
-  green: 'border-l-[3px] border-[var(--color-green-6)]',
-  orange: 'border-l-[3px] border-[var(--color-deep-orange-6)]',
-  purple: 'border-l-[3px] border-[var(--color-purple-6)]',
-  red: 'border-l-[3px] border-[var(--color-deep-orange-6)]',
-  yellow: 'border-l-[3px] border-[var(--color-yellow-6)]',
-}
+// **消費 categorical-color SSOT**(CAT_EVENT = subtle 底 + hover step-2;CAT_ACCENT = 左側 step-6
+// 實心條),與 Tag / Avatar 共用 12 色相,key X 一律對 `--color-X-*`(1:1)。
+// 2026-06-01 allDay:全天事件 = 淡底 tile + 左側實心 accent 條 + medium,視覺區分「全天長條」vs
+// 有時間事件;用 accent border 而非 solid fill 保文字對比安全。對齊 Google Calendar / Outlook 慣例。
+const EVENT_COLOR_CLASSES = CAT_EVENT
+const EVENT_ALLDAY_ACCENT = CAT_ACCENT
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
