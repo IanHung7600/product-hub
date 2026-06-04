@@ -235,8 +235,9 @@ export const UploadManagerSurface = {
   ),
 }
 
-// surface="upload-manager" 的 compact list:外框 padding 跟 rich 面板同(左右 loose 16 / 上下 tight 12),
-// 但列間 gap 只 4px(密集文字列,item 自身保留 py-2 作列高來源)。對比上面 rich panel 的 12px gap,demo 兩 mode 密度差異。
+// surface="upload-manager" 的 compact list:左右 loose 16(同 rich,對齊 header);上下「不對稱」=「12 − item 該側留白」:
+// top !pt-1=4(item 自帶 py-2 的 8 + 4 = 12),bottom 12(進度條貼底、item 下方無留白);gap 只 4px(密集列)。
+// 對比 rich panel(item py-0 → 上下對稱 12 / gap 12),demo 兩 mode 密度差異。
 export const UploadManagerCompactSurface = {
   name: 'Upload manager · 精簡(無邊框)',
   render: () => (

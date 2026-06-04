@@ -47,7 +47,7 @@ benchmark:
 | Mode | Prefix | Typography | 適用場景 |
 |---|---|---|---|
 | `compact`（預設） | Paperclip icon 16px | 掃描模式 | 批次上傳的一般檔案（CSV、JSON） |
-| `rich` | Avatar 48px square(固定) | 閱讀模式（ListItem md） | 需要縮圖預覽的檔案（圖片、文件） |
+| `rich` | Avatar 48px square(固定) | 掃描模式(兩 mode 統一,見下「為什麼兩 mode 都 scanning」) | 需要縮圖預覽的檔案（圖片、文件） |
 
 compact 為預設——多數 upload 清單是「快速掃視多檔」場景，只有需要縮圖預覽才升級為 rich。
 
@@ -281,7 +281,7 @@ upload-manager 的 completed(100% bar + ✓)屬「剛完成的 upload session」
 | Mode × surface | List wrapper gap | Rationale |
 |------|----------------|-----------|
 | **Rich + `surface=form`**(border card)| `gap-2`(8px) | card 邊框不相黏(standalone card invariant) |
-| **Rich + `surface=upload-manager`**(無邊框浮層面板)| `gap-[var(--layout-space-tight)]`(12px)| 卡片 + 48 縮圖列需垂直呼吸。**2026-06-03 圖五 user 校準:原「沒邊框 = 4px」已被覆蓋為 tight(12px)**,因 rich 列比 compact 大 |
+| **Rich + `surface=upload-manager`**(無邊框浮層面板)| `gap-[var(--layout-space-tight)]`(12px)| 卡片 + 48 縮圖列需垂直呼吸。**2026-06-03 圖五 user 校準:rich upload-manager 初版誤設 4px,已校正為 tight(12px)**,因 rich 列比 compact 大 |
 | **Compact**(所有情境)| `gap-1`(4px) | 統一 — 有 status only / 無 status only / mixed 都 gap-1(2026-04-23 user 指示簡化:原條件式「全上傳中 → 0 gap」是 consumer 心智負擔 + state 轉換時 fragile,故捨棄 0-gap)|
 
 **control→list gap(FileUpload 內建 list 消費)**:dropzone / button 控制項 ↔ 第一個 FileItem 的間距 = **同上 form gap 同值**(rich card 8px / compact bg-pill 4px),由 `file-upload.tsx` 依 `fileListMode` 套用。**FileUpload 內建 list 一律 `surface=form`**(dropzone 是表單上傳框,非獨立浮層 upload manager),故不套用下方 upload-manager 的 12px / 面板 padding。

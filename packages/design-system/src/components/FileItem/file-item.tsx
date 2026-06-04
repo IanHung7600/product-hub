@@ -15,7 +15,7 @@ import { ItemContent, ItemPrefix } from '@/design-system/patterns/element-anatom
  * 兩種 mode（精簡 vs 完整內容呈現）:
  *
  * compact（★ default）: Paperclip 16px 在左。右側 content + bar。
- *   py = gap = 4px (gap-1)，對稱。
+ *   padding 詳 spec「Padding」表(form: px-3 py-2;surface=upload-manager: px-0 保留 py-2)。
  *   description 只有 error 才顯示。
  *   bar 跟文字左邊對齊（在 icon 右邊的 column 內）。
  *
@@ -25,7 +25,7 @@ import { ItemContent, ItemPrefix } from '@/design-system/patterns/element-anatom
  *   無 bar → justify-center（文字垂直置中對齊 avatar）
  *
  * status 可選。不傳 = 已上傳檔案（無 bar，可點擊下載）。
- * onClick → hover:bg-neutral-hover + cursor-pointer。
+ * onClick → 只加 cursor-pointer(**永不顯示 hover-bg**;FileItem 三型態皆 permanent-anchored,詳 spec「Hover 行為 canonical」)。
  */
 
 const STATUS_ICON = {
