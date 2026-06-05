@@ -1,7 +1,6 @@
 {
   "_doc": "Storybook 分類治理 SSOT(2026-06-05 RFC P1)。每個 DS 單元屬哪 category + 每 category 該守什麼 storybook 規矩。消費者:storybook-config(runtime sidebar order)+ governance scripts/hooks(稽核)+ /story-writing(產生器)。改規矩只改這裡。",
   "_decisionTree": [
-    "0. 是『基礎原則 / 結構分類法 / 跨元件指南』的可見參考文件(非前門元件)? → foundation(對標 Material/Atlassian Foundations)",
     "1. 是原子設計值(色/字/間距/圓角/陰影)? → token",
     "2. 沒有可 render 的件,只是『怎麼組多個元件解決情境』的指南? → pattern",
     "3. 是 fork consumer 的 app scaffold? → template",
@@ -126,30 +125,6 @@
       "openSnapshotCoverable": "n/a",
       "traitShape": false,
       "classification": "scaffold",
-      "rootBarrel": "n/a",
-      "universalGuard": true
-    },
-    "foundation": {
-      "goal": "基礎設計原則 / 結構分類法 / 跨元件指南(可見參考文件,非前門元件;對標 Material/Atlassian Foundations)",
-      "titlePrefix": "Design System/Foundations",
-      "titleParts": 3,
-      "visibility": "public",
-      "sidebarOrder": 0,
-      "requiredStories": "reference-doc",
-      "renderDemo": "reference-doc",
-      "autodocs": true,
-      "anatomyDiagram": "optional",
-      "propsApiTable": false,
-      "stateComboMatrix": "n/a",
-      "a11yTabTest": "exempt",
-      "visualRegression": "opt",
-      "usageDoDont": "core",
-      "codeSnippet": "n/a",
-      "responsiveRtlDensity": "n/a",
-      "contentUxWriting": "guidance",
-      "openSnapshotCoverable": "n/a",
-      "traitShape": false,
-      "classification": "foundation-reference",
       "rootBarrel": "n/a",
       "universalGuard": true
     }
