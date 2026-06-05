@@ -14,7 +14,7 @@ type Story = StoryObj<typeof ResizeHandle>
 
 // Demo column with resize handle on right edge
 const ColumnDemo: React.FC<{ isResizing?: boolean; disabled?: boolean }> = ({ isResizing, disabled }) => (
-  <div className="relative inline-block bg-surface border border-divider px-loose py-2 w-[200px]">
+  <div className="relative inline-block bg-surface border border-divider px-[var(--layout-space-loose)] py-2 w-[200px]">
     <span className="text-body">Column header</span>
     <ResizeHandle
       direction="horizontal"
@@ -59,7 +59,7 @@ export const Disabled: Story = {
 export const Vertical: Story = {
   name: '垂直方向',
   render: () => (
-    <div className="relative bg-surface border border-divider px-loose py-2 w-[300px] h-[120px]">
+    <div className="relative bg-surface border border-divider px-[var(--layout-space-loose)] py-2 w-[300px] h-[120px]">
       <span className="text-body">Panel body</span>
       <ResizeHandle
         direction="vertical"
