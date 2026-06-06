@@ -1,6 +1,6 @@
 ---
 name: feedback_consume_existing_classification_ssot
-description: "分類/治理判斷先消費既有 category-matrix.json 5-category SSOT,禁再發明新框架疊上去(朝三暮四根因)"
+description: "消費既有不憑直覺:(a)分類用既有 category-matrix.json 5-category SSOT 禁發明新框架;(b)用元件前先讀其 spec variant/size/emphasis 按原則選不吃 cva 預設"
 metadata: 
   node_type: memory
   type: feedback
@@ -17,3 +17,4 @@ metadata:
 3. component/pattern/token base 類 = 看原始碼 folder(folder 就是分類訊號)。
 4. anatomy pattern(item-anatomy / header-canonical)**對稱**:設計原則 DOC = 公開 `Patterns/X Anatomy` story + 可 import primitive;建 item/header 元件由 `build-ui-canonicals.md` 自我檢查機械導流(row→item-anatomy / chrome header→header-canonical)。
 5. 重大/SSOT 改動前跑對抗式 workflow 驗框架——它正是抓出我重造 SSOT 的機制(信機械 > 信自評)。[[feedback_ai_ground_truth_unreliable_mechanical_primary]]
+6. **用任何 DS component 前先讀其 `spec.md` 的 variant/size/emphasis 表按原則選**,禁吃 cva 預設、禁靠截圖事後補抓。2026-06-06 anchor:寫 Header Anatomy story 沒讀 `button.spec.md` 就擺按鈕 → 吃到 Button 預設(當時=primary 藍),截圖視覺稽核才抓到。chrome header icon = `variant="text"`(toolbar embedded)非 tertiary(=Material Outlined 有框);擺按鈕列必同讀 `action-bar.spec.md`(role 分區/dismiss 分隔)。Button 預設 2026-06-06 已改低 emphasis(labeled→tertiary / iconOnly→text;對齊 MUI/Ant/Polaris/Material3),**CTA 仍必 explicit `variant="primary"`**。
