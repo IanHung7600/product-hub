@@ -45,9 +45,12 @@ for helper in \
   [ "$rc" -eq 2 ] && WORST=2
 done
 
-# ── Warn-only helper(_chrome_header_handcraft — Phase 3 才升 P0,目前吞 exit 保 warn)──
+# ── _chrome_header_handcraft(2026-06-06 升 P0 BLOCKER,跟 item-anatomy C.4 row-handcraft 對稱;
+#    migration 完成 per header-canonical.spec.md L245 + 0 殘留手刻 verified)──
 if [ -f "$LIB_DIR/_chrome_header_handcraft.sh" ]; then
-  printf '%s' "$INPUT" | bash "$LIB_DIR/_chrome_header_handcraft.sh" 2>&1 1>/dev/null || true
+  printf '%s' "$INPUT" | bash "$LIB_DIR/_chrome_header_handcraft.sh" 1>/dev/null
+  rc=$?
+  [ "$rc" -eq 2 ] && WORST=2
 fi
 
 exit $WORST
