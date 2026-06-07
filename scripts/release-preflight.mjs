@@ -38,6 +38,7 @@ console.log('═══ Release Preflight — 1:1 release.yml gates,fail-fast ═
 // ① SYNCS first(修 drift,讓 CI 抓不到)
 run('sync version → 5 manifests', 'node scripts/sync-version-to-all-manifests.mjs')
 run('sync ds-canonical mirror', 'node scripts/sync-ds-canonical.mjs')
+run('sync template canonical App(dashboard-app.tsx ← apps/template App.tsx)', 'node scripts/sync-template-canonical-app.mjs')
 
 // ② Deterministic audit gates(== release.yml「Audit gates」step + story type-check)
 run('tsc -b', 'npx tsc -b')
@@ -55,6 +56,7 @@ run('root barrel internal-exclusion(dim-72)', 'node scripts/gen-design-system-ba
 run('plugin-structure-validate', 'node scripts/plugin-structure-validate.mjs')
 run('story-quality', 'npm run --silent story-quality:check')
 run('ds-canonical drift check', 'node scripts/sync-ds-canonical.mjs --check')
+run('template canonical App drift check(防 receiver 覆寫 scaffold App.tsx)', 'node scripts/sync-template-canonical-app.mjs --check')
 
 // ③ Build + smoke + dogfood(== release.yml publish job + smoke-shard job)
 run('build:lib', 'npm run --silent build:lib')
