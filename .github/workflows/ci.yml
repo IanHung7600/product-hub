@@ -222,6 +222,13 @@ jobs:
       - name: Figma Make artifacts(SSOT propagation check)
         run: node scripts/gen-figma-make-artifacts.mjs --check
 
+      # 2026-06-08:DS src 改了但版本沒 bump → 此 main push 不會 republish npm → consumer 拿 stale。
+      # 補「republish 靠 AI 記得 bump」的非機械斷點(release.yml tag-only 觸發,plain main push 不發版)。
+      # 只在 main push 跑(PR 還沒決定發版,不擋);排除 stories/spec.md(不 ship);網路失敗降級 warn。
+      - name: DS src republish gate(src 改了必 bump,防 ship stale)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: node scripts/check-src-republish.mjs --check 2>&1 | tail -25
+
       - name: File-size budget enforcement
         run: |
           fail=0

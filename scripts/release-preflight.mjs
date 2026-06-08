@@ -57,6 +57,9 @@ run('plugin-structure-validate', 'node scripts/plugin-structure-validate.mjs')
 run('story-quality', 'npm run --silent story-quality:check')
 run('ds-canonical drift check', 'node scripts/sync-ds-canonical.mjs --check')
 run('template canonical App drift check(防 receiver 覆寫 scaffold App.tsx)', 'node scripts/sync-template-canonical-app.mjs --check')
+// 2026-06-08:DS src 改了必 bump 才 republish(補「republish 靠 AI 記得 bump」非機械斷點)。
+// preflight 此時 version 已 bump → gate 見「bumped → OK」綠;若忘 bump 直 push 則 ci.yml 同道 gate 擋。
+run('DS src republish gate(src 改了必 bump,防 ship stale)', 'node scripts/check-src-republish.mjs --check')
 
 // ③ Build + smoke + dogfood(== release.yml publish job + smoke-shard job)
 run('build:lib', 'npm run --silent build:lib')
