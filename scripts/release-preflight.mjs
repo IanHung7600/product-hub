@@ -64,6 +64,7 @@ run('template canonical App drift check(防 receiver 覆寫 scaffold App.tsx)', 
 // preflight 此時 version 已 bump → gate 見「bumped → OK」綠;若忘 bump 直 push 則 ci.yml 同道 gate 擋。
 run('DS src republish gate(src 改了必 bump,防 ship stale)', 'node scripts/check-src-republish.mjs --check')
 run('llms.txt drift check(build-time derive,禁手維護)', 'node scripts/gen-llms-txt.mjs --check')
+run('Field size-resolve gate(防新控件漏讀 size context 重演 B 組)', 'node scripts/check-field-size-resolve.mjs')
 
 // ③ Build + smoke + dogfood(== release.yml publish job + smoke-shard job)
 run('build:lib', 'npm run --silent build:lib')

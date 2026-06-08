@@ -120,6 +120,7 @@ jobs:
           node scripts/check-src-republish.mjs --check
           node scripts/sync-template-canonical-app.mjs --check
           node scripts/gen-llms-txt.mjs --check
+          node scripts/check-field-size-resolve.mjs
 
       - name: Build Storybook
         run: npm run build-storybook

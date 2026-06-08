@@ -227,6 +227,11 @@ jobs:
       - name: llms.txt drift check(build-time derive,禁手維護)
         run: node scripts/gen-llms-txt.mjs --check 2>&1 | tail -20
 
+      # 2026-06-08:防新增 Field 控件又用 `size = 'md'` 不讀 context(B 組 cascade bug class)。
+      # deterministic source grep — Field 控件(import fieldWrapperStyles)必用 useResolvedFieldSize。
+      - name: Field size-resolve gate(防漏讀 size context)
+        run: node scripts/check-field-size-resolve.mjs 2>&1 | tail -10
+
       # 2026-06-08:DS src 改了但版本沒 bump → 此 main push 不會 republish npm → consumer 拿 stale。
       # 補「republish 靠 AI 記得 bump」的非機械斷點(release.yml tag-only 觸發,plain main push 不發版)。
       # 只在 main push 跑(PR 還沒決定發版,不擋);排除 stories/spec.md(不 ship);網路失敗降級 warn。

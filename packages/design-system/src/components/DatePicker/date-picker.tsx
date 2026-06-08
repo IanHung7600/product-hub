@@ -10,7 +10,7 @@ import { Popover, PopoverTrigger, PopoverAnchor, PopoverContent } from '@/design
 import { DateGrid } from '@/design-system/components/DateGrid/date-grid'
 import { Button } from '@/design-system/components/Button/button'
 import { SurfaceFooter } from '@/design-system/patterns/overlay-surface/overlay-surface'
-import { useFieldContext } from '@/design-system/components/Field/field-context'
+import { useFieldContext, useResolvedFieldSize } from '@/design-system/components/Field/field-context'
 import {
   TimeColumns,
   isoToTimeParts,
@@ -349,7 +349,7 @@ const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
       mode = 'edit',
       variant: variantProp,
       error: errorProp = false,
-      size = 'md',
+      size: sizeProp,
       value,
       onChange,
       placeholder,
@@ -377,6 +377,7 @@ const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
     ref
   ) => {
     const fieldCtx = useFieldContext()
+    const size = useResolvedFieldSize(sizeProp)  // B 組 cascade fix:<Field size>/cell surface-size 對 DatePicker 生效
     const error = errorProp || (fieldCtx?.invalid ?? false)
     const disabled = disabledProp ?? fieldCtx?.disabled
     const resolvedMode = disabled ? 'disabled' : mode
@@ -709,7 +710,7 @@ const DatePickerRange = React.forwardRef<HTMLDivElement, DatePickerRangeProps>(
       mode = 'edit',
       variant: variantProp,
       error: errorProp = false,
-      size = 'md',
+      size: sizeProp,
       value,
       onChange,
       placeholder,
@@ -731,6 +732,7 @@ const DatePickerRange = React.forwardRef<HTMLDivElement, DatePickerRangeProps>(
     ref,
   ) => {
     const fieldCtx = useFieldContext()
+    const size = useResolvedFieldSize(sizeProp)  // B 組 cascade fix:<Field size>/cell surface-size 對 DatePicker 生效
     const error = errorProp || (fieldCtx?.invalid ?? false)
     const disabled = disabledProp ?? fieldCtx?.disabled
     const resolvedMode = disabled ? 'disabled' : mode

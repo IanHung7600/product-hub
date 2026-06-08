@@ -6,7 +6,7 @@ import { X, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { FieldMode, FieldVariant } from '@/design-system/components/Field/field-types'
 import { fieldWrapperStyles, EMPTY_DISPLAY, nakedCellRowModeAlign, fieldDisplayTextClass } from '@/design-system/components/Field/field-wrapper'
-import { useFieldContext } from '@/design-system/components/Field/field-context'
+import { useFieldContext, useResolvedFieldSize } from '@/design-system/components/Field/field-context'
 import { Tag } from '@/design-system/components/Tag/tag'
 import { ItemInlineAction, ItemSuffix } from '@/design-system/patterns/element-anatomy/item-anatomy'
 import { OverflowIndicator } from '@/design-system/components/OverflowIndicator/overflow-indicator'
@@ -814,14 +814,17 @@ function CustomCombobox({
 // ── Public component ────────────────────────────────────────────────────────
 
 const Combobox = React.forwardRef<HTMLDivElement, ComboboxProps>(
-  (props, ref) => {
+  ({ size: sizeProp, ...props }, ref) => {
+    // B 組 cascade fix:public wrapper 一處 resolve size(prop>Field>surface>md)後 forward 給內層,
+    // 讓 <Field size> / DataTable cell surface-size 對 Combobox 生效(內層默認 'md' 被此顯式 size 覆蓋)。
+    const size = useResolvedFieldSize(sizeProp)
     // 2026-05-16 真 root cause fix:之前用 `_ref` drop ref。修為 forward 給 internal
     // `__triggerRef`,讓 PeoplePicker stack 透過 ref 量 trigger DOM(visibleCountOverride
     // 才生效)。對齊 React forwardRef public-API canonical(MUI Autocomplete / Radix
     // Popover.Trigger 共識)+ codex M31 Step 5 比稿 verdict + DS-wide ref-drop iceberg audit。
     const isMobile = useIsTouchDevice()
-    if (isMobile) return <NativeCombobox {...props} __triggerRef={ref} />
-    return <CustomCombobox {...props} __triggerRef={ref} />
+    if (isMobile) return <NativeCombobox {...props} size={size} __triggerRef={ref} />
+    return <CustomCombobox {...props} size={size} __triggerRef={ref} />
   }
 )
 Combobox.displayName = 'Combobox'

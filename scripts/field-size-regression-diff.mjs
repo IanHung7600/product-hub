@@ -42,9 +42,12 @@ const entries = Object.values(idx.entries || idx.stories || {})
 const CONTROLS = ['input','numberinput','textarea','select','combobox','datepicker','timepicker','peoplepicker','linkinput']
 const TYPES = ['overview','size-matrix','state-behavior','mode-matrix','inspector','column-types']
 const STORY_IDS = entries
-  .filter(e => e.type === 'story' &&
-    (CONTROLS.some(c => e.id.startsWith(`design-system-components-${c}-`)) || e.id.startsWith('design-system-components-datatable-')) &&
-    TYPES.some(t => e.id.endsWith('--' + t)))
+  .filter(e => e.type === 'story' && (
+    ((CONTROLS.some(c => e.id.startsWith(`design-system-components-${c}-`)) || e.id.startsWith('design-system-components-datatable-')) &&
+      TYPES.some(t => e.id.endsWith('--' + t)))
+    // Field 元件 stories(<Field size> cascade 構圖最可能受 B 組 fix 影響 → 全納入回歸)
+    || e.id.startsWith('design-system-components-field-')
+  ))
   .map(e => e.id).sort()
 // baseline 也要有同 id(rename 防漏)
 const baseIdx = JSON.parse(readFileSync(join(BASELINE, 'index.json'), 'utf8'))

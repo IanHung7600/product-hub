@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 import type { FieldMode, FieldVariant } from '@/design-system/components/Field/field-types'
 import { fieldWrapperStyles, EMPTY_DISPLAY, nakedCellRowModeAlign } from '@/design-system/components/Field/field-wrapper'
 import { ItemSuffix } from '@/design-system/patterns/element-anatomy/item-anatomy'
-import { useFieldContext, useFieldSurface } from '@/design-system/components/Field/field-context'
+import { useFieldContext, useFieldSurface, useResolvedFieldSize } from '@/design-system/components/Field/field-context'
 import { Avatar } from '@/design-system/components/Avatar/avatar'
 import { Tag } from '@/design-system/components/Tag/tag'
 import { Select } from '@/design-system/components/Select/select'
@@ -110,7 +110,7 @@ export interface PeoplePickerProps extends Omit<React.HTMLAttributes<HTMLDivElem
 const PeoplePicker = React.forwardRef<HTMLDivElement, PeoplePickerProps>(function PeoplePicker({
   mode: modeProp,
   variant: variantProp,
-  size = 'md',
+  size: sizeProp,
   value,
   onChange,
   people = [],
@@ -131,6 +131,7 @@ const PeoplePicker = React.forwardRef<HTMLDivElement, PeoplePickerProps>(functio
 }, ref) {
   const fieldCtx = useFieldContext()
   const surface = useFieldSurface()
+  const size = useResolvedFieldSize(sizeProp)  // B 組 cascade fix
   const mode: FieldMode = modeProp ?? fieldCtx?.mode ?? 'edit'
   const resolvedMode: FieldMode = disabled ? 'disabled' : mode
   const resolvedVariant: FieldVariant = variantProp ?? fieldCtx?.variant ?? 'default'

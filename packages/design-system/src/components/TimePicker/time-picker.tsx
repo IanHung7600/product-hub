@@ -12,7 +12,7 @@ import {
 } from '@/design-system/components/Field/field-wrapper'
 import { ItemInlineAction, ItemSuffix } from '@/design-system/patterns/element-anatomy/item-anatomy'
 import { Popover, PopoverTrigger, PopoverContent } from '@/design-system/components/Popover/popover'
-import { useFieldContext } from '@/design-system/components/Field/field-context'
+import { useFieldContext, useResolvedFieldSize } from '@/design-system/components/Field/field-context'
 import { Button } from '@/design-system/components/Button/button'
 import {
   TimeColumns,
@@ -145,7 +145,7 @@ const TimePicker = React.forwardRef<HTMLDivElement, TimePickerProps>(
       mode = 'edit',
       variant: variantProp,
       error: errorProp = false,
-      size = 'md',
+      size: sizeProp,
       value,
       onChange,
       placeholder,
@@ -170,6 +170,7 @@ const TimePicker = React.forwardRef<HTMLDivElement, TimePickerProps>(
     ref,
   ) => {
     const fieldCtx = useFieldContext()
+    const size = useResolvedFieldSize(sizeProp)  // B 組 cascade fix
     const error = errorProp || (fieldCtx?.invalid ?? false)
     const disabled = disabledProp ?? fieldCtx?.disabled
     const resolvedMode = disabled ? 'disabled' : mode
