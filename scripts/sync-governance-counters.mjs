@@ -158,7 +158,9 @@ for (const root of scopeCheckRoots) {
     if (f === 'scripts/sync-governance-counters.mjs') continue // self-skip drift detector references
     if (f.includes('.claude/logs/')) continue // self-skip log output (contains drift report text)
     const c = fs.readFileSync(path.join(ROOT, f), 'utf-8')
-    if (/@your-org\//.test(c) || /your-org\b/.test(c)) {
+    // 2026-06-08 fix:原 regex 大小寫敏感 → 漏抓 scaffold 佔位 `Your-Org DS Owner`(大寫)。
+    // 加 `i` flag,catch Your-Org / your-org / YOUR-ORG 全形,防 placeholder 殘留無聲漂移。
+    if (/@your-org\//i.test(c) || /your-org\b/i.test(c)) {
       scopeLeftovers.push(f)
     }
   }

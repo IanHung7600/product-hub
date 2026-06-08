@@ -87,6 +87,23 @@ if (uniq.length !== 1) {
 }
 console.log(`    ✓ 5 manifests 全一致 = ${uniq[0]}`)
 
+// ④.5 template consumer dep 一致性(2026-06-08:防 template DS dep 落後 DS version 再現「beta.32」)
+// sync-version-to-all-manifests.mjs 已把 template DS+sb dep 改寫成 `^DSversion`;此處 fail-closed 斷言
+// 「沒同步就不准 tag」。注:apps/template 的 `*` workspace dep 由 mirror 處理,不在此驗。
+const tmplPkg = JSON.parse(readFileSync('template/ds-product-template/package.json', 'utf8'))
+const tmplExpected = `^${uniq[0]}`
+const tmplDeps = {
+  '@qijenchen/design-system': tmplPkg.dependencies?.['@qijenchen/design-system'],
+  '@qijenchen/storybook-config': tmplPkg.dependencies?.['@qijenchen/storybook-config'],
+}
+const tmplDrift = Object.entries(tmplDeps).filter(([, v]) => v !== tmplExpected)
+if (tmplDrift.length) {
+  console.error(`❌ template consumer dep 落後 DS version(應 ${tmplExpected}):`, JSON.stringify(tmplDeps, null, 2))
+  console.error('   修:node scripts/sync-version-to-all-manifests.mjs')
+  process.exit(1)
+}
+console.log(`    ✓ template consumer dep 對齊 ${tmplExpected}`)
+
 // ⑤ pass-marker(綁 HEAD sha)
 const head = execSync('git rev-parse HEAD').toString().trim()
 mkdirSync('.claude/logs', { recursive: true })
