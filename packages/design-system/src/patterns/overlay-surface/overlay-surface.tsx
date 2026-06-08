@@ -1,5 +1,7 @@
 import * as React from 'react'
 import { cn } from '@/lib/utils'
+// W2 tabsSlot wrapper 契約 SSOT 在 header-canonical(跨家族 W-rule owner);SurfaceHeader 消費同一 const 不 hardcode。
+import { HEADER_TABS_SLOT_WRAPPER_CLASS } from '@/design-system/patterns/header-canonical/chrome-header'
 
 /**
  * @internal — DS-internal primitive(2026-05-23 per `.claude/rules/ui-development.md` Public vs Internal canonical)。
@@ -124,7 +126,7 @@ export const SurfaceHeader = React.forwardRef<
             TabsList wrapper 是 block-level full-width」+ `:187-189`「selected 底線從 TabsList
             gray border 位置長出來」+ GitHub Primer UnderlineNav / Ant Design line type / Mantine
             default 共識(全派 TabsList 自畫 full-width underline)。*/}
-        <div className="[&>[role=tablist]]:w-full [&>[role=tablist]]:px-[var(--layout-space-loose)]">
+        <div className={HEADER_TABS_SLOT_WRAPPER_CLASS}>
           {tabsSlot}
         </div>
       </div>

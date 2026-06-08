@@ -13,7 +13,27 @@ benchmark:
 
 # Header Canonical 設計原則
 
-> **Foundational SSOT rationale**(cap 800):本 pattern 統一**所有 header 家族**(chrome page header + overlay header)的視覺契約 — border ownership / padding / 高度策略 / tabs 連動 / dismiss canonical。6 個 consumer(`SidebarHeader` / `FileViewer Toolbar+InfoPanel` / `DialogHeader` / `SheetHeader` / `PopoverHeader` / 未來 Drawer)pointer 指向本 SSOT,**禁各自 hardcode**。
+> **Foundational SSOT rationale**(cap 800):本 pattern 統一**所有 header 家族**(chrome page header + overlay header)的視覺契約 — border ownership / padding / 高度策略 / tabs 連動 / dismiss canonical。consumer(`SidebarHeader` / `FileViewer Toolbar+InfoPanel` / `AppShell PageHeader+GlobalHeader` / `DialogHeader` / `SheetHeader` / `PopoverHeader` / `CoachmarkHeader` / 未來 Drawer)pointer 指向本 SSOT,**禁各自 hardcode**。
+
+## 選哪個 header(decision — 做任何 header 前先回答這題)
+
+> 本段是「該用哪個 header」的單一決策入口(對標 `item-anatomy.spec.md` 的判斷流程,讓人 / AI 遇到任何 header 設計先走這裡、確認判斷正確才動)。**判準是「這個 header 坐在哪種 surface 上」,不是「長得像不像一條橫列」。**
+
+**先問一題:這個 header 所在的 surface 是「常駐 app chrome」還是「浮層 overlay」?**
+
+| 你的場景 | 用 | 家族 |
+|---|---|---|
+| **常駐 app chrome**:AppShell page top / global header、Sidebar header、FileViewer toolbar、固定在版面上的工具列 | **`<ChromeHeader>`**(`patterns/header-canonical/chrome-header`)| **B. Fixed-height** |
+| **浮層 overlay 標題列**:Dialog / Sheet / Popover / Coachmark 等 overlay 頂部(多數用 `DialogHeader`/`SheetHeader`/`PopoverHeader` consumer wrapper,底層是 SurfaceHeader)| **`<SurfaceHeader>`**(`patterns/overlay-surface`)| **A. Padding-based** |
+| 用一整排 **Tabs 直接「取代」整個 header**(無獨立標題列)| **standalone `<Tabs size="lg">`**(tab 高 = chrome-header-height,見 W3 C)| —(tabs 即 chrome)|
+
+**何時不用(when NOT to use)— 最常見誤判**:
+- ❌ **chrome 與 overlay 搞混**:看 surface 本身是常駐 chrome 還是浮層,不看視覺像不像。**邊界案例**:Sidebar 內彈出的 flyout / popover header = **overlay → SurfaceHeader**,不因為它長在 sidebar 裡就當 chrome。
+- ❌ 純內容區小標題(section heading)→ 用 typography(`text-h6` 等),不是 header primitive
+- ❌ 列表 row / menu item → 走 `item-anatomy`,不是 header
+- ❌ 卡片內標題列 → Card 自己的 header 區,不套本 pattern
+
+**機械防呆**(讓 AI 即使誤判也被擋):手刻 chrome header(`h-[var(--chrome-header-height)] border-b`)→ `_chrome_header_handcraft` 攔;手刻 overlay header(`px-loose + border-b border-divider` 簽名)→ `check_story_invariants.sh R9` BLOCKER。命名前綴(`chrome-` / `overlay`-surface)本身自帶 surface 語意,讀到名字即知用途。
 
 ## 定位
 

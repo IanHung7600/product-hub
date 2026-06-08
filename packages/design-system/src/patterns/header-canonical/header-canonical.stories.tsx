@@ -1,4 +1,4 @@
-// @anatomy-exempt: Header Anatomy pattern story — demos ChromeHeader primitive generic 型(single-row / withTabs)。
+// @anatomy-exempt: Header Anatomy pattern story — 涵蓋 2 家族:B chrome(ChromeHeader,single-row / withTabs)+ A overlay(SurfaceHeader)。
 // （leadingRail slot 因專搭 sidebar,canonical demo 在 AppShell primary-header,不在此孤立展示。）
 // 內部 title 用 flex 排列是 header content 結構,非 list row,不走 item-anatomy MenuItem。
 //
@@ -14,6 +14,7 @@ import {
   X,
 } from 'lucide-react'
 import { ChromeHeader } from '@/design-system/patterns/header-canonical/chrome-header'
+import { SurfaceHeader } from '@/design-system/patterns/overlay-surface/overlay-surface'
 import { Button } from '@/design-system/components/Button/button'
 import { Separator } from '@/design-system/components/Separator/separator'
 import {
@@ -122,6 +123,21 @@ export const Overview = () => (
         header 內含分頁。對標 FileViewer InfoPanel。傳 tabsSlot,border 改由 TabsList 全寬畫一條線。
       </div>
       <WithTabs />
+    </section>
+    <section className="flex flex-col gap-2">
+      <div className="text-body font-medium text-foreground">A 家族 overlay(SurfaceHeader)— 浮層標題列</div>
+      <div className="text-body-sm text-fg-muted">
+        Dialog / Sheet / Popover / Coachmark 的頂部標題列。高度 padding-based(由內容撐、對齊 chrome-header-height),跟
+        chrome 家族共用同一組契約:border-b、px-loose、dismiss size=sm、tabs 連動。consumer 多用 DialogHeader /
+        SheetHeader / PopoverHeader wrapper,此處用底層 SurfaceHeader 展示 anatomy。
+      </div>
+      <div className="overflow-hidden rounded-md border border-divider bg-surface-raised shadow-[var(--elevation-200)]">
+        <SurfaceHeader>
+          <h2 className="flex-1 truncate text-body-lg font-medium text-foreground">編輯專案設定</h2>
+          <Button iconOnly dismiss size="sm" startIcon={X} aria-label="關閉" />
+        </SurfaceHeader>
+        <div className="p-6 text-body text-fg-muted">浮層內容區…(Dialog / Sheet / Popover body)</div>
+      </div>
     </section>
     <section className="flex flex-col gap-2">
       <div className="text-body font-medium text-foreground">leadingRail — 見 AppShell（非此處）</div>
