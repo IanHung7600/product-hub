@@ -1,6 +1,6 @@
 # @qijenchen/design-system — 完整設計參考(llms-full)
 
-> 全 component / pattern 的 variants / sizes / 禁止事項。build-time 從 spec.md frontmatter 生成,禁手改。v0.1.0-beta.61。
+> 全 component / pattern 的 variants / sizes / 禁止事項。build-time 從 spec.md frontmatter 生成,禁手改。v0.1.0-beta.62。
 
 # Components
 
@@ -316,9 +316,9 @@ Storybook: https://ajenchen-design-system.netlify.app
 Source(AI 讀此看官方範例): src/components/Tabs/
 
 ### Sizes
-- **sm**: ★ cva default — 所有 header 內 tabs(overlay / chrome header / Dialog / Sidebar / dense toolbar);tab-height 32/40
+- **sm**: ★ cva default — 所有 header 內 tabs(overlay / chrome header / Dialog / Sidebar / dense toolbar)
 - **md**: future tier — 目前無 recommended use case,新 consumer 須先諮詢 DS owner
-- **lg**: 獨立 tabs 直接取代 chrome header — page-level workspace 主導覽(tab-height 48/56 = chrome-header-height)
+- **lg**: 獨立 tabs 直接取代 chrome header — page-level workspace 主導覽(tab 高度 = chrome-header-height)
 
 ## Tag(family 3)
 
