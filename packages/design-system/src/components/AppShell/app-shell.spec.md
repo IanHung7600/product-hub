@@ -297,6 +297,7 @@ Main 內塞什麼(table / field / card / page header / list)的 layout + spacing
 - ❌ 禁:`sidebar={<div>...</div>}`(應傳 `<Sidebar>` primitive,確保視覺 SSOT。型別上收 ReactNode、不做機械強制 — React 型別強制易被 wrapper 包一層繞過,世界級 shell 元件皆收 ReactNode;本約定靠 story 示範 + audit 把關。2026-06-10 user 拍板 2a:措辭「必」→「應」對齊 code 真實)
 - ❌ 禁:`header={<header>...</header>}`(應傳 `<ChromeHeader>` 或消費 `header-canonical` 派生 header;同上,型別不機械強制)
 - ❌ 禁:AppShell.Main 自加 padding(違反 layoutSpace 規則 1B)
+- ❌ 禁:AppShellAside header 加第二行 / actions(header = 單行 title + close X,API typed `title: string` 結構鎖;說明文字歸 aside body — 2026-06-12 fork-drift 防線)
 - ✅ 必:`layout` mode 在 product 啟動時固定,**不在 runtime 切換**(切換 = product 角色變動 = 應該重 mount app)
 
 ---
