@@ -6,7 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 import type { FieldMode, FieldVariant } from "@/design-system/components/Field/field-types"
-import { useFieldContext, useResolvedFieldDisabled, useResolvedFieldMode } from "@/design-system/components/Field/field-context"
+import { useFieldContext, useResolvedFieldDisabled, useResolvedFieldMode, useResolvedFieldSize } from "@/design-system/components/Field/field-context"
 import { fieldWrapperStyles } from "@/design-system/components/Field/field-wrapper"
 import { SelectionItem } from "@/design-system/components/SelectionControl/selection-item"
 import type { LucideIcon } from "lucide-react"
@@ -185,6 +185,8 @@ const Checkbox = React.forwardRef<
     // 2026-06-12 修:原本只看 resolvedDisabled(prop/fieldCtx),mode='disabled' 無人消費
     // → disabled boolean cell 渲出可 focus 的正常外觀 checkbox(違 field-controls.spec L286)
     const effectiveDisabled = resolvedDisabled || resolvedMode === 'disabled'
+    // readonly 灰框 size:走 SSOT resolver(prop > ctx > 'md',field-context.ts:150-161)
+    const resolvedBoxSize = useResolvedFieldSize(size ?? undefined, 'md') as 'sm' | 'md' | 'lg'
 
     // ── mode='display'(下移至所有 hooks 之後,per #35 Rules of Hooks)──────────
     // 純展示模式:無互動 primitive、渲染 ✓ / —(checked=true → ✓ / 其他 → —)。取代 BooleanDisplay。
@@ -205,7 +207,7 @@ const Checkbox = React.forwardRef<
     // standalone readOnly(settings list / SelectionItem row)維持原樣鎖互動不變。
     if (effectiveReadOnly && insideField && effectiveLabel == null) {
       const isChecked = (props.checked ?? props.defaultChecked) === true
-      const boxSize = (size ?? fieldCtx?.size ?? 'md') as 'sm' | 'md' | 'lg'  // prop > ctx(對齊 useResolvedFieldSize 優先序)
+      const boxSize = resolvedBoxSize
       return (
         <div
           role="checkbox"

@@ -6,7 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 import type { FieldMode, FieldVariant } from "@/design-system/components/Field/field-types"
-import { useFieldContext, useResolvedFieldMode, useResolvedFieldDisabled } from "@/design-system/components/Field/field-context"
+import { useFieldContext, useResolvedFieldMode, useResolvedFieldDisabled, useResolvedFieldSize } from "@/design-system/components/Field/field-context"
 import { SelectionItem } from "@/design-system/components/SelectionControl/selection-item"
 import type { LucideIcon } from "lucide-react"
 import type { AvatarData } from "@/design-system/components/Avatar/avatar"
@@ -74,6 +74,8 @@ const RadioGroup = React.forwardRef<
   // 2026-06-08 SSOT cascade:resolvedMode 經 resolver hook 讀 fieldCtx(原 root 完全不讀 → <Field disabled>/<Field mode> 失效)
   const resolvedMode = useResolvedFieldMode({ mode, disabled: (props as { disabled?: boolean }).disabled })
   const fieldCtx = useFieldContext()
+  // readonly 灰框 size:走 SSOT resolver(RadioGroup 無 size prop → ctx > 'md')
+  const resolvedBoxSize = useResolvedFieldSize(undefined, 'md') as 'sm' | 'md' | 'lg'
   // mode='display' — 純展示 selected option 的 label,不渲染任何 radio control 視覺。
   // 對齊 Carbon read-only single-select(只顯示 selected 內容)+ Airtable / Notion read-only。
   // 實作:walk children 找 control.value === selectedValue 的 SelectionItem,render label plain text。
@@ -98,7 +100,7 @@ const RadioGroup = React.forwardRef<
   if (resolvedMode === 'readonly' && fieldCtx?.hasFieldWrapper === true) {
     const selectedValue = (value ?? defaultValue) as string | undefined
     const selectedLabel = selectedValue ? findSelectedRadioLabel(props.children, selectedValue) : null
-    const boxSize = (fieldCtx?.size ?? 'md') as 'sm' | 'md' | 'lg'
+    const boxSize = resolvedBoxSize
     return (
       <div
         role="radiogroup"

@@ -5,7 +5,7 @@ import { Check } from 'lucide-react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import type { FieldMode, FieldVariant } from '@/design-system/components/Field/field-types'
-import { useFieldContext, useResolvedFieldDisabled, useResolvedFieldMode } from '@/design-system/components/Field/field-context'
+import { useFieldContext, useResolvedFieldDisabled, useResolvedFieldMode, useResolvedFieldSize } from '@/design-system/components/Field/field-context'
 import { fieldWrapperStyles } from '@/design-system/components/Field/field-wrapper'
 
 /**
@@ -156,6 +156,8 @@ const Switch = React.forwardRef<
     const effectiveReadOnly = readOnly || resolvedMode === 'readonly'
     // mode='disabled' 直傳(無 Field ctx 的 cell 場景)必須落到真 disabled chrome(同 Checkbox 2026-06-12 修)
     const effectiveDisabled = disabled || resolvedMode === 'disabled'
+    // readonly 灰框 size:走 SSOT resolver(prop > ctx > 'md',field-context.ts:150-161)
+    const resolvedBoxSize = useResolvedFieldSize(size ?? undefined, 'md') as 'sm' | 'md' | 'lg'
     const insideField = fieldCtx?.hasFieldWrapper === true
     const effectiveLabel = insideField ? undefined : label
     const effectiveDescription = insideField ? undefined : description
@@ -186,7 +188,7 @@ const Switch = React.forwardRef<
     // + ✓/— 值語言;standalone readOnly(settings list)維持原樣鎖互動。詳 checkbox.tsx 同段註解。
     if (effectiveReadOnly && insideField) {
       const isChecked = (props.checked ?? props.defaultChecked) === true
-      const boxSize = (size ?? fieldCtx?.size ?? 'md') as 'sm' | 'md' | 'lg'  // prop > ctx(對齊 useResolvedFieldSize 優先序)
+      const boxSize = resolvedBoxSize
       return (
         <div
           role="switch"
