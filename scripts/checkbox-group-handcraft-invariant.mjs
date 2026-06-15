@@ -16,16 +16,21 @@ import { readFileSync, globSync } from 'node:fs'
 import path from 'node:path'
 
 const ROOT = path.resolve(import.meta.dirname, '..')
-const RE = /<div className="[^"]*(?:grid|flex-col|flex flex-col)[^"]*">\s*(?:<Checkbox\b[^>]*\/>\s*){2,}/g
+// 簽名 1:容器 div 直接包 ≥2 個 DS <Checkbox>(該用 CheckboxGroup)
+const RE_DS = /<div className="[^"]*(?:grid|flex-col|flex flex-col)[^"]*">\s*(?:<Checkbox\b[^>]*\/>\s*){2,}/g
+// 簽名 2(2026-06-15 擴:user 抓 popover.anatomy raw input 漏網):≥2 連續
+// `<label ...><input type="checkbox">選項文字</label>` = 手刻 option group(該用 DS Checkbox/CheckboxGroup)。
+// bare `<input type="checkbox" checked onChange>`(story dev 控制 knob,非 label-wrapped option)不匹配 → 零誤判。
+const RE_RAW = /(?:<label[^>]*>\s*<input[^>]*type="checkbox"[^>]*\/?>[^<]*<\/label>\s*){2,}/g
 
 export function checkSource(src) {
-  // 排除 checkbox 元件自身(CheckboxGroup demo / 定義)
   const out = []
-  for (const m of src.matchAll(RE)) {
+  for (const m of src.matchAll(RE_DS)) {
     const before = src.slice(Math.max(0, m.index - 200), m.index)
-    if (!before.includes('CheckboxGroup')) {
-      out.push(src.slice(0, m.index).split('\n').length)
-    }
+    if (!before.includes('CheckboxGroup')) out.push(src.slice(0, m.index).split('\n').length)
+  }
+  for (const m of src.matchAll(RE_RAW)) {
+    out.push(src.slice(0, m.index).split('\n').length)
   }
   return out
 }

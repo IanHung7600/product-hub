@@ -2,6 +2,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverBody, PopoverFooter, PopoverTitle } from './popover'
 import { Button } from '@/design-system/components/Button/button'
+import { Checkbox } from '@/design-system/components/Checkbox/checkbox'
+import { CheckboxGroup } from '@/design-system/components/Checkbox/checkbox-group'
 import { H3, Desc, Td, Th, TokenCell } from '@/design-system/stories-helpers/anatomy/anatomy-utils'
 
 const meta: Meta = {
@@ -26,11 +28,11 @@ export const Overview: Story = {
             <PopoverContent>
               <PopoverHeader><PopoverTitle>依類型篩選</PopoverTitle></PopoverHeader>
               <PopoverBody>
-                <div className="flex flex-col gap-1.5 text-caption text-fg-secondary">
-                  <label className="flex items-center gap-2"><input type="checkbox" defaultChecked /> 待處理</label>
-                  <label className="flex items-center gap-2"><input type="checkbox" defaultChecked /> 進行中</label>
-                  <label className="flex items-center gap-2"><input type="checkbox" /> 已完成</label>
-                </div>
+                <CheckboxGroup>
+                  <Checkbox defaultChecked label="待處理" />
+                  <Checkbox defaultChecked label="進行中" />
+                  <Checkbox label="已完成" />
+                </CheckboxGroup>
               </PopoverBody>
               <PopoverFooter>
                 <Button variant="tertiary" size="sm" className="flex-1">清除</Button>
@@ -129,11 +131,11 @@ export const Inspector: Story = {
               <PopoverHeader><PopoverTitle>依類型篩選</PopoverTitle></PopoverHeader>
             )}
             <PopoverBody>
-              <div className="flex flex-col gap-1.5 text-caption text-fg-secondary">
-                <label className="flex items-center gap-2"><input type="checkbox" defaultChecked /> 待處理</label>
-                <label className="flex items-center gap-2"><input type="checkbox" defaultChecked /> 進行中</label>
-                <label className="flex items-center gap-2"><input type="checkbox" /> 已完成</label>
-              </div>
+              <CheckboxGroup>
+                <Checkbox defaultChecked label="待處理" />
+                <Checkbox defaultChecked label="進行中" />
+                <Checkbox label="已完成" />
+              </CheckboxGroup>
             </PopoverBody>
             {showFooter && (
               <PopoverFooter>
