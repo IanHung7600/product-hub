@@ -53,6 +53,8 @@ run('status-color-invariant(progress/step/in-progress → --info)', 'node script
 run('layout-space-utility-invariant(裸 px-loose silent-fail)', 'node scripts/layout-space-utility-invariant.mjs')
 run('category-classification-invariant(分類三訊號一致)', 'node scripts/category-classification-invariant.mjs')
 run('item-content-leading-coherence(防 reading-gap+compact-行高 off-grid 偏移,Notice 2026-06-15 anchor)', 'node scripts/item-content-leading-coherence.mjs')
+run('checkbox-group-handcraft(防手刻 div 包選項 Checkbox,2026-06-15 popover/sheet/coachmark anchor)', 'node scripts/checkbox-group-handcraft-invariant.mjs')
+run('layout-space-story-coherence(防 token overview story 顯示值 drift,2026-06-15 tight 8≠12 anchor)', 'node scripts/layout-space-story-coherence.mjs')
 run('code-quality-audit', 'node scripts/code-quality-audit.mjs --scope=packages/design-system/src/components --check')
 run('content-quality', 'node scripts/audit-content-quality.mjs --check')
 run('governance-counters', 'node scripts/sync-governance-counters.mjs --check')
