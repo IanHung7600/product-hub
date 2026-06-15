@@ -3,6 +3,7 @@
 
 import type { Meta, StoryObj } from '@storybook/react'
 import { MemoryRouter } from 'react-router-dom'
+import { Toaster } from '@qijenchen/design-system'
 import App from './App'
 
 const meta: Meta<typeof App> = {
@@ -13,6 +14,7 @@ const meta: Meta<typeof App> = {
     (Story, ctx) => (
       <MemoryRouter initialEntries={[(ctx.parameters.initialPath as string) ?? '/']}>
         <Story />
+        <Toaster />
       </MemoryRouter>
     ),
   ],
@@ -44,4 +46,19 @@ export const ModuleCatalog: Story = {
 export const FormsModuleDetail: Story = {
   name: '表單 Module 詳情',
   parameters: { initialPath: '/modules/forms' },
+}
+
+export const ApprovalsModuleDetail: Story = {
+  name: '簽核 Module 詳情',
+  parameters: { initialPath: '/modules/approvals' },
+}
+
+export const TodosModuleDetail: Story = {
+  name: '待辦 Module 詳情',
+  parameters: { initialPath: '/modules/todos' },
+}
+
+export const NotificationsModuleDetail: Story = {
+  name: '通知 Module 詳情',
+  parameters: { initialPath: '/modules/notifications' },
 }
