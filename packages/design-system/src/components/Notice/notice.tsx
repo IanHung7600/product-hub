@@ -6,15 +6,18 @@ import * as React from 'react'
 import { X as XIcon, Info, CircleCheck, TriangleAlert, XCircle, type LucideIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/design-system/components/Button/button'
-import { ItemContent, ItemPrefix } from '@/design-system/patterns/element-anatomy/item-anatomy'
+import { ItemContent, ItemPrefix, ItemSuffix } from '@/design-system/patterns/element-anatomy/item-anatomy'
 
 /**
  * Notice — Toast / Alert 共用的視覺佈局層
  *
- * ── Typography: md tier ──
- * title: text-body (14px) leading-compact — 有 description 時加 font-medium
- * description: text-body (14px) leading-compact + text-fg-secondary (neutral-8)
+ * ── Typography: Family 2 reading-md(2026-06-15 user 拍板,off-grid 偏移收斂)──
+ * title: text-body (14px) default leading 1.5 — 有 description 時加 font-medium
+ * description: text-body (14px) default leading 1.5 + text-fg-secondary (neutral-8)
  * 14px 配 14px — 視覺層級靠 font-weight + color 區分,不靠 font-size。
+ * **行高 = reading 預設 1.5**(非 compact):Notice 是 Family 2 reading consumer,
+ * ItemContent 預設 mode='reading' + gap token `--item-gap-label-desc-reading` 名實相符。
+ * 原 `leading-compact`(1.3)= reading-gap + scanning-行高 混搭的 off-grid 偏移,已移除。
  *
  * ── Padding（固定,不隨 density 變） ──
  * px = px-4（16px）
@@ -58,7 +61,11 @@ export const SUBTLE_ICON_COLOR: Record<NoticeVariant, string> = {
 
 const NOTICE_LAYOUT = [
   'flex items-start gap-2 w-full',
-  'text-body leading-compact',
+  // 2026-06-15 user 拍板:Notice = 乾淨 Family 2 reading-md consumer。
+  // 原 `leading-compact`(1.3)是 off-grid 偏移(reading gap token + scanning 行高混搭、未文件化),
+  // 已移除 → label/desc 走 text-body reading 預設 1.5,與 ItemContent 預設 mode='reading' + gap
+  // token `--item-gap-label-desc-reading` 名實相符。詳 notice.spec.md「Typography」段。
+  'text-body',
   'px-4 py-3',
 ].join(' ')
 
@@ -124,8 +131,12 @@ const Notice = React.forwardRef<HTMLDivElement, NoticeProps>(
         />
 
         {(endContent || dismissible) && (
-          // @row-slot-handcraft-allow: Notice 是非-row alert（非 item-anatomy row），此 end slot 是 Notice 自身 layout 的 dismiss/endContent 容器，不是 row prefix/suffix → 不消費 ItemPrefix/ItemSuffix
-          <div className="flex items-center gap-2 shrink-0 h-[1lh]">
+          // 2026-06-15 user 拍板:消費 ItemSuffix primitive(原手刻 div + @row-slot-handcraft-allow
+          // 已移除)。item-anatomy.spec.md 把 Notice 的 action/dismiss 對應到 suffix slot;ItemSuffix
+          // base geometry(h-[1lh] shrink-0 ml-auto flex items-center gap-2)正是此處所需,hoverReveal
+          // 預設 false 故無 row inline-action 機制干擾。內裝 dismiss = Button iconOnly dismiss xs(banner
+          // family canonical,overlay-surface.spec.md「Chrome dismiss size canonical」)。
+          <ItemSuffix>
             {endContent}
             {dismissible && (
               <Button
@@ -138,7 +149,7 @@ const Notice = React.forwardRef<HTMLDivElement, NoticeProps>(
                 onClick={onDismiss}
               />
             )}
-          </div>
+          </ItemSuffix>
         )}
       </div>
     )

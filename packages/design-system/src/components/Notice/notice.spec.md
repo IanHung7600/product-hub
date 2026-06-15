@@ -29,11 +29,15 @@ Notice 是純視覺 primitive，不是獨立使用的元件。消費者：
 
 ## Typography
 
-md tier，固定不隨 density 變：
-- title: `text-body`（14px）`leading-compact`（1.3）— 有 description 時加 `font-medium`
-- description: `text-body`（14px）`leading-compact` + `text-fg-secondary`（neutral-8）
+**Family 2 reading-md consumer（2026-06-15 user 拍板,off-grid 偏移收斂）**，md tier 固定不隨 density 變：
+- title: `text-body`（14px）**default leading 1.5** — 有 description 時加 `font-medium`
+- description: `text-body`（14px）**default leading 1.5** + `text-fg-secondary`（neutral-8）
+- label↔desc gap: `--item-gap-label-desc-reading`（ItemContent 預設 mode=`reading` size=`md` 自動選）
+- icon: 16px（`ICON_SIZE.md`，item-anatomy.tsx）
 
-相同 body 字級,層級靠 font-weight / color 區分。
+相同 body 字級,層級靠 font-weight / color 區分（不靠 font-size,亦不靠 compact 行高）。
+
+> **為何 reading-md 而非 compact（2026-06-15 codify，根治 off-grid 偏移）**：Notice 同時服務 title-only（多數）與 title+desc、Alert（banner）與 Toast（snackbar）。原本 root 套 `leading-compact`(1.3) 形成「reading gap token + scanning 行高」混搭,落在 ItemContent 4 個合法 mode（reading-md/reading-lg/scanning-md/scanning-lg）**之外**的第五種組合（label 14 + desc 14 + 行高 1.3）且未文件化 → 違反 `item-anatomy.spec.md`「偏離 canonical 必明文 rationale」。收斂為純 **reading-md**：title-only 14px 對齊 Ant/Material title-only norm（scanning-lg 的 16px 過大）；desc 維持 14px 可讀（scanning-md 的 12px caption 對通知訊息過小）；title↔desc 階層由 `font-medium` 承載已足夠。對照 FileItem（顯式 `mode="scanning"` + 文件化 = 正確消費範例,file-item.tsx:13/214）。
 
 ## Padding（固定）
 

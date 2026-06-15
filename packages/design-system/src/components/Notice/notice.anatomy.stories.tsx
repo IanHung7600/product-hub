@@ -122,14 +122,14 @@ export const Overview: Story = {
               <tr>
                 <Td mono>title</Td>
                 <Td>單行必填</Td>
-                <Td mono>text-body leading-compact</Td>
+                <Td mono>text-body(reading 1.5)</Td>
                 <Td mono>14px / 有 desc 時 font-medium</Td>
               </tr>
               <tr>
                 <Td mono>description</Td>
                 <Td>可選輔助文字</Td>
                 <Td mono>text-fg-secondary</Td>
-                <Td mono>14px leading-compact</Td>
+                <Td mono>14px(reading 1.5)</Td>
               </tr>
               <tr>
                 <Td mono>endContent</Td>
@@ -265,7 +265,7 @@ function NoticeInspector() {
 │  h-[1lh]      min-w-0 flex-1                   h-[1lh]           │
 └──────────────────────────────────────────────────────────────────┘
 
-text-body = 14px   leading-compact = 1.3
+text-body = 14px   reading 行高 = 1.5(Family 2 reading-md,2026-06-15 收斂)
 固定 md tier — 不隨 density 變(通知是跨 density 一致的訊息載體)`}
             </pre>
           </div>
@@ -350,7 +350,7 @@ text-body = 14px   leading-compact = 1.3
               </tr>
               <tr>
                 <Td mono>title font</Td>
-                <Td mono>text-body · leading-compact</Td>
+                <Td mono>text-body · reading 1.5 · font-medium</Td>
               </tr>
               <tr>
                 <Td mono>desc font</Td>
