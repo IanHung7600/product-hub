@@ -17,6 +17,9 @@ import {
 } from '@qijenchen/design-system'
 import { getModule } from '../data/modules'
 import { LeaveRequestDemo } from '../modules/forms/LeaveRequestDemo'
+import { ApprovalFlowDemo } from '../modules/approvals/ApprovalFlowDemo'
+import { TodosDemo } from '../modules/todos/TodosDemo'
+import { NotificationsDemo } from '../modules/notifications/NotificationsDemo'
 
 export function ModuleDetailPage() {
   const { moduleId } = useParams<{ moduleId: string }>()
@@ -76,11 +79,11 @@ export function ModuleDetailPage() {
             <section className="space-y-[var(--layout-space-tight)]">
               <h3 className="text-h5">可互動 Demo</h3>
               <div className="rounded-lg border border-divider bg-surface p-[var(--layout-space-loose)]">
-                {module.status === 'ready' && module.id === 'forms' ? (
-                  <LeaveRequestDemo variant={variant} />
-                ) : (
-                  <Empty title="Demo 規劃中" description="此 Module 的可互動 demo 將在後續階段提供。" />
-                )}
+                {module.id === 'forms'         ? <LeaveRequestDemo variant={variant} />
+                 : module.id === 'approvals'   ? <ApprovalFlowDemo variant={variant} />
+                 : module.id === 'todos'        ? <TodosDemo variant={variant} />
+                 : module.id === 'notifications'? <NotificationsDemo variant={variant} />
+                 : <Empty title="Demo 規劃中" description="此 Module 的可互動 demo 將在後續階段提供。" />}
               </div>
             </section>
           </div>
