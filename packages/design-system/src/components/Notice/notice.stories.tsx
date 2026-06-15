@@ -26,10 +26,10 @@ type Story = StoryObj<typeof Notice>
 
 const SUBTLE_CONTAINER: Record<NoticeVariant, string> = {
   neutral: 'bg-muted border border-border',
-  info: 'bg-info-subtle border border-[var(--info-hover)]',
-  success: 'bg-success-subtle border border-[var(--success-hover)]',
-  warning: 'bg-warning-subtle border border-[var(--warning-hover)]',
-  error: 'bg-error-subtle border border-[var(--error-hover)]',
+  info: 'bg-info-subtle border border-[var(--info-text)]',
+  success: 'bg-success-subtle border border-[var(--success-text)]',
+  warning: 'bg-warning-subtle border border-[var(--warning-text)]',
+  error: 'bg-error-subtle border border-[var(--error-text)]',
 }
 
 const SOLID_BG: Record<Exclude<NoticeVariant, 'neutral'>, string> = {

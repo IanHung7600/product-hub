@@ -23,12 +23,15 @@ import { Notice, useInverseTheme, SUBTLE_ICON_COLOR, type NoticeVariant } from '
  * fixed: 無圓角,full-width,無 border
  */
 
+// border 用 `--{hue}-text`(= icon 同色,2026-06-15 user 拍板「直接共用 hue-text,不開新 token」)。
+// 原借 `--{hue}-hover`(互動狀態 token)當靜態 border 是語意 smell + 跟 icon 不同色;
+// 改共用 hue-text(SUBTLE_ICON_COLOR 用的同一顆,blue-7 等)→ 0 新 token + border/icon cohesion。
 const SUBTLE_CONTAINER: Record<NoticeVariant, string> = {
   neutral: 'bg-muted border border-border',
-  info: 'bg-info-subtle border border-[var(--info-hover)]',
-  success: 'bg-success-subtle border border-[var(--success-hover)]',
-  warning: 'bg-warning-subtle border border-[var(--warning-hover)]',
-  error: 'bg-error-subtle border border-[var(--error-hover)]',
+  info: 'bg-info-subtle border border-[var(--info-text)]',
+  success: 'bg-success-subtle border border-[var(--success-text)]',
+  warning: 'bg-warning-subtle border border-[var(--warning-text)]',
+  error: 'bg-error-subtle border border-[var(--error-text)]',
 }
 
 const SOLID_HUE_BG: Record<string, string> = {
