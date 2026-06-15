@@ -70,7 +70,7 @@ export const MODULES: ModuleMeta[] = [
       locked: ['狀態機邏輯', '時間軸視覺'],
     },
     adoptedBy: ['請假系統', '差旅報銷', '採購申請'],
-    status: 'planned',
+    status: 'ready',
   },
   {
     id: 'todos',
@@ -91,7 +91,7 @@ export const MODULES: ModuleMeta[] = [
       locked: ['批次操作互動', '卡片版面'],
     },
     adoptedBy: ['請假系統', '專案管理'],
-    status: 'planned',
+    status: 'ready',
   },
   {
     id: 'notifications',
@@ -112,7 +112,7 @@ export const MODULES: ModuleMeta[] = [
       locked: ['未讀標記行為', 'Toast 出現位置'],
     },
     adoptedBy: ['請假系統', '專案管理', '差旅報銷'],
-    status: 'planned',
+    status: 'ready',
   },
 ]
 
