@@ -86,14 +86,8 @@
       "bucket": "SHIP_REWRITTEN"
     },
     {
-      "file": "hooks/post_edit_dispatcher.sh",
-      "sha256": "01d9586e2777366df12655c088983f14629bc757ce23bff901c82a093f05b6e5",
-      "sourceHook": "post_edit_dispatcher.sh",
-      "bucket": "SHIP_REWRITTEN"
-    },
-    {
       "file": "manifest.json",
-      "sha256": "e4f7221b36e6f526cc1fc535442da011e15fc249615fa3a955960796a0af50e3"
+      "sha256": "ee4f619b722c7d3a4f80dddb52dcee4bf900c7e6923945cd59d290d4a8236e5a"
     }
   ]
 }

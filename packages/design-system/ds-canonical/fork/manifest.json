@@ -28,11 +28,6 @@
         "bucket": "SHIP_REWRITTEN"
       },
       {
-        "file": "hooks/post_edit_dispatcher.sh",
-        "sourceHook": "post_edit_dispatcher.sh",
-        "bucket": "SHIP_REWRITTEN"
-      },
-      {
         "file": "hooks/inject_deploy_url_after_push.sh",
         "sourceHook": "inject_deploy_url_after_push.sh",
         "bucket": "SHIP_REWRITTEN"

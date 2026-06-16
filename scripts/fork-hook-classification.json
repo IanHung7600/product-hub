@@ -3,7 +3,10 @@
     "purpose": "C-prime fork-mode governance corpus 分類 SSOT。build-fork-governance.mjs 消費此檔生成 ds-canonical/fork/。--check 若有任何 .claude/hooks/*.{sh,py} 未分類則 FAIL(防漏接新 hook)。",
     "source": "workflow wf_4070529c-5af critic agent(讀全 53 hook + inventory 對抗分類)+ Claude 組裝 2026-06-16",
     "total": 53,
-    "tally": { "SHIP_AS_IS": 9, "SHIP_REWRITTEN": 5, "REPLACE": 1, "DROP": 38 },
+    "tally": { "SHIP_AS_IS": 9, "SHIP_REWRITTEN": 4, "REPLACE": 1, "DROP": 39 },
+    "known_coverage_gaps": [
+      "post_edit_dispatcher 的 _overlay_handcraft(擋 consumer 手刻 overlay header,非 SurfaceHeader/Popover primitive)+ _code_quality 兩個 fork-relevant 檢查,改判 DROP 後目前無 standalone 涵蓋 → 待 promote 成 standalone fork hook(harness 驗證後加)。layout-space 部分已由 check_layout_space_magic_numbers 涵蓋,無 gap。"
+    ],
     "buckets_def": {
       "SHIP_AS_IS": "已 fork-aware(scope apps/** 或 layout-agnostic,DS 內部路徑乾淨 exit 0)→ 原樣 ship 進 fork settings",
       "SHIP_REWRITTEN": "fork 有價值但寫死 DS 路徑/資料 → 機械改寫(packages/design-system/src→node_modules/@qijenchen/design-system/src;.claude/{logs,memory} 讀取加 [ -d ]||exit 0 guard)",
@@ -29,7 +32,6 @@
     { "hook": "check_opacity_token_usage.sh", "transform": "registry path packages/design-system/src/tokens/utility-registry.json + ../../packages fallback → node_modules/@qijenchen/design-system/src/tokens/utility-registry.json(ships in package)", "reason": "fire on apps/** 但 DS registry 在 fork 不存在 → 退化成 ~10% opacity-only 模式 = false-green。repoint 後恢復全 9 category enforcement。" },
     { "hook": "check_escape_marker_abuse.sh", "transform": "保留 IS_CONSUMER apps/** branch(≥3 escape marker exit 2),丟棄 DS-source branch", "reason": "consumer branch fork-relevant;DS-source branch DS-author-only。" },
     { "hook": "check_ds_anchor_preflight.sh", "transform": "canonical-read 目標 packages/design-system/src/**/spec.md → node_modules/@qijenchen/design-system/src/**/spec.md(pass-regex 認 node_modules spec read)", "reason": "scope apps/** soft inject(exit 0 不 brick),但 M29 nag 指向 fork 不存在的 DS spec path = 半廢 nag。repoint 後有用。" },
-    { "hook": "post_edit_dispatcher.sh", "transform": "_layout_space helper scope src/app/ → apps/(目前 path bug 漏掉 fork product code);只 fan-out fork-relevant helpers(_layout_space/_overlay_handcraft/_code_quality),DS-source-scoped helpers(_hardcoded_strings/_token_hygiene/_cva_default_sync/_story_compile_drift/_person_data_richness)在 fork no-op", "reason": "mixed dispatcher:部分 helper fork-relevant + 有 src/app→apps path bug 要修。" },
     { "hook": "inject_deploy_url_after_push.sh", "transform": "確認 deploy-URL 推導邏輯不依賴 DS-internal path(generic Netlify/git remote 推導)", "reason": "每次 push 吐 deploy URL,fork 一樣需要(scenario-definition fork dim 63)。" }
   ],
 
@@ -54,6 +56,7 @@
     { "hook": "check_main_branch_workbench.sh", "reason": "DS-author solo-dev git workflow(1 chat=1 branch);可能 brick fork user 在 main 編輯 → 不 ship。" },
     { "hook": "check_naming_and_abstraction.sh", "reason": "DS-author 新元件命名/抽象紀律(scope DS src)。" },
     { "hook": "check_orphan_ds_css.sh", "reason": "DS CSS aggregator orphan 偵測;packages/design-system/src 不存在即 early-exit = fork 無意義。" },
+    { "hook": "post_edit_dispatcher.sh", "reason": "fan-out 到 lib/_*.sh helper,但 helper 沒隨 corpus ship + 有 [ -f ]||return 0 guard → fork 內全 no-op = false-green(harness 深查抓到)。layout-space 價值已由 standalone check_layout_space_magic_numbers 涵蓋故 DROP;唯 _overlay_handcraft/_code_quality 列 known_coverage_gaps 待 promote。" },
     { "hook": "check_overlay_open_focus_escape_probe.sh", "reason": "DS-author overlay focus/escape 稽核 probe。" },
     { "hook": "check_peoplepicker_ssot_drift.sh", "reason": "DS-author PeoplePicker 元件 SSOT drift(scope DS src)。" },
     { "hook": "check_pixel_quantified_audit.sh", "reason": "DS-author audit pixel-quantified 強制。" },
