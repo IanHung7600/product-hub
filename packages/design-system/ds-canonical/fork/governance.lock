@@ -1,0 +1,99 @@
+{
+  "_purpose": "sha256 of every shipped fork governance body + manifest (tamper-detect baseline)",
+  "entries": [
+    {
+      "file": "hooks/block_prototype_imports.py",
+      "sha256": "0ab679ddb522f508c490891711559175a912be8b7f4db04d8a55cdac983fd482",
+      "sourceHook": "block_prototype_imports.py",
+      "bucket": "SHIP_AS_IS"
+    },
+    {
+      "file": "hooks/check_chrome_header_avatar_canonical.sh",
+      "sha256": "2b9c31b2071da0ae1c6e27620a0aa3ebc9983ded827ef7dcc2016342632935de",
+      "sourceHook": "check_chrome_header_avatar_canonical.sh",
+      "bucket": "SHIP_AS_IS"
+    },
+    {
+      "file": "hooks/check_consumer_app_invariants.sh",
+      "sha256": "e2d63b142759bf791ca3c4462342d91623827aeb54c15398c94853485684900b",
+      "sourceHook": "check_consumer_app_invariants.sh",
+      "bucket": "SHIP_AS_IS"
+    },
+    {
+      "file": "hooks/check_ds_anchor_preflight.sh",
+      "sha256": "b2a2e1128e014634f94bdd83534f0bc60461924b988e6beef868598e305a5b59",
+      "sourceHook": "check_ds_anchor_preflight.sh",
+      "bucket": "SHIP_REWRITTEN"
+    },
+    {
+      "file": "hooks/check_escape_marker_abuse.sh",
+      "sha256": "4f9d8dc91275145204f0bc760c4378dd53f7ad4389d89da737aef23f84b2502b",
+      "sourceHook": "check_escape_marker_abuse.sh",
+      "bucket": "SHIP_REWRITTEN"
+    },
+    {
+      "file": "hooks/check_field_family_invariants.sh",
+      "sha256": "1beeb2b347cacf5d8a912470bce0b9ab6b54c2595873155389456cdbe6125d80",
+      "sourceHook": "check_field_family_invariants.sh",
+      "bucket": "SHIP_AS_IS"
+    },
+    {
+      "file": "hooks/check_fork_product_quality.sh",
+      "sha256": "1985d7607de85ae71b07b4b302c27b3dbb51670bbe68421489e27c75a2b64ffa",
+      "sourceHook": "check_substantive_edit_approval_preflight.sh",
+      "bucket": "REPLACE"
+    },
+    {
+      "file": "hooks/check_item_list_gap.sh",
+      "sha256": "4e779e5894f16873f1bc322f64571a7ff869d3b75ed5383a5b0f662c7b533d99",
+      "sourceHook": "check_item_list_gap.sh",
+      "bucket": "SHIP_AS_IS"
+    },
+    {
+      "file": "hooks/check_layout_space_magic_numbers.sh",
+      "sha256": "09c74c67c61a366b14bb1cce2ac27d4b8d0541a8698f85d50e4afe9783ad7309",
+      "sourceHook": "check_layout_space_magic_numbers.sh",
+      "bucket": "SHIP_AS_IS"
+    },
+    {
+      "file": "hooks/check_opacity_token_usage.sh",
+      "sha256": "1772e83242520f569a9a44e96d08d74e121c119c940c019c8ed50989f14de646",
+      "sourceHook": "check_opacity_token_usage.sh",
+      "bucket": "SHIP_REWRITTEN"
+    },
+    {
+      "file": "hooks/check_pattern_invariants.sh",
+      "sha256": "c6cf3288cbc2bdb689091aef678073470f58b7f1bf98cdefb55afc9724ad277b",
+      "sourceHook": "check_pattern_invariants.sh",
+      "bucket": "SHIP_AS_IS"
+    },
+    {
+      "file": "hooks/check_sidebar_menu_button_implicit_wrap.sh",
+      "sha256": "90be9c6744b27f0ffd9320dc1fbca22d159c8c43292e7b6d6a6e577178ed89dc",
+      "sourceHook": "check_sidebar_menu_button_implicit_wrap.sh",
+      "bucket": "SHIP_AS_IS"
+    },
+    {
+      "file": "hooks/check_tailwind_wildcard_in_docs.sh",
+      "sha256": "51fcf04d3adc2a15b6c06312753e51412ed8ff88d088a5e8fe4ec0c784c7aa96",
+      "sourceHook": "check_tailwind_wildcard_in_docs.sh",
+      "bucket": "SHIP_AS_IS"
+    },
+    {
+      "file": "hooks/inject_deploy_url_after_push.sh",
+      "sha256": "f5cd8597574f1b061b132a289337731f7dabac0c6666f1ca611d8316504b401c",
+      "sourceHook": "inject_deploy_url_after_push.sh",
+      "bucket": "SHIP_REWRITTEN"
+    },
+    {
+      "file": "hooks/post_edit_dispatcher.sh",
+      "sha256": "01d9586e2777366df12655c088983f14629bc757ce23bff901c82a093f05b6e5",
+      "sourceHook": "post_edit_dispatcher.sh",
+      "bucket": "SHIP_REWRITTEN"
+    },
+    {
+      "file": "manifest.json",
+      "sha256": "e4f7221b36e6f526cc1fc535442da011e15fc249615fa3a955960796a0af50e3"
+    }
+  ]
+}

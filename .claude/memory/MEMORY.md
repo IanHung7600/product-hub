@@ -23,6 +23,7 @@
 
 ## Reference
 - [reference_deploy_targets.md](reference_deploy_targets.md) — Deploy targets + URL 3-strategy 自動推導 + per-user override + transport self-awareness(2026-06-11 合併 deploy_url_auto_detect)
+- [reference_cloud_governance_loading.md](reference_cloud_governance_loading.md) — 雲端 sandbox 治理載入實證:committed .claude 全 4 hook event 會 fire / plugin 不可靠(#63028/#62174)/ --cloud 需 TTY / skills 不認 node_modules(2026-06-16)
 
 ---
 **Prune history**(細節在 .claude/memory/retired/ + git log):
