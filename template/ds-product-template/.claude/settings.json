@@ -1,6 +1,6 @@
 {
   "defaultMode": "auto",
-  "_comment_plugin_setup": "First-time setup: run `/plugin marketplace add github:ajenchen/design-system` in Claude Code → then `/plugin install design-system@qijenchen-ds`. Plugin auto-enables thereafter (Phase 7 marketplace flow,per design-system .claude-plugin/marketplace.json). Bootstrap hooks 在 plugin 裝好前先補 first-time mechanical gate(committed in fork,不依賴 plugin)。",
+  "_comment_governance": "C-prime committed-config-first 治理。本 settings 註冊一個極穩定的 dispatcher(fork-governance-dispatcher.sh,讀 node_modules/@qijenchen/design-system/ds-canonical/fork/manifest.json 跑官方 fork 治理)+ fail-open bootstrap。治理本體在 node_modules(npm install 覆蓋 = 官方控管、使用者改不動);DS 未來治理增刪改 → npm install / npm run sync-all 即完全同步,本檔幾乎永不需改。首次啟用:npm install(或 npm run setup:governance)。不需 /plugin install。",
   "permissions": {
     "allow": [
       "Bash(npm install)",
@@ -14,21 +14,31 @@
     "SessionStart": [
       {
         "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check_plugin_bootstrap.sh\""
-          }
+          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check_governance_bootstrap.sh\"" },
+          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/fork-governance-dispatcher.sh\"" }
         ]
       }
     ],
     "PreToolUse": [
       {
-        "matcher": "Edit|Write",
+        "matcher": "Edit|Write|MultiEdit",
         "hooks": [
-          {
-            "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/block_production_edit_without_plugin.sh\""
-          }
+          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/fork-governance-dispatcher.sh\"" }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/fork-governance-dispatcher.sh\"" }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/fork-governance-dispatcher.sh\"" }
         ]
       }
     ]
