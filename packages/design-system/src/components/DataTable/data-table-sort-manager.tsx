@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils'
 import { dragSourceStyle, dragHandleCursorClass } from '@/design-system/lib/drag-visual'
 import { Button } from '@/design-system/components/Button/button'
 import { Select, type SelectOption } from '@/design-system/components/Select/select'
-import { SurfaceHeader, SurfaceBody } from '@/design-system/patterns/overlay-surface/overlay-surface'
+import { SurfaceHeader, SurfaceBody, COMPACT_HEADER_SLOT } from '@/design-system/patterns/overlay-surface/overlay-surface'
 import { ButtonDivider } from '@/design-system/components/Button/button-group'
 import { PopoverTitle, PopoverClose } from '@/design-system/components/Popover/popover'
 import { ItemInlineActionButton } from '@/design-system/patterns/element-anatomy/item-anatomy'
@@ -108,8 +108,8 @@ export function DataTableSortManager<TData>({
   // 2026-05-23 Phase A.4 Decision 2: w-[480px] → token `--data-table-sort-panel-width`(SSOT in uiSize.css)
   return (
     <div className={cn('flex flex-col h-full min-h-0 w-[var(--data-table-sort-panel-width)]', className)}>
-      {/* Popover 派輕量 chrome — slot 縮 20 匹配 PopoverTitle text-body line-height,header 自然 ~45px */}
-      <SurfaceHeader className="[--chrome-slot-h:1.25rem]">
+      {/* Popover 派輕量 chrome — slot 走 COMPACT_HEADER_SLOT(=21,衍生自 PopoverTitle text-body line-box),header 自然 ~45px */}
+      <SurfaceHeader className={COMPACT_HEADER_SLOT}>
         <PopoverTitle className="flex-1">排序</PopoverTitle>
         {onReset && sorting.length > 0 && (
           <>

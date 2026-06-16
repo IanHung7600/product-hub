@@ -53,6 +53,9 @@ run('status-color-invariant(progress/step/in-progress → --info)', 'node script
 run('layout-space-utility-invariant(裸 px-loose silent-fail)', 'node scripts/layout-space-utility-invariant.mjs')
 run('category-classification-invariant(分類三訊號一致)', 'node scripts/category-classification-invariant.mjs')
 run('item-content-leading-coherence(防 reading-gap+compact-行高 off-grid 偏移,Notice 2026-06-15 anchor)', 'node scripts/item-content-leading-coherence.mjs')
+run('checkbox-group-handcraft(防手刻 div 包選項 Checkbox,2026-06-15 popover/sheet/coachmark anchor)', 'node scripts/checkbox-group-handcraft-invariant.mjs')
+run('layout-space-story-coherence(防 token overview story 顯示值 drift,2026-06-15 tight 8≠12 anchor)', 'node scripts/layout-space-story-coherence.mjs')
+run('overlay-density-lock-placement(防 density lock 設在 header 非 surface 根,FileViewer 圖二 anchor)', 'node scripts/overlay-density-lock-placement.mjs')
 run('code-quality-audit', 'node scripts/code-quality-audit.mjs --scope=packages/design-system/src/components --check')
 run('content-quality', 'node scripts/audit-content-quality.mjs --check')
 run('governance-counters', 'node scripts/sync-governance-counters.mjs --check')
@@ -70,6 +73,11 @@ run('Field cascade-resolve gate(防新控件漏讀 size/mode/disabled context �
 
 // ③ Build + smoke + dogfood(== release.yml publish job + smoke-shard job)
 run('build:lib', 'npm run --silent build:lib')
+// 2026-06-16 root-cause gate:apps/template 是 React 19 workspace,root tsc -b references 不含它 → React19
+// 專屬錯(@types/react 移除全域 JSX namespace → `JSX.Element` TS2503)只在 receiver `cd apps/template &&
+// npm run build` 才炸,DS preflight 一路假綠 ship(bde81e7e 2026-06-12 brick ds-product-template receiver +
+// 自身 Audit + Dependabot PR,連敗到 beta.67)。跑 receiver 同款 build command 在 tag 前攔下此 class。
+run('build apps/template(React19 receiver build — 防 root tsc 漏掉的 receiver-only TS2503)', 'cd apps/template && npm run build')
 run('build-storybook', 'npm run --silent build-storybook')
 // FULL story runtime smoke == release.yml smoke-shard job(被 `needs:` 硬 gate)。這是唯一能攔
 // SizeMatrix 那類 {var}-undefined / runtime crash 的 gate;build-storybook 是 compile-time、dogfood

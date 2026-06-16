@@ -294,7 +294,7 @@ expect_block "16. R9 手刻 <div px-loose border-b border-divider> overlay heade
 run_hook "PreToolUse" "Write" "$TMP_DIR/r9-correct.stories.tsx" '
 export const Panel = () => (
   <div className="max-w-md flex flex-col rounded-lg border-border bg-surface-raised shadow-[var(--elevation-200)]">
-    <SurfaceHeader className="justify-between [--chrome-slot-h:1.25rem]">
+    <SurfaceHeader className="justify-between">
       <div className="flex-1 min-w-0"><PopoverTitle>正在上傳 3 個項目</PopoverTitle></div>
     </SurfaceHeader>
   </div>

@@ -2,6 +2,7 @@ import React from 'react'
 import LinkTo from '@storybook/addon-links/react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Checkbox } from './checkbox'
+import { CheckboxGroup } from './checkbox-group'
 import { Switch } from '@/design-system/components/Switch/switch'
 import { RadioGroup, RadioGroupItem } from '@/design-system/components/RadioGroup/radio-group'
 
@@ -64,17 +65,19 @@ export const UsageGuidance: Story = {
           note="勾選不代表立刻生效——使用者按「儲存」前都可以反悔。心智模型是「選擇 / 同意」，視覺語言強調「尚未確定」"
         >
           <div className="border border-border rounded-lg p-4 space-y-3">
-            <Checkbox
-              label="我同意服務條款與隱私政策"
-              checked={agree}
-              onCheckedChange={(v) => setAgree(v === true)}
-            />
-            <Checkbox
-              label="訂閱行銷訊息"
-              description="每月最多 2 封，可隨時取消"
-              checked={notif === 'checked'}
-              onCheckedChange={(v) => setNotif(v ? 'checked' : 'unchecked')}
-            />
+            <CheckboxGroup>
+              <Checkbox
+                label="我同意服務條款與隱私政策"
+                checked={agree}
+                onCheckedChange={(v) => setAgree(v === true)}
+              />
+              <Checkbox
+                label="訂閱行銷訊息"
+                description="每月最多 2 封，可隨時取消"
+                checked={notif === 'checked'}
+                onCheckedChange={(v) => setNotif(v ? 'checked' : 'unchecked')}
+              />
+            </CheckboxGroup>
             <div className="flex gap-2 pt-2">
               <button className="h-field-md px-3 text-body rounded-md bg-primary text-inverse-fg">儲存</button>
               <button className="h-field-md px-3 text-body rounded-md border border-border">取消</button>
@@ -119,7 +122,7 @@ export const UsageGuidance: Story = {
           title="vs Radio — Checkbox 是獨立 toggle(多選 或 單一 agreement)"
           note="每個 Checkbox 是獨立 boolean——可同時勾多個。也用於單一「我同意 X」agreement"
         >
-          <div className="space-y-2">
+          <CheckboxGroup>
             <Checkbox
               label="讀取權限"
               description="可查看資料"
@@ -138,7 +141,7 @@ export const UsageGuidance: Story = {
               checked={perms.admin}
               onCheckedChange={(v) => setPerms({ ...perms, admin: v === true })}
             />
-          </div>
+          </CheckboxGroup>
           <Label>↑ 權限可以任意組合——多選用 Checkbox</Label>
         </Rule>
 
@@ -158,11 +161,11 @@ export const UsageGuidance: Story = {
           title="❌ 多選一用 Checkbox"
           note="使用者可以同時勾 3 個 → 邏輯錯誤，破壞互斥語意"
         >
-          <div className="space-y-2">
+          <CheckboxGroup>
             <Checkbox label="信用卡" />
             <Checkbox label="銀行轉帳" />
             <Checkbox label="貨到付款" />
-          </div>
+          </CheckboxGroup>
           <Label warn>↑ 付款方式只能一個，卻用 Checkbox 允許多選 → 用 RadioGroup</Label>
         </Rule>
 

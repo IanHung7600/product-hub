@@ -95,14 +95,13 @@ const DialogContent = React.forwardRef<
       <DialogOverlay />
       <DialogPrimitive.Content
         ref={ref}
-        // Density canonical(2026-04-22 v5 校準):Dialog 繼承 page density(跟 Sheet 對齊
-        // sheet.tsx line 111 canonical),不自設 data-layout-space="lg" 或 data-density。
-        //
-        // 先前曾設 `data-layout-space="lg"` 給 header/body 寬鬆呼吸,但跟 chrome-header-height
-        // canonical 衝突(md page dialog header 期望 48,強設 lg 會變 56)。
-        // 世界級對照:Polaris Modal horizontal padding 16 / Material M3 24 / Atlassian 24 — 16 是
-        // 合理 lower bound;md page 用 16 loose body padding 可接受,lg page 自動 24。
-        // 詳 overlay-surface.spec.md「Chrome dismiss size canonical」
+        // Density:**全繼承 page**(layout-space + ui-size 都不自鎖)。2026-06-16 定論(撤回本 session 一度加的
+        // data-layout-space="lg"):density.spec 第 10 行親自定義 layout-space 管「dialog body padding」——
+        // Dialog 鎖死它 = override 自家 dial 對它點名要管的對象失效 = 自相矛盾。有同類 padding-density dial 的
+        // 世界級(SAP Fiori syncStyleClass / AWS Cloudscape「all view types」)都讓 modal 跟 page dial 走、不鎖固定 tier。
+        // 效果:md page → body px-loose 16 / header py-tight 12(header 48);lg page → 24 / 16(header 56),隨 page。
+        // 「modal 要寬鬆」需求在 lg 階自然滿足(Polaris modal 16 = 世界級下限,證明 md 16 合格);「button 不撐高
+        // header」由 ui-size 繼承 page 解決(button=page sm),與 layout-space 鎖不鎖無關 → 故不需鎖。
         onOpenAutoFocus={handleOpenAutoFocus}
         className={cn(
           "fixed left-1/2 top-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2",

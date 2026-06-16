@@ -154,4 +154,5 @@ Notice **不**自帶 Esc-to-dismiss 行為(`notice.tsx` 無 keydown handler);dis
 - `alert.spec.md`
 - `bulk-action-bar.spec.md`
 - `coachmark.spec.md`
+- `item-anatomy.spec.md`
 - `toast.spec.md`

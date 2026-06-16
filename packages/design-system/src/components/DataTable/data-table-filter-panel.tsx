@@ -13,7 +13,7 @@ import { NumberInput } from '@/design-system/components/NumberInput/number-input
 import { DatePicker, DatePickerRange } from '@/design-system/components/DatePicker/date-picker'
 import { PeoplePicker } from '@/design-system/components/PeoplePicker/people-picker'
 import type { PersonValue } from '@/design-system/components/PeoplePicker/person-display'
-import { SurfaceHeader, SurfaceBody } from '@/design-system/patterns/overlay-surface/overlay-surface'
+import { SurfaceHeader, SurfaceBody, COMPACT_HEADER_SLOT } from '@/design-system/patterns/overlay-surface/overlay-surface'
 import { PopoverTitle, PopoverClose } from '@/design-system/components/Popover/popover'
 import { ButtonDivider } from '@/design-system/components/Button/button-group'
 import { FieldControlGroup } from '@/design-system/components/FieldControlGroup/field-control-group'
@@ -551,8 +551,8 @@ function DataTableFilterPanelInner<TData>({
         : 'w-[min(640px,calc(100vw-2rem))]',
       className,
     )}>
-      {/* Popover 派輕量 chrome — slot 縮 20 匹配 PopoverTitle text-body line-height,header 自然 ~45px */}
-      <SurfaceHeader className="[--chrome-slot-h:1.25rem]">
+      {/* Popover 派輕量 chrome — slot 走 COMPACT_HEADER_SLOT(=21,衍生自 PopoverTitle text-body line-box),header 自然 ~45px */}
+      <SurfaceHeader className={COMPACT_HEADER_SLOT}>
         <PopoverTitle className="flex-1">篩選</PopoverTitle>
         {/* Refresh icon — 只在 value ≠ defaultValue 時顯示(對齊 sort modified-from-default UX)
             含 ButtonDivider 對齊「欄位顯示」+「排序」chrome corner action canonical(2026-05-04) */}

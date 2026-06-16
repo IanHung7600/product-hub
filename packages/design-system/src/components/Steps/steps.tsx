@@ -455,7 +455,11 @@ function StepItemHeader({ children, className, style }: { children: React.ReactN
       onKeyDown={item.clickable ? onKeyDown : undefined}
       aria-disabled={item.disabled || undefined}
       className={cn(
-        'outline-none',
+        // leading-compact:scanning-family header 行高 = 1.3(item-anatomy.spec.md:776 掃描模式 label 行高)。
+        // 設在 header 而非 li 根 → prefix h-[1lh] + 水平 connector h-[1lh] + label(StepLabel 亦 leading-compact)
+        // 全用 1.3 對齊;li 根 text-body(1.5,steps.tsx:329-331)留給展開 content 的 reading 行高,不被
+        // scanning 波及(避免 改A壞B)。對齊 MenuItem 把 leading-compact 放 row 容器之原則(item-anatomy.tsx:144-146)。
+        'outline-none leading-compact',
         item.clickable
           ? 'cursor-pointer rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring'
           : 'cursor-not-allowed',
@@ -539,7 +543,9 @@ function VerticalConnectorLine() {
     <div
       aria-hidden
       className={cn(
-        'absolute w-px',
+        // leading-compact:connector 的 0.5lh 須跟 scanning label 同行高(1.3)→ 起點對齊 circle 中心
+        // (circle 對齊 label 第一行;label 已 leading-compact)。否則 connector 繼承 li 根 1.5 → 0.5lh 偏大 → 起點偏低。
+        'absolute w-px leading-compact',
         isBlue ? 'bg-info' : 'bg-border',
       )}
       style={{
@@ -773,7 +779,9 @@ const StepLabel = React.forwardRef<HTMLSpanElement, StepLabelProps>(
       <span
         ref={ref}
         className={cn(
-          'font-medium break-words',
+          // leading-compact:scanning-family label 行高 = 1.3(item-anatomy.spec.md:776);text-body utility
+          // 自帶 lh:1.5,須顯式 leading-compact 蓋回 1.3,跟 MenuItem label(實測 14px/18px=1.3)一致。
+          'font-medium break-words leading-compact',
           size === 'lg' ? 'text-body-lg' : 'text-body',
           disabled
             ? 'text-fg-disabled'

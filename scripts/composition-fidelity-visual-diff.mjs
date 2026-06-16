@@ -317,7 +317,15 @@ for (const m of identityMappings) {
           children: Array.from(el.children).map(c => snapshot(c, depth + 1)).filter(Boolean),
         }
       }
-      return snapshot(document.body)
+      // 2026-06-16 root-cause fix(pre-existing ≥12-run DOM_FAIL):從 document.body 起算會把 Storybook
+      // 自己的 wrapper chrome(#storybook-root 外層 + decorator div,classless 或 sb- 被 normalizeClass 剝掉)
+      // 一起比;DS 自建 storybook 與 consumer npm storybook 的 wrapper 巢狀層數不同 → classless wrapper path
+      // collapse 後跨 storybook 錯位 → 串聯出大量假 styleDrift(pixel=0% 完美一致卻 DOM_FAIL)。錨定 story
+      // 內容根 #storybook-root(Storybook 7+;fallback #root / body)→ 只比實際 component DOM,排除 chrome。
+      const storyRoot = document.querySelector('#storybook-root')
+        || document.getElementById('root')
+        || document.body
+      return snapshot(storyRoot)
     })
   }
   function flattenDom(node, out = [], path = '') {

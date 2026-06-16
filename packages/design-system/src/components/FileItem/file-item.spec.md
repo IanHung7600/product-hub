@@ -293,7 +293,7 @@ upload-manager 的 completed(100% bar + ✓)屬「剛完成的 upload session」
 - **它是 popover-class 浮層 surface,但不是 Radix `<Popover>`**(常駐面板:不靠 trigger 開、不 outside-click 關、用 chevron 收合非 X dismiss)→ **不包 `<Popover>`**,而是直接消費 overlay-surface 三件套 primitive。
 - **殼 + header + body 全消費 overlay-surface SSOT(禁手刻)**:
   - 殼:用 Popover 同款 chrome token `rounded-lg border border-border bg-surface-raised shadow-[var(--elevation-200)] flex flex-col`(DS 無獨立 shell primitive — `PopoverContent`/`DialogContent` 各自套這組 token;常駐面板鏡像同值)。
-  - header:`<SurfaceHeader className="justify-between [--chrome-slot-h:1.25rem]">` + `<PopoverTitle>`(輕量浮層 header SSOT,padding = px-loose py-tight + border-b + unbounded-slot 負 my trick)。
+  - header:`<SurfaceHeader className={cn("justify-between", COMPACT_HEADER_SLOT)}>` + `<PopoverTitle>`(輕量浮層 header SSOT,slot 走 `COMPACT_HEADER_SLOT`=21 衍生自 text-body title;padding = px-loose py-tight + border-b + unbounded-slot 負 my trick)。
   - body:**`<SurfaceBody>`(body SSOT,含 px-loose py-tight + flex-1 scroll 鏈)**,FileItem-specific padding 用 className override(見下)。**這不是「List-as-region」**(那專指 edge-to-edge 選單清單:item hover-bg 貼容器、px-0;Cmd+K / menu / nav)—— upload-manager list 有 px-loose、item 無 hover-bg、是 chrome-padded body,故就用 SurfaceBody。**scroll(consumer 注意)**:SurfaceBody 的 `flex-1 / overflow-y-auto` 只在 shell 有 `max-h` + `overflow-hidden` 時生效;常駐面板若檔案數可超 viewport,shell 須加 `max-h`(對齊 overlay-surface.spec.md「viewport-aware scroll」),demo 短內容不需。
   - **禁手刻**:`<div px-loose py-2 border-b>`(header)/ 手刻 `<div px-loose py-tight>`(body)= drift(2026-06-03/04 user 抓:py-2≠py-tight / 殼 token 全偏 / body 重刻 SurfaceBody)。Hook `check_story_invariants.sh R9` 機械攔手刻 header。
 

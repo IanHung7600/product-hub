@@ -8,11 +8,14 @@ name: Visual Regression
 # 對齊 Chromatic / Percy / BackstopJS 的 self-hosted visual diff infra
 # (我們用 playwright + pixelmatch 自己跑,免 SaaS 訂閱)。
 #
-# Updating baseline:
-#   1. 改 component 視覺(intentional change)
-#   2. Local 跑 `npm run visual-audit -- --scope=all --update-baseline`
-#   3. Review 新 baseline PNG → commit + push
-#   4. CI 此 step diff 新 commit 對 latest baseline → 0 diff pass
+# Updating baseline(2026-06-16 修正 — 舊「Local --update-baseline」會造成跨 OS 像素差,見 commit db4906ba):
+#   ⚠️ baseline 必須是 CI ubuntu 渲染。macOS 本機 render 跟 ubuntu 字型渲染不同 → 直接 local
+#   `--update-baseline` 會灌進 macOS 字型 → ~31 張假 diff(db4906ba 就是在修這個)。正確流程:
+#   1. 改 component 視覺(intentional change)後,在該分支跑本 workflow(push main / PR / 或 workflow_dispatch)
+#   2. CI 在 ubuntu 渲染 + diff,fail 時上傳 `visual-regression-diffs` artifact(含 ubuntu 渲染的 snapshots/)
+#   3. `gh run download <run> -n visual-regression-diffs -D /tmp/vr` → 人工核對 breached 圖內容 = 有意變更
+#   4. 把 breached 那幾張 ubuntu PNG 覆蓋進 snapshots-baseline/ → commit + push
+#   5. 重跑本 workflow → 0 diff pass
 #
 # Skip mechanism: PR title 含「[skip-visual]」可暫繞(emergency only,需 audit reason 進 commit msg)
 
@@ -21,6 +24,8 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # 2026-06-16:手動觸發 — 在工作分支上跑 ubuntu render 以更新 baseline(免 PR / 免先 ship)
+  workflow_dispatch:
 
 permissions:
   contents: read

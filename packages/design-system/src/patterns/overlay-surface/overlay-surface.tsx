@@ -51,18 +51,30 @@ import { HEADER_TABS_SLOT_WRAPPER_CLASS } from '@/design-system/patterns/header-
 // 時標記)的 **native size 不變**(sm: 28 md / 32 lg),但 **layout 佔位** via 負 `my` 縮成 `--chrome-slot-h`。
 //
 // **Slot height = header title 的 line-height**(讓 button 不 dominate,title 自然撐 header)
-//   - Default `var(--field-height-xs)` = 24,匹配 Dialog/Sheet text-body-lg (16 × 1.5 = 24)
-//   - Popover/Coachmark override `--chrome-slot-h: 1.25rem` (20),匹配 text-body (14 × 1.5 ≈ 21,floor 20)
+//   - Default 衍生自 title typography:`calc(var(--font-body-lg-size)*1.5)` = 16×1.5 = 24(Dialog/Sheet title = text-body-lg)。
+//     2026-06-16:從寫死 `var(--field-height-xs)`(巧合也=24)改為衍生 → title 字級若改,slot 自動跟、不靠巧合(M17 SSOT;
+//     1.5 = typography.spec body 行高常數,非 token 故 inline,若 body 行高改 1.3 須同步此處)。
+//   - Popover-tier(title = text-body)走 `COMPACT_HEADER_SLOT`(見下)= calc(--font-body-size×1.5) = 14×1.5 = 21
+//     (= PopoverTitle text-body line-box,衍生非寫死;2026-06-16 從各自寫死 1.25rem/20 巧合值收斂進 SSOT)
 //
-// Header 永遠 padding-based(無 min-h),但因 slot ≤ title line-height,header 高度由 title 主導:
+// Header 永遠 padding-based(無 min-h),但因 slot = title line-box,header 高度由 title 主導:
 //   - Dialog: max(24 title, 24 slot) + py-tight(12*2)= 48 ✓ chrome-header-height
-//   - Popover: max(21 title, 20 slot) + py-tight(12*2)= 45 ✓ 自然輕量
-// Q10 穩定性:title-only / title+button / refresh in/out 全 case header 高度 = title + py(slot 不 dominate)
+//   - Popover: max(21 title, 21 slot) + py-tight(12*2)= 45 ✓ 自然輕量
+// Q10 穩定性:title-only / title+button / refresh in/out 全 case header 高度 = title + py(slot=title,不超過)
 //
 // 負 my 公式:(slot - native) / 2,density-aware:
 //   Dialog md: (24 - 28) / 2 = -2px;  lg: (24 - 32) / 2 = -4px
-//   Popover md: (20 - 28) / 2 = -4px
-const CHROME_UNBOUNDED_SLOT = '[&_[data-unbounded]]:my-[calc((var(--chrome-slot-h,var(--field-height-xs))-var(--field-height-sm))/2)]'
+//   Popover md: (21 - 28) / 2 = -3.5px(sub-pixel,可接受)
+const CHROME_UNBOUNDED_SLOT = '[&_[data-unbounded]]:my-[calc((var(--chrome-slot-h,calc(var(--font-body-lg-size)*1.5))-var(--field-height-sm))/2)]'
+
+/**
+ * 輕量浮層 header 的 slot override —— **SSOT,禁各自 inline**(2026-06-16 收斂)。
+ * Popover-tier header(title = PopoverTitle `text-body`)的 slot = body line-box = `calc(--font-body-size×1.5)` = 21,
+ * 衍生自 title typography → title 字級改,slot 自動跟(取代舊各自寫死的 1.25rem / 20 巧合值)。
+ * 消費者(同設計邏輯,皆 raw SurfaceHeader + PopoverTitle):PopoverHeader / DataTable sort·filter panel /
+ * FileItem upload-manager。Default slot(Dialog/Sheet,title = text-body-lg)= 24,在 CHROME_UNBOUNDED_SLOT fallback。
+ */
+export const COMPACT_HEADER_SLOT = '[--chrome-slot-h:calc(var(--font-body-size)*1.5)]'
 
 export interface SurfaceHeaderProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -136,7 +148,7 @@ export const SurfaceHeader = React.forwardRef<
 
   // Padding-based(預設) — Dialog/Sheet 用 body-lg title (16/24)，自然撐 max(24 title, 24 button slot) = 24
   // → header = 24 + py-tight 12×2 = 48 chrome-header-height ✓ 穩定無需 min-h
-  // Popover 等輕量 chrome 走 PopoverHeader override(`[--chrome-slot-h:1.25rem]` = 20 slot,無 min-h / 無 py override)：max(21 title, 20 slot) + py-tight 12×2 = 45（見上方 L57）
+  // Popover 等輕量 chrome 走 COMPACT_HEADER_SLOT(slot = calc(--font-body-size×1.5)=21 = title line-box,無 min-h / 無 py override)：max(21 title, 21 slot) + py-tight 12×2 = 45（見上方 L57）
   //
   // withTabs=true(無 tabsSlot,backward compat):移除 border-b,consumer 自畫
   return (

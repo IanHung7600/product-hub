@@ -370,9 +370,9 @@ Button 自動加 **`data-unbounded="true"`** attribute 當 **`variant === 'text'
 
 **實際應用**:`SurfaceHeader` / `SurfaceFooter` 內建 CSS rule(SSOT 在 `overlay-surface.tsx` `CHROME_UNBOUNDED_SLOT`,此處僅引述不重述完整公式):
 ```css
-[&_[data-unbounded]]:my-[calc((var(--chrome-slot-h,var(--field-height-xs))-var(--field-height-sm))/2)]
+[&_[data-unbounded]]:my-[calc((var(--chrome-slot-h,calc(var(--font-body-lg-size)*1.5))-var(--field-height-sm))/2)]
 ```
-→ slot 高度由 `--chrome-slot-h` 參數化(default `var(--field-height-xs)`=24;Popover override 20)
+→ slot 高度由 `--chrome-slot-h` 參數化(default 衍生 `calc(var(--font-body-lg-size)*1.5)`=24;Popover-tier override = `COMPACT_HEADER_SLOT` 衍生 21;皆 title 字級改自動跟)
 → default(md): my=-2px / lg: my=-4px
 → 效果:Button native size 不變(sm 28/32,touch target 亦同),**layout 佔位縮到 24**(等效 xs 幾何),header = 24 + 2×tight = 48/56 = `--chrome-header-height` ✓
 

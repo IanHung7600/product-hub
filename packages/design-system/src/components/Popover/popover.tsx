@@ -4,7 +4,7 @@ import * as PopoverPrimitive from "@radix-ui/react-popover"
 import { X as XIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { SurfaceHeader, SurfaceBody, SurfaceFooter } from "@/design-system/patterns/overlay-surface/overlay-surface"
+import { SurfaceHeader, SurfaceBody, SurfaceFooter, COMPACT_HEADER_SLOT } from "@/design-system/patterns/overlay-surface/overlay-surface"
 import { Button } from "@/design-system/components/Button/button"
 import { OVERLAY_SIDE_OFFSET, OVERLAY_COLLISION_PADDING } from "@/design-system/tokens/elevation/overlay-geometry"
 
@@ -13,7 +13,7 @@ import { OVERLAY_SIDE_OFFSET, OVERLAY_COLLISION_PADDING } from "@/design-system/
  *
  * ── 視覺 ──
  * 與 Dialog 對齊：bg-surface-raised / rounded-lg / border-border / elevation-200。
- * density 永遠鎖 md（non-modal 輕量浮層不隨頁面 density 放大）。
+ * layout-space 鎖 md（輕量浮層 header py-tight 保持精簡）；ui-size 繼承 page（內部控件對齊觸發點，2026-06-15 改，原 data-density master switch）。
  *
  * ── 結構 ──
  * PopoverContent：外殼（bg / border / radius / shadow / density），無內距。
@@ -56,7 +56,11 @@ const PopoverContent = React.forwardRef<
       align={align}
       sideOffset={sideOffset}
       collisionPadding={collisionPadding}
-      data-density="md"
+      // Layout-space lock(2026-06-15 canonical,原 data-density="md" 改為只鎖 layout-space):Popover 是
+      // 輕量浮層,header/footer 用 py-tight(layout-space)→ 鎖 layout-space=md 保持精簡 padding;但
+      // **ui-size 不鎖、繼承 page** → 內部 field 控件 / dismiss 按鈕隨 page 放大,跟觸發點一致(decouple)。
+      // [data-layout-space="md"] 有 reset selector(layoutSpace.css L31)→ lg page 上正確 reset 回 md。
+      data-layout-space="md"
       onOpenAutoFocus={onOpenAutoFocus ?? handlePopoverOpenAutoFocus}
       className={cn(
         "z-50 w-72 rounded-lg border border-border bg-surface-raised text-foreground shadow-[var(--elevation-200)] outline-none",
@@ -86,20 +90,19 @@ interface PopoverHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const PopoverHeader = React.forwardRef<HTMLDivElement, PopoverHeaderProps>(
   ({ className, children, hideClose = false, ...props }, ref) => (
-    // Popover lightweight chrome canonical(2026-05-04 重思 v2):
-    //   覆寫 `--chrome-slot-h: 1.25rem` (20px) → unbounded button 佔位縮成 20,**匹配 PopoverTitle
-    //   text-body line-height (14×1.5≈21,floor 20)**。Header 維持 padding-based 自然撐開:
-    //   max(21 title, 20 slot) + py-tight(12*2) = 45 → 自然比 Dialog/Sheet 48 輕一級。
-    //   Q10 穩定:title-only / title+close 都 = title + py 主導,slot 不 dominate。
-    //   無 min-h / 無 py override — 修正前一版過度設計。
+    // Popover lightweight chrome canonical(2026-05-04 重思 v2;2026-06-16 slot 改衍生 + 收斂 SSOT):
+    //   走 `COMPACT_HEADER_SLOT`(= calc(--font-body-size×1.5) = 14×1.5 = 21 = PopoverTitle text-body line-box,
+    //   衍生非寫死,取代舊各自寫死的 1.25rem / 20 巧合值)→ slot = title 行高,title 字級改 slot 自動跟。
+    //   Header 維持 padding-based:max(21 title, 21 slot) + py-tight(12*2) = 45 → 自然比 Dialog/Sheet 48 輕一級。
+    //   Q10 穩定:title-only / title+close 都 = title + py 主導(slot=title)。無 min-h / 無 py override。
     <SurfaceHeader
       ref={ref}
-      className={cn("justify-between [--chrome-slot-h:1.25rem]", className)}
+      className={cn("justify-between", COMPACT_HEADER_SLOT, className)}
       {...props}
     >
       <div className="flex-1 min-w-0">{children}</div>
       {!hideClose && (
-        // Dismiss X = native sm,SurfaceHeader 負 my trick 讓 layout 佔位 24 → 匹配 inner 24
+        // Dismiss X = native sm,SurfaceHeader 負 my trick 讓 layout 佔位縮到 slot(21 = title line-box)
         <PopoverPrimitive.Close asChild>
           <Button data-dismiss iconOnly dismiss size="sm" startIcon={XIcon} aria-label="關閉" />
         </PopoverPrimitive.Close>

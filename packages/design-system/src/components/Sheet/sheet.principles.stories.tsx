@@ -33,6 +33,7 @@ import { Button } from '@/design-system/components/Button/button'
 import { Field, FieldLabel } from '@/design-system/components/Field/field'
 import { Input } from '@/design-system/components/Input/input'
 import { Checkbox } from '@/design-system/components/Checkbox/checkbox'
+import { CheckboxGroup } from '@/design-system/components/Checkbox/checkbox-group'
 
 const meta: Meta = {
   title: 'Design System/Components/Sheet/設計原則',
@@ -112,10 +113,10 @@ export const UsageGuidance: Story = {
                 </Field>
                 <Field>
                   <FieldLabel>通知</FieldLabel>
-                  <div className="grid">
+                  <CheckboxGroup>
                     <Checkbox defaultChecked label="新任務" />
                     <Checkbox label="每日摘要" />
-                  </div>
+                  </CheckboxGroup>
                 </Field>
             </SheetBody>
             <SheetFooter>
@@ -180,10 +181,10 @@ export const UsageGuidance: Story = {
           </PopoverTrigger>
           <PopoverContent align="start">
             <PopoverBody>
-              <div className="grid">
+              <CheckboxGroup>
                 <Checkbox defaultChecked label="進行中" />
                 <Checkbox label="已完成" />
-              </div>
+              </CheckboxGroup>
             </PopoverBody>
           </PopoverContent>
         </Popover>

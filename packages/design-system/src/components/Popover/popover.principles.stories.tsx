@@ -34,6 +34,7 @@ import {
 } from '@/design-system/components/Tooltip/tooltip'
 import { Button } from '@/design-system/components/Button/button'
 import { Checkbox } from '@/design-system/components/Checkbox/checkbox'
+import { CheckboxGroup } from '@/design-system/components/Checkbox/checkbox-group'
 
 const meta: Meta = {
   title: 'Design System/Components/Popover/設計原則',
@@ -95,10 +96,11 @@ export const UsageGuidance: Story = {
           <PopoverContent align="start">
             <PopoverHeader><PopoverTitle>依狀態篩選</PopoverTitle></PopoverHeader>
             <PopoverBody>
-              <div className="grid">
+              {/* CheckboxGroup zero-gap canonical(checkbox.spec.md L225)— 非手刻 grid div */}
+              <CheckboxGroup>
                 <Checkbox defaultChecked label="進行中" />
                 <Checkbox label="已完成" />
-              </div>
+              </CheckboxGroup>
             </PopoverBody>
           </PopoverContent>
         </Popover>
@@ -168,12 +170,12 @@ export const UsageGuidance: Story = {
           <PopoverContent align="start" className="w-80">
             <PopoverHeader><PopoverTitle>進階篩選</PopoverTitle></PopoverHeader>
             <PopoverBody>
-              <div className="grid">
+              <CheckboxGroup>
                 <Checkbox defaultChecked label="我指派的" />
                 <Checkbox label="我建立的" />
                 <Checkbox label="我追蹤的" />
-                <div className="border-t border-divider pt-3 mt-1 text-caption text-fg-muted">最多 3 個條件</div>
-              </div>
+              </CheckboxGroup>
+              <div className="border-t border-divider pt-3 mt-1 text-caption text-fg-muted">最多 3 個條件</div>
             </PopoverBody>
             <PopoverFooter>
               <Button variant="tertiary" size="sm" className="flex-1">清除</Button>
@@ -217,10 +219,10 @@ export const UsageGuidance: Story = {
           </PopoverTrigger>
           <PopoverContent align="start">
             <PopoverBody>
-              <div className="grid">
+              <CheckboxGroup>
                 <Checkbox defaultChecked label="我的任務" />
                 <Checkbox label="全部" />
-              </div>
+              </CheckboxGroup>
             </PopoverBody>
           </PopoverContent>
         </Popover>
@@ -251,7 +253,7 @@ export const VisualAlignmentRule: Story = {
     <div>
       <Rule
         title="Popover 與 Dialog 共用 overlay-surface 視覺語言"
-        note="bg-surface-raised / border-border / rounded-lg / elevation-200 完全一致。Header / Body / Footer 內 padding 來自 overlay-surface pattern 主檔(px-loose py-tight)。差異只有兩點:(1) Popover 是 non-modal 無 overlay 遮罩,(2) density 永遠鎖 md(不隨頁面 density 放大)"
+        note="bg-surface-raised / border-border / rounded-lg / elevation-200 完全一致。Header / Body / Footer 內 padding 來自 overlay-surface pattern 主檔(px-loose py-tight)。差異:(1) Popover 是 non-modal 無 overlay 遮罩,(2) Popover 鎖 layout-space=md(header 精簡)、Dialog 鎖 layout-space=lg(寬鬆呼吸),兩者 ui-size 都繼承 page"
       >
         <Popover>
           <PopoverTrigger asChild>

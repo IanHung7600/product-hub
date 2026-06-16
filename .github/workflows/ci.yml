@@ -98,6 +98,17 @@ jobs:
           fi
           echo "✅ stories type-check clean"
 
+      - name: Build apps/template(React 19 — root tsc -b references 不含 → 防 receiver-only TS2503 再現)
+        # 2026-06-16 root-cause fix:apps/template 是 React 19 workspace(自帶 nested @types/react@19),但 root
+        # tsconfig.json references 只含 tsconfig.app/node,從不 typecheck apps/template。React19-specific 錯
+        # (@types/react 移除「全域」JSX namespace → `JSX.Element` TS2503)只在 receiver `cd apps/template &&
+        # npm run build` 才炸,DS CI 一路假綠 ship(anchor:bde81e7e 2026-06-12 brick ds-product-template
+        # receiver build + 自身 Audit + Dependabot PR)。跑 receiver 同款 build command(tsc -b && vite build,
+        # resolve apps/template 自帶 React19 types)在 publish 前攔下此 class bug。
+        run: |
+          cd apps/template
+          npm run build
+
       - name: Hook test suite
         run: |
           shopt -s nullglob

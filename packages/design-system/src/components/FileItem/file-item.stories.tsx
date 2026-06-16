@@ -6,7 +6,7 @@ import { FileItem } from './file-item'
 import { Button } from '@/design-system/components/Button/button'
 import { FileViewer, type FileInfo } from '@/design-system/components/FileViewer/file-viewer'
 // upload-manager 面板消費 overlay-surface header + body SSOT(非手刻)—— 跟 Popover/Dialog 同一組 primitive
-import { SurfaceHeader, SurfaceBody } from '@/design-system/patterns/overlay-surface/overlay-surface'
+import { SurfaceHeader, SurfaceBody, COMPACT_HEADER_SLOT } from '@/design-system/patterns/overlay-surface/overlay-surface'
 import { PopoverTitle } from '@/design-system/components/Popover/popover'
 
 // 錯誤 description 範例(含 clickable "View log"):consumer 自由 ReactNode,通常用底線 link 表 clickable
@@ -217,7 +217,7 @@ export const UploadManagerSurface = {
     <div className="max-w-md flex flex-col rounded-lg border border-border bg-surface-raised shadow-[var(--elevation-200)]">
       {/* header 消費 overlay-surface SurfaceHeader + PopoverTitle(輕量浮層 chrome SSOT,非手刻):
           px-loose py-tight + border-b + chevron(variant=text → 自動 data-unbounded → 套 slot 負 my trick)*/}
-      <SurfaceHeader className="justify-between [--chrome-slot-h:1.25rem]">
+      <SurfaceHeader className={`justify-between ${COMPACT_HEADER_SLOT}`}>
         <div className="flex-1 min-w-0"><PopoverTitle>正在上傳 3 個項目</PopoverTitle></div>
         <Button iconOnly variant="text" size="sm" startIcon={ChevronDown} aria-label="收合" onClick={noop} />
       </SurfaceHeader>
@@ -243,7 +243,7 @@ export const UploadManagerCompactSurface = {
   render: () => (
     <div className="max-w-md flex flex-col rounded-lg border border-border bg-surface-raised shadow-[var(--elevation-200)]">
       {/* header 消費同一個 overlay-surface SurfaceHeader + PopoverTitle SSOT(同 rich panel)*/}
-      <SurfaceHeader className="justify-between [--chrome-slot-h:1.25rem]">
+      <SurfaceHeader className={`justify-between ${COMPACT_HEADER_SLOT}`}>
         <div className="flex-1 min-w-0"><PopoverTitle>同步 3 個檔案</PopoverTitle></div>
         <Button iconOnly variant="text" size="sm" startIcon={ChevronDown} aria-label="收合" onClick={noop} />
       </SurfaceHeader>

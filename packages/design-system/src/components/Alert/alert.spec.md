@@ -142,7 +142,7 @@ Alert chrome corner 可承載多個 action(close 左側並排):
 
 ### Subtle(預設)
 
-淺底色 + 四邊 1px border(邊框採語意色的 hover tint)。99% 場景用 subtle——視覺重量適中,使用者注意但可繼續主要任務。不設 `data-theme`,元素跟隨頁面 theme。
+淺底色 + 四邊 1px border(邊框採 `--{hue}-text` = icon 同色,2026-06-15 user 拍板;原借 `-hover` 狀態 token 是語意 smell 已改)。99% 場景用 subtle——視覺重量適中,使用者注意但可繼續主要任務。不設 `data-theme`,元素跟隨頁面 theme。
 
 ### Solid
 

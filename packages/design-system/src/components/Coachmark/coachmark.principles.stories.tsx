@@ -26,6 +26,7 @@ import {
 } from '@/design-system/components/Dialog/dialog'
 import { Button } from '@/design-system/components/Button/button'
 import { Checkbox } from '@/design-system/components/Checkbox/checkbox'
+import { CheckboxGroup } from '@/design-system/components/Checkbox/checkbox-group'
 
 const meta: Meta = {
   title: 'Design System/Components/Coachmark/設計原則',
@@ -138,10 +139,10 @@ export const UsageGuidance: Story = {
             <PopoverContent align="start">
               <PopoverHeader><PopoverTitle>依狀態篩選</PopoverTitle></PopoverHeader>
               <PopoverBody>
-                <div className="grid">
+                <CheckboxGroup>
                   <Checkbox defaultChecked label="進行中" />
                   <Checkbox label="已完成" />
-                </div>
+                </CheckboxGroup>
               </PopoverBody>
             </PopoverContent>
           </Popover>
