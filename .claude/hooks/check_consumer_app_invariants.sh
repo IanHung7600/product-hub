@@ -227,6 +227,25 @@ if echo "$CONTENT" | grep -qE '<DS\.AppShell\b' && \
   VIOLATIONS="${VIOLATIONS}  - <AppShell header/sidebar/aside={<raw element>}> — slot 必餵 DS 元件(ChromeHeader / Sidebar / AppShellAside),raw div/header 漏接 border/scroll/responsive canonical(per app-shell.spec.md:296-299)\n"
 fi
 
+# Pattern 10(2026-06-16,user 抓 fork prototype 手刻 table 不用 DataTable):RAW PRIMITIVE 手刻
+# r3 既有 Pattern 1-9 只抓「DS 元件用錯」(<DS.X> 已在用但用法錯),漏掉**根本沒用 DS 元件、亂刻
+# raw HTML** —— 即 mindset #2 +「# SSOT 消費 canonical」+ build-ui-canonicals.md:9「命中既有元件
+# → 必消費,不 hand-craft raw HTML 繞過」這條**必定遵循大原則**的機械閘缺口。反 pattern 由
+# build-ui-canonicals.md ❌→✅ 對照表(SSOT)驅動。零誤判:只抓高信心 raw-tag 訊號;<DS.X> 元件是
+# PascalCase + DS. prefix 不匹配小寫 raw tag;node_modules 已於上方排除;有理由可 @ds-misuse-allow escape。
+if echo "$CONTENT" | grep -qE '<table\b' && echo "$CONTENT" | grep -qE '<thead\b|<tbody\b|<th\b'; then
+  VIOLATIONS="${VIOLATIONS}  - 手刻 raw <table><thead>/<tbody> 資料表 → 必用 <DataTable columns={...} data={...} />(build-ui-canonicals.md:18 ❌→✅ SSOT;這是「優先消費既有元件」大原則,無理由不得手刻)\n"
+fi
+if echo "$CONTENT" | grep -qE '<img\b[^>]*rounded-full'; then
+  VIOLATIONS="${VIOLATIONS}  - 手刻 <img ... rounded-full> 頭像 → 必用 <Avatar>(build-ui-canonicals.md:25)\n"
+fi
+if echo "$CONTENT" | grep -qE '<select\b'; then
+  VIOLATIONS="${VIOLATIONS}  - native <select> 手刻下拉 → 必用 <Select> / <DropdownMenu>(build-ui-canonicals.md:15)\n"
+fi
+if echo "$CONTENT" | grep -qE '<hr\b'; then
+  VIOLATIONS="${VIOLATIONS}  - 手刻 <hr> 分隔線 → 用 <Separator>(或 separator.spec 允許的 CSS border)(build-ui-canonicals.md:23)\n"
+fi
+
 # Pattern 6: Overlay trigger without defaultOpen state for visual demo
 # (Skip in production .tsx; only enforce in .stories.tsx where visual snapshot matters)
 if echo "$FILE" | grep -qE '\.stories\.tsx$'; then
