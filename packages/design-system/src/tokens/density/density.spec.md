@@ -119,3 +119,10 @@ document.documentElement.setAttribute('data-layout-space', 'md')
 - ❌ **把 density/layout-space lock 設在 header primitive(ChromeHeader / SurfaceHeader)而非 surface 根**——header 鎖、body 沒鎖 → 左緣不對齊(FileViewer 圖二 bug)。lock 一律放 surface 根容器
 - ❌ 為了追求表面一致性硬把 Dialog button 綁 lg ui-size(犧牲 header 高度 / strapline 彈性)
 - ❌ **鎖 Dialog 的 layout-space**(2026-06-16 定論)—— 本 spec 第 10 行定義 layout-space 就管「dialog body padding」,鎖 Dialog = 令自家 dial 對它點名要管的對象失效 = 自相矛盾;有同類 dial 的 SAP/Cloudscape 都讓 modal 跟 page dial。modal 寬鬆需求在 lg 階自然滿足(md 16 = Polaris 下限),不靠鎖。Popover/Coachmark 鎖 md 是另一回事(空間效率、消費 layout-space token、且為非阻斷錨定浮層)
+
+## 被引用(auto-maintained,Dim 3 reciprocal audit)
+
+> 本節由 `scripts/add-reciprocal-pointers.mjs` 自動維護,列出在 SSOT 語境下指向本 spec 的其他 spec。若要手動補充,寫在本節之前。
+
+- `file-viewer.spec.md`
+- `header-canonical.spec.md`

@@ -3,7 +3,11 @@ name: Mirror to published ds-product-template repo
 # Per 2026-05-29 monorepo 2-scenario architecture(codex r5 synthesize verdict):
 #   DS repo = SSOT,published `ajenchen/ds-product-template` = subset mirror(build artifact).
 #
-# Trigger: on push to main(template-affecting paths only)
+# Trigger(2026-06-16 timing-race root fix — 雙觸發):
+#   - workflow_run [Release] completed+success = 發版後主路徑(npm 已 publish → 內部 poll 零等待,
+#     根治 beta.64-67 mirror 連敗:舊 push 觸發遠早於 tag-publish ~28-81min,超過 15min poll → timeout 連紅)
+#   - push main(scaffold paths)= 非發版 scaffold 變更(apps/template 等);版本未上 npm 時 graceful skip
+#     (不 timeout),交給 Release 完成後的 workflow_run 補做
 # Action:
 #   1. Build mirror via scripts/build-published-template-mirror.mjs(allowlist + integrity scans)
 #   2. Push to ajenchen/ds-product-template main using CROSS_REPO_TOKEN PAT
@@ -41,19 +45,32 @@ on:
       - '!**/governance-counters.json'
       - '!**/hook-fires.jsonl'
 
+  # 2026-06-16 timing-race root fix:Release(tag→npm publish)完成後才觸發 mirror,npm 已有該版本 →
+  # 內部 poll 第一輪即過、零等待。Edge case A:job-level if 只在 Release **成功**才跑(失敗 = 沒新版)。
+  workflow_run:
+    workflows: ["Release"]
+    types: [completed]
+
   workflow_dispatch:  # allow manual trigger
 
 jobs:
   mirror:
     name: Build mirror + push to published template repo
     runs-on: ubuntu-latest
-    # 2026-06-06 fix:race — 同一 main push 同時觸發此 mirror + Release;Release npm publish 約 +11min 才完成,
-    # 此 job 的 `npm install --package-lock-only` 需新版已上 npm,故下方 poll 等版本上架(最多 15min)→ timeout 從 10 升 20。
+    # Edge case A:workflow_run 觸發只在 Release **成功**才跑(失敗/取消 = npm 沒新版,跑了也 poll-timeout)。
+    # push / workflow_dispatch 事件無此限制(它們走下方 graceful-skip 邏輯)。
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    # workflow_run 路徑 poll 只需確認 registry propagation(Release 已 publish 完),數分鐘內過;push 路徑
+    # 版本未上 npm 即 graceful skip 不長等。timeout 保留 20min 給 clone + rsync + lock 重生。
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
+          # Edge case C:workflow_run 預設 checkout default branch(main)HEAD —— 但發版後若又有新 bump 進 main,
+          # HEAD 版本會 > 剛發布版本 → 又落入「已 bump 未 publish」窗口。顯式 checkout 觸發 Release 的 head_sha
+          # (= 被 tag 的發版 commit),鎖定「正在發布的那個版本」內容;push / dispatch 用該事件自己的 sha。
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -111,24 +128,38 @@ jobs:
           # Why:published Audit CI 用 setup-node cache:npm + npm ci → 需 valid committed lock 含 @product/template
           # workspace。Template source(template/ds-product-template/)無 apps/ → 只有此 mirror 結構能生正確 lock。
           #
-          # RACE:此 mirror 與 Release 同 push 觸發,Release npm publish 約 +11min 才完成。mirror-build 把剛 bump 的
-          # ^$BUILT_VER 寫進 package.json,npm install 需該版已上 npm → 否則 ETARGET(beta.56/57 連敗根因)。故 poll
-          # 等「正在發布的版本」($BUILT_VER,直接讀 DS source,不靠 clone 的舊值)上 npm 才重生 lock。
-          # 非版本變更時 $BUILT_VER 早已在 npm → 立即通過,零等待。
-          # 2026-06-10 fix:必等「兩個」套件都上 npm(beta.61 mirror 敗因:只等 design-system,
-          # storybook-config 晚幾分鐘 publish → lock 重生 ETARGET notarget storybook-config)。
-          echo "⏳ 等 @qijenchen/design-system@$BUILT_VER + @qijenchen/storybook-config@$BUILT_VER 上 npm(避開 release-publish race,最多 15min)..."
-          for i in $(seq 1 60); do
+          # 2026-06-16 timing-race root fix(取代舊「push 觸發 + 60×15s=15min poll」):
+          #   npm publish 發生在 tag → Release.yml 完成時,遠晚於 push main(preflight worktree-clean gate 把
+          #   commit/push 與 tag 拆開 ~28-81min)→ 舊 push-triggered mirror 的 15min poll 必 timeout(beta.64-67 連敗)。
+          #   新模型:Release 成功的 workflow_run 才做真正 sync(版本此時必已 publish);push 只服務「非發版 scaffold
+          #   變更」,版本未上 npm 時 graceful skip(不 timeout),交 workflow_run 補做(edge case B)。
+          #   $BUILT_VER 已於上方讀出(checked-out SHA 的 DS 版本;workflow_run 路徑 = 被 tag 的發版版本)。
+          if [ "${{ github.event_name }}" = "workflow_run" ]; then
+            # Release 已成功 → 版本必已 publish;只等 registry propagation(數分鐘),短 poll(20×15s=5min)。
+            echo "⏳ workflow_run(Release 成功)— 確認 @design-system + @storybook-config @$BUILT_VER 已上 npm..."
+            ok=0
+            for i in $(seq 1 20); do
+              if npm view "@qijenchen/design-system@$BUILT_VER" version >/dev/null 2>&1 \
+                 && npm view "@qijenchen/storybook-config@$BUILT_VER" version >/dev/null 2>&1; then
+                ok=1; echo "✓ 兩套件 @$BUILT_VER 已上 npm,繼續重生 lock"; break
+              fi
+              sleep 15
+            done
+            if [ "$ok" -ne 1 ]; then
+              echo "❌ Release 成功但 $BUILT_VER 5min 內未見於 npm(registry 異常延遲?)。中止。"; exit 1
+            fi
+          else
+            # push / workflow_dispatch:版本若已在 npm → 直接 mirror(非發版 scaffold 變更的正常路徑);
+            # 若尚未上 npm(= 發版進行中,bump 已 push 但 tag/publish 未完成)→ graceful skip 不 timeout,
+            # 交給 Release 完成後的 workflow_run 補做(edge case B,避免歷史的 timeout 連紅)。
             if npm view "@qijenchen/design-system@$BUILT_VER" version >/dev/null 2>&1 \
                && npm view "@qijenchen/storybook-config@$BUILT_VER" version >/dev/null 2>&1; then
-              echo "✓ 兩套件 @$BUILT_VER 都已上 npm,繼續重生 lock"; break
+              echo "✓ $BUILT_VER 已在 npm — push/dispatch 事件直接 mirror scaffold 變更"
+            else
+              echo "ℹ️ $BUILT_VER 尚未上 npm(發版進行中)→ push/dispatch 不 timeout,skip;改由 Release 完成的 workflow_run 補 mirror。"
+              exit 0
             fi
-            if [ "$i" -eq 60 ]; then
-              echo "❌ 等 npm 逾時 15min — Release 可能失敗 / 延遲。本次不 mirror(避免寫出指向不存在版本的 lock)。"
-              exit 1
-            fi
-            sleep 15
-          done
+          fi
           npm install --package-lock-only --ignore-scripts --no-audit --no-fund
           git config user.name "DS Mirror Bot"
           git config user.email "bot@noreply.github.com"
