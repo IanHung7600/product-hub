@@ -16,6 +16,8 @@
     "CLAUDE.md",
     "ds-canonical",
     "!ds-canonical/.claude",
+    "!**/__pycache__",
+    "!**/*.pyc",
     "cli-init.mjs",
     "ds-story-manifest.json",
     "llms.txt",

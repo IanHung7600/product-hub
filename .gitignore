@@ -118,3 +118,8 @@ storybook-static-baseline/
 
 # 治理 hook-fire logger 偶爾以相對路徑誤寫到 ds-canonical/.claude/logs(stray,絕不該 ship 進 fork npm)
 packages/design-system/ds-canonical/.claude/
+
+# Python bytecode cache:CI 跑 harness 經 python3 跑 block_prototype_imports.py 會生 __pycache__,
+# 不該 ship 進 npm(beta.70 誤含一個 .pyc,harmless 但 cruft;此處 + package.json files negation 防再現)
+__pycache__/
+*.pyc
