@@ -61,7 +61,7 @@ if [ "${CLAUDE_BYPASS_CHROME_HEADER_AVATAR:-0}" = "1" ]; then
   exit 0
 fi
 
-REL=${FILE_PATH#*/my-project/}
+REL=${FILE_PATH#"$CLAUDE_PROJECT_DIR"/}
 
 cat >&2 <<EOF
 🚨 Chrome header avatar canonical violation(per user 2026-05-27 抓 + codex collab cite battle):

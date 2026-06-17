@@ -123,6 +123,11 @@ jobs:
           node scripts/sync-template-canonical-app.mjs --check
           node scripts/gen-llms-txt.mjs --check
           node scripts/check-field-cascade-resolve.mjs
+          node scripts/audit-motion-delay-invariants.mjs
+          node scripts/item-content-leading-coherence.mjs
+          node scripts/checkbox-group-handcraft-invariant.mjs
+          node scripts/layout-space-story-coherence.mjs
+          node scripts/overlay-density-lock-placement.mjs
           # 2026-06-16 root-cause gate(== ci.yml「Build apps/template」+ release-preflight.mjs):apps/template 是
           # React19 workspace,root tsc -b references 不含它 → receiver-only `JSX.Element` TS2503 假綠 ship
           # (bde81e7e 2026-06-12 anchor)。subshell 跑 receiver 同款 build,cwd 不外洩。

@@ -96,7 +96,7 @@ if [ "${CLAUDE_BYPASS_DS_ANCHOR:-0}" = "1" ]; then
   exit 0
 fi
 
-REL_PATH=${FILE_PATH#*/my-project/}
+REL_PATH=${FILE_PATH#"$CLAUDE_PROJECT_DIR"/}
 
 # Soft BLOCKER(對齊 check_substantive_edit_approval_preflight.sh hybrid pattern)
 cat >&2 <<EOF

@@ -218,6 +218,17 @@ const r1 = refreshLaunchers(SKEL)
   if (!r.skipped) { skelResults.push('  opt-out: ❌ 有 .github/no-governance-sync 仍刷新(應 skip)'); fail++ }
   else skelResults.push(`  opt-out: ✅ skip(${r.skipped})`)
 }
+// 4d JSONC settings(// 註解,Claude Code 允許)→ 仍能容忍 + merge(MINOR 2 回歸鎖)
+{
+  buildSkelFixture(false)
+  writeFileSync(join(SKEL, '.claude/settings.json'), '{\n  // fork user 自己加的註解\n  "defaultMode": "auto",\n  "hooks": {} /* block 註解 */\n}')
+  let r, threw = false
+  try { r = refreshLaunchers(SKEL) } catch (e) { threw = true }
+  const s = (!threw && r?.settingsMerged) ? JSON.parse(readFileSync(join(SKEL, '.claude/settings.json'), 'utf8')) : null
+  const hasLauncher = s && JSON.stringify(s.hooks).includes('check_governance_bootstrap.sh')
+  if (threw || !hasLauncher) { skelResults.push(`  JSONC settings: ❌ // 註解的 settings 沒容忍/沒 merge(threw=${threw})`); fail++ }
+  else skelResults.push('  JSONC settings: ✅ // + block 註解容忍 + merge 成功')
+}
 
 console.log('=== 假 fork 測試 harness 結果 ===')
 console.log(`fixture: ${FIX}(apps/** + node_modules/@qijenchen/design-system/src,NO packages/design-system)`)

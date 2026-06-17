@@ -93,6 +93,10 @@ function buildCorpus() {
   const lockEntries = []
 
   const emit = (outName, content, sourceHook, bucket, evs) => {
+    // fork path 適配(所有 bucket 都套):DS-author repo dir 名 `my-project` 的 display-path strip
+    // 在 fork 永不命中 → 顯示絕對路徑。改 `$CLAUDE_PROJECT_DIR`(fork 通用,strip 出 repo-relative)。
+    // 純 display(soft warn message),不動 exit code / BLOCKER 邏輯。
+    content = content.replace(/#\*\/my-project\//g, '#"$$CLAUDE_PROJECT_DIR"/')
     const outPath = join(OUT_DIR, 'hooks', outName)
     writeFileSync(outPath, content)
     const sha = createHash('sha256').update(content).digest('hex')

@@ -17,6 +17,23 @@
 import { readFileSync, writeFileSync, copyFileSync, existsSync, readdirSync, mkdirSync } from 'node:fs'
 import { join } from 'node:path'
 
+// Claude Code 的 .claude/settings.json 允許 JSONC(// 行註解 / block 註解)→ JSON.parse 會炸。
+// string-aware strip 註解後再 parse(fork user 若註解過 settings,skeleton 刷新才不會默默 no-op)。
+function parseJsonc(text, label) {
+  let out = '', inStr = false, inLine = false, inBlock = false
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i], n = text[i + 1]
+    if (inLine) { if (c === '\n') { inLine = false; out += c } continue }
+    if (inBlock) { if (c === '*' && n === '/') { inBlock = false; i++ } continue }
+    if (inStr) { out += c; if (c === '\\') out += text[++i] ?? ''; else if (c === '"') inStr = false; continue }
+    if (c === '"') { inStr = true; out += c; continue }
+    if (c === '/' && n === '/') { inLine = true; i++; continue }
+    if (c === '/' && n === '*') { inBlock = true; i++; continue }
+    out += c
+  }
+  try { return JSON.parse(out) } catch (e) { throw new Error(`${label} JSONC strip 後仍非法 JSON:${e.message}`) }
+}
+
 const LAUNCHERS = ['check_governance_bootstrap.sh', 'fork-governance-dispatcher.sh', 'inject_fork_governance_preamble.sh']
 const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 // path-segment 比對:啟動器必以 `/<name>` 出現(它一律在 .claude/hooks/ 路徑下)且後接邊界(引號/空白/結尾)。
@@ -50,7 +67,7 @@ export function refreshLaunchers(projectDir) {
   // 2. idempotent merge settings hooks + permissions
   const canonical = JSON.parse(readFileSync(join(src, 'settings-hooks.json'), 'utf8'))
   const settingsPath = join(projectDir, '.claude/settings.json')
-  const s = existsSync(settingsPath) ? JSON.parse(readFileSync(settingsPath, 'utf8')) : {}
+  const s = existsSync(settingsPath) ? parseJsonc(readFileSync(settingsPath, 'utf8'), '.claude/settings.json') : {}
   s.hooks = s.hooks || {}
 
   // strip 舊 launcher 註冊(所有 event)→ 去重,重跑不疊加

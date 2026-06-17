@@ -129,6 +129,8 @@ const canonicalChecks = [
   ['ds-canonical/fork/hooks', 'fork hook bodies(機械強制)'],
   ['ds-canonical/fork/launchers/fork-governance-dispatcher.sh', 'fork 接線骨架(sync-all 刷新源)'],
   ['ds-canonical/fork/launchers/settings-hooks.json', 'fork settings hooks 模板'],
+  // fork hook 依賴的 registry(漏 ship → opacity/layout-space hook 在 fork 降級 fallback、失去 radius/typography/elevation block-list)
+  ['src/tokens/utility-registry.json', 'utility-registry(fork opacity/layout-space hook 依賴)'],
 ]
 for (const [path, label] of canonicalChecks) {
   if (!existsSync(join(dsRoot, path))) {

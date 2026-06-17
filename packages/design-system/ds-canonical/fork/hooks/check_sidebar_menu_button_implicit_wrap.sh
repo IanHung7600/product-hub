@@ -55,7 +55,7 @@ if [ "${CLAUDE_BYPASS_SIDEBAR_MENU_BUTTON_WRAP:-0}" = "1" ]; then
   exit 0
 fi
 
-REL=${FILE_PATH#*/my-project/}
+REL=${FILE_PATH#"$CLAUDE_PROJECT_DIR"/}
 
 cat >&2 <<'EOF'
 🚨 SidebarMenuButton implicit-wrap canonical violation(per user 2026-05-27 UserFooter 垂直 stack 事件):

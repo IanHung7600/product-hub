@@ -9,7 +9,7 @@
     },
     {
       "file": "hooks/check_chrome_header_avatar_canonical.sh",
-      "sha256": "2b9c31b2071da0ae1c6e27620a0aa3ebc9983ded827ef7dcc2016342632935de",
+      "sha256": "ffa91559c19d3f2aab50c69c4b247c15a29376d10b116f6223afb3289b4f91a2",
       "sourceHook": "check_chrome_header_avatar_canonical.sh",
       "bucket": "SHIP_AS_IS"
     },
@@ -21,7 +21,7 @@
     },
     {
       "file": "hooks/check_ds_anchor_preflight.sh",
-      "sha256": "b2a2e1128e014634f94bdd83534f0bc60461924b988e6beef868598e305a5b59",
+      "sha256": "15fb44c8b35042efd03e1992f8b5b7b121a7633cebe556d4ca0a1a7f5483dc35",
       "sourceHook": "check_ds_anchor_preflight.sh",
       "bucket": "SHIP_REWRITTEN"
     },
@@ -69,7 +69,7 @@
     },
     {
       "file": "hooks/check_sidebar_menu_button_implicit_wrap.sh",
-      "sha256": "90be9c6744b27f0ffd9320dc1fbca22d159c8c43292e7b6d6a6e577178ed89dc",
+      "sha256": "240807737e9c75bd137a8abd9a7194ffcb4a92b1015f626f14539fd8dbf73ea8",
       "sourceHook": "check_sidebar_menu_button_implicit_wrap.sh",
       "bucket": "SHIP_AS_IS"
     },

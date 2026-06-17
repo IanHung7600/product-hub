@@ -9,6 +9,7 @@
     "dist",
     "src/**/*.{tsx,ts,css}",
     "src/**/*.spec.md",
+    "src/**/*.json",
     "!src/**/*.spec.ts",
     "!src/**/*.test.ts",
     "README.md",
