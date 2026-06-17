@@ -38,6 +38,8 @@ console.log('═══ Release Preflight — 1:1 release.yml gates,fail-fast ═
 // ① SYNCS first(修 drift,讓 CI 抓不到)
 run('sync version → 5 manifests', 'node scripts/sync-version-to-all-manifests.mjs')
 run('sync ds-canonical mirror', 'node scripts/sync-ds-canonical.mjs')
+// C-prime fork governance corpus 從 .claude SSOT 重生(hooks + preamble,deterministic)→ 下方 --check 驗 + commit 進 tag。
+run('sync fork-governance corpus(hooks + preamble ← .claude SSOT)', 'node scripts/build-fork-governance.mjs')
 // llms.txt/llms-full.txt 從 spec frontmatter build-time 重生(deterministic,禁手維護;對齊 Mantine
 // 「每 release 從 source 重生」)。SYNCS 段重生 → 下方 drift gate 驗 + commit 進 tag。
 run('sync llms.txt + llms-full.txt(從 spec frontmatter)', 'node scripts/gen-llms-txt.mjs')
@@ -64,6 +66,11 @@ run('root barrel internal-exclusion(dim-72)', 'node scripts/gen-design-system-ba
 run('plugin-structure-validate', 'node scripts/plugin-structure-validate.mjs')
 run('story-quality', 'npm run --silent story-quality:check')
 run('ds-canonical drift check', 'node scripts/sync-ds-canonical.mjs --check')
+// C-prime #5(2026-06-17 codex 共識 C3 future-SSOT 閘):fork 治理 corpus 必過(a) classify 漏接閘
+// (新增 hook 未分類 = FAIL)+(b) 生成物 vs SSOT drift gate,且(c) 假 fork harness 防假生效。
+// 這把「未來 DS 治理增刪改 → fork 同步」從『靠記得』變『機械強制』(漏分類/drift/假生效 = 擋發版)。
+run('fork-governance --check(classify 漏接 + drift gate,C3 future-SSOT)', 'node scripts/build-fork-governance.mjs --check')
+run('fork-governance harness(假 fork 防 false-green/brick/crash)', 'node scripts/test-fork-governance.mjs')
 run('template canonical App drift check(防 receiver 覆寫 scaffold App.tsx)', 'node scripts/sync-template-canonical-app.mjs --check')
 // 2026-06-08:DS src 改了必 bump 才 republish(補「republish 靠 AI 記得 bump」非機械斷點)。
 // preflight 此時 version 已 bump → gate 見「bumped → OK」綠;若忘 bump 直 push 則 ci.yml 同道 gate 擋。

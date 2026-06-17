@@ -214,9 +214,16 @@ for (const p of dsSourceCheck) {
     scanFail++
   }
 }
-// .claude/hooks 特例(2026-05-30):fork-committed bootstrap hooks 合法該在 mirror(補 plugin chicken-egg);
-// 只准這 2 個,其餘 = DS governance hook 洩漏(governance 走 plugin install,不該進 mirror)。
-const FORK_BOOTSTRAP_HOOKS = new Set(['check_plugin_bootstrap.sh', 'block_production_edit_without_plugin.sh'])
+// .claude/hooks 特例(2026-06-17 C-prime 更新):fork-committed governance 啟動器合法該在 mirror。
+// C-prime committed-config-first:committed 的是「穩定啟動器」(dispatcher 讀 npm fork-corpus / bootstrap
+// 自動裝 @beta / preamble 注入),治理「本體」在 npm(node_modules ds-canonical/fork)非 mirror。
+// 只准這 3 個 committed 啟動器;其餘 .sh = DS governance hook 本體洩漏(該走 npm,不進 mirror)。
+// 退役舊名:check_plugin_bootstrap.sh / block_production_edit_without_plugin.sh(plugin-first 時代已移除)。
+const FORK_BOOTSTRAP_HOOKS = new Set([
+  'check_governance_bootstrap.sh',
+  'fork-governance-dispatcher.sh',
+  'inject_fork_governance_preamble.sh',
+])
 const mirrorHooksDir = join(OUT_DIR, '.claude/hooks')
 if (existsSync(mirrorHooksDir)) {
   const leaked = readdirSync(mirrorHooksDir).filter((f) => !FORK_BOOTSTRAP_HOOKS.has(f))

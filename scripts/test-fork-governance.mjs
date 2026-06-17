@@ -98,9 +98,58 @@ for (const h of allHooks) {
   if (r.exit === 127) { crashed.push(`${h}: exit 127 (missing dep/file)`); fail++ }
 }
 
+// 3) committed 模板治理流程(#6 codex C3:測 dispatcher/bootstrap/injection,不只 fork hook 本體)
+// 合成「完整 fork」:committed template .claude/hooks + npm fork corpus,跑 3 個 committed 啟動器。
+const TPL_HOOKS = join(ROOT, 'template/ds-product-template/.claude/hooks')
+const FULL = '/tmp/ds-fork-full'
+const flowResults = []
+function buildFullFixture() {
+  if (existsSync(FULL)) rmSync(FULL, { recursive: true, force: true })
+  mkdirSync(join(FULL, 'apps/demo/src'), { recursive: true })
+  mkdirSync(join(FULL, '.claude/hooks'), { recursive: true })
+  const npmFork = join(FULL, 'node_modules/@qijenchen/design-system/ds-canonical/fork')
+  mkdirSync(npmFork, { recursive: true })
+  // committed 啟動器
+  for (const h of readdirSync(TPL_HOOKS).filter((f) => f.endsWith('.sh'))) copyFileSync(join(TPL_HOOKS, h), join(FULL, '.claude/hooks', h))
+  // npm fork corpus(hooks + manifest + preamble)
+  execSync(`cp -R '${join(ROOT, 'packages/design-system/ds-canonical/fork')}/.' '${npmFork}/'`)
+  writeFileSync(join(FULL, 'apps/demo/src/App.tsx'), 'export const App = () => <div>x</div>\n')
+}
+function runTpl(hookFile, payload) {
+  const r = spawnSync('bash', [join(FULL, '.claude/hooks', hookFile)], { input: payload, encoding: 'utf8', cwd: FULL, env: { ...process.env, CLAUDE_PROJECT_DIR: FULL } })
+  return { exit: r.status == null ? 127 : r.status, out: (r.stdout || ''), err: (r.stderr || '') }
+}
+buildFullFixture()
+// injection:preamble 在 → 輸出 valid additionalContext 含設計紀律
+{
+  const r = runTpl('inject_fork_governance_preamble.sh', '{"hook_event_name":"SessionStart"}')
+  let ok = false
+  try { const j = JSON.parse(r.out); ok = (j.hookSpecificOutput.additionalContext || '').includes('item-anatomy') } catch (e) { ok = false }
+  if (!ok) { flowResults.push('  inject_preamble: ❌ 未輸出含 item-anatomy 的 valid additionalContext'); fail++ }
+  else flowResults.push('  inject_preamble: ✅ 注入 valid additionalContext(含設計紀律)')
+}
+// dispatcher:PostToolUse 違規(手刻 table)→ 轉發 exit 2
+{
+  const v = runTpl('fork-governance-dispatcher.sh', JSON.stringify({ hook_event_name: 'PostToolUse', tool_name: 'Write', tool_input: { file_path: 'apps/demo/src/App.tsx', new_string: 'export const X=()=><table><thead><th>a</th></thead></table>' } }))
+  if (v.exit !== 2) { flowResults.push(`  dispatcher(PostToolUse 違規): ❌ 未轉發攔截(exit=${v.exit})`); fail++ }
+  else flowResults.push('  dispatcher(PostToolUse 違規): ✅ 轉發 exit 2')
+}
+// dispatcher:manifest 缺 → 不 brick(exit 0)
+{
+  rmSync(join(FULL, 'node_modules/@qijenchen/design-system/ds-canonical/fork/manifest.json'), { force: true })
+  const v = runTpl('fork-governance-dispatcher.sh', JSON.stringify({ hook_event_name: 'PostToolUse', tool_name: 'Write', tool_input: { file_path: 'apps/demo/src/App.tsx', new_string: 'x' } }))
+  if (v.exit !== 0) { flowResults.push(`  dispatcher(manifest 缺): ❌ brick(exit=${v.exit},應 0)`); fail++ }
+  else flowResults.push('  dispatcher(manifest 缺): ✅ exit 0 不 brick')
+  const b = runTpl('check_governance_bootstrap.sh', '{"hook_event_name":"SessionStart"}')
+  if (b.exit !== 0) { flowResults.push(`  bootstrap(本體缺): ❌ exit ${b.exit}(應 0 fail-open)`); fail++ }
+  else flowResults.push('  bootstrap(本體缺): ✅ exit 0 fail-open(notice 不 brick)')
+}
+
 console.log('=== 假 fork 測試 harness 結果 ===')
 console.log(`fixture: ${FIX}(apps/** + node_modules/@qijenchen/design-system/src,NO packages/design-system)`)
 console.log(results.join('\n'))
+console.log('\n=== committed 模板治理流程(dispatcher/bootstrap/injection)===')
+console.log(flowResults.join('\n'))
 console.log(`\ncrash 檢查(${allHooks.length} hook):${crashed.length ? '\n  ' + crashed.join('\n  ') : '✅ 無 syntax error / 無 exit-127'}`)
 console.log(`\n${fail === 0 ? '✅ FORK-GOVERNANCE HARNESS PASS — 無 false-green / 無 brick / 無 crash' : `❌ ${fail} 項 fail(見上）`}`)
 process.exit(fail === 0 ? 0 : 1)

@@ -20,9 +20,11 @@ DS_FORK="$PD/node_modules/@qijenchen/design-system/ds-canonical/fork"
 [ -f "$DS_FORK/manifest.json" ] && exit 0
 
 # 治理本體缺 → 嘗試自動裝(僅在有 package.json 時;雲端網路 unrestricted)
+# codex risk 2:plain `npm install` 會被 lockfile 重現「舊」依賴樹 → 拿不到最新治理。
+# 明確裝 @beta(對齊 sync-all)保證 npm-current,而非 lockfile pinned 舊版。
 if [ -f "$PD/package.json" ]; then
-  echo "💡 DS 治理本體缺(可能是雲端 fresh-clone session)→ 自動 npm install 啟用治理…" >&2
-  ( cd "$PD" && npm install --no-audit --no-fund >/dev/null 2>&1 ) || true
+  echo "💡 DS 治理本體缺(可能是雲端 fresh-clone session)→ 自動裝最新治理(@beta)…" >&2
+  ( cd "$PD" && npm install @qijenchen/design-system@beta @qijenchen/storybook-config@beta --legacy-peer-deps --no-audit --no-fund >/dev/null 2>&1 ) || true
 fi
 
 # 裝完複驗
