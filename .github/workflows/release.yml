@@ -117,6 +117,8 @@ jobs:
           node scripts/plugin-structure-validate.mjs
           npm run --silent story-quality:check
           node scripts/sync-ds-canonical.mjs --check
+          node scripts/build-fork-governance.mjs --check
+          node scripts/test-fork-governance.mjs
           node scripts/check-src-republish.mjs --check
           node scripts/sync-template-canonical-app.mjs --check
           node scripts/gen-llms-txt.mjs --check

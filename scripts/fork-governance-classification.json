@@ -7,7 +7,7 @@
     "delivery_mechanisms": {
       "hook": "committed settings.json dispatcher → 跑 npm fork-corpus hook body(web 已證 fire)",
       "inject": "committed SessionStart/UserPromptSubmit hook 讀 npm-current preamble + additionalContext 注入(已證機制)",
-      "skill": "committed enabledPlugins(雲端浮出,已證)+ 可選 committed .claude/skills shim(CLI 可攜)",
+      "skill": "⚠️ NON-auto:Claude Code 只從 .claude/skills/plugin 載入、不認 node_modules,且專案級 enabledPlugins 被官方靜默忽略(#62174)→ skills slash command 非 C-prime 自動送達。要 slash command 需 committed .claude/skills shim 或裝 plugin。治理核心(preamble 注入 + dispatcher hooks)不靠 skills。",
       "embed": "蒸餾後直接寫進 fork 根 CLAUDE.md(always-load,可靠)",
       "npm_read": "fork preamble/spec 本體在 node_modules,AI on-demand Read(npm-current)"
     }
@@ -52,8 +52,8 @@
     },
 
     "skills": {
-      "verdict": "per gap-audit:23 skill,9 fork-relevant",
-      "delivery": "skill(committed enabledPlugins 雲端浮出 + 可選 .claude/skills shim)",
+      "verdict": "per gap-audit:23 skill,9 fork-relevant。⚠️ 2026-06-17 修:enabledPlugins 自動浮出是 false claim(#62174 靜默忽略 + 不認 node_modules)→ skills 非 C-prime 自動送達;治理核心不靠 skills(preamble + hooks 涵蓋)。fork 要 slash command 需 committed .claude/skills shim 或 plugin。",
+      "delivery": "NON-auto(見 _meta.delivery_mechanisms.skill);要 slash command → committed .claude/skills shim 或 plugin",
       "items": [
         { "names": ["prototype", "product-ui-audit", "delivery-handoff", "ux-audit", "performance-audit", "visual-audit", "bug-fix-rhythm", "scan-similar-bugs", "propose-options"], "bucket": "SHIP_AS_IS", "reason": "fork 做產品 workflow(部分 mechanical layer 如 npm run visual-audit 在 fork 降級 Layer B AI judgement)" },
         { "name": "code-quality-audit", "bucket": "SHIP_REWRITTEN", "reason": "通用 clean-code 但 executor scripts/code-quality-audit.mjs 未 ship → shim 改 AI 手動 grep 或 ship 進 npm bin" },

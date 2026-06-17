@@ -7,7 +7,7 @@
 | Step | Action | 為何 |
 |---|---|---|
 | 1 | `npm install`(或本機已裝跳過)| 拉 `@qijenchen/design-system` + `storybook-config`;**治理本體(fork hooks + 設計紀律 preamble)隨 npm 落地 `node_modules/.../ds-canonical/fork/`** |
-| 2 | 開啟 Claude Code session | committed `.claude/settings.json` 的 hook 自動 fire(全環境含雲端,已實證):**SessionStart 注入 npm-current 設計紀律 + dispatcher 跑官方治理 + bootstrap 缺本體自動裝**;skills(`/prototype` `/product-ui-audit` 等)由 committed enabledPlugins 自動浮出 |
+| 2 | 開啟 Claude Code session | committed `.claude/settings.json` 的 hook 自動 fire(全環境含雲端,已實證):**SessionStart 注入 npm-current 設計紀律 + dispatcher 跑官方治理 + bootstrap 缺本體自動裝**。(skills slash command 非 C-prime 自動送達 — 見下方「治理怎麼到你手上」)|
 | 3 | `npm run setup:netlify`(要 deploy 才需)| Netlify site + 密碼保護(見下)|
 | 4 | `npm run create-app <name>`(要新 app)| 從 `apps/template/` 複製 |
 | 5 | `npm run storybook` 本地 verify | 確認 DS 元件視覺正確 |
@@ -19,7 +19,7 @@
 ## 🧭 治理怎麼到你手上(C-prime 多軌,皆 committed 隨 repo 走)
 - **事前主動指引**(寫產品 code 前就遵循 item-anatomy/layout-space/命名/SSOT 消費/4-family)→ committed SessionStart hook `inject_fork_governance_preamble.sh` 讀 npm-current `ds-canonical/fork/preamble.md` 注入 context。**可靠 + 最新 + 零 drift**(非 @import / 非 path-scoped rules,那兩個官方證實不可靠)。
 - **機械強制**(手刻 table / 硬寫間距色值 / 誤用 primitive 等被擋)→ committed `fork-governance-dispatcher.sh` 跑 npm fork-corpus hook(轉發攔截)。
-- **Skills**(`/prototype` `/product-ui-audit` …)→ committed enabledPlugins 雲端浮出。
+- **Skills(slash command,如 `/prototype`)→ 非 C-prime 自動送達**:Claude Code 只從 `.claude/skills` / plugin 載入、**不認 node_modules**,且專案級 `enabledPlugins` 被官方靜默忽略(#62174)。要 slash command 需自行 commit 進 `.claude/skills/` 或裝 plugin。**但設計治理不靠 skills** — 事前指引(preamble)+ 機械強制(hooks)已涵蓋核心,skills 只是便利包裝。
 - **本體 SSOT** 全在 npm(`npm install` 覆蓋 = 官方控管、改不動);`npm run sync-all` 更到最新。
 
 ### 🧩 寫某元件 UI 前必讀:DS 官方範例(stories)

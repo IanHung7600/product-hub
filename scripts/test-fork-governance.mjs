@@ -38,7 +38,10 @@ function buildFixture() {
 // spawnSync 同時拿 status + stderr + stdout(不管 exit code)→ 避免「exit 0 但有 stderr 警告」被漏判 false-green。
 function runHook(hookFile, toolName, filePath, content) {
   const payload = JSON.stringify({ tool_name: toolName, tool_input: { file_path: filePath, content, new_string: content } })
-  const r = spawnSync('bash', [join(FORK_HOOKS, hookFile)], {
+  // 依副檔名選 interpreter,對齊 dispatcher(用 bash 跑 .py 會 syntax-error exit 2 = false-block;
+  // harness 若也用 bash 跑 .py 就會 false-green 漏掉 dispatcher 的同 bug,故必對齊)。
+  const interp = hookFile.endsWith('.py') ? 'python3' : 'bash'
+  const r = spawnSync(interp, [join(FORK_HOOKS, hookFile)], {
     input: payload, encoding: 'utf8', cwd: FIX, env: { ...process.env, CLAUDE_PROJECT_DIR: FIX },
   })
   if (r.error) return { exit: 127, stderr: String(r.error.message || r.error) }
@@ -94,9 +97,15 @@ for (const h of allHooks) {
     try { execSync(`bash -n '${join(FORK_HOOKS, h)}'`, { stdio: 'pipe' }) }
     catch (e) { crashed.push(`${h}: syntax error`); fail++ }
   }
-  // 跑一次 generic apps edit,不得 127
+  if (h.endsWith('.py')) {
+    try { execSync(`python3 -m py_compile '${join(FORK_HOOKS, h)}'`, { stdio: 'pipe' }) }
+    catch (e) { crashed.push(`${h}: python syntax error`); fail++ }
+  }
+  // 跑一次 generic CLEAN apps edit:不得 127(crash)且不得 2(false-block 乾淨檔)。
+  // exit 2 on clean = B1 那類「dispatcher 用 bash 跑 .py 誤 exit 2 brick 編輯」的源頭,必擋。
   const r = runHook(h, 'Write', A, 'export const X=()=><div>x</div>')
   if (r.exit === 127) { crashed.push(`${h}: exit 127 (missing dep/file)`); fail++ }
+  if (r.exit === 2) { crashed.push(`${h}: exit 2 on CLEAN file = false-block(會誤擋乾淨編輯)`); fail++ }
 }
 
 // 3) committed 模板治理流程(#6 codex C3:測 dispatcher/bootstrap/injection,不只 fork hook 本體)
@@ -134,6 +143,12 @@ buildFullFixture()
   const v = runTpl('fork-governance-dispatcher.sh', JSON.stringify({ hook_event_name: 'PostToolUse', tool_name: 'Write', tool_input: { file_path: 'apps/demo/src/App.tsx', new_string: 'export const X=()=><table><thead><th>a</th></thead></table>' } }))
   if (v.exit !== 2) { flowResults.push(`  dispatcher(PostToolUse 違規): ❌ 未轉發攔截(exit=${v.exit})`); fail++ }
   else flowResults.push('  dispatcher(PostToolUse 違規): ✅ 轉發 exit 2')
+}
+// dispatcher:PostToolUse CLEAN 檔 → 必 exit 0(B1 回歸鎖:用 bash 跑 .py hook 會 syntax-error exit 2 → 誤擋所有乾淨編輯 = brick)
+{
+  const c = runTpl('fork-governance-dispatcher.sh', JSON.stringify({ hook_event_name: 'PostToolUse', tool_name: 'Write', tool_input: { file_path: 'apps/demo/src/Clean.tsx', new_string: 'export const Clean = () => null' } }))
+  if (c.exit !== 0) { flowResults.push(`  dispatcher(PostToolUse CLEAN 檔): ❌ exit ${c.exit}(應 0;B1 brick 回歸 = 用 bash 跑 .py)`); fail++ }
+  else flowResults.push('  dispatcher(PostToolUse CLEAN 檔): ✅ exit 0 不誤擋乾淨編輯')
 }
 // dispatcher:manifest 缺 → 不 brick(exit 0)
 {

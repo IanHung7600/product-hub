@@ -476,16 +476,16 @@ Hook `check_ssot_consultation.sh`(retired;改靠 mindset #2 + `check_canonical_p
 - 在 Toolbar 用 `<input className="bg-transparent border-0 ...">`(應用 `<Input variant="bare">` 若既有;無 → Ambiguity Protocol)
 
 
-- 需要時 Read:node_modules/@qijenchen/design-system/.claude/references/ui-dev-rules.md(flex slot 幾何/Padding 3 層/Icon size 3 類,fork 寫 .tsx 通用)
+- 需要時 Read:node_modules/@qijenchen/design-system/ds-canonical/references/ui-dev-rules.md(flex slot 幾何/Padding 3 層/Icon size 3 類,fork 寫 .tsx 通用)
 
-- 需要時 Read:node_modules/@qijenchen/design-system/.claude/references/naming-conventions.md(命名慣例 + 禁止清單,fork 命名通用)
+- 需要時 Read:node_modules/@qijenchen/design-system/ds-canonical/references/naming-conventions.md(命名慣例 + 禁止清單,fork 命名通用)
 
-- 需要時 Read:node_modules/@qijenchen/design-system/.claude/references/tailwind-gotchas.md(Tailwind v4 var()/tailwind-merge/shadcn alias,fork 同套會踩)
+- 需要時 Read:node_modules/@qijenchen/design-system/ds-canonical/references/tailwind-gotchas.md(Tailwind v4 var()/tailwind-merge/shadcn alias,fork 同套會踩)
 
-- 需要時 Read:node_modules/@qijenchen/design-system/.claude/references/props-naming.md(onClose/onDismiss 分層 + icon canonical,fork 自寫元件用)
+- 需要時 Read:node_modules/@qijenchen/design-system/ds-canonical/references/props-naming.md(onClose/onDismiss 分層 + icon canonical,fork 自寫元件用)
 
-- 需要時 Read:node_modules/@qijenchen/design-system/.claude/references/cva-patterns.md(cva 適用/例外,fork 寫 className 變體元件用(低頻 pointer))
+- 需要時 Read:node_modules/@qijenchen/design-system/ds-canonical/references/cva-patterns.md(cva 適用/例外,fork 寫 className 變體元件用(低頻 pointer))
 
-- 需要時 Read:node_modules/@qijenchen/design-system/.claude/references/composition-fidelity.md(fork 視角短版(為何標 marker/禁硬寫 token);DS-side CF gate workflow 路徑 )
+- 需要時 Read:node_modules/@qijenchen/design-system/ds-canonical/references/composition-fidelity.md(fork 視角短版(為何標 marker/禁硬寫 token);DS-side CF gate workflow 路徑 )
 
-- 需要時 Read:node_modules/@qijenchen/design-system/.claude/references/scenario-definition.md(fork 需知 Scenario B 禁忌(禁 import src/dist)+ E2E(pointer 即可))
+- 需要時 Read:node_modules/@qijenchen/design-system/ds-canonical/references/scenario-definition.md(fork 需知 Scenario B 禁忌(禁 import src/dist)+ E2E(pointer 即可))

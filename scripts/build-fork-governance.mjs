@@ -141,7 +141,9 @@ function buildCorpus() {
       if (via.includes('inject') || via.includes('embed')) {
         preParts.push(`\n---\n## ${label}/${it.name}\n`, applyTransform(readFileSync(src, 'utf8')))
       } else {
-        preParts.push(`\n- 需要時 Read:node_modules/@qijenchen/design-system/.claude/${home}/${it.name}(${(it.reason || '').slice(0, 60)})`)
+        // npm package 把 .claude/{rules,references} 鏡像到 ds-canonical/{rules,references}(sync-ds-canonical.mjs);
+        // 套件「不 ship .claude/ 目錄」→ pointer 必指 ds-canonical/(實際 ship 路徑),指 .claude/ 會 file-not-found。
+        preParts.push(`\n- 需要時 Read:node_modules/@qijenchen/design-system/ds-canonical/${home}/${it.name}(${(it.reason || '').slice(0, 60)})`)
       }
     }
   }

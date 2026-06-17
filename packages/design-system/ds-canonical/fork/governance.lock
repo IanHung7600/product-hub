@@ -92,7 +92,7 @@
     },
     {
       "file": "launchers/fork-governance-dispatcher.sh",
-      "sha256": "25067f4da2347da9b93d902e09918282da1f62d121cbd676bc082e72029fc45f",
+      "sha256": "6a99ad2d7404a4d721a611a19e4537ebfe8cf5e2ddba99edc7f6b386d86e8b5d",
       "source": "template/.claude/hooks"
     },
     {
@@ -111,7 +111,7 @@
     },
     {
       "file": "preamble.md",
-      "sha256": "11c739bab463dfd778a344fac25fd00d795b0dba25b0239aa7719b9fed1b61c0"
+      "sha256": "0794daeb677fb0ea17ebbd2a53f747075691deb5ad7ba98281b544d758e94e5e"
     }
   ]
 }

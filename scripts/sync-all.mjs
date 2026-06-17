@@ -4,7 +4,7 @@
 // 2026-06-17 C-prime 改寫(codex C5 共識 + 雲端探針實證):治理改 committed-config-first —
 //   - 治理「本體」(fork hooks + 設計紀律 preamble)在 npm package 的 ds-canonical/fork/,`npm install @beta` 即最新。
 //   - 設計紀律「事前注入」由 committed SessionStart hook 讀 npm-current preamble(下個 session 自動最新)。
-//   - skills 由 committed `.claude/settings.json` 的 enabledPlugins 在雲端自動浮出(免 plugin 指令)。
+//   - skills(slash command)非 C-prime 自動送達(Claude Code 不認 node_modules + 專案級 enabledPlugins 靜默忽略 #62174);治理核心靠 preamble 注入 + dispatcher hooks,不靠 skills。
 // 故 sync-all = 純 npm(不再 shell `claude plugin ...`;舊 plugin 指令在雲端不可靠 #63028 + 非 npm-only)。
 //
 // Anchor:plain `npm install` 會被 lockfile 重現舊樹(codex risk 2)→ 明確 `@beta` 拿最新 beta(robust)。
@@ -34,7 +34,6 @@ console.log('')
 if (ok) {
   console.log('✅ 治理本體已更到最新(node_modules/@qijenchen/design-system/ds-canonical/fork)。')
   console.log('   • 設計紀律 preamble + fork hooks 隨 npm 更新。')
-  console.log('   • Skills 由 committed enabledPlugins 自動浮出(免 plugin 指令)。')
 
   // 接線骨架(committed 啟動器 + settings hooks)從 npm-current launchers idempotent 刷新 →
   // 達成「接線層」也完全同步(既有 fork 一鍵 adopt;DS 改啟動器後重跑即同步)。
