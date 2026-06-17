@@ -10,6 +10,7 @@
 // Anchor:plain `npm install` 會被 lockfile 重現舊樹(codex risk 2)→ 明確 `@beta` 拿最新 beta(robust)。
 
 import { spawnSync } from 'node:child_process'
+import { refreshLaunchers } from './refresh-fork-launchers.mjs'
 
 function run(label, cmd, args) {
   process.stdout.write(`▶ ${label}... `)
@@ -34,6 +35,22 @@ if (ok) {
   console.log('✅ 治理本體已更到最新(node_modules/@qijenchen/design-system/ds-canonical/fork)。')
   console.log('   • 設計紀律 preamble + fork hooks 隨 npm 更新。')
   console.log('   • Skills 由 committed enabledPlugins 自動浮出(免 plugin 指令)。')
+
+  // 接線骨架(committed 啟動器 + settings hooks)從 npm-current launchers idempotent 刷新 →
+  // 達成「接線層」也完全同步(既有 fork 一鍵 adopt;DS 改啟動器後重跑即同步)。
+  process.stdout.write('▶ 刷新接線骨架(啟動器 + settings hooks)... ')
+  let refresh
+  try { refresh = refreshLaunchers(process.cwd()) } catch (e) { refresh = { error: String(e?.message || e) } }
+  if (refresh?.error) {
+    console.log(`⚠️(${refresh.error})`)
+  } else if (refresh?.skipped) {
+    console.log(`skip(${refresh.skipped})`)
+  } else {
+    console.log('✓')
+    if (refresh.copied?.length) console.log(`   • 啟動器:${refresh.copied.join(' / ')}`)
+    if (refresh.settingsMerged) console.log('   • settings.json hooks + permissions 已對齊 canonical(strip 舊 + append + union,未動你自有非治理 hook)。')
+  }
+
   console.log('   👉 重啟 Claude Code session → committed hook 重讀 npm-current 治理生效。')
   process.exit(0)
 }

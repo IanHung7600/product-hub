@@ -65,6 +65,7 @@ const ALLOWLIST = [
   'scripts/deploy-url.mjs',
   'scripts/lint-ds-internal-imports.mjs',
   'scripts/sync-all.mjs',
+  'scripts/refresh-fork-launchers.mjs', // sync-all import 此模組刷新接線骨架 → 必隨 mirror ship,否則 fork sync-all 炸 module-not-found
   'scripts/verify-consumer-css-entry.mjs',
   // Cloud-dev path — 2026-05-30 codex Phase B P-bug fix:source 從 template 的 Scenario-B 版,
   // 非 DS-root 的 Scenario-A 版。否則 fork user 拿到「不需 /plugin install」的錯 banner + 錯 npm 命令

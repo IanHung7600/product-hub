@@ -33,6 +33,9 @@ const REFS_DIR = join(ROOT, '.claude/references')
 const OVERRIDE_DIR = join(ROOT, 'scripts/fork-hook-overrides')
 const OUT_DIR = join(ROOT, 'packages/design-system/ds-canonical/fork')
 const SETTINGS_PATH = join(ROOT, '.claude/settings.json')
+// C-prime 接線骨架 SSOT(template fork 的 committed 啟動器 + settings.json)→ 隨 npm ship 供 sync-all 刷新
+const TPL_CLAUDE = join(ROOT, 'template/ds-product-template/.claude')
+const LAUNCHER_NAMES = ['check_governance_bootstrap.sh', 'fork-governance-dispatcher.sh', 'inject_fork_governance_preamble.sh']
 
 const CHECK = process.argv.includes('--check')
 
@@ -149,6 +152,31 @@ function buildCorpus() {
   const preambleStr = preParts.join('\n') + '\n'
   writeFileSync(join(OUT_DIR, 'preamble.md'), preambleStr)
   lockEntries.push({ file: 'preamble.md', sha256: createHash('sha256').update(preambleStr).digest('hex') })
+
+  // ── launchers/(接線骨架:3 啟動器 + settings hooks 區塊,隨 npm ship 供 sync-all 刷新既有 fork)──
+  // SSOT = template/ds-product-template/.claude/{hooks,settings.json}。讓「接線層」也完全同步(2026-06-17 補)。
+  mkdirSync(join(OUT_DIR, 'launchers'), { recursive: true })
+  for (const ln of LAUNCHER_NAMES) {
+    const src = join(TPL_CLAUDE, 'hooks', ln)
+    if (!existsSync(src)) {
+      console.error(`❌ LAUNCHER 缺檔:template/ds-product-template/.claude/hooks/${ln}(C-prime 啟動器 SSOT 必存在)`)
+      process.exit(1)
+    }
+    const content = readFileSync(src, 'utf8')
+    writeFileSync(join(OUT_DIR, 'launchers', ln), content)
+    lockEntries.push({ file: `launchers/${ln}`, sha256: createHash('sha256').update(content).digest('hex'), source: 'template/.claude/hooks' })
+  }
+  // settings.json 的 hooks 區塊 + governance permissions → launchers/settings-hooks.json(sync-all idempotent merge 用)
+  const tplSettings = JSON.parse(readFileSync(join(TPL_CLAUDE, 'settings.json'), 'utf8'))
+  const settingsHooksStr = JSON.stringify({
+    _generated: 'build-fork-governance.mjs',
+    _source: 'template/ds-product-template/.claude/settings.json(hooks + permissions 區塊)',
+    _merge: 'sync-all/refresh-fork-launchers.mjs:strip 舊 launcher 註冊 + append canonical hooks + union permissions.allow',
+    hooks: tplSettings.hooks,
+    permissions: tplSettings.permissions,
+  }, null, 2) + '\n'
+  writeFileSync(join(OUT_DIR, 'launchers', 'settings-hooks.json'), settingsHooksStr)
+  lockEntries.push({ file: 'launchers/settings-hooks.json', sha256: createHash('sha256').update(settingsHooksStr).digest('hex'), source: 'template/.claude/settings.json' })
 
   // dispatcher manifest + lock
   const manifestStr = JSON.stringify(manifest, null, 2) + '\n'

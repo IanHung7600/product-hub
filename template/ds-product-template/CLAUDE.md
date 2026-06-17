@@ -14,7 +14,7 @@
 | 6 | Push main → Netlify auto-deploy | done |
 
 > **雲端(claude.ai/code)**:每個 session 是 fresh clone(node_modules 不留)→ committed bootstrap 偵測缺本體會**自動 `npm install @beta`** 啟用治理。網路政策需可達 npm/github。
-> **既有 fork(C-prime 之前建立的)補上 committed 啟動器**:啟動器在 upstream 模板 → `git fetch upstream && git checkout upstream/main -- .claude/settings.json .claude/hooks/`(取 settings.json hooks 區塊 + 3 個啟動器),之後 `npm run sync-all` 拉治理本體;或直接重新從模板建立 repo。**(全新 fork 不需此步——啟動器已隨模板 ship。)**
+> **既有 fork adopt / 同步骨架**:跑 `npm run sync-all` 一鍵搞定——拉治理本體 **+ 從 npm idempotent 刷新接線骨架**(committed 啟動器 + settings.json hooks 區塊),帶 `.github/no-governance-sync` opt-out。所以 DS 改了接線層,fork 重跑 sync-all 就同步,不用手動 git-checkout。**(全新 fork 不需此步——骨架已隨模板 ship。唯一例外:C-prime 之前的舊 fork,sync-all 本身是舊版 → 先一次性 `git fetch upstream && git checkout upstream/main -- scripts .claude`,之後 sync-all 自我維護。)**
 
 ## 🧭 治理怎麼到你手上(C-prime 多軌,皆 committed 隨 repo 走)
 - **事前主動指引**(寫產品 code 前就遵循 item-anatomy/layout-space/命名/SSOT 消費/4-family)→ committed SessionStart hook `inject_fork_governance_preamble.sh` 讀 npm-current `ds-canonical/fork/preamble.md` 注入 context。**可靠 + 最新 + 零 drift**(非 @import / 非 path-scoped rules,那兩個官方證實不可靠)。
@@ -73,7 +73,7 @@ node_modules/@qijenchen/design-system/ds-story-manifest.json                    
 | 事件 | 自動發生 |
 |---|---|
 | DS publish 新 beta | Dependabot daily + `sync-design-system.yml` → 自動 bump deps + commit |
-| 你想手動同步治理到最新 | `npm run sync-all`(npm-only:`npm install @beta` → 治理本體最新;重啟 session 生效)|
+| 你想手動同步治理到最新 | `npm run sync-all`(`npm install @beta` → 治理本體最新 **+ idempotent 刷新接線骨架**〔啟動器 + settings hooks〕;重啟 session 生效)|
 | 你寫 product code | committed 治理 hook 自動 enforce(注入指引 + 擋違規);違規 = 立即提示/BLOCKER |
 | Push main | `audit.yml`(tsc + lint:imports + build)+ Netlify auto-rebuild |
 

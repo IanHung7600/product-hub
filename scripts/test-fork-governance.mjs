@@ -14,6 +14,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync, copyFileSyn
 import { join, dirname } from 'node:path'
 import { execSync, spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
+import { refreshLaunchers } from './refresh-fork-launchers.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const FORK_HOOKS = join(ROOT, 'packages/design-system/ds-canonical/fork/hooks')
@@ -145,11 +146,68 @@ buildFullFixture()
   else flowResults.push('  bootstrap(本體缺): ✅ exit 0 fail-open(notice 不 brick)')
 }
 
+// 4) sync-all 接線骨架刷新(refresh-fork-launchers:idempotent + 不 clobber user hook + opt-out)
+// 既有 fork 的「接線層完全同步」命脈。模擬既有 fork(有 user 自有 hook + 舊 launcher 註冊)+ npm-current launchers。
+const skelResults = []
+const SKEL = '/tmp/ds-fork-skel'
+function buildSkelFixture(withOptOut) {
+  if (existsSync(SKEL)) rmSync(SKEL, { recursive: true, force: true })
+  mkdirSync(join(SKEL, '.claude/hooks'), { recursive: true })
+  if (withOptOut) { mkdirSync(join(SKEL, '.github'), { recursive: true }); writeFileSync(join(SKEL, '.github/no-governance-sync'), '') }
+  const npmLaunchers = join(SKEL, 'node_modules/@qijenchen/design-system/ds-canonical/fork/launchers')
+  mkdirSync(npmLaunchers, { recursive: true })
+  execSync(`cp -R '${join(ROOT, 'packages/design-system/ds-canonical/fork/launchers')}/.' '${npmLaunchers}/'`)
+  // 既有 fork settings:user 自有「非治理」hook + 一個「舊版 launcher 註冊」(模擬 pre-update,測去重)
+  writeFileSync(join(SKEL, '.claude/settings.json'), JSON.stringify({
+    defaultMode: 'auto',
+    hooks: {
+      SessionStart: [{ hooks: [{ type: 'command', command: 'bash my-own-hook.sh' }, { type: 'command', command: 'bash "$CLAUDE_PROJECT_DIR/.claude/hooks/check_governance_bootstrap.sh"' }] }],
+      PostToolUse: [{ matcher: 'Edit', hooks: [{ type: 'command', command: 'bash user-lint.sh' }] }],
+    },
+  }, null, 2))
+}
+// 4a 正常刷新
+buildSkelFixture(false)
+const r1 = refreshLaunchers(SKEL)
+{
+  const launchersCopied = r1.copied?.length === 3 && existsSync(join(SKEL, '.claude/hooks/fork-governance-dispatcher.sh'))
+  const s = JSON.parse(readFileSync(join(SKEL, '.claude/settings.json'), 'utf8'))
+  const cmds = JSON.stringify(s.hooks)
+  const hasAllLaunchers = ['check_governance_bootstrap.sh', 'fork-governance-dispatcher.sh', 'inject_fork_governance_preamble.sh'].every((l) => cmds.includes(l))
+  const events4 = ['SessionStart', 'PreToolUse', 'PostToolUse', 'UserPromptSubmit'].every((ev) => s.hooks[ev])
+  const userHookKept = cmds.includes('my-own-hook.sh') && cmds.includes('user-lint.sh')
+  const noDupBootstrap = (cmds.match(/check_governance_bootstrap\.sh/g) || []).length === 1
+  const permUnioned = (s.permissions?.allow || []).length >= 5
+  if (!launchersCopied) { skelResults.push('  refresh: ❌ 啟動器未全 copy(應 3 個)'); fail++ }
+  else if (!hasAllLaunchers || !events4) { skelResults.push('  refresh: ❌ settings 缺啟動器註冊 / 缺 4-event'); fail++ }
+  else if (!userHookKept) { skelResults.push('  refresh: ❌ clobber 了 user 自有非治理 hook'); fail++ }
+  else if (!noDupBootstrap) { skelResults.push('  refresh: ❌ 舊 launcher 註冊沒去重(重複)'); fail++ }
+  else if (!permUnioned) { skelResults.push('  refresh: ❌ permissions.allow 未 union'); fail++ }
+  else skelResults.push('  refresh: ✅ 啟動器 copy(3)+ settings 4-event 註冊 + user hook 保留 + 去重 + perm union')
+}
+// 4b idempotent
+{
+  const before = readFileSync(join(SKEL, '.claude/settings.json'), 'utf8')
+  refreshLaunchers(SKEL)
+  const after = readFileSync(join(SKEL, '.claude/settings.json'), 'utf8')
+  if (before !== after) { skelResults.push('  idempotent: ❌ 第二次刷新改了 settings(非冪等 → 重跑會疊加)'); fail++ }
+  else skelResults.push('  idempotent: ✅ 重跑 settings 完全一致')
+}
+// 4c opt-out
+{
+  buildSkelFixture(true)
+  const r = refreshLaunchers(SKEL)
+  if (!r.skipped) { skelResults.push('  opt-out: ❌ 有 .github/no-governance-sync 仍刷新(應 skip)'); fail++ }
+  else skelResults.push(`  opt-out: ✅ skip(${r.skipped})`)
+}
+
 console.log('=== 假 fork 測試 harness 結果 ===')
 console.log(`fixture: ${FIX}(apps/** + node_modules/@qijenchen/design-system/src,NO packages/design-system)`)
 console.log(results.join('\n'))
 console.log('\n=== committed 模板治理流程(dispatcher/bootstrap/injection)===')
 console.log(flowResults.join('\n'))
+console.log('\n=== 接線骨架刷新(sync-all refresh-fork-launchers:idempotent / 不 clobber / opt-out)===')
+console.log(skelResults.join('\n'))
 console.log(`\ncrash 檢查(${allHooks.length} hook):${crashed.length ? '\n  ' + crashed.join('\n  ') : '✅ 無 syntax error / 無 exit-127'}`)
 console.log(`\n${fail === 0 ? '✅ FORK-GOVERNANCE HARNESS PASS — 無 false-green / 無 brick / 無 crash' : `❌ ${fail} 項 fail(見上）`}`)
 process.exit(fail === 0 ? 0 : 1)
