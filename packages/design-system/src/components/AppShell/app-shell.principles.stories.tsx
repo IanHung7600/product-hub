@@ -123,6 +123,17 @@ export const LayoutModeRule: Story = {
           <li>❌ 禁:`primary-header` mode 同時在 globalHeader + SidebarHeader 各放一份 = 視覺冗餘 + 跨產品識別混淆(WorkspaceBrand 視覺 SSOT,只能出現一次)</li>
         </ul>
       </section>
+
+      <section>
+        <h2 className="text-h4 mb-2">帳號入口(個人設定)跟著 mode 走(只能出現一次)</h2>
+        <ul className="text-body space-y-1">
+          <li>• <strong>primary-sidebar</strong>:帳號 / 個人設定放 Sidebar 底部(`&lt;SidebarFooter&gt;`)— Linear / Notion / Figma</li>
+          <li>• <strong>primary-header</strong>:帳號入口改放 globalHeader 右側 avatar(品牌左、帳號右,左右對稱),sidebar 不放 user footer — GitHub / Gmail / Slack 帳號一律在 global bar 右上</li>
+          <li>• 開「個人資料 / 設定 / 登出」帳號選單(`&lt;DropdownMenu&gt;`),<strong>不用 ProfileCard</strong>(ProfileCard 是看別人的人員卡,預設動作 Chat/通話用在自己身上不對)</li>
+          <li>• 帳號 avatar = 24px,跟左側品牌 avatar 同尺寸(header-canonical 4.5 chrome header avatar);右側邊距與品牌距分割線對稱</li>
+          <li>❌ 禁:`primary-header` mode 同時在 globalHeader + sidebar footer 各放一份 = 入口混淆(帳號入口視覺 SSOT,只能出現一次)</li>
+        </ul>
+      </section>
     </div>
   ),
 }

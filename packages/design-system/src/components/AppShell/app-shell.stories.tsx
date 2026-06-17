@@ -400,6 +400,7 @@ export const PrimaryHeader: Story = {
             <AcmeSidebar
               viewportInsetTop="var(--chrome-header-height)"
               includeWorkspaceBrand={false}
+              includeUserFooter={false}
             />
           }
           globalHeader={<GlobalHeader />}

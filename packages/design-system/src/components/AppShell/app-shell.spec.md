@@ -134,6 +134,28 @@ function CustomAside() {
   header={<PageHeader title="..." />}>...
 ```
 
+### 帳號入口(Account entry)放置 SSOT(2026-06-17 codify per user directive「primary-header 不該把個人設定放 sidebar footer,該放主標頭右側 avatar」)
+
+「帳號 / 個人設定入口」(目前使用者的 avatar,點開 = 帳號選單)放置同樣 **mode-dependent**,鏡像上方 WorkspaceBrand 規則:
+
+| Mode | 帳號入口放置 | Sidebar footer | 對齊 World-class |
+|---|---|---|---|
+| `primary-sidebar` | **Sidebar 底部**(`<SidebarFooter>` 內,當前使用者)| 有 — 放使用者 | Linear / Notion / Figma(無 global header,帳號自然在 sidebar 底)|
+| `primary-header` | **globalHeader 右側**(trailing slot,品牌在左、帳號在右)| **無 / 空** | GitHub / Gmail / Slack(帳號 avatar 一律在 global top bar 右上)|
+
+**Rule:帳號入口只能出現一次**(視覺 SSOT,同 WorkspaceBrand)。`primary-header` mode 同時放(globalHeader 右 + sidebar footer)= 視覺冗餘 + 入口混淆 → **禁止**;`primary-header` 的 sidebar **不放** user footer(與上方「globalHeader 存在 → sidebar 不重複 chrome 角色」同源邏輯)。
+
+**為什麼 primary-header 帳號入口在「右上」**:GitHub / Gmail / Slack / Atlassian 的全域標頭一律把「自己的帳號」放右上(品牌在左、帳號在右,左右對稱)= global chrome 標準位置,不是 sidebar footer。
+
+**入口開什麼 = 帳號選單(`<DropdownMenu>`),不是 ProfileCard**:
+- 開「個人資料 / 設定 / 登出」navigation 選單(對齊 GitHub / Gmail / Slack / Atlassian「自己的帳號入口」慣例)。
+- **不用 `ProfileCard`**:ProfileCard 的預設動作(Chat / 通話)語義是「聯絡某人」,用在**自己**身上不對 — ProfileCard 是看**別人**的人員卡。自己的帳號入口 = 選單。
+- 消費既有 `components/DropdownMenu`(`DropdownMenuTrigger asChild` 包 avatar 作 focusable 觸發點)。
+
+**Avatar 尺寸 + 邊距**:帳號 avatar = `<Avatar size={24}>`(density-fixed,跟左側品牌 avatar 同尺寸),走 `../../patterns/header-canonical/header-canonical.spec.md` 4.5 chrome header avatar SSOT(brand + account 皆 24px raw Avatar、非 ItemAvatar)。右側邊距 = 作為 ChromeHeader 主內容區最後一個 child 自然繼承 `--layout-space-loose`(16px@md / 24px@lg),**與左側品牌 avatar 距 leadingRail 分割線的距離對稱**(ChromeHeader px-loose canonical 結構性保證,**禁 hardcode margin**)。
+
+**Reference implementation**:`_demo-helpers.tsx` `AccountMenu`(帳號選單)+ `GlobalHeader`(右 slot 預設放 `<AccountMenu />`)。
+
 **真正的 distinguishing factor = Header scope(local toolbar vs global bar)**:
 - **Local toolbar 派**(當前頁 anchor / breadcrumb / page-level actions / filter / 該頁 specific 操作)→ `primary-sidebar`
 - **Global bar 派**(account avatar / workspace switcher / notifications / 跨頁 search / 跨頁導覽)→ `primary-header`
@@ -322,3 +344,9 @@ Main 內塞什麼(table / field / card / page header / list)的 layout + spacing
 - `components/Sheet/sheet.spec.md` — modal fallback SSOT(`aria-labelledby` 強制 + `z-50`)
 - `tokens/layoutSpace/layoutSpace.spec.md` — Main 內 layout 6 條規則 SSOT
 - `tokens/uiSize/uiSize.spec.md` — `--chrome-header-height` 等 size token
+
+## 被引用(auto-maintained,Dim 3 reciprocal audit)
+
+> 本節由 `scripts/add-reciprocal-pointers.mjs` 自動維護,列出在 SSOT 語境下指向本 spec 的其他 spec。若要手動補充,寫在本節之前。
+
+- `header-canonical.spec.md`
