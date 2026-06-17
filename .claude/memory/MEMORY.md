@@ -4,6 +4,9 @@
 - [user_role.md](user_role.md) — Design-oriented frontend engineer with high standards for design correctness
 - [project_goal.md](project_goal.md) — World-class DS where CLAUDE.md + specs ensure AI faithfully executes design principles
 
+## Project (active work)
+- [project_cprime_governance_shipped.md](project_cprime_governance_shipped.md) — C-prime fork 治理已發版 beta.70(committed-config + npm,免 plugin);**雲端首次-session install-timing 待 user 真機驗證**(唯一無法 headless 的殘留)
+
 ## Feedback (workflow / collaboration discipline)
 - [feedback_codex_dual_track_synthesizer.md](feedback_codex_dual_track_synthesizer.md) — Codex dual-track + ASK gate 嚴格 + triple-verify + brief 三 invariant + Phase-A-first + auto-mode 禁問(2026-06-11 合併 05-23 directives)
 - [feedback_audit_discipline_full_sweep_deterministic_preflight.md](feedback_audit_discipline_full_sweep_deterministic_preflight.md) — 稽核三 invariant:NO-SAMPLE 全盤 / 必 chain deterministic script / Preflight scan(合 3 file)
