@@ -18,7 +18,10 @@ import { readFileSync, writeFileSync, copyFileSync, existsSync, readdirSync, mkd
 import { join } from 'node:path'
 
 const LAUNCHERS = ['check_governance_bootstrap.sh', 'fork-governance-dispatcher.sh', 'inject_fork_governance_preamble.sh']
-const refsLauncher = (cmd) => LAUNCHERS.some((l) => (cmd || '').includes(l))
+const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+// path-segment 比對:啟動器必以 `/<name>` 出現(它一律在 .claude/hooks/ 路徑下)且後接邊界(引號/空白/結尾)。
+// 避免 loose substring 誤刪「command 只是『含』啟動器名為子字串」的 user hook(adversarial FINDING 2b)。
+const refsLauncher = (cmd) => LAUNCHERS.some((l) => new RegExp(`/${escRe(l)}(?=["'\\s]|$)`).test(cmd || ''))
 
 // 刷新 projectDir 的接線骨架;回傳 {copied, settingsMerged, skipped}
 export function refreshLaunchers(projectDir) {

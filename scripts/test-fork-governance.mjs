@@ -162,7 +162,8 @@ function buildSkelFixture(withOptOut) {
     defaultMode: 'auto',
     hooks: {
       SessionStart: [{ hooks: [{ type: 'command', command: 'bash my-own-hook.sh' }, { type: 'command', command: 'bash "$CLAUDE_PROJECT_DIR/.claude/hooks/check_governance_bootstrap.sh"' }] }],
-      PostToolUse: [{ matcher: 'Edit', hooks: [{ type: 'command', command: 'bash user-lint.sh' }] }],
+      // PostToolUse:user 自有 lint + 一個「含啟動器名為子字串但不是啟動器」的 hook(adversarial FINDING 2b 不得誤刪)
+      PostToolUse: [{ matcher: 'Edit', hooks: [{ type: 'command', command: 'bash user-lint.sh' }, { type: 'command', command: 'bash ".claude/hooks/my-fork-governance-dispatcher.sh.bak"' }] }],
     },
   }, null, 2))
 }
@@ -176,14 +177,16 @@ const r1 = refreshLaunchers(SKEL)
   const hasAllLaunchers = ['check_governance_bootstrap.sh', 'fork-governance-dispatcher.sh', 'inject_fork_governance_preamble.sh'].every((l) => cmds.includes(l))
   const events4 = ['SessionStart', 'PreToolUse', 'PostToolUse', 'UserPromptSubmit'].every((ev) => s.hooks[ev])
   const userHookKept = cmds.includes('my-own-hook.sh') && cmds.includes('user-lint.sh')
+  const substringHookKept = cmds.includes('my-fork-governance-dispatcher.sh.bak') // FINDING 2b:子字串碰撞不得誤刪
   const noDupBootstrap = (cmds.match(/check_governance_bootstrap\.sh/g) || []).length === 1
   const permUnioned = (s.permissions?.allow || []).length >= 5
   if (!launchersCopied) { skelResults.push('  refresh: ❌ 啟動器未全 copy(應 3 個)'); fail++ }
   else if (!hasAllLaunchers || !events4) { skelResults.push('  refresh: ❌ settings 缺啟動器註冊 / 缺 4-event'); fail++ }
   else if (!userHookKept) { skelResults.push('  refresh: ❌ clobber 了 user 自有非治理 hook'); fail++ }
+  else if (!substringHookKept) { skelResults.push('  refresh: ❌ 子字串碰撞 hook 被誤刪(FINDING 2b 回歸)'); fail++ }
   else if (!noDupBootstrap) { skelResults.push('  refresh: ❌ 舊 launcher 註冊沒去重(重複)'); fail++ }
   else if (!permUnioned) { skelResults.push('  refresh: ❌ permissions.allow 未 union'); fail++ }
-  else skelResults.push('  refresh: ✅ 啟動器 copy(3)+ settings 4-event 註冊 + user hook 保留 + 去重 + perm union')
+  else skelResults.push('  refresh: ✅ 啟動器 copy(3)+ 4-event 註冊 + user hook 保留 + 子字串不誤刪 + 去重 + perm union')
 }
 // 4b idempotent
 {

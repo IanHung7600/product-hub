@@ -156,6 +156,33 @@ if (missingEntries.length > 0) {
   }
 }
 
+// ━━━ 2026-06-17 fail-closed guard:shipped scripts/*.mjs 的 ES import 鏈必在 mirror 存在 ━━━
+// Gap anchor(adversarial verify FINDING 6):前兩道 guard 只掃 `node X.mjs` 字面引用,看不到 ES `import`。
+// sync-all.mjs `import './refresh-fork-launchers.mjs'` 若被 import 的模組沒進 ALLOWLIST → mirror 照樣 build 綠,
+// 但 fork `npm run sync-all` 炸 ERR_MODULE_NOT_FOUND(實證:移除 allowlist 條目 → 舊 build 仍 exit 0)。
+// 本 guard 掃 shipped scripts 的相對 import(靜態 + 動態),機械強制 import 鏈完整,不再靠人手加註解。
+{
+  const scriptsDir = join(OUT_DIR, 'scripts')
+  const missing = []
+  if (existsSync(scriptsDir)) {
+    for (const f of readdirSync(scriptsDir).filter((x) => x.endsWith('.mjs'))) {
+      const body = readFileSync(join(scriptsDir, f), 'utf8')
+      const rels = [
+        ...body.matchAll(/from\s+['"](\.[^'"]+\.mjs)['"]/g),
+        ...body.matchAll(/import\(\s*['"](\.[^'"]+\.mjs)['"]\s*\)/g),
+      ]
+      for (const m of rels) {
+        if (!existsSync(join(scriptsDir, m[1]))) missing.push(`${f} → import ${m[1]}`)
+      }
+    }
+  }
+  if (missing.length) {
+    console.error(`\n❌ shipped scripts/*.mjs 的相對 import 在 mirror 缺檔(fork 跑 npm run 會炸 ERR_MODULE_NOT_FOUND):${missing.join(', ')}。修:把被 import 的模組加進 ALLOWLIST。`)
+    process.exit(1)
+  }
+  console.log(`  ✓ shipped scripts/*.mjs 的 ES import 鏈全在 mirror`)
+}
+
 // ━━━ Transform root package.json ━━━
 
 // dsRootPkg removed 2026-05-29(codex caught dead var)— mirror root uses templatePkg as base
