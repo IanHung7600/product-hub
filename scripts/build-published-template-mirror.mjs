@@ -245,10 +245,10 @@ for (const p of dsSourceCheck) {
 // .claude/hooks 特例(2026-06-17 C-prime 更新):fork-committed governance 啟動器合法該在 mirror。
 // C-prime committed-config-first:committed 的是「穩定啟動器」(dispatcher 讀 npm fork-corpus / bootstrap
 // 自動裝 @beta / preamble 注入),治理「本體」在 npm(node_modules ds-canonical/fork)非 mirror。
-// 只准這 3 個 committed 啟動器;其餘 .sh = DS governance hook 本體洩漏(該走 npm,不進 mirror)。
-// 退役舊名:check_plugin_bootstrap.sh / block_production_edit_without_plugin.sh(plugin-first 時代已移除)。
+// 只准這 2 個 committed 啟動器;其餘 .sh = DS governance hook 本體洩漏(該走 npm,不進 mirror)。
+// 退役舊名:check_plugin_bootstrap.sh / block_production_edit_without_plugin.sh(plugin-first 時代移除)/
+// check_governance_bootstrap.sh(2026-06-17 install 併進 inject 消除 SessionStart 並行 race)。
 const FORK_BOOTSTRAP_HOOKS = new Set([
-  'check_governance_bootstrap.sh',
   'fork-governance-dispatcher.sh',
   'inject_fork_governance_preamble.sh',
 ])

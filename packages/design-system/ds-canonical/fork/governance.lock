@@ -86,23 +86,18 @@
       "bucket": "SHIP_REWRITTEN"
     },
     {
-      "file": "launchers/check_governance_bootstrap.sh",
-      "sha256": "0d00b4ba2fbe41b50d976b40b55eee01bd08058263a44af07e6f9f82431efd1d",
-      "source": "template/.claude/hooks"
-    },
-    {
       "file": "launchers/fork-governance-dispatcher.sh",
       "sha256": "6a99ad2d7404a4d721a611a19e4537ebfe8cf5e2ddba99edc7f6b386d86e8b5d",
       "source": "template/.claude/hooks"
     },
     {
       "file": "launchers/inject_fork_governance_preamble.sh",
-      "sha256": "a2b853faf14a7684a1978de75594d6305485d7e7b93672dda47a732641f2db9b",
+      "sha256": "eccf9dbb5ccd3a2e0bea6e3e225de2eb0f1634a6c12c349aab89439cf6e1fb89",
       "source": "template/.claude/hooks"
     },
     {
       "file": "launchers/settings-hooks.json",
-      "sha256": "8632173baa5cf138f9978def8a3a58fc9814be5785426f3e6b846fe04cbfee97",
+      "sha256": "b040779f18032dc382bb83ce8ccac3ebae4c2280976e73f14e3b78e39dc9367b",
       "source": "template/.claude/settings.json"
     },
     {

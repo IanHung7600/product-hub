@@ -14,7 +14,7 @@
 | 6 | Push main → Netlify auto-deploy | done |
 
 > **雲端(claude.ai/code)**:每個 session 是 fresh clone(node_modules 不留)→ committed bootstrap 偵測缺本體會**自動 `npm install @beta`** 啟用治理。網路政策需可達 npm/github。
-> **既有 fork adopt / 同步骨架**:跑 `npm run sync-all` 一鍵搞定——拉治理本體 **+ 從 npm idempotent 刷新接線骨架**(committed 啟動器 + settings.json hooks 區塊),帶 `.github/no-governance-sync` opt-out。所以 DS 改了接線層,fork 重跑 sync-all 就同步,不用手動 git-checkout。**(全新 fork 不需此步——骨架已隨模板 ship。唯一例外:C-prime 之前的舊 fork,sync-all 本身是舊版 → 先一次性 `git fetch upstream && git checkout upstream/main -- scripts .claude`,之後 sync-all 自我維護。)**
+> **既有 fork adopt / 同步骨架**:跑 `npm run sync-all` 一鍵搞定——拉治理本體 **+ 從 npm idempotent 刷新接線骨架**(committed 啟動器 + settings.json hooks 區塊),帶 `.github/no-governance-sync` opt-out。所以 DS 改了接線層,fork 重跑 sync-all 就同步,不用手動 git-checkout。**(全新 fork 不需此步——骨架已隨模板 ship。唯一例外:C-prime 之前的舊 fork,自己的 sync-all 是舊版 → 先一次性從「模板種子 repo」`ajenchen/ds-product-template`〔不是 DS repo `ajenchen/design-system`,那會 dump 一整套 DS-author corpus〕取新 scaffold:`git remote add ds-template https://github.com/ajenchen/ds-product-template.git && git fetch ds-template && git checkout ds-template/main -- scripts .claude`,之後 `npm run sync-all` 自我維護〔含移除舊 plugin-era hook 防 brick〕。)**
 
 ## 🧭 治理怎麼到你手上(C-prime 多軌,皆 committed 隨 repo 走)
 - **事前主動指引**(寫產品 code 前就遵循 item-anatomy/layout-space/命名/SSOT 消費/4-family)→ committed SessionStart hook `inject_fork_governance_preamble.sh` 讀 npm-current `ds-canonical/fork/preamble.md` 注入 context。**可靠 + 最新 + 零 drift**(非 @import / 非 path-scoped rules,那兩個官方證實不可靠)。

@@ -34,7 +34,7 @@ function parseJsonc(text, label) {
   try { return JSON.parse(out) } catch (e) { throw new Error(`${label} JSONC strip 後仍非法 JSON:${e.message}`) }
 }
 
-const LAUNCHERS = ['check_governance_bootstrap.sh', 'fork-governance-dispatcher.sh', 'inject_fork_governance_preamble.sh']
+const LAUNCHERS = ['fork-governance-dispatcher.sh', 'inject_fork_governance_preamble.sh']
 const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 // path-segment 比對:啟動器必以 `/<name>` 出現(它一律在 .claude/hooks/ 路徑下)且後接邊界(引號/空白/結尾)。
 // 避免 loose substring 誤刪「command 只是『含』啟動器名為子字串」的 user hook(adversarial FINDING 2b)。
@@ -44,7 +44,8 @@ const refsLauncher = (cmd) => LAUNCHERS.some((l) => new RegExp(`/${escRe(l)}(?=[
 // 既有 beta.69 fork 帶 plugin-era committed hook;C-prime 叫 user 拿掉 plugin →
 // block_production_edit_without_plugin.sh(PreToolUse)exit 2 擋掉所有 apps/** 編輯 = brick。
 // 故 migration 必「移除」這些 obsolete(從 disk + settings 註冊),非只「新增」launcher。
-const OBSOLETE_HOOKS = ['block_production_edit_without_plugin.sh', 'check_plugin_bootstrap.sh']
+// check_governance_bootstrap.sh:C-prime 早期 bootstrap,2026-06-17 install 邏輯併進 inject(消除 SessionStart 並行 race)→ obsolete。
+const OBSOLETE_HOOKS = ['block_production_edit_without_plugin.sh', 'check_plugin_bootstrap.sh', 'check_governance_bootstrap.sh']
 const refsObsolete = (cmd) => OBSOLETE_HOOKS.some((o) => new RegExp(`/${escRe(o)}(?=["'\\s]|$)`).test(cmd || ''))
 
 // 刷新 projectDir 的接線骨架;回傳 {copied, settingsMerged, skipped}

@@ -1,30 +1,46 @@
 #!/bin/bash
-# inject_fork_governance_preamble.sh — C-prime 事前指引注入(committed in fork,SessionStart)
+# inject_fork_governance_preamble.sh — C-prime SessionStart 治理 init(install-if-missing + 事前指引注入)
 #
-# 這是「讓 fork AI 事前主動遵循設計原則」的核心機制(codex 共識 #3/#4)。
-# 讀 npm-current 的 fork 治理 preamble(node_modules,npm install/sync-all 後最新)→ 經
-# additionalContext 注入進 session context。這條路可靠(committed SessionStart hook web 已實證 fire)
-# + npm-current(讀 node_modules,非 committed 副本 → 零 drift)+ 不靠 @import/path-scoped-rules
-# (那兩個 docs 證實不可靠:@import 在 code block 不解析 / path-scoped 只 Read 載入 #38487)。
+# 2026-06-17 合併原 check_governance_bootstrap 的 install(adversarial run-4 MAJOR — cloud-flow race):
+#   原本 SessionStart 有 3 個 hook(bootstrap 裝 / inject 注入 / dispatcher),Claude Code 同組 hook「並行」跑。
+#   雲端 fresh-clone 時 bootstrap 還在前景 `npm install`(冷裝 30s–4min),inject 並行跑完一次 `[ -f preamble ]`
+#   檢查 → 檔案還沒到 → 靜默 exit 0 → 什麼都沒注入 = proactive 指引在雲端首次 session 失效(且每 session 重演)。
+#   修:把 install 與 inject 放「同一 hook process 內 sequential」→ 消除並行 race + 避免兩個並發 npm install 衝突。
+#   dispatcher 不再掛 SessionStart(manifest 無 SessionStart body = 本來就 no-op);它留在 Pre/Post/UserPromptSubmit。
 #
-# fail-open:preamble 缺(還沒 npm install)→ 不輸出、exit 0,永不 brick(bootstrap 另發 notice)。
-# 對齊既有 13 個用 additionalContext 的 hook 的輸出契約。
+# fail-open:install 失敗 / preamble 缺 → notice + exit 0,永不 brick。
+# 對齊既有用 additionalContext 的 hook 輸出契約。
 
 set -uo pipefail
 PD="${CLAUDE_PROJECT_DIR:-.}"
-PREAMBLE="$PD/node_modules/@qijenchen/design-system/ds-canonical/fork/preamble.md"
+FORK="$PD/node_modules/@qijenchen/design-system/ds-canonical/fork"
+PREAMBLE="$FORK/preamble.md"
 
-# 治理本體缺(雲端 fresh-clone 還沒裝)→ 安靜放行(bootstrap 會發 npm install notice)
-[ -f "$PREAMBLE" ] || exit 0
+# (1) 治理本體缺(雲端 fresh-clone / 還沒裝)+ 有 package.json → 前景裝 @beta。
+# 這裡 block 到裝完才往下讀 → sequential,後面的讀取保證在 install 之後(消除 race)。
+# codex risk 2:plain `npm install` 會被 lockfile 重現舊樹 → 明確 @beta 拿最新治理。
+if [ ! -f "$PREAMBLE" ] && [ -f "$PD/package.json" ]; then
+  echo "💡 DS 治理本體缺(可能雲端 fresh-clone session)→ 自動裝最新治理(@beta)…" >&2
+  ( cd "$PD" && npm install @qijenchen/design-system@beta @qijenchen/storybook-config@beta --legacy-peer-deps --no-audit --no-fund >/dev/null 2>&1 ) || true
+fi
 
-CONTENT=$(cat "$PREAMBLE" 2>/dev/null)
-[ -z "$CONTENT" ] && exit 0
+# (2) 本體在(本機持久 / 剛裝完)→ 讀 + 經 additionalContext 注入設計紀律
+if [ -f "$PREAMBLE" ]; then
+  CONTENT=$(cat "$PREAMBLE" 2>/dev/null)
+  if [ -n "$CONTENT" ]; then
+    jq -n --arg ctx "$CONTENT" '{
+      hookSpecificOutput: {
+        hookEventName: "SessionStart",
+        additionalContext: ("# DS 設計治理(npm-current,事前主動遵循)\n\n" + $ctx)
+      }
+    }'
+    exit 0
+  fi
+fi
 
-# 經 additionalContext 注入(SessionStart);用 jq 安全 JSON-escape preamble 全文
-jq -n --arg ctx "$CONTENT" '{
-  hookSpecificOutput: {
-    hookEventName: "SessionStart",
-    additionalContext: ("# DS 設計治理(npm-current,事前主動遵循)\n\n" + $ctx)
-  }
-}'
+# (3) 仍缺(install 失敗 / 無 package.json)→ notice,不阻擋(fail-open)
+cat >&2 << 'EOF'
+💡 DS 治理尚未就位(npm install 未完成或失敗)。請手動執行 → npm install(或 npm run sync-all)。
+   注:現在「不阻擋」你工作,只是提醒;治理本體就位後設計治理 hook 才會機械把關。
+EOF
 exit 0

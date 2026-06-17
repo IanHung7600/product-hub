@@ -156,9 +156,11 @@ buildFullFixture()
   const v = runTpl('fork-governance-dispatcher.sh', JSON.stringify({ hook_event_name: 'PostToolUse', tool_name: 'Write', tool_input: { file_path: 'apps/demo/src/App.tsx', new_string: 'x' } }))
   if (v.exit !== 0) { flowResults.push(`  dispatcher(manifest 缺): ❌ brick(exit=${v.exit},應 0)`); fail++ }
   else flowResults.push('  dispatcher(manifest 缺): ✅ exit 0 不 brick')
-  const b = runTpl('check_governance_bootstrap.sh', '{"hook_event_name":"SessionStart"}')
-  if (b.exit !== 0) { flowResults.push(`  bootstrap(本體缺): ❌ exit ${b.exit}(應 0 fail-open)`); fail++ }
-  else flowResults.push('  bootstrap(本體缺): ✅ exit 0 fail-open(notice 不 brick)')
+  // inject(SessionStart init,已併入 bootstrap install)在「本體缺 + 無 package.json」→ exit 0 fail-open(不 brick、不嘗試 install)
+  rmSync(join(FULL, 'node_modules/@qijenchen/design-system/ds-canonical/fork/preamble.md'), { force: true })
+  const b = runTpl('inject_fork_governance_preamble.sh', '{"hook_event_name":"SessionStart"}')
+  if (b.exit !== 0) { flowResults.push(`  inject(本體缺 fail-open): ❌ exit ${b.exit}(應 0)`); fail++ }
+  else flowResults.push('  inject(本體缺 fail-open): ✅ exit 0 不 brick(notice;install+inject 已 sequential 合一,消除並行 race)')
 }
 
 // 4) sync-all 接線骨架刷新(refresh-fork-launchers:idempotent + 不 clobber user hook + opt-out)
@@ -176,7 +178,7 @@ function buildSkelFixture(withOptOut) {
   writeFileSync(join(SKEL, '.claude/settings.json'), JSON.stringify({
     defaultMode: 'auto',
     hooks: {
-      SessionStart: [{ hooks: [{ type: 'command', command: 'bash my-own-hook.sh' }, { type: 'command', command: 'bash "$CLAUDE_PROJECT_DIR/.claude/hooks/check_governance_bootstrap.sh"' }] }],
+      SessionStart: [{ hooks: [{ type: 'command', command: 'bash my-own-hook.sh' }, { type: 'command', command: 'bash "$CLAUDE_PROJECT_DIR/.claude/hooks/inject_fork_governance_preamble.sh"' }] }],
       // PostToolUse:user 自有 lint + 一個「含啟動器名為子字串但不是啟動器」的 hook(adversarial FINDING 2b 不得誤刪)
       PostToolUse: [{ matcher: 'Edit', hooks: [{ type: 'command', command: 'bash user-lint.sh' }, { type: 'command', command: 'bash ".claude/hooks/my-fork-governance-dispatcher.sh.bak"' }] }],
     },
@@ -186,22 +188,22 @@ function buildSkelFixture(withOptOut) {
 buildSkelFixture(false)
 const r1 = refreshLaunchers(SKEL)
 {
-  const launchersCopied = r1.copied?.length === 3 && existsSync(join(SKEL, '.claude/hooks/fork-governance-dispatcher.sh'))
+  const launchersCopied = r1.copied?.length === 2 && existsSync(join(SKEL, '.claude/hooks/fork-governance-dispatcher.sh'))
   const s = JSON.parse(readFileSync(join(SKEL, '.claude/settings.json'), 'utf8'))
   const cmds = JSON.stringify(s.hooks)
-  const hasAllLaunchers = ['check_governance_bootstrap.sh', 'fork-governance-dispatcher.sh', 'inject_fork_governance_preamble.sh'].every((l) => cmds.includes(l))
+  const hasAllLaunchers = ['fork-governance-dispatcher.sh', 'inject_fork_governance_preamble.sh'].every((l) => cmds.includes(l))
   const events4 = ['SessionStart', 'PreToolUse', 'PostToolUse', 'UserPromptSubmit'].every((ev) => s.hooks[ev])
   const userHookKept = cmds.includes('my-own-hook.sh') && cmds.includes('user-lint.sh')
   const substringHookKept = cmds.includes('my-fork-governance-dispatcher.sh.bak') // FINDING 2b:子字串碰撞不得誤刪
-  const noDupBootstrap = (cmds.match(/check_governance_bootstrap\.sh/g) || []).length === 1
+  const noDupInject = (cmds.match(/\/inject_fork_governance_preamble\.sh/g) || []).length === 1
   const permUnioned = (s.permissions?.allow || []).length >= 5
-  if (!launchersCopied) { skelResults.push('  refresh: ❌ 啟動器未全 copy(應 3 個)'); fail++ }
+  if (!launchersCopied) { skelResults.push('  refresh: ❌ 啟動器未全 copy(應 2 個:dispatcher + inject)'); fail++ }
   else if (!hasAllLaunchers || !events4) { skelResults.push('  refresh: ❌ settings 缺啟動器註冊 / 缺 4-event'); fail++ }
   else if (!userHookKept) { skelResults.push('  refresh: ❌ clobber 了 user 自有非治理 hook'); fail++ }
   else if (!substringHookKept) { skelResults.push('  refresh: ❌ 子字串碰撞 hook 被誤刪(FINDING 2b 回歸)'); fail++ }
-  else if (!noDupBootstrap) { skelResults.push('  refresh: ❌ 舊 launcher 註冊沒去重(重複)'); fail++ }
+  else if (!noDupInject) { skelResults.push('  refresh: ❌ 舊 launcher 註冊沒去重(inject 重複)'); fail++ }
   else if (!permUnioned) { skelResults.push('  refresh: ❌ permissions.allow 未 union'); fail++ }
-  else skelResults.push('  refresh: ✅ 啟動器 copy(3)+ 4-event 註冊 + user hook 保留 + 子字串不誤刪 + 去重 + perm union')
+  else skelResults.push('  refresh: ✅ 啟動器 copy(2)+ 4-event 註冊 + user hook 保留 + 子字串不誤刪 + 去重 + perm union')
 }
 // 4b idempotent
 {
@@ -225,7 +227,7 @@ const r1 = refreshLaunchers(SKEL)
   let r, threw = false
   try { r = refreshLaunchers(SKEL) } catch (e) { threw = true }
   const s = (!threw && r?.settingsMerged) ? JSON.parse(readFileSync(join(SKEL, '.claude/settings.json'), 'utf8')) : null
-  const hasLauncher = s && JSON.stringify(s.hooks).includes('check_governance_bootstrap.sh')
+  const hasLauncher = s && JSON.stringify(s.hooks).includes('inject_fork_governance_preamble.sh')
   if (threw || !hasLauncher) { skelResults.push(`  JSONC settings: ❌ // 註解的 settings 沒容忍/沒 merge(threw=${threw})`); fail++ }
   else skelResults.push('  JSONC settings: ✅ // + block 註解容忍 + merge 成功')
 }

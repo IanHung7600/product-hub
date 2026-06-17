@@ -109,7 +109,7 @@
       "delivery": "npm_read + sync-all refresh(scripts/refresh-fork-launchers.mjs:copy 啟動器 + idempotent merge settings hooks,帶 .github/no-governance-sync opt-out)",
       "source_ssot": "template/ds-product-template/.claude/{hooks,settings.json}",
       "items": [
-        { "names": ["check_governance_bootstrap.sh", "fork-governance-dispatcher.sh", "inject_fork_governance_preamble.sh"], "bucket": "SHIP_AS_IS", "via": "launchers", "reason": "極穩定 thin 啟動器(fork committed);隨 npm ship 供 sync-all 刷新 → 既有 fork 一鍵 adopt/同步骨架,無需手動 git-checkout upstream" },
+        { "names": ["fork-governance-dispatcher.sh", "inject_fork_governance_preamble.sh"], "bucket": "SHIP_AS_IS", "via": "launchers", "reason": "極穩定 thin 啟動器(fork committed);隨 npm ship 供 sync-all 刷新 → 既有 fork 一鍵 adopt/同步骨架,無需手動 git-checkout upstream。inject = SessionStart install-if-missing + 注入(2026-06-17 併入原 check_governance_bootstrap,消除 3-hook 並行 race);dispatcher = Pre/Post/UserPromptSubmit 機械強制。" },
         { "name": "settings-hooks.json", "bucket": "SHIP_AS_IS", "via": "launchers", "reason": "settings.json 的 hooks 區塊 + governance permissions(從 template settings.json 抽);sync-all idempotent merge 進 fork settings(strip 舊 launcher 註冊 + append canonical + union permissions.allow),不 clobber user 自有非治理 hook" }
       ]
     }

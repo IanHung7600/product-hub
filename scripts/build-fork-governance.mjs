@@ -35,7 +35,8 @@ const OUT_DIR = join(ROOT, 'packages/design-system/ds-canonical/fork')
 const SETTINGS_PATH = join(ROOT, '.claude/settings.json')
 // C-prime 接線骨架 SSOT(template fork 的 committed 啟動器 + settings.json)→ 隨 npm ship 供 sync-all 刷新
 const TPL_CLAUDE = join(ROOT, 'template/ds-product-template/.claude')
-const LAUNCHER_NAMES = ['check_governance_bootstrap.sh', 'fork-governance-dispatcher.sh', 'inject_fork_governance_preamble.sh']
+// 2026-06-17 移除 check_governance_bootstrap.sh:其 install 邏輯併進 inject(消除 SessionStart 並行 race)。
+const LAUNCHER_NAMES = ['fork-governance-dispatcher.sh', 'inject_fork_governance_preamble.sh']
 
 const CHECK = process.argv.includes('--check')
 

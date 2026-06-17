@@ -124,6 +124,11 @@ jobs:
           if [ "$fail" -eq 1 ]; then exit 1; fi
           echo "✅ all hook tests passed"
 
+      - name: Fork-governance corpus + harness(C-prime PR-gate;原只在 release/canary → 加 PR-gate defense-in-depth)
+        run: |
+          node scripts/build-fork-governance.mjs --check
+          node scripts/test-fork-governance.mjs
+
       - name: Story compile-drift check
         run: |
           # 直接用 compile-stories.mjs 的 exit code:script 內部 `--check` mode 已正確
