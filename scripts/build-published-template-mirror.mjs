@@ -83,7 +83,7 @@ const ALLOWLIST = [
   'template/ds-product-template/CLAUDE.md',
   'template/ds-product-template/docs',
   'template/ds-product-template/tsconfig.json',
-  'template/ds-product-template/.claude',  // C-prime committed 治理:settings.json(dispatcher hooks + enabledPlugins skills)+ 3 啟動器 hooks
+  'template/ds-product-template/.claude',  // C-prime committed 治理:settings.json(SessionStart inject preamble + dispatcher hooks + fail-open bootstrap)+ 3 啟動器 hooks。skills 非 C-prime 自動送達(#62174)
 ]
 
 // Files within template/ds-product-template/ get "flattened" to mirror root
