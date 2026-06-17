@@ -123,6 +123,12 @@ const canonicalChecks = [
   ['ds-canonical/references', 'ds-canonical/references/'],
   ['ds-canonical/commands', 'ds-canonical/commands/'],
   ['src/components/Button/button.spec.md', 'Button spec.md'],
+  // C-prime fork 治理 corpus(fork 取得治理的命脈;漏 ship = fork 完全拿不到治理)
+  ['ds-canonical/fork/preamble.md', 'fork preamble(事前設計紀律注入源)'],
+  ['ds-canonical/fork/manifest.json', 'fork manifest(dispatcher 清單)'],
+  ['ds-canonical/fork/hooks', 'fork hook bodies(機械強制)'],
+  ['ds-canonical/fork/launchers/fork-governance-dispatcher.sh', 'fork 接線骨架(sync-all 刷新源)'],
+  ['ds-canonical/fork/launchers/settings-hooks.json', 'fork settings hooks 模板'],
 ]
 for (const [path, label] of canonicalChecks) {
   if (!existsSync(join(dsRoot, path))) {
