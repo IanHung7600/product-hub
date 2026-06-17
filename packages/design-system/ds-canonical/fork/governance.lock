@@ -88,6 +88,10 @@
     {
       "file": "manifest.json",
       "sha256": "ee4f619b722c7d3a4f80dddb52dcee4bf900c7e6923945cd59d290d4a8236e5a"
+    },
+    {
+      "file": "preamble.md",
+      "sha256": "11c739bab463dfd778a344fac25fd00d795b0dba25b0239aa7719b9fed1b61c0"
     }
   ]
 }

@@ -15,6 +15,7 @@
       {
         "hooks": [
           { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/check_governance_bootstrap.sh\"" },
+          { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/inject_fork_governance_preamble.sh\"" },
           { "type": "command", "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/fork-governance-dispatcher.sh\"" }
         ]
       }

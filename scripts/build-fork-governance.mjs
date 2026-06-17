@@ -27,6 +27,9 @@ import { fileURLToPath } from 'node:url'
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const HOOKS_DIR = join(ROOT, '.claude/hooks')
 const CLS_PATH = join(ROOT, 'scripts/fork-hook-classification.json')
+const GOV_PATH = join(ROOT, 'scripts/fork-governance-classification.json')
+const RULES_DIR = join(ROOT, '.claude/rules')
+const REFS_DIR = join(ROOT, '.claude/references')
 const OVERRIDE_DIR = join(ROOT, 'scripts/fork-hook-overrides')
 const OUT_DIR = join(ROOT, 'packages/design-system/ds-canonical/fork')
 const SETTINGS_PATH = join(ROOT, '.claude/settings.json')
@@ -34,6 +37,7 @@ const SETTINGS_PATH = join(ROOT, '.claude/settings.json')
 const CHECK = process.argv.includes('--check')
 
 const cls = JSON.parse(readFileSync(CLS_PATH, 'utf8'))
+const gov = JSON.parse(readFileSync(GOV_PATH, 'utf8'))
 const settings = JSON.parse(readFileSync(SETTINGS_PATH, 'utf8'))
 
 // ── (1) Coverage gate:全 .claude/hooks/*.{sh,py} 必須被分類,漏接 = FAIL ──
@@ -118,6 +122,33 @@ function buildCorpus() {
     emit(newName, readFileSync(ov, 'utf8'), e.hook, 'REPLACE', eventsOf(e.hook))
   }
   // DROP: 不生成
+
+  // ── preamble.md(#3 事前指引層,deterministic 從 source 生成、hash-locked,禁人工摘要)──
+  // 規則:via 含 "inject" 的 rules/references → 收錄全文(path-rewrite 後);via "npm_read" → 收錄 pointer。
+  // 來源是 .claude/rules + .claude/references 的真實檔(SSOT),非手寫摘要 → deterministic + npm-current。
+  const preParts = ['# DS Fork 治理 preamble(SessionStart 注入;source-generated,禁手改)\n',
+    '> 本檔由 build-fork-governance.mjs 從 .claude/{rules,references} SSOT 生成,path 已改 node_modules 視角。\n']
+  const collect = (home, srcDir, label) => {
+    const items = (gov.homes[home] && gov.homes[home].items) || []
+    for (const it of items) {
+      if (!it.name || !['SHIP_AS_IS', 'SHIP_REWRITTEN'].includes(it.bucket)) continue
+      const src = join(srcDir, it.name)
+      if (!existsSync(src)) continue
+      const via = it.via || ''
+      if (via.includes('inject') || via.includes('embed')) {
+        preParts.push(`\n---\n## ${label}/${it.name}\n`, applyTransform(readFileSync(src, 'utf8')))
+      } else {
+        preParts.push(`\n- 需要時 Read:node_modules/@qijenchen/design-system/.claude/${home}/${it.name}(${(it.reason || '').slice(0, 60)})`)
+      }
+    }
+  }
+  preParts.push('\n# 設計紀律(rules,寫產品 code 前主動遵循)\n')
+  collect('rules', RULES_DIR, 'rules')
+  preParts.push('\n# SSOT 消費對照(references)\n')
+  collect('references', REFS_DIR, 'references')
+  const preambleStr = preParts.join('\n') + '\n'
+  writeFileSync(join(OUT_DIR, 'preamble.md'), preambleStr)
+  lockEntries.push({ file: 'preamble.md', sha256: createHash('sha256').update(preambleStr).digest('hex') })
 
   // dispatcher manifest + lock
   const manifestStr = JSON.stringify(manifest, null, 2) + '\n'
