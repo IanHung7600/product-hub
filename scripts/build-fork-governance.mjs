@@ -84,6 +84,14 @@ function applyTransform(content) {
     .replace(/\.\.\/\.\.\/packages\/design-system\/src/g, 'node_modules/@qijenchen/design-system/src')
 }
 
+// preamble 專用 transform:除 src 路徑外,把 inline 的 .claude/{rules,references,skills,commands} 指標
+// 改指 npm ship 的 ds-canonical/(套件不 ship .claude/ 目錄)→ 修 fork 死指標(adversarial MINOR 1)。
+// memory/planning/logs 與 scripts/*.mjs 是 DS-author-only,不 ship → 不改(由 fork-context header 教 fork 忽略)。
+function preambleTransform(content) {
+  return applyTransform(content)
+    .replace(/\.claude\/(rules|references|skills|commands)\//g, 'node_modules/@qijenchen/design-system/ds-canonical/$1/')
+}
+
 // ── 生成 ──
 function buildCorpus() {
   if (existsSync(OUT_DIR)) rmSync(OUT_DIR, { recursive: true, force: true })
@@ -134,7 +142,11 @@ function buildCorpus() {
   // 規則:via 含 "inject" 的 rules/references → 收錄全文(path-rewrite 後);via "npm_read" → 收錄 pointer。
   // 來源是 .claude/rules + .claude/references 的真實檔(SSOT),非手寫摘要 → deterministic + npm-current。
   const preParts = ['# DS Fork 治理 preamble(SessionStart 注入;source-generated,禁手改)\n',
-    '> 本檔由 build-fork-governance.mjs 從 .claude/{rules,references} SSOT 生成,path 已改 node_modules 視角。\n']
+    '> 本檔由 build-fork-governance.mjs 從 .claude/{rules,references} SSOT 生成,path 已改 node_modules 視角。\n',
+    '\n> **你是 FORK PRODUCT 開發者**:遵循下方設計紀律(item-anatomy / SSOT 消費 / Tailwind / 命名 / 4-Family Layout);' +
+    '**忽略 DS-author-only 流程詞彙**(`build:lib` / `release:preflight` / push DS repo main / codex-collab / `scripts/*.mjs` gate — 那些是 DS 維護者的,fork 用不到)。' +
+    'Deep detail 看 `node_modules/@qijenchen/design-system/ds-canonical/{rules,references}` + 元件 `.spec.md`。\n' +
+    '> **4-Family Layout**:Family 1+2(列表/選單項)見下方 item-anatomy;Family 3(Pill)見 `Button` 的 `.spec.md`;Family 4(可編輯 Field 控件)見 `field-controls.spec.md`(都在 node_modules/@qijenchen/design-system/src)。\n']
   const collect = (home, srcDir, label) => {
     const items = (gov.homes[home] && gov.homes[home].items) || []
     for (const it of items) {
@@ -143,7 +155,7 @@ function buildCorpus() {
       if (!existsSync(src)) continue
       const via = it.via || ''
       if (via.includes('inject') || via.includes('embed')) {
-        preParts.push(`\n---\n## ${label}/${it.name}\n`, applyTransform(readFileSync(src, 'utf8')))
+        preParts.push(`\n---\n## ${label}/${it.name}\n`, preambleTransform(readFileSync(src, 'utf8')))
       } else {
         // npm package 把 .claude/{rules,references} 鏡像到 ds-canonical/{rules,references}(sync-ds-canonical.mjs);
         // 套件「不 ship .claude/ 目錄」→ pointer 必指 ds-canonical/(實際 ship 路徑),指 .claude/ 會 file-not-found。

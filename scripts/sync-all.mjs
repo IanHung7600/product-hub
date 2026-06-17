@@ -47,7 +47,8 @@ if (ok) {
   } else {
     console.log('✓')
     if (refresh.copied?.length) console.log(`   • 啟動器:${refresh.copied.join(' / ')}`)
-    if (refresh.settingsMerged) console.log('   • settings.json hooks + permissions 已對齊 canonical(strip 舊 + append + union,未動你自有非治理 hook)。')
+    if (refresh.removed?.length) console.log(`   • 移除 obsolete plugin-era hook:${refresh.removed.join(' / ')}(防 brick:這些舊 hook 沒 plugin 會擋掉所有編輯)`)
+    if (refresh.settingsMerged) console.log('   • settings.json hooks + permissions 已對齊 canonical(strip 舊 launcher + obsolete + append + union,未動你自有非治理 hook)。')
   }
 
   console.log('   👉 重啟 Claude Code session → committed hook 重讀 npm-current 治理生效。')

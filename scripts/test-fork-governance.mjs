@@ -229,6 +229,20 @@ const r1 = refreshLaunchers(SKEL)
   if (threw || !hasLauncher) { skelResults.push(`  JSONC settings: ❌ // 註解的 settings 沒容忍/沒 merge(threw=${threw})`); fail++ }
   else skelResults.push('  JSONC settings: ✅ // + block 註解容忍 + merge 成功')
 }
+// 4e obsolete plugin-era hook 移除(BLOCKER run-3 回歸鎖:既有 fork 的 block_production_edit_without_plugin 必被移除,否則 C-prime 拿掉 plugin 後它 exit 2 brick 所有編輯)
+{
+  buildSkelFixture(false)
+  writeFileSync(join(SKEL, '.claude/hooks/block_production_edit_without_plugin.sh'), '#!/bin/bash\nexit 2\n')
+  writeFileSync(join(SKEL, '.claude/settings.json'), JSON.stringify({
+    hooks: { PreToolUse: [{ matcher: 'Edit|Write', hooks: [{ type: 'command', command: 'bash "$CLAUDE_PROJECT_DIR/.claude/hooks/block_production_edit_without_plugin.sh"' }] }] },
+  }, null, 2))
+  const r = refreshLaunchers(SKEL)
+  const fileGone = !existsSync(join(SKEL, '.claude/hooks/block_production_edit_without_plugin.sh'))
+  const s = JSON.parse(readFileSync(join(SKEL, '.claude/settings.json'), 'utf8'))
+  const regGone = !JSON.stringify(s.hooks).includes('block_production_edit_without_plugin')
+  if (!fileGone || !regGone) { skelResults.push(`  obsolete 移除: ❌ block_production_edit 殘留(file 在=${!fileGone}/reg 在=${!regGone})`); fail++ }
+  else skelResults.push(`  obsolete 移除: ✅ block_production_edit 從 disk + settings 清掉(防 brick;removed=${(r.removed || []).join(',')})`)
+}
 
 console.log('=== 假 fork 測試 harness 結果 ===')
 console.log(`fixture: ${FIX}(apps/** + node_modules/@qijenchen/design-system/src,NO packages/design-system)`)

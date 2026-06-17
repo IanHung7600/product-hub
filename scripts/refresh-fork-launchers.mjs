@@ -14,7 +14,7 @@
 //
 // 抽成獨立模組 = sync-all 呼叫 + test-fork-governance.mjs 直接測(不需真跑 npm install)。
 
-import { readFileSync, writeFileSync, copyFileSync, existsSync, readdirSync, mkdirSync } from 'node:fs'
+import { readFileSync, writeFileSync, copyFileSync, existsSync, readdirSync, mkdirSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 
 // Claude Code 的 .claude/settings.json 允許 JSONC(// 行註解 / block 註解)→ JSON.parse 會炸。
@@ -40,9 +40,16 @@ const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 // 避免 loose substring 誤刪「command 只是『含』啟動器名為子字串」的 user hook(adversarial FINDING 2b)。
 const refsLauncher = (cmd) => LAUNCHERS.some((l) => new RegExp(`/${escRe(l)}(?=["'\\s]|$)`).test(cmd || ''))
 
+// 2026-06-17 BLOCKER fix(adversarial run 3,實證既有 6 個 downstream fork):
+// 既有 beta.69 fork 帶 plugin-era committed hook;C-prime 叫 user 拿掉 plugin →
+// block_production_edit_without_plugin.sh(PreToolUse)exit 2 擋掉所有 apps/** 編輯 = brick。
+// 故 migration 必「移除」這些 obsolete(從 disk + settings 註冊),非只「新增」launcher。
+const OBSOLETE_HOOKS = ['block_production_edit_without_plugin.sh', 'check_plugin_bootstrap.sh']
+const refsObsolete = (cmd) => OBSOLETE_HOOKS.some((o) => new RegExp(`/${escRe(o)}(?=["'\\s]|$)`).test(cmd || ''))
+
 // 刷新 projectDir 的接線骨架;回傳 {copied, settingsMerged, skipped}
 export function refreshLaunchers(projectDir) {
-  const result = { copied: [], settingsMerged: false, skipped: null }
+  const result = { copied: [], removed: [], settingsMerged: false, skipped: null }
 
   // opt-out:fork user 明確不要官方覆蓋骨架
   if (existsSync(join(projectDir, '.github/no-governance-sync'))) {
@@ -63,6 +70,11 @@ export function refreshLaunchers(projectDir) {
     copyFileSync(join(src, f), join(hooksDir, f))
     result.copied.push(f)
   }
+  // 移除 obsolete plugin-era committed hooks(brick 來源:block_production_edit_without_plugin.sh 等)
+  for (const o of OBSOLETE_HOOKS) {
+    const f = join(hooksDir, o)
+    if (existsSync(f)) { rmSync(f); result.removed.push(o) }
+  }
 
   // 2. idempotent merge settings hooks + permissions
   const canonical = JSON.parse(readFileSync(join(src, 'settings-hooks.json'), 'utf8'))
@@ -70,10 +82,10 @@ export function refreshLaunchers(projectDir) {
   const s = existsSync(settingsPath) ? parseJsonc(readFileSync(settingsPath, 'utf8'), '.claude/settings.json') : {}
   s.hooks = s.hooks || {}
 
-  // strip 舊 launcher 註冊(所有 event)→ 去重,重跑不疊加
+  // strip 舊 launcher 註冊(去重,重跑不疊加)+ obsolete plugin-era 註冊(移除,不 re-add)
   for (const ev of Object.keys(s.hooks)) {
     s.hooks[ev] = (s.hooks[ev] || [])
-      .map((g) => ({ ...g, hooks: (g.hooks || []).filter((h) => !refsLauncher(h.command)) }))
+      .map((g) => ({ ...g, hooks: (g.hooks || []).filter((h) => !refsLauncher(h.command) && !refsObsolete(h.command)) }))
       .filter((g) => (g.hooks || []).length > 0)
     if (s.hooks[ev].length === 0) delete s.hooks[ev]
   }
