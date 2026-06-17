@@ -115,3 +115,6 @@ tmp/
 /smoke.png
 *.tsbuildinfo
 storybook-static-baseline/
+
+# 治理 hook-fire logger 偶爾以相對路徑誤寫到 ds-canonical/.claude/logs(stray,絕不該 ship 進 fork npm)
+packages/design-system/ds-canonical/.claude/
