@@ -83,7 +83,7 @@ const ALLOWLIST = [
   'template/ds-product-template/CLAUDE.md',
   'template/ds-product-template/docs',
   'template/ds-product-template/tsconfig.json',
-  'template/ds-product-template/.claude',  // settings.json with plugin marketplace flow
+  'template/ds-product-template/.claude',  // C-prime committed 治理:settings.json(dispatcher hooks + enabledPlugins skills)+ 3 啟動器 hooks
 ]
 
 // Files within template/ds-product-template/ get "flattened" to mirror root
