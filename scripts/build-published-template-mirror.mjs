@@ -83,7 +83,7 @@ const ALLOWLIST = [
   'template/ds-product-template/CLAUDE.md',
   'template/ds-product-template/docs',
   'template/ds-product-template/tsconfig.json',
-  'template/ds-product-template/.claude',  // C-prime committed 治理:settings.json(SessionStart inject preamble + dispatcher hooks + fail-open bootstrap)+ 3 啟動器 hooks。skills 非 C-prime 自動送達(#62174)
+  'template/ds-product-template/.claude',  // C-prime committed 治理:settings.json(SessionStart inject preamble + dispatcher hooks + fail-open bootstrap)+ 啟動器 hooks + fork-relevant skills(.claude/skills/,name-allowlist 把關;session-1 可叫用)。DS-author-only skill 不送(#62174 Claude Code 不認 node_modules → 走 committed scaffold)
 ]
 
 // Files within template/ds-product-template/ get "flattened" to mirror root
