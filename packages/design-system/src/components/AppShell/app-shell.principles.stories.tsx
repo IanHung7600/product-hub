@@ -73,8 +73,9 @@ export const UsageGuidance: Story = {
   ),
 }
 
-// 佈局模式選型 deep-dive — 內容錨定 app-shell.spec.md「兩 mode 差異」(L93-94 / L105 常見誤解)
-// +「WorkspaceBrand 放置 SSOT」(L112-119);category-templates.md component-specific `{Topic}Rule` idiom
+// 佈局模式選型 deep-dive — 內容錨定 app-shell.spec.md 的「Layout mode 兩 mode 差異」+「WorkspaceBrand 放置 SSOT」
+// +「帳號入口(Account entry)放置 SSOT」段(均含 Responsive 精修子句;用段名錨定不寫死行號避免 drift)。
+// category-templates.md component-specific `{Topic}Rule` idiom
 export const LayoutModeRule: Story = {
   name: '佈局模式怎麼選',
   render: () => (

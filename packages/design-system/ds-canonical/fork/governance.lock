@@ -110,11 +110,11 @@
     },
     {
       "file": "skills/bug-fix-rhythm/SKILL.md",
-      "sha256": "9901dc89a2e58072687b37ab8160b0cfe477f28eb3fd812a70e559870d1ab407"
+      "sha256": "4bca87df4f2777fe76f8e302698d373fb0ba60699922fb8b35c8aefae1c51ae0"
     },
     {
       "file": "skills/code-quality-audit/SKILL.md",
-      "sha256": "9fec4a0a89799f73361e6352d21e200e6e7b3557a61c33e8b9d5b0affaa2809d"
+      "sha256": "fb65ebf0c72f7b475640f4861a1bfa2e9140727e2ff051fbd58f8348c0dc187d"
     },
     {
       "file": "skills/delivery-handoff/references/flow-diagram.md",
@@ -150,7 +150,7 @@
     },
     {
       "file": "skills/product-ui-audit/SKILL.md",
-      "sha256": "8d814dbd5409d8a6069a2a2a32360f5e1f356d44246005a7abba63b85599b723"
+      "sha256": "cef077d82f906fd26d1507bbab00f5215a75583780aa893805d3018eef000a05"
     },
     {
       "file": "skills/propose-options/SKILL.md",
@@ -158,7 +158,7 @@
     },
     {
       "file": "skills/prototype/references/audit-checks.md",
-      "sha256": "76ccad0fcfaaaacf4c45825bc42419374e3621572b72c847f51a9e96778a745c"
+      "sha256": "6f17d6b4bc6ae94eedef8c39b68d4ab1baec92ef1035eeab462e17239c2803e3"
     },
     {
       "file": "skills/prototype/references/benchmark-sources.md",
@@ -186,7 +186,7 @@
     },
     {
       "file": "skills/scan-similar-bugs/SKILL.md",
-      "sha256": "ad532b903eb9dc4963fc938ace0b32fbdf14031ee60ee851f6ca1fe703ea893c"
+      "sha256": "79c5125f6d65d9d530c09ba2f19afe60174278448b122f4d4a66f9280c1312ca"
     },
     {
       "file": "skills/ux-audit/SKILL.md",
@@ -198,7 +198,7 @@
     },
     {
       "file": "skills/visual-audit/references/audit-architecture.md",
-      "sha256": "781ed6929c9bf354a0170f292fea23ce84dd7d7c8d9cba32698679ec42a2196f"
+      "sha256": "48c931ad559c1e37ecebd08d289509692c79d9c92d2574f65e89bf286b7c95cf"
     },
     {
       "file": "skills/visual-audit/references/visual-checklist.md",
@@ -210,7 +210,7 @@
     },
     {
       "file": "skills/visual-audit/SKILL.md",
-      "sha256": "4e2cab48827f7301045656d10b926b2666582a89f6ce1e57a9a063beff82bb84"
+      "sha256": "0af4957c5ab08f8c04bbc944900ae45b719eed879e667de1fd139392e57c4525"
     }
   ]
 }

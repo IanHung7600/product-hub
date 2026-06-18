@@ -54,6 +54,10 @@ fi
 # 例外(2026-06-18 responsive 精修,M34 hook-intent 對齊):同 file 也用 useSidebar/isMobile =
 # mobile-only 補品牌的「正確 responsive fork」(小螢幕 Sheet 蓋住 globalHeader → Sheet 內補同組 primitive,
 # desktop 仍無 SidebarHeader,非真重複)→ 不 flag。見 app-shell.spec.md WorkspaceBrand SSOT「Responsive 精修」子句。
+# ⚠️ 限制(2026-06-18 beta.74 audit 記錄):V2 是 token-presence 啟發式(file 含 useSidebar/isMobile 即豁免),
+#    非「isMobile 真的 guard 該 <SidebarHeader>」的 AST 級判斷 → 罕見假陰性(unguarded SidebarHeader 但 file
+#    因別處用 isMobile → 漏擋)。bash 無法精準 AST;靠 code review + escape allowlist 兜底,目前唯一 consumer(stories)正確。
+#    要嚴格需 TS AST lint rule(future)。
 if grep -q '<SidebarHeader' "$TARGET" && ! grep -qE 'useSidebar|isMobile' "$TARGET"; then
   VIOLATIONS+=("V2 Sidebar 內含 SidebarHeader:primary-header mode WorkspaceBrand 該在 globalHeader,sidebar 內不該重複(per spec.md「WorkspaceBrand 放置 SSOT」+ world-class GitHub/Gmail/Figma 共識)。若是 mobile-only responsive 補品牌請用 useSidebar().isMobile 條件渲染(自動豁免);若 sidebar header 是其他內容(非 brand),加 escape allowlist `// @app-shell-primary-header-allow:` 並說明 reason")
 fi

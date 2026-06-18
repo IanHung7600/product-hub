@@ -8,7 +8,7 @@
       "post_edit_dispatcher 的 _overlay_handcraft(擋 consumer 手刻 overlay header,非 SurfaceHeader/Popover primitive)+ _code_quality 兩個 fork-relevant 檢查,改判 DROP 後目前無 standalone 涵蓋 → 待 promote 成 standalone fork hook(harness 驗證後加)。layout-space 部分已由 check_layout_space_magic_numbers 涵蓋,無 gap。"
     ],
     "buckets_def": {
-      "SHIP_AS_IS": "已 fork-aware(scope apps/** 或 layout-agnostic,DS 內部路徑乾淨 exit 0)→ 原樣 ship 進 fork settings",
+      "SHIP_AS_IS": "已 fork-aware(scope apps/** 或 layout-agnostic,DS 內部路徑乾淨 exit 0)→ 原樣 ship 進 fork settings。註(2026-06-18):build emit() 對【所有】bucket(含 SHIP_AS_IS)套一個 universal display-path 改寫 `#*/my-project/`→`$CLAUDE_PROJECT_DIR`(純 soft-warn 訊息路徑顯示、不動 exit/BLOCKER 邏輯)→ SHIP_AS_IS 行為語意仍 verbatim,只 display path 適配 fork",
       "SHIP_REWRITTEN": "fork 有價值但寫死 DS 路徑/資料 → 機械改寫(packages/design-system/src→node_modules/@qijenchen/design-system/src;.claude/{logs,memory} 讀取加 [ -d ]||exit 0 guard)",
       "REPLACE": "意圖對 fork 重要但現形式有害(hard-block apps/** = 鎖死)→ 換 quality-positive soft inject(exit 0)",
       "DROP": "DS-author-only,fork 無意義(governance/audit/codex/solo-dev/component-SSOT 維護)→ 不註冊進 fork settings"
@@ -71,7 +71,7 @@
     { "hook": "check_story_invariants.sh", "reason": "DS-author story archetype/baseline registry(scope DS src stories)。" },
     { "hook": "check_storybook_addon_packaging.sh", "reason": "DS-author storybook-config addon packaging。" },
     { "hook": "check_wrapper_primitive_schema_drift.sh", "reason": "DS-author wrapper-vs-primitive schema(scope DS src)。" },
-    { "hook": "chrome_header_dispatcher.sh", "reason": "fan-out 4 個 ChromeHeader header-canonical DS-author invariant。" },
+    { "hook": "chrome_header_dispatcher.sh", "reason": "fan-out 4 個 ChromeHeader header-canonical DS-author invariant(含 _app_shell_primary_header_consistency lib,beta.73 加 responsive 豁免)。注(2026-06-18 beta.74 audit):fork 端 primary-header 一致性『機械』enforcement 暫不送 = 刻意 defer,非 beta.73 回歸;responsive 品牌/帳號 pattern 由 app-shell.spec.md canonical + AcmeSidebar demo + preamble 注入指引 fork。要 fork 也機械擋,需另案把 chrome-header 家族 enforcement fork-relevant 化(scope 較大)。" },
     { "hook": "enforce_home_charter.sh", "reason": "DS-author 8-home governance charter 強制。" },
     { "hook": "inject_pending_self_audit.sh", "reason": "DS-author next-turn self-audit BLOCKER 注入(讀 score-history)。" },
     { "hook": "log_governance_fires.sh", "reason": "DS-author governance fire log。" },

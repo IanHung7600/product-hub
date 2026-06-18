@@ -134,6 +134,20 @@ function preambleTransform(content) {
     .replace(/\.claude\/(rules|references|skills|commands)\//g, 'node_modules/@qijenchen/design-system/ds-canonical/$1/')
 }
 
+// fork skill 自動加註(2026-06-18 beta.74 adversarial-audit 補):fork-shipped skill 若引用 DS-author 機械工具
+// (`scripts/*.mjs` 或非 fork-template 的 `npm run <audit>`),fork 套件未隨附那些 executor(Claude Code 不掃
+// node_modules + 那些 script 有 DS-author dep / 路徑假設,不適合 ship)→ 自動在 frontmatter 後 prepend 誠實註記,
+// 避免 fork user 照 skill 跑到 ERR_MODULE_NOT_FOUND。build 一律加 = recurrence-proof(未來新 skill 自動涵蓋)。
+const FORK_TPL_NPM = new Set(Object.keys(JSON.parse(readFileSync(join(ROOT, 'template/ds-product-template/package.json'), 'utf8')).scripts || {}))
+const FORK_SKILL_NOTE = '> **⚠️ Fork 工具註記(build 自動加)**:本 skill 提到的 `scripts/*.mjs` 或非標準 `npm run <audit>` 是 **DS-author repo 的機械工具,未隨 fork 套件附帶**(Claude Code 不掃 node_modules,fork 也無這些 executor + dep)。你的 product fork 用本 skill 的**方法論**(human / AI judgment)+ 既有 committed governance hook 的機械強制即可;要 mechanical 腳本層(截圖 / CI gate)請自行設置對應工具,或把該檢查 PR 回 DS repo 跑。\n'
+function annotateForkSkill(content) {
+  const refsScript = /scripts\/[a-z0-9_-]+\.mjs/.test(content)
+  const refsForeignNpm = [...content.matchAll(/npm run ([\w:-]+)/g)].some((m) => !FORK_TPL_NPM.has(m[1]))
+  if (!refsScript && !refsForeignNpm) return content
+  const fm = content.match(/^---\n[\s\S]*?\n---\n/)
+  return fm ? fm[0] + '\n' + FORK_SKILL_NOTE + content.slice(fm[0].length) : FORK_SKILL_NOTE + content
+}
+
 // ── 生成 ──
 function buildCorpus() {
   if (existsSync(OUT_DIR)) rmSync(OUT_DIR, { recursive: true, force: true })
@@ -186,7 +200,11 @@ function buildCorpus() {
   // skill/command/agent 是「docs-with-pointers」,即使 SHIP_AS_IS 也須改 path(與 hook 的 self-contained shell verbatim 不同)。
   const emitFile = (srcFile, outRel) => {
     let buf = readFileSync(srcFile)
-    if (srcFile.endsWith('.md')) buf = Buffer.from(preambleTransform(buf.toString('utf8')))
+    if (srcFile.endsWith('.md')) {
+      let txt = preambleTransform(buf.toString('utf8'))
+      if (outRel.startsWith('skills/')) txt = annotateForkSkill(txt) // 引用 DS-author 機械工具的 skill 自動加 fork 註記
+      buf = Buffer.from(txt)
+    }
     const outPath = join(OUT_DIR, outRel)
     mkdirSync(dirname(outPath), { recursive: true })
     writeFileSync(outPath, buf)

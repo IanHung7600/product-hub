@@ -265,7 +265,7 @@ fi
 ENV_SMOKE=""
 # (a) plugin-mode 完整性 — CLAUDE_PLUGIN_ROOT 在 ds-repo native mode 可能 UNSET → 先 guard 才用
 if [ -n "${CLAUDE_PLUGIN_ROOT:-}" ] && [ ! -d "${CLAUDE_PLUGIN_ROOT:-}/hooks" ]; then
-  ENV_SMOKE="${ENV_SMOKE}\n    - Plugin mode:\$CLAUDE_PLUGIN_ROOT 有設但 hooks/ 找不到 → plugin install 可能不完整(跑 /plugin marketplace update)。"
+  ENV_SMOKE="${ENV_SMOKE}\n    - Plugin mode:\$CLAUDE_PLUGIN_ROOT 有設但 hooks/ 找不到 → plugin install 可能不完整(C-prime 主路徑 = committed-config + \`npm run sync-all\`〔npm-only〕;刻意用 plugin 才跑 /plugin marketplace update)。"
 fi
 # (b) node 在 PATH — audit scripts 依賴
 if ! command -v node >/dev/null 2>&1; then
