@@ -22,4 +22,13 @@ metadata:
 
 跨環境治理散布的可行機制 = **committed `.claude` 配置**(非 plugin)。官方控管靠「本體放 npm 套件(npm install 覆蓋 = 改不動)+ committed 啟動器指向 node_modules 本體 + CI 抓竄改(detect-not-prevent;真鎖死需企業版 managed-settings)」。共識方案見 [[project_cprime_governance_delivery]](若已建 plan doc)。
 
+## Mid-session reload 語意(2026-06-18 官方 docs 實證 — 修正「sync-all 中途都要重啟」誤解)
+
+fork 中途 `npm run sync-all` / `npm install` 後**三軌生效不同**(別盲目叫 user 重啟整個 session):
+- **Hook command scripts**:每次 fire 重 spawn + 重讀 disk → **即時**(dispatcher 讀 node_modules manifest 當下最新)。
+- **settings.json(hooks/permissions)**:**file watcher 自動 hot-reload**,有 `ConfigChange` hook event;**非必重啟**(docs verbatim: "Direct edits to hooks in settings files are normally picked up automatically by the file watcher")。
+- **preamble / CLAUDE.md / rules / skills**:SessionStart-only(`source` = startup/resume/**clear**/compact)→ `/clear` 或下個 session 才重讀;skills 在 session 開始前掃 → 同理需 `/clear`/新 session。
+- **結論**:只有「事前指引 preamble + skills」需 `/clear` 或新 session;機械 hook 即時、settings 自動 reload。`UserPromptSubmit` 可每 prompt 注 `additionalContext`(理論可做 in-session preamble re-inject,但 preamble 大→token 成本高→**不採用**,/clear 是乾淨慣例)。
+- 雲端:每 session fresh clone + SessionStart `npm install @beta` → 開新 session 本來就全套最新;中途 sync 主要是地端情境。
+
 **時效注意**:#63028/#62174 是 Claude Code bug,未來可能修復;committed-config-works 是標準行為較穩。引用前若關鍵請重驗。

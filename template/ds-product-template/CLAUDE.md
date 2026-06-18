@@ -85,9 +85,20 @@ node_modules/@qijenchen/design-system/ds-story-manifest.json                    
 | 事件 | 自動發生 |
 |---|---|
 | DS publish 新 beta | Dependabot daily + `sync-design-system.yml` → 自動 bump deps + commit |
-| 你想手動同步治理到最新 | `npm run sync-all`(`npm install @beta` → 治理本體最新 **+ idempotent 刷新接線骨架 + skills**〔啟動器 + settings hooks + `.claude/skills/`〕;**重啟 session** 後 skill 生效)|
+| 你想手動同步治理到最新 | `npm run sync-all`(`npm install @beta` → 治理本體最新 **+ idempotent 刷新接線骨架 + skills**〔啟動器 + settings hooks + `.claude/skills/`〕;生效時機見下方「三軌」表)|
 | 你寫 product code | committed 治理 hook 自動 enforce(注入指引 + 擋違規);違規 = 立即提示/BLOCKER |
 | Push main | `audit.yml`(tsc + lint:imports + build)+ Netlify auto-rebuild |
+
+### `sync-all` / `npm install` 後三軌生效時機(別盲目重啟)
+中途同步治理後,**多數已即時/自動,只有「設計指引」需動作**:
+
+| 軌 | 何時生效 | 要不要動作 |
+|---|---|---|
+| **機械強制 hook**(擋手刻 table / 硬寫色值 / 誤用 primitive)| **即時**——dispatcher 每次觸發重讀 npm-current | 無需動作 |
+| **settings 接線**(hooks 註冊 / permissions)| **自動 hot-reload**——Claude Code file watcher 監看 settings.json(官方 `ConfigChange`)| 無需動作(雲端/保險起見開新 session 最穩)|
+| **設計指引 preamble + skills(`/prototype` 等)**| **下個 session 自動最新**,或現在跑 `/clear` 立即刷新 | 跑 `/clear`(⚠️ 會清空本對話)或開新 session |
+
+> **雲端(claude.ai/code)**:每 session 是 fresh clone + SessionStart 自動 `npm install @beta` → **開新 session 本來就拿最新全套**,不必中途 sync。中途 sync-all 主要是**本地**(node_modules 跨 session 持久)情境。
 
 ## 📚 Storybook 用途
 - **DS repo Storybook** = DS library 元件 reference。

@@ -54,7 +54,12 @@ if (ok) {
     if (refresh.agents?.length) console.log(`   • agents:${refresh.agents.join(' / ')}`)
   }
 
-  console.log('   👉 重啟 Claude Code session → committed hook 重讀 npm-current 治理 + skills 生效。')
+  console.log('')
+  console.log('   ── 各軌生效時機(多數已即時/自動,不必盲目重啟整個 session)──')
+  console.log('   ✅ 機械強制 hook:已即時生效(dispatcher 每次觸發即重讀 npm-current,無需動作)')
+  console.log('   ✅ settings 接線:Claude Code file watcher 自動 hot-reload(無需動作;雲端或保險起見開新 session 最穩)')
+  console.log('   🟡 設計指引 preamble + skills:本 session 仍舊版 → 開新 session 自動最新,或現在跑 /clear 立即刷新(⚠️ /clear 會清空本對話 history)')
+  console.log('   👉 想立刻全套用最新指引:跑 /clear 或開新 session;只改 code 想繼續手上工作:機械強制已即時,不必動作')
   process.exit(0)
 }
 
