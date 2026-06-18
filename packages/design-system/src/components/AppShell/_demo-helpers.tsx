@@ -26,6 +26,7 @@ import {
   SidebarMenuButton,
   SidebarFooter,
   SidebarTrigger,
+  useSidebar,
 } from '@/design-system/components/Sidebar/sidebar'
 import { ChromeHeader } from '@/design-system/patterns/header-canonical/chrome-header'
 import {
@@ -125,9 +126,15 @@ export function AcmeSidebar({
   includeWorkspaceBrand?: boolean
   includeUserFooter?: boolean
 } = {}) {
+  // Responsive 品牌/帳號(2026-06-18):小螢幕 sidebar 收成 Sheet(z-50)打開時會「蓋住」globalHeader →
+  // primary-header 把品牌+帳號放 globalHeader,Sheet 內就看不到、drawer 變孤兒。故 mobile 時在 sidebar 內
+  // 補回同一組 primitive(<SidebarHeader><WorkspaceBrand/> + <SidebarFooter><UserFooter/>,style SSOT 與
+  // primary-sidebar 完全一致);desktop(globalHeader 可見)維持 headerless/footerless,不重複。
+  // 「只能出現一次」精修為「同一時間一次,per breakpoint 判定」— 見 app-shell.spec.md WorkspaceBrand/帳號入口 SSOT。
+  const { isMobile } = useSidebar()
   return (
     <Sidebar collapsible="icon" viewportInsetTop={viewportInsetTop}>
-      {includeWorkspaceBrand && (
+      {(includeWorkspaceBrand || isMobile) && (
         <SidebarHeader>
           <WorkspaceBrand />
         </SidebarHeader>
@@ -151,7 +158,7 @@ export function AcmeSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      {includeUserFooter && (
+      {(includeUserFooter || isMobile) && (
         <SidebarFooter>
           <UserFooter />
         </SidebarFooter>

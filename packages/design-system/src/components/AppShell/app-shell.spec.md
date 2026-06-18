@@ -118,6 +118,8 @@ function CustomAside() {
 
 **Rule:WorkspaceBrand 只能出現一次**(視覺 SSOT)。`primary-header` mode 重複放(同時在 globalHeader + SidebarHeader)= 視覺冗餘 + 跨產品識別混淆 → **禁止**。
 
+**Responsive 精修(mobile-Sheet 子句,2026-06-18)**:「只能出現一次」= **同一時間一次,「一次」per breakpoint 判定**。Desktop(≥768px)brand 在 globalHeader、sidebar 內無 SidebarHeader。Mobile(<768px)sidebar 收成 Sheet(`sidebar.tsx` mobile 分支,z-50)打開時**蓋住 globalHeader** → brand 看不到、drawer 變孤兒 → 此時在 Sheet 內補 `<SidebarHeader><WorkspaceBrand/>`(globalHeader 既被蓋住,仍「同一時間一次」,非重複)。機制:consumer 讀既有 `useSidebar().isMobile`,mobile 才條件渲染**同一組 primitive**(style SSOT,與 primary-sidebar 外觀一致,非手刻對齊)。Reference:`_demo-helpers.tsx` `AcmeSidebar`(`includeWorkspaceBrand || isMobile`)。**禁止**:desktop primary-header 同時 globalHeader + SidebarHeader 放 brand(那才是真重複)。對齊 Material modal navigation drawer(手機 drawer 從 top app bar 開、蓋住內容、頂放品牌)+ Gmail / GitHub mobile 選單。
+
 **Slack 為 mixed pattern 例外**(thin workspace rail + channels sidebar 有 workspace name)— 不採用此分類,DS 採 **GitHub / Gmail / Figma** 共識(globalHeader 存在 → sidebar 內無 header)。
 
 **Consumer 實作 pattern**:
@@ -144,6 +146,8 @@ function CustomAside() {
 | `primary-header` | **globalHeader 右側**(trailing slot,品牌在左、帳號在右)| **無 / 空** | GitHub / Gmail / Slack(帳號 avatar 一律在 global top bar 右上)|
 
 **Rule:帳號入口只能出現一次**(視覺 SSOT,同 WorkspaceBrand)。`primary-header` mode 同時放(globalHeader 右 + sidebar footer)= 視覺冗餘 + 入口混淆 → **禁止**;`primary-header` 的 sidebar **不放** user footer(與上方「globalHeader 存在 → sidebar 不重複 chrome 角色」同源邏輯)。
+
+**Responsive 精修(同 WorkspaceBrand,per breakpoint)**:mobile(<768px)sidebar Sheet 蓋住 globalHeader(帳號入口也在 globalHeader 右)→ 在 Sheet 底補 `<SidebarFooter><UserFooter/>`(consumer `includeUserFooter || isMobile`,同組 primitive、style SSOT);desktop 維持無 footer。對齊世界級 mobile drawer「頂品牌 + 底帳號」慣例(Gmail / GitHub / Material modal nav drawer)。
 
 **為什麼 primary-header 帳號入口在「右上」**:GitHub / Gmail / Slack / Atlassian 的全域標頭一律把「自己的帳號」放右上(品牌在左、帳號在右,左右對稱)= global chrome 標準位置,不是 sidebar footer。
 

@@ -131,6 +131,18 @@ run_hook_on_file "src/other.tsx" '
 '
 expect_pass_silent "7. layout != primary-header → skip"
 
+# 8. responsive mobile-aware fork(useSidebar/isMobile + SidebarHeader + globalHeader)→ silent
+#    (2026-06-18 精修豁免:mobile-only 補品牌不是 desktop 重複)
+run_hook_on_file "src/responsive.tsx" '
+const { isMobile } = useSidebar()
+<AppShell layout="primary-header" globalHeader={<GH />}>
+  <Sidebar>
+    {isMobile && <SidebarHeader>brand</SidebarHeader>}
+  </Sidebar>
+</AppShell>
+'
+expect_pass_silent "8. responsive isMobile + SidebarHeader → silent(mobile-only 補品牌豁免)"
+
 echo ""
 echo "=== Summary ==="
 echo "Passed: $PASS / $((PASS + FAIL))"

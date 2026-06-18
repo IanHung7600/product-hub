@@ -50,9 +50,12 @@ if ! grep -q 'globalHeader\s*=' "$TARGET"; then
   VIOLATIONS+=("V1 缺 globalHeader prop:layout=\"primary-header\" 必傳 globalHeader 否則邏輯矛盾(per app-shell.spec.md「primary-header = primary-sidebar + 一條 global header」)")
 fi
 
-# V2:layout="primary-header" + <SidebarHeader> 同 file → WorkspaceBrand 該在 globalHeader 不重複
-if grep -q '<SidebarHeader' "$TARGET"; then
-  VIOLATIONS+=("V2 Sidebar 內含 SidebarHeader:primary-header mode WorkspaceBrand 該在 globalHeader,sidebar 內不該重複(per spec.md「WorkspaceBrand 放置 SSOT」+ world-class GitHub/Gmail/Figma 共識)。若 sidebar header 是其他內容(非 brand),加 escape allowlist `// @app-shell-primary-header-allow:` 並說明 reason")
+# V2:layout="primary-header" + <SidebarHeader> 同 file → WorkspaceBrand 該在 globalHeader 不重複。
+# 例外(2026-06-18 responsive 精修,M34 hook-intent 對齊):同 file 也用 useSidebar/isMobile =
+# mobile-only 補品牌的「正確 responsive fork」(小螢幕 Sheet 蓋住 globalHeader → Sheet 內補同組 primitive,
+# desktop 仍無 SidebarHeader,非真重複)→ 不 flag。見 app-shell.spec.md WorkspaceBrand SSOT「Responsive 精修」子句。
+if grep -q '<SidebarHeader' "$TARGET" && ! grep -qE 'useSidebar|isMobile' "$TARGET"; then
+  VIOLATIONS+=("V2 Sidebar 內含 SidebarHeader:primary-header mode WorkspaceBrand 該在 globalHeader,sidebar 內不該重複(per spec.md「WorkspaceBrand 放置 SSOT」+ world-class GitHub/Gmail/Figma 共識)。若是 mobile-only responsive 補品牌請用 useSidebar().isMobile 條件渲染(自動豁免);若 sidebar header 是其他內容(非 brand),加 escape allowlist `// @app-shell-primary-header-allow:` 並說明 reason")
 fi
 
 if [[ ${#VIOLATIONS[@]} -gt 0 ]]; then

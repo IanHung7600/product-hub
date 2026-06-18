@@ -384,6 +384,10 @@ export const PrimarySidebarWithTabs: Story = {
  * - **Main col 仍有 local header(PageHeader)** — 當前頁 title / breadcrumb / page actions
  *   對齊 GitHub repo header / Slack channel header / Gmail email-list toolbar 2-layer 慣例
  * - Sidebar 內**不 render WorkspaceBrand**(`includeWorkspaceBrand={false}`),avoid 重複(已在 globalHeader)
+ * - **小螢幕(<768px)responsive**:sidebar 收成 Sheet 打開時蓋住 globalHeader → AcmeSidebar 偵測
+ *   `useSidebar().isMobile` 自動在 Sheet 內補回 WorkspaceBrand 頂 + UserFooter 底(同 primary-sidebar style SSOT);
+ *   desktop 維持無 header/footer。見 app-shell.spec.md WorkspaceBrand/帳號入口 SSOT 的「Responsive 精修」子句。
+ *   (在 Storybook 縮窄 viewport < 768px 即可見 Sheet 內品牌 + 帳號。)
  */
 export const PrimaryHeader: Story = {
   name: '主標頭佈局 — 全域+本地兩層(GitHub/Gmail/Slack 派)',
