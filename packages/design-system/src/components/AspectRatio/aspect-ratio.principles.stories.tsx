@@ -197,7 +197,7 @@ export const RatioChoice: Story = {
       <p className="text-caption text-fg-muted max-w-[720px] leading-relaxed mb-8">
         先看內容方向(橫 / 方 / 直),再對到下方的判斷準則即可選定。五個 ratio 的並排視覺對照見{' '}
         <LinkTo kind="Design System/Components/AspectRatio/設計規格" name="標準 比例 視覺對照">
-          <span className="text-primary hover:underline font-medium cursor-pointer">設計規格 → 標準 比例 視覺對照</span>
+          <span className="text-primary hover:text-primary-hover font-medium cursor-pointer">設計規格 → 標準 比例 視覺對照</span>
         </LinkTo>
         ,此處只講「怎麼選」的決策邏輯,不重畫圖。
       </p>

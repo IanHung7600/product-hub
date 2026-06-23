@@ -46,6 +46,12 @@ jobs:
       - name: plugin structure validate
         run: node scripts/plugin-structure-validate.mjs
 
+      # C-prime fork governance(C3 future-SSOT):classify 漏接閘 + 生成物 drift + 假 fork harness
+      - name: fork-governance corpus + harness
+        run: |
+          node scripts/build-fork-governance.mjs --check
+          node scripts/test-fork-governance.mjs
+
       # Dim 84 — mirror-build integrity + 2-scenario E2E
       - name: 2-scenario architecture
         run: node scripts/test-2-scenario-architecture.mjs

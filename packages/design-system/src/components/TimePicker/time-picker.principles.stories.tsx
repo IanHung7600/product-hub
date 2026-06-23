@@ -39,19 +39,19 @@ export const UsageGuidance: Story = {
       <p>適合 TimePicker 的真實業務場景(點擊跳轉「展示」頁範例):</p>
       <ul className="space-y-1">
         <li>
-          <LinkTo kind="Design System/Components/TimePicker/展示" name="會議時段"><span className="text-primary hover:underline font-medium cursor-pointer">會議時段</span></LinkTo>
+          <LinkTo kind="Design System/Components/TimePicker/展示" name="會議時段"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">會議時段</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/TimePicker/展示" name="航班起飛時間"><span className="text-primary hover:underline font-medium cursor-pointer">航班起飛時間</span></LinkTo>
+          <LinkTo kind="Design System/Components/TimePicker/展示" name="航班起飛時間"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">航班起飛時間</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/TimePicker/展示" name="店家營業時間"><span className="text-primary hover:underline font-medium cursor-pointer">店家營業時間</span></LinkTo>
+          <LinkTo kind="Design System/Components/TimePicker/展示" name="店家營業時間"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">店家營業時間</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/TimePicker/展示" name="事件發生時間"><span className="text-primary hover:underline font-medium cursor-pointer">事件發生時間</span></LinkTo>
+          <LinkTo kind="Design System/Components/TimePicker/展示" name="事件發生時間"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">事件發生時間</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/TimePicker/展示" name="員工上班時段設定"><span className="text-primary hover:underline font-medium cursor-pointer">員工上班時段設定</span></LinkTo>
+          <LinkTo kind="Design System/Components/TimePicker/展示" name="員工上班時段設定"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">員工上班時段設定</span></LinkTo>
         </li>
       </ul>
       <p className="text-fg-muted mt-3">不確定是否該用 TimePicker 時,先對照下方「何時不用」清單;若情境不符,改用清單建議的替代元件(例如同時要日期就用 DatePicker)。</p>

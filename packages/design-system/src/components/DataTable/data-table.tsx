@@ -134,12 +134,14 @@ export interface DataTableProps<TData>
   spreadsheetMode?: boolean
 
   // ── L2 Selection(see data-table.spec.md「L2 選取」)──
-  /** 已選 row IDs(controlled) */
-  selection?: string[]
-  /** 預設選取(uncontrolled) */
-  defaultSelection?: string[]
-  /** Selection 變更 callback */
-  onSelectionChange?: (next: string[]) => void
+  /** 已選列(controlled)。傳 string[] = include shorthand;傳 DataTableSelection 支援反向選取(all + excluded) */
+  selection?: string[] | DataTableSelection
+  /** 預設選取(uncontrolled);同上接受 string[] 或 DataTableSelection */
+  defaultSelection?: string[] | DataTableSelection
+  /** Selection 變更 callback(emit DataTableSelection union;include / all 兩模型) */
+  onSelectionChange?: (next: DataTableSelection) => void
+  /** 全資料集筆數 M(server-side / filter 後);all 模式 count = totalCount − excluded.length(consumer 計算) */
+  totalCount?: number
   /** 是否啟用 selection / 模式;true 等同 'multi' */
   selectable?: boolean | 'single' | 'multi'
   /** Row 是否可選(disabled rows 只 disable checkbox,row 內容正常 render) */
@@ -264,6 +266,48 @@ const cellEditId = (rowId: string, colId: string) => `${rowId}__${colId}`
 //   (詳 ./data-table.css)— consumer 可走 CSS override 改值,不再 hard-code in TS。
 // L2 selection 內部 column id(避免 magic string 重複)
 const SELECT_COL_ID = '__select__'
+
+/**
+ * L2 選取模型(discriminated union,2026-06-22 對齊 MUI X DataGrid v8
+ * rowSelectionModel { type: include | exclude, ids } + AG Grid selectAll + toggledNodes)。
+ *
+ * - mode==='include' (ids):只選 ids 列(預設;= 載入/可見列逐一選取)。
+ * - mode==='all' (excluded):全資料集(filter 後)選取,扣掉 excluded —— 反向選取(inverted)。
+ *   解決「全選 10k 筆只載 50 筆 → 無法列舉其餘 ID」:all 模式「選取 = 全集 − excluded」,
+ *   任何 toggle 都只是 excluded 的 add/remove,對任意順序封閉、O(1)、不需列舉未載入 ID。
+ *
+ * 計數(consumer):mode==='all' ? totalCount − excluded.length : ids.length(需傳 totalCount)。
+ * 進入 all 模式:consumer 在「選取全部 M」hint 點擊時 setSelection({ mode: 'all', excluded: [] })。
+ */
+export type DataTableSelection =
+  | { mode: 'include'; ids: string[] }
+  | { mode: 'all'; excluded: string[] }
+
+// 正規化:string[] shorthand → { mode:'include' }(向後相容既有 consumer 傳 ID 陣列)
+function normalizeSelection(
+  input: string[] | DataTableSelection | undefined,
+): DataTableSelection | undefined {
+  if (input === undefined) return undefined
+  if (Array.isArray(input)) return { mode: 'include', ids: input }
+  return input
+}
+
+// union-aware「把 ids 設成 willSelect 狀態」純函式(對任意 toggle 順序封閉)
+function applySelectIds(
+  sel: DataTableSelection,
+  ids: string[],
+  willSelect: boolean,
+): DataTableSelection {
+  if (sel.mode === 'include') {
+    const set = new Set(sel.ids)
+    ids.forEach((id) => { if (willSelect) set.add(id); else set.delete(id) })
+    return { mode: 'include', ids: Array.from(set) }
+  }
+  // all 模式:選取 = 全集 − excluded → willSelect 移出 excluded;取消選取 加進 excluded
+  const set = new Set(sel.excluded)
+  ids.forEach((id) => { if (willSelect) set.delete(id); else set.add(id) })
+  return { mode: 'all', excluded: Array.from(set) }
+}
 const cellPadding: React.CSSProperties = { paddingBlock: 'var(--table-cell-py)', paddingInline: 'var(--table-cell-px)' }
 const HEADER_BG = 'bg-muted'
 
@@ -774,6 +818,7 @@ function DataTableInner<TData>(
     estimateRowHeight, tableOptions, rowActions, cellErrors,
     pinnedLeftColumns, pinnedRightColumns, inlineEdit = false,
     selection: selectionProp, defaultSelection, onSelectionChange,
+    totalCount,
     selectable = false, isRowSelectable, getRowId, getRowAriaLabel,
     preserveSelectionOnFilter = false,
     columnVisibility: columnVisibilityProp, defaultColumnVisibility, onColumnVisibilityChange,
@@ -887,9 +932,9 @@ function DataTableInner<TData>(
   // ── L2 Selection state ──
   const enabled = selectable !== false
   const mode = selectable === 'single' ? 'single' : 'multi'
-  const [selection, setSelection] = useControllable<string[]>({
-    value: selectionProp,
-    defaultValue: defaultSelection ?? [],
+  const [selection, setSelection] = useControllable<DataTableSelection>({
+    value: normalizeSelection(selectionProp),
+    defaultValue: normalizeSelection(defaultSelection) ?? { mode: 'include', ids: [] },
     onChange: onSelectionChange,
   })
   // Shift-click anchor:存最後一次「單擊」的 row id,shift-click 時做區間選
@@ -1381,7 +1426,7 @@ function DataTableInner<TData>(
       // 內部 checkbox/radio 用 stopPropagation 避免 double-fire
       const onCellClick = isDisabled ? undefined : (e: React.MouseEvent) => {
         e.stopPropagation()
-        if (mode === 'single') setSelection([rowId])
+        if (mode === 'single') setSelection({ mode: 'include', ids: [rowId] })
         else toggleRow(rowId, rowOriginal, { shiftKey: e.shiftKey })
       }
       return (
@@ -1408,7 +1453,7 @@ function DataTableInner<TData>(
           ) : (
             <Checkbox
               size={checkboxSize}
-              checked={selectionSet.has(rowId)}
+              checked={isSelectedId(rowId)}
               disabled={isDisabled}
               aria-label={ariaLabel}
               onClick={(e) => {
@@ -1679,8 +1724,10 @@ function DataTableInner<TData>(
   React.useEffect(() => {
     if (!enabled || preserveSelectionOnFilter) return
     setSelection(prev => {
-      const filtered = prev.filter(id => visibleRowIdsSet.has(id))
-      return filtered.length === prev.length ? prev : filtered
+      // all 模式 = 「全部符合當前 filter」→ 不清(excluded 留著,被 filter 掉的 excluded 列無害)
+      if (prev.mode === 'all') return prev
+      const filtered = prev.ids.filter(id => visibleRowIdsSet.has(id))
+      return filtered.length === prev.ids.length ? prev : { mode: 'include', ids: filtered }
     })
   }, [visibleRowIdsKey, enabled, preserveSelectionOnFilter, visibleRowIdsSet, setSelection])
 
@@ -1692,9 +1739,22 @@ function DataTableInner<TData>(
       .map(r => r.id)
   }, [rows, enabled, isRowSelectable])
 
+  // Union-aware「某列是否選取」+ 計數(include = ids 內;all = 不在 excluded 內)
+  const includeSet = React.useMemo(
+    () => (selection.mode === 'include' ? new Set(selection.ids) : new Set<string>()),
+    [selection],
+  )
+  const excludeSet = React.useMemo(
+    () => (selection.mode === 'all' ? new Set(selection.excluded) : new Set<string>()),
+    [selection],
+  )
+  const isSelectedId = React.useCallback(
+    (id: string) => (selection.mode === 'include' ? includeSet.has(id) : !excludeSet.has(id)),
+    [selection.mode, includeSet, excludeSet],
+  )
+  const hasAnySelection = selection.mode === 'all' || includeSet.size > 0
   // Header tri-state checkbox value
-  const selectionSet = React.useMemo(() => new Set(selection), [selection])
-  const visibleSelectedCount = selectableVisibleIds.filter(id => selectionSet.has(id)).length
+  const visibleSelectedCount = selectableVisibleIds.filter(id => isSelectedId(id)).length
   const headerCheckedState: boolean | 'indeterminate' =
     selectableVisibleIds.length === 0 ? false
       : visibleSelectedCount === 0 ? false
@@ -1708,20 +1768,16 @@ function DataTableInner<TData>(
   )
 
   const toggleHeaderCheckbox = React.useCallback(() => {
-    if (headerCheckedState === true) {
-      // 清掉本頁可見已選(保留可見外的 selection)
-      const visibleSet = new Set(selectableVisibleIds)
-      setSelection(prev => prev.filter(id => !visibleSet.has(id)))
-    } else {
-      // 選全可見(扣除 disabled);保留可見外的既有 selection
-      setSelection(prev => Array.from(new Set([...prev, ...selectableVisibleIds])))
-    }
+    // header tri-state visible-scoped:全可見已選 → 取消可見;否則 → 選全可見。
+    // include / all 兩模型由 applySelectIds 處理(all 模式 toggle 改寫 excluded)。
+    const willSelect = headerCheckedState !== true
+    setSelection(prev => applySelectIds(prev, selectableVisibleIds, willSelect))
   }, [headerCheckedState, selectableVisibleIds, setSelection])
 
   const toggleRow = React.useCallback((rowId: string, rowOriginal: TData, opts?: { shiftKey?: boolean }) => {
     if (isRowSelectable && !isRowSelectable(rowOriginal)) return
     if (mode === 'single') {
-      setSelection(selectionSet.has(rowId) ? [] : [rowId])
+      setSelection(isSelectedId(rowId) ? { mode: 'include', ids: [] } : { mode: 'include', ids: [rowId] })
       anchorRowIdRef.current = rowId
       return
     }
@@ -1739,24 +1795,16 @@ function DataTableInner<TData>(
           return row && (!isRowSelectable || isRowSelectable(row.original))
         })
         // Mail / GitHub 慣例:shift-click 把 range 全變「rowId 點擊後該變的狀態」
-        const willCheck = !selectionSet.has(rowId)
-        setSelection(prev => {
-          const set = new Set(prev)
-          rangeIds.forEach(id => willCheck ? set.add(id) : set.delete(id))
-          return Array.from(set)
-        })
+        const willCheck = !isSelectedId(rowId)
+        setSelection(prev => applySelectIds(prev, rangeIds, willCheck))
         return
       }
     }
-    // 一般 toggle + 更新 anchor
-    setSelection(prev => {
-      const set = new Set(prev)
-      if (set.has(rowId)) set.delete(rowId)
-      else set.add(rowId)
-      return Array.from(set)
-    })
+    // 一般 toggle + 更新 anchor(include / all 由 applySelectIds 處理)
+    const willCheck = !isSelectedId(rowId)
+    setSelection(prev => applySelectIds(prev, [rowId], willCheck))
     anchorRowIdRef.current = rowId
-  }, [isRowSelectable, mode, selectionSet, rows, visibleIdToRow, setSelection])
+  }, [isRowSelectable, mode, isSelectedId, rows, visibleIdToRow, setSelection])
 
   // ── Cmd+A / Esc / Arrow keys 鍵盤 handler(table-level)──
   // code-quality-allow: long-function — single keyboard dispatch covering Cmd+A / Esc / Arrow / Space + selection state mutations,拆 sub-handler 會切散 keyboard mode coherence
@@ -1823,18 +1871,18 @@ function DataTableInner<TData>(
       // Cmd/Ctrl+A:選全可見(扣 disabled)— 對齊 Mail / GitHub / Linear 慣例
       if ((e.metaKey || e.ctrlKey) && e.key === 'a' && mode === 'multi') {
         e.preventDefault()
-        setSelection(prev => Array.from(new Set([...prev, ...selectableVisibleIds])))
+        setSelection(prev => applySelectIds(prev, selectableVisibleIds, true))
         return
       }
       // Esc:clear selection
-      if (e.key === 'Escape' && selection.length > 0) {
+      if (e.key === 'Escape' && hasAnySelection) {
         e.preventDefault()
-        setSelection([])
+        setSelection({ mode: 'include', ids: [] })
         anchorRowIdRef.current = null
         return
       }
     },
-    [enabled, mode, selection.length, selectableVisibleIds, setSelection,
+    [enabled, mode, hasAnySelection, selectableVisibleIds, setSelection,
      spreadsheetMode, selectedCellId, editingCellId, table, isCellEditable]
   )
 
@@ -2906,8 +2954,8 @@ function DataTableInner<TData>(
   if (enabled && mode === 'single') {
     return (
       <RadioGroupPrimitive.Root
-        value={selection[0] ?? ''}
-        onValueChange={(v) => v && setSelection([v])}
+        value={selection.mode === 'include' ? (selection.ids[0] ?? '') : ''}
+        onValueChange={(v) => v && setSelection({ mode: 'include', ids: [v] })}
       >
         {wrapWithDnd(tableContent)}
       </RadioGroupPrimitive.Root>

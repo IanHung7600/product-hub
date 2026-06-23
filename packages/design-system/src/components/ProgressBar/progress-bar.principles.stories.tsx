@@ -61,11 +61,11 @@ export const UsageGuidance: Story = {
           <p>適合 ProgressBar 的真實業務場景(點擊跳轉「展示」頁範例):</p>
           <ul className="space-y-1">
             <li>
-              <LinkTo kind="Design System/Components/ProgressBar/展示" name="批次任務進度"><span className="text-primary hover:underline font-medium cursor-pointer">批次任務進度</span></LinkTo>
+              <LinkTo kind="Design System/Components/ProgressBar/展示" name="批次任務進度"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">批次任務進度</span></LinkTo>
               <span className="text-fg-secondary"> — CSV 匯入 1,250 筆客戶資料、批次寄送:總量已知,單一 prominent 進度條讓使用者掌握整體完成比例</span>
             </li>
             <li>
-              <LinkTo kind="Design System/Components/ProgressBar/展示" name="DataTable 儲存格內進度"><span className="text-primary hover:underline font-medium cursor-pointer">DataTable 儲存格內進度</span></LinkTo>
+              <LinkTo kind="Design System/Components/ProgressBar/展示" name="DataTable 儲存格內進度"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">DataTable 儲存格內進度</span></LinkTo>
               <span className="text-fg-secondary"> — 列表中每列各自的配額使用率 / 任務完成度,4px 細線不搶走主要欄位的閱讀重量</span>
             </li>
           </ul>

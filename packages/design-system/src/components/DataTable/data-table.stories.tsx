@@ -4,7 +4,7 @@ import React from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { createColumnHelper, type ColumnDef } from '@tanstack/react-table'
 import { Pencil, Trash2, MoreVertical, Search, Filter, Eye, Download, Plus, ArrowUpDown } from 'lucide-react'
-import { DataTable } from './data-table'
+import { DataTable, type DataTableSelection } from './data-table'
 import { DataTableSortManager } from './data-table-sort-manager'
 import { DataTableColumnVisibilityPanel } from './data-table-column-visibility-panel'
 import { DataTableFilterPanel, evaluateTree, createEmptyFilterTree, isFilterTreeActive, type FilterTree } from './data-table-filter-panel'
@@ -948,8 +948,7 @@ export const WithBulkActions: Story = {
   name: '選取 + 批次操作',
   parameters: { layout: 'fullscreen' },
   render: () => {
-    const [selection, setSelection] = React.useState<string[]>([])
-    const [allSelected, setAllSelected] = React.useState(false)
+    const [selection, setSelection] = React.useState<DataTableSelection>({ mode: 'include', ids: [] })
     const [search, setSearch] = React.useState('')
     const [columnVisibility, setColumnVisibility] = React.useState<Record<string, boolean>>({})
     // Issue 3(2026-05-10):columnSearch 移到 `<DataTableColumnVisibilityPanel>` 內 own,
@@ -968,13 +967,16 @@ export const WithBulkActions: Story = {
       [search]
     )
     const VISIBLE = filteredData.length
-    // **NEW fix(2026-05-04)**:showHint 必含 selection.length > 0 前提,否則「清除選取」後 allSelected
-    // 還是 true 邏輯走「: true」branch → Alert 仍 render「已選取全部 N 個」 → 怪 state
-    const showHint = selection.length > 0 && (
-      !allSelected
-        ? selection.length === VISIBLE && VISIBLE > 0 && TOTAL > VISIBLE
-        : true
-    )
+    // 反向選取(inverted)showcase:include 全可見已選且 dataset 更大 → offer「選取全部 M」;
+    // all 模式 → 顯示「已選取全部 M(排除 K)」。count = M − excluded(consumer 端計算)。
+    const isAll = selection.mode === 'all'
+    const visibleIds = filteredData.map((p) => p.sku)
+    const selectedCount = isAll ? TOTAL - selection.excluded.length : selection.ids.length
+    const visibleSelectedIds = isAll
+      ? visibleIds.filter((id) => !selection.excluded.includes(id))
+      : selection.ids.filter((id) => visibleIds.includes(id))
+    const allVisibleSelected = VISIBLE > 0 && visibleSelectedIds.length === VISIBLE
+    const showHint = isAll || (allVisibleSelected && TOTAL > VISIBLE)
 
     return (
       // 撐滿 parent(layout=fullscreen);
@@ -1068,6 +1070,7 @@ export const WithBulkActions: Story = {
             selectable
             selection={selection}
             onSelectionChange={setSelection}
+            totalCount={TOTAL}
             columnVisibility={columnVisibility}
             onColumnVisibilityChange={setColumnVisibility}
             getRowId={(row) => row.sku}
@@ -1092,7 +1095,7 @@ export const WithBulkActions: Story = {
 
         {/* 底部 chrome group(撤回前一版 absolute overlay,2026-05-04 user 抓 BulkActionBar 沒底色 + 蓋表底列 regression):
             回 flex flow 自然推 table。Q7 mount-time growth 真因 = virtualizer estimateRowHeight ≠ token,已在 DataTable 內修(estimate size-aware) */}
-        {(showHint || selection.length > 0) && (
+        {(showHint || selectedCount > 0) && (
           <div className="flex flex-col">
             {showHint && (
               <Alert
@@ -1100,24 +1103,24 @@ export const WithBulkActions: Story = {
                 placement="fixed"
                 dismissible={false}
                 title={
-                  allSelected ? (
+                  isAll ? (
                     <>
-                      已選取全部 {TOTAL} 個項目。{' '}
+                      已選取全部 {TOTAL} 個項目{selection.excluded.length > 0 ? `(排除 ${selection.excluded.length} 個)` : ''}。{' '}
                       <button
                         type="button"
-                        onClick={() => { setSelection([]); setAllSelected(false) }}
-                        className="text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+                        onClick={() => setSelection({ mode: 'include', ids: [] })}
+                        className="text-primary hover:text-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
                       >
                         清除選取項目
                       </button>
                     </>
                   ) : (
                     <>
-                      已選取本頁全部 {selection.length} 個。{' '}
+                      已選取本頁全部 {selectedCount} 個。{' '}
                       <button
                         type="button"
-                        onClick={() => setAllSelected(true)}
-                        className="text-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+                        onClick={() => setSelection({ mode: 'all', excluded: [] })}
+                        className="text-primary hover:text-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
                       >
                         點此選取全部 {TOTAL} 個項目
                       </button>
@@ -1126,10 +1129,11 @@ export const WithBulkActions: Story = {
                 }
               />
             )}
-            {selection.length > 0 && (
+            {selectedCount > 0 && (
               <BulkActionBar
-                selection={selection}
-                onClear={() => { setSelection([]); setAllSelected(false) }}
+                selection={visibleSelectedIds}
+                totalSelected={selectedCount}
+                onClear={() => setSelection({ mode: 'include', ids: [] })}
                 actions={
                   <>
                     <Button variant="tertiary" size="md" startIcon={Download}>下載</Button>
@@ -1165,7 +1169,7 @@ export const SelectionKeyboardAndShift: Story = {
           height="400px"
           selectable
           selection={selection}
-          onSelectionChange={setSelection}
+          onSelectionChange={(s) => setSelection(s.mode === 'include' ? s.ids : [])}
           getRowId={(row) => row.sku}
         />
       </div>
@@ -1192,7 +1196,7 @@ export const SelectionSingleMode: Story = {
           height="auto"
           selectable="single"
           selection={selection}
-          onSelectionChange={setSelection}
+          onSelectionChange={(s) => setSelection(s.mode === 'include' ? s.ids : [])}
           getRowId={(row) => row.sku}
         />
       </div>
@@ -1216,7 +1220,7 @@ export const SelectionDisabledRows: Story = {
           height="auto"
           selectable
           selection={selection}
-          onSelectionChange={setSelection}
+          onSelectionChange={(s) => setSelection(s.mode === 'include' ? s.ids : [])}
           getRowId={(row) => row.sku}
           isRowSelectable={(row) => row.stock !== 'Out of stock'}
         />
@@ -1819,7 +1823,7 @@ export const RoadmapAllInOne: Story = {
             inlineEdit
             selectable
             selection={selection}
-            onSelectionChange={setSelection}
+            onSelectionChange={(s) => setSelection(s.mode === 'include' ? s.ids : [])}
             columnVisibility={columnVisibility}
             onColumnVisibilityChange={setColumnVisibility}
             pinnedLeftColumns={['id']}

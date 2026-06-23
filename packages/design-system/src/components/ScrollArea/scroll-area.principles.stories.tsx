@@ -93,16 +93,16 @@ export const UsageGuidance: Story = {
       <p>適合 ScrollArea 的真實業務場景(點擊跳轉「展示」頁範例):</p>
       <ul className="space-y-1">
         <li>
-          <LinkTo kind="Design System/Components/ScrollArea/展示" name="垂直捲動 — Linear 議題清單"><span className="text-primary hover:underline font-medium cursor-pointer">垂直捲動 — Linear issue 清單</span></LinkTo>
+          <LinkTo kind="Design System/Components/ScrollArea/展示" name="垂直捲動 — Linear 議題清單"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">垂直捲動 — Linear issue 清單</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/ScrollArea/展示" name="垂直捲動 — Notion 側欄 導覽"><span className="text-primary hover:underline font-medium cursor-pointer">垂直捲動 — Notion sidebar 導覽</span></LinkTo>
+          <LinkTo kind="Design System/Components/ScrollArea/展示" name="垂直捲動 — Notion 側欄 導覽"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">垂直捲動 — Notion sidebar 導覽</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/ScrollArea/展示" name="水平捲動 — Stripe 寬欄位商品表"><span className="text-primary hover:underline font-medium cursor-pointer">水平捲動 — Stripe 寬欄位商品表</span></LinkTo>
+          <LinkTo kind="Design System/Components/ScrollArea/展示" name="水平捲動 — Stripe 寬欄位商品表"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">水平捲動 — Stripe 寬欄位商品表</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/ScrollArea/展示" name="雙向捲動 — GitHub PR 大型檢閱表"><span className="text-primary hover:underline font-medium cursor-pointer">雙向捲動 — GitHub PR 大型檢閱表</span></LinkTo>
+          <LinkTo kind="Design System/Components/ScrollArea/展示" name="雙向捲動 — GitHub PR 大型檢閱表"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">雙向捲動 — GitHub PR 大型檢閱表</span></LinkTo>
         </li>
       </ul>
       <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>

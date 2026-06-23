@@ -49,10 +49,10 @@ export const UsageGuidance: Story = {
         <div className="prose prose-sm max-w-prose mb-8">
           <p>適合 Field 的真實業務場景(點擊跳轉「展示」頁範例):</p>
           <ul className="space-y-1">
-            <li><LinkTo kind="Design System/Components/Field/展示" name="垂直"><span className="text-primary hover:underline font-medium cursor-pointer">註冊 / 建立專案表單 — 引導式逐欄輸入(垂直佈局)</span></LinkTo></li>
-            <li><LinkTo kind="Design System/Components/Field/展示" name="水平"><span className="text-primary hover:underline font-medium cursor-pointer">帳號設定 / 偏好設定頁 — 修改已知屬性(水平佈局)</span></LinkTo></li>
-            <li><LinkTo kind="Design System/Components/Field/展示" name="混合控制元件的高度對齊"><span className="text-primary hover:underline font-medium cursor-pointer">同一表單混用 Input / Select / DatePicker 等控制元件</span></LinkTo></li>
-            <li><LinkTo kind="Design System/Components/Field/展示" name="SegmentedControl 作為 Field 控制元件"><span className="text-primary hover:underline font-medium cursor-pointer">少量互斥選項(計費週期、版面密度)用 SegmentedControl 當控制元件</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Field/展示" name="垂直"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">註冊 / 建立專案表單 — 引導式逐欄輸入(垂直佈局)</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Field/展示" name="水平"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">帳號設定 / 偏好設定頁 — 修改已知屬性(水平佈局)</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Field/展示" name="混合控制元件的高度對齊"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">同一表單混用 Input / Select / DatePicker 等控制元件</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Field/展示" name="SegmentedControl 作為 Field 控制元件"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">少量互斥選項(計費週期、版面密度)用 SegmentedControl 當控制元件</span></LinkTo></li>
           </ul>
           <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見下方 vs 近親 段)。</p>
         </div>

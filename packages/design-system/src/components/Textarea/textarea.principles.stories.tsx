@@ -47,10 +47,10 @@ export const UsageGuidance: Story = {
       <p>適合 Textarea 的真實業務場景(點擊跳轉「展示」頁範例):</p>
       <ul className="space-y-1">
         <li>
-          <LinkTo kind="Design System/Components/Textarea/展示" name="基本用法"><span className="text-primary hover:underline font-medium cursor-pointer">Issue 回報、評論留言等多行輸入(基本用法)</span></LinkTo>
+          <LinkTo kind="Design System/Components/Textarea/展示" name="基本用法"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">Issue 回報、評論留言等多行輸入(基本用法)</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/Textarea/展示" name="在 Field 內"><span className="text-primary hover:underline font-medium cursor-pointer">表單內的專案說明、備註欄位(在 Field 內)</span></LinkTo>
+          <LinkTo kind="Design System/Components/Textarea/展示" name="在 Field 內"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">表單內的專案說明、備註欄位(在 Field 內)</span></LinkTo>
         </li>
       </ul>
       <p className="text-fg-secondary mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,見下方與 Input 的分界示範。</p>

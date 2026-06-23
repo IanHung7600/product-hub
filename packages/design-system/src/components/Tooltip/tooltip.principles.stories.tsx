@@ -49,13 +49,13 @@ export const UsageGuidance: Story = {
           <p>適合 Tooltip 的真實業務場景(點擊跳轉「展示」頁範例):</p>
           <ul className="space-y-1">
             <li>
-              <LinkTo kind="Design System/Components/Tooltip/展示" name="非 Button 元素"><span className="text-primary hover:underline font-medium cursor-pointer">非 Button 元素</span></LinkTo>
+              <LinkTo kind="Design System/Components/Tooltip/展示" name="非 Button 元素"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">非 Button 元素</span></LinkTo>
             </li>
             <li>
-              <LinkTo kind="Design System/Components/Tooltip/展示" name="方向"><span className="text-primary hover:underline font-medium cursor-pointer">方向</span></LinkTo>
+              <LinkTo kind="Design System/Components/Tooltip/展示" name="方向"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">方向</span></LinkTo>
             </li>
             <li>
-              <LinkTo kind="Design System/Components/Tooltip/展示" name="長文字"><span className="text-primary hover:underline font-medium cursor-pointer">長文字</span></LinkTo>
+              <LinkTo kind="Design System/Components/Tooltip/展示" name="長文字"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">長文字</span></LinkTo>
             </li>
           </ul>
           <p className="text-fg-muted mt-3">判斷不確定時:回到「畫面上的資訊是否已足夠」這個核心問題;若提示需要被點擊或停留互動,改用近親元件(見下方「vs 近親」)。</p>

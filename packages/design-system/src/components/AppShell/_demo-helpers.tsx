@@ -12,6 +12,8 @@ import {
   Users,
   BarChart3,
   LayoutDashboard,
+  User,
+  LogOut,
 } from 'lucide-react'
 import {
   Sidebar,
@@ -24,7 +26,9 @@ import {
   SidebarMenuButton,
   SidebarFooter,
   SidebarTrigger,
+  useSidebar,
 } from '@/design-system/components/Sidebar/sidebar'
+import { useAppShell } from '@/design-system/components/AppShell/app-shell'
 import { ChromeHeader } from '@/design-system/patterns/header-canonical/chrome-header'
 import {
   ItemAvatar,
@@ -34,6 +38,14 @@ import {
   ProfileCard,
   ProfileCardDefaultActions,
 } from '@/design-system/components/ProfileCard/profile-card'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuGroup,
+} from '@/design-system/components/DropdownMenu/dropdown-menu'
 
 // ── MAIN_NAV(對齊 sidebar.stories.tsx baseline)────────────────────────
 
@@ -103,19 +115,43 @@ export const UserFooter = () => (
 // ── AcmeSidebar(完整 production-grade,對齊 sidebar IconCollapse story)──
 // `includeWorkspaceBrand` default true(primary-sidebar 派 Linear/Notion 慣例:workspace brand 在 sidebar 頂)。
 // `false` 用於 primary-header mode:workspace brand 移到 globalHeader 左側(GitHub logo / Slack workspace bar 慣例)。
+// `includeUserFooter` default true(primary-sidebar:帳號在 sidebar 底)。`false` 用於 primary-header:
+// 帳號入口移到 globalHeader 右側 AccountMenu(GitHub/Gmail/Slack 慣例;見 app-shell.spec.md 帳號入口放置 SSOT)。
 
 export function AcmeSidebar({
   viewportInsetTop,
   includeWorkspaceBrand = true,
+  includeUserFooter = true,
 }: {
   viewportInsetTop?: string
   includeWorkspaceBrand?: boolean
+  includeUserFooter?: boolean
 } = {}) {
+  // Responsive 品牌/帳號(2026-06-18 v2):小螢幕 sidebar 收成 Sheet(z-50)打開時會「蓋住」globalHeader →
+  // primary-header 把品牌+帳號放 globalHeader,Sheet 內就看不到、drawer 變孤兒。故 mobile 時在 sidebar 內補回。
+  // **每 mode 鏡像自己桌面的帳號家**(per app-shell.spec.md「帳號入口(Account entry)放置 SSOT」Responsive 精修):
+  //   - primary-header:桌面帳號在 globalHeader 右(brand 左 / account 右)→ Sheet 內把整條 globalHeader 搬進
+  //     SidebarHeader(brand + flex-1 + AccountMenu;**SidebarHeader 即 ChromeHeader 基底,與 GlobalHeader 同
+  //     primitive** = 結構 SSOT,非手刻對齊),**不放 SidebarFooter**(footer 是 primary-sidebar 慣例;
+  //     對齊 Material modal navigation drawer「帳號 switcher 放 drawer header,非 footer」)。
+  //   - primary-sidebar:桌面帳號在 sidebar 底(SidebarFooter)→ Sheet 維持 header=brand / footer=UserFooter(不變)。
+  // desktop(globalHeader 可見)維持 headerless/footerless,不重複。「只能出現一次」= 同一時間一次,per breakpoint 判定。
+  const { isMobile } = useSidebar()
+  const { layout } = useAppShell()
+  // primary-header 收成 Sheet:帳號入口鏡像 globalHeader 放 SidebarHeader 右(SidebarHeader = ChromeHeader 基底,
+  // 與 GlobalHeader「brand 左 + flex-1 + account 右」完全同結構 → avatar 24px + 右緣距 px-loose 由 construction 保證)。
+  const headerHasAccount = layout === 'primary-header' && isMobile
   return (
     <Sidebar collapsible="icon" viewportInsetTop={viewportInsetTop}>
-      {includeWorkspaceBrand && (
+      {(includeWorkspaceBrand || isMobile) && (
         <SidebarHeader>
           <WorkspaceBrand />
+          {headerHasAccount && (
+            <>
+              <div className="flex-1" />
+              <AccountMenu />
+            </>
+          )}
         </SidebarHeader>
       )}
       <SidebarContent>
@@ -137,14 +173,54 @@ export function AcmeSidebar({
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <UserFooter />
-      </SidebarFooter>
+      {/* Footer 只 primary-sidebar(帳號在 sidebar 底);primary-header 帳號改放 SidebarHeader 右(見上),
+          mobile 也不放 footer(誤用他 mode 慣例)。 */}
+      {includeUserFooter && (
+        <SidebarFooter>
+          <UserFooter />
+        </SidebarFooter>
+      )}
     </Sidebar>
   )
 }
 
-// ── GlobalHeader(primary-header mode 用,跨頁 chrome:WorkspaceBrand 左 + 跨頁 actions 右)──
+// ── AccountMenu(primary-header mode 用,主標頭右側「個人設定入口」)──────────────
+// 2026-06-17 加 per user directive「primary-header 不該把個人設定放 sidebar footer,該放主標頭右側 avatar」。
+// 對齊 GitHub / Gmail / Slack / Atlassian:自己的帳號入口在 global top bar 右上 + 點開帳號選單
+// (非 ProfileCard——ProfileCard 是看「別人」的人員卡,預設動作 Chat/通話用在自己身上不對)。
+// 消費 SSOT:
+//   - <Avatar size={24}>(header-canonical.spec.md 4.5 chrome header avatar:brand + account 同 24px;
+//     sync with --chrome-header-avatar-size)。互動感由 focus ring + hover 提供,不放大到 field height。
+//   - <DropdownMenu>(個人資料 / 設定 / 登出;baseline = dropdown-menu.stories.tsx Groups)
+//   - 放置 / 邊距對稱 canonical → app-shell.spec.md「帳號入口(Account entry)放置 SSOT」段
+export function AccountMenu() {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label="帳號與設定"
+          className="flex items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+        >
+          {/* 24 per header-canonical.spec.md 4.5 chrome header avatar canonical(brand + account 同尺寸); sync with --chrome-header-avatar-size */}
+          <Avatar size={24} alt="Alan Chen" color="blue" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>Alan Chen</DropdownMenuLabel>
+          <DropdownMenuItem startIcon={User}>個人資料</DropdownMenuItem>
+          <DropdownMenuItem startIcon={Settings}>設定</DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuGroup>
+          <DropdownMenuItem startIcon={LogOut}>登出</DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
+// ── GlobalHeader(primary-header mode 用,跨頁 chrome:WorkspaceBrand 左 + 帳號入口右)──
 // 2026-05-21 加 per user clarification「primary-header = primary-sidebar + 一條 global header」。
 // 對齊 GitHub top nav(logo 左 / search 中 / account 右)+ Slack workspace bar 慣例。
 // 消費 ChromeHeader(per `header-canonical.spec.md` Element + Background ownership 段:
@@ -159,7 +235,7 @@ export function GlobalHeader({ rightSlot }: { rightSlot?: React.ReactNode } = {}
     <ChromeHeader className="bg-surface" leadingRail={<SidebarTrigger />}>
       <WorkspaceBrand />
       <div className="flex-1" />
-      {rightSlot}
+      {rightSlot ?? <AccountMenu />}
     </ChromeHeader>
   )
 }

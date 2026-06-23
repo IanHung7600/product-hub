@@ -24,16 +24,16 @@ export const UsageGuidance: Story = {
       <p>適合 OverflowIndicator 的真實業務場景(點擊跳轉「展示」頁範例):</p>
       <ul className="space-y-1">
         <li>
-          <LinkTo kind="Design System/Internal/OverflowIndicator/展示" name="Combobox 標籤溢出"><span className="text-primary hover:underline font-medium cursor-pointer">Combobox 標籤溢出</span></LinkTo>
+          <LinkTo kind="Design System/Internal/OverflowIndicator/展示" name="Combobox 標籤溢出"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">Combobox 標籤溢出</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Internal/OverflowIndicator/展示" name="人員頭像 疊合 +N"><span className="text-primary hover:underline font-medium cursor-pointer">PR reviewer 頭像疊合 +N(只顯前 3 位)</span></LinkTo>
+          <LinkTo kind="Design System/Internal/OverflowIndicator/展示" name="人員頭像 疊合 +N"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">PR reviewer 頭像疊合 +N(只顯前 3 位)</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Internal/OverflowIndicator/展示" name="Breadcrumb 中段收合"><span className="text-primary hover:underline font-medium cursor-pointer">Breadcrumb 中段收合</span></LinkTo>
+          <LinkTo kind="Design System/Internal/OverflowIndicator/展示" name="Breadcrumb 中段收合"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">Breadcrumb 中段收合</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Internal/OverflowIndicator/展示" name="DataTable 人員欄位"><span className="text-primary hover:underline font-medium cursor-pointer">DataTable 人員欄位</span></LinkTo>
+          <LinkTo kind="Design System/Internal/OverflowIndicator/展示" name="DataTable 人員欄位"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">DataTable 人員欄位</span></LinkTo>
         </li>
       </ul>
       <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見下方 vs 近親段落)。</p>
@@ -62,7 +62,7 @@ export const CompositionRules: Story = {
         <p>OverflowIndicator 是顯示「還有 N 個沒列出來」的 `+N` 小標籤,由下列幾種元件在內部使用(顯示前幾項 + 把剩下的折成 `+N`),不直接放在頁面程式碼裡:</p>
 
         <h4>Pattern 1 — Combobox 標籤溢出(單行模式)</h4>
-        <p>多選標籤太多、單行放不下 → <LinkTo kind="Design System/Components/Combobox/展示" name="四模式"><span className="text-primary hover:underline font-medium cursor-pointer">Combobox</span></LinkTo> 內部使用 OverflowIndicator;hover `+N` 展開完整清單。對齊 GitHub 多標籤 / Linear 多指派人的做法。</p>
+        <p>多選標籤太多、單行放不下 → <LinkTo kind="Design System/Components/Combobox/展示" name="四模式"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">Combobox</span></LinkTo> 內部使用 OverflowIndicator;hover `+N` 展開完整清單。對齊 GitHub 多標籤 / Linear 多指派人的做法。</p>
 
         <h4>Pattern 2 — 人員頭像疊合 +N</h4>
         <p>一群人只顯示前幾位、其餘折成 `+M`。目前由列表元件自行把頭像疊合再放上 OverflowIndicator(形狀用圓形對齊頭像);未來規劃中的 Avatar 群組元件會把這段組合收進去。對齊 Slack 工作區成員預覽 / Linear 團隊成員的做法。</p>

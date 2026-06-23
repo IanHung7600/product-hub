@@ -46,8 +46,8 @@ export const UsageGuidance: Story = {
           <div className="prose prose-sm max-w-prose mb-8">
             <p>適合 RadioGroup 的真實業務場景(點擊跳轉「展示」頁範例):</p>
             <ul className="space-y-1">
-              <li><LinkTo kind="Design System/Components/RadioGroup/展示" name="直式群組"><span className="text-primary hover:underline font-medium cursor-pointer">直式群組</span></LinkTo><span className="text-fg-secondary"> — 訂閱方案選擇(月付 / 年付 / 終身):需要對比價格與說明的決策節點,直式 + description 完整閱讀</span></li>
-              <li><LinkTo kind="Design System/Components/RadioGroup/展示" name="水平排列"><span className="text-primary hover:underline font-medium cursor-pointer">水平排列</span></LinkTo><span className="text-fg-secondary"> — 外觀主題切換(淺色 / 深色 / 系統):2-3 個短 label、不需描述文字,橫排省垂直空間</span></li>
+              <li><LinkTo kind="Design System/Components/RadioGroup/展示" name="直式群組"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">直式群組</span></LinkTo><span className="text-fg-secondary"> — 訂閱方案選擇(月付 / 年付 / 終身):需要對比價格與說明的決策節點,直式 + description 完整閱讀</span></li>
+              <li><LinkTo kind="Design System/Components/RadioGroup/展示" name="水平排列"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">水平排列</span></LinkTo><span className="text-fg-secondary"> — 外觀主題切換(淺色 / 深色 / 系統):2-3 個短 label、不需描述文字,橫排省垂直空間</span></li>
             </ul>
             <p className="text-fg-muted mt-3">判斷不確定時:回頭看「何時用 / 何時不用」;若仍不符,改用近親元件(見下方「vs 近親元件」)。</p>
           </div>

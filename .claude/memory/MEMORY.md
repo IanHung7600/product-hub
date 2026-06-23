@@ -4,6 +4,9 @@
 - [user_role.md](user_role.md) — Design-oriented frontend engineer with high standards for design correctness
 - [project_goal.md](project_goal.md) — World-class DS where CLAUDE.md + specs ensure AI faithfully executes design principles
 
+## Project (active work)
+- [project_cprime_governance_shipped.md](project_cprime_governance_shipped.md) — C-prime fork 治理已發版 beta.70(committed-config + npm,免 plugin);**雲端端到端 100% 蓋章(2026-06-17 user 真機):proactive 指引 + 機械強制(PostToolUse P0 BLOCKER 實際 fire)兩半皆親證生效**
+
 ## Feedback (workflow / collaboration discipline)
 - [feedback_codex_dual_track_synthesizer.md](feedback_codex_dual_track_synthesizer.md) — Codex dual-track + ASK gate 嚴格 + triple-verify + brief 三 invariant + Phase-A-first + auto-mode 禁問(2026-06-11 合併 05-23 directives)
 - [feedback_audit_discipline_full_sweep_deterministic_preflight.md](feedback_audit_discipline_full_sweep_deterministic_preflight.md) — 稽核三 invariant:NO-SAMPLE 全盤 / 必 chain deterministic script / Preflight scan(合 3 file)
@@ -23,6 +26,7 @@
 
 ## Reference
 - [reference_deploy_targets.md](reference_deploy_targets.md) — Deploy targets + URL 3-strategy 自動推導 + per-user override + transport self-awareness(2026-06-11 合併 deploy_url_auto_detect)
+- [reference_cloud_governance_loading.md](reference_cloud_governance_loading.md) — 雲端 sandbox 治理載入實證:committed .claude 全 4 hook event 會 fire / plugin 不可靠(#63028/#62174)/ --cloud 需 TTY / skills 不認 node_modules(2026-06-16)
 
 ---
 **Prune history**(細節在 .claude/memory/retired/ + git log):

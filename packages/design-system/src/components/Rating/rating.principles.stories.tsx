@@ -58,15 +58,15 @@ export const UsageGuidance: Story = {
       <p>適合 Rating 的真實業務場景(點擊跳轉「展示」頁範例):</p>
       <ul className="space-y-1">
         <li>
-          <LinkTo kind="Design System/Components/Rating/展示" name="商品列表平均分"><span className="text-primary hover:underline font-medium cursor-pointer">商品列表平均分</span></LinkTo>
+          <LinkTo kind="Design System/Components/Rating/展示" name="商品列表平均分"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">商品列表平均分</span></LinkTo>
           <span className="text-fg-secondary"> — 電商搜尋結果每張商品卡的 readOnly 平均分 + 評論數(4.7、12,843 則)</span>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/Rating/展示" name="送出評分流程"><span className="text-primary hover:underline font-medium cursor-pointer">送出評分流程</span></LinkTo>
+          <LinkTo kind="Design System/Components/Rating/展示" name="送出評分流程"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">送出評分流程</span></LinkTo>
           <span className="text-fg-secondary"> — 訂單完成 / 用餐後使用者親自給分:hover 預覽 + click 送出(interactive)</span>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/Rating/展示" name="包在 Field 內"><span className="text-primary hover:underline font-medium cursor-pointer">包在 Field 內</span></LinkTo>
+          <LinkTo kind="Design System/Components/Rating/展示" name="包在 Field 內"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">包在 Field 內</span></LinkTo>
           <span className="text-fg-secondary"> — 售後問卷表單中作為欄位:label + 驗證跟其他 Field 控制項一致</span>
         </li>
       </ul>

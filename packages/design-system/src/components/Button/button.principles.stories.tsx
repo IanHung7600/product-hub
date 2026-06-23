@@ -51,13 +51,13 @@ export const UsageGuidance: Story = {
       <p>適合 Button 的真實業務場景(點擊跳轉「展示」頁範例):</p>
       <ul className="space-y-1">
         <li>
-          <LinkTo kind="Design System/Components/Button/展示" name="危險 語意"><span className="text-primary hover:underline font-medium cursor-pointer">Danger 語意</span></LinkTo>
+          <LinkTo kind="Design System/Components/Button/展示" name="危險 語意"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">Danger 語意</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/Button/展示" name="滑鼠移過 / 鍵盤聚焦"><span className="text-primary hover:underline font-medium cursor-pointer">滑鼠移過 / 鍵盤聚焦</span></LinkTo>
+          <LinkTo kind="Design System/Components/Button/展示" name="滑鼠移過 / 鍵盤聚焦"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">滑鼠移過 / 鍵盤聚焦</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/Button/展示" name="純圖示加 Tooltip"><span className="text-primary hover:underline font-medium cursor-pointer">純圖示加 Tooltip</span></LinkTo>
+          <LinkTo kind="Design System/Components/Button/展示" name="純圖示加 Tooltip"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">純圖示加 Tooltip</span></LinkTo>
         </li>
       </ul>
       <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>

@@ -76,7 +76,7 @@ benchmark:
 - `gap-2`(8px)+ `<ButtonDivider />`(自帶 mx-1 = 12px 視覺距離)
 - `px-[var(--layout-space-loose)] py-[var(--layout-space-tight)]`
 - 自然高度 56md / 68lg(md Button `--field-height-md` 32/36 + `py-[var(--layout-space-tight)]` 12/16 ×2;對齊 SurfaceFooter / DataTable toolbar canonical)
-- `selection.length === 0` → 回 null 不佔 layout
+- `selection.length === 0` **且** `totalSelected` 為 0/未設 → 回 null 不佔 layout(反向選取 all 模式 `totalSelected > 0` 但可見列全 excluded 時仍顯示,見「Extend dataset pattern」)
 - **寬度邊界**:actions 為單行 flex 排列(`gap-2`),無折行、無內建 overflow 收納;寬度受限場景由 consumer 控制 action 數量
 
 ### Slot
@@ -170,6 +170,8 @@ interface BulkActionBarLabels {
 
 「本頁全選 → hint 點擊 → 擴選整個 dataset」2-step 後,consumer 把 `totalSelected` 設為 dataset 真總數,count 區改顯示該值(否則 fallback `selection.length`)——避免 Alert 顯「已選 5370」但 bar 仍顯「已選 50」的不同步(2026-05-13 ship)。對齊 Gmail / Linear / Notion 全選 dataset hint pattern。
 
+**可見性與反向選取(DataTable all 模式,2026-06-22)**:顯示判準 = `selection.length > 0 || (totalSelected ?? 0) > 0`。反向選取(`{ mode:'all', excluded }`)下若可見列全被 excluded、`selection`(可見代表)為空但 `totalSelected > 0`(全集仍有選取),bar **仍顯示**(否則「已選 N 個但 bar 消失」矛盾)。對應 `data-table.spec.md`「L2 選取」inverted 模型。
+
 ---
 
 ## a11y 預設
@@ -185,7 +187,7 @@ interface BulkActionBarLabels {
 
 ## 視覺與動畫
 
-- **出現 / 消失**:`selection.length` 0→>0 直接 mount;>0→0 回 null 直接 unmount(無 fade 動畫)。inline composition 下自然 reflow;consumer 需固定高度時自擺 placeholder(見「禁止事項」)
+- **出現 / 消失**:有選取(`selection.length > 0` **或** `totalSelected > 0`)直接 mount;歸零回 null 直接 unmount(無 fade 動畫)。inline composition 下自然 reflow;consumer 需固定高度時自擺 placeholder(見「禁止事項」)
 - **底色**:**無底色 contrast**,跟 page 同色(`bg-canvas` / `bg-surface` 視 placement 繼承)。對齊 Notion / Linear minimalist — 用文字內容切換呈現「mode」,**不**用底色 highlight。**不像 Polaris 那種顯著底色變化** <!-- @benchmark-unverified: see frontmatter benchmark list for canonical DS source URL -->
 - **邊界**:**無外框邊界**(融入 page chrome)— 恆 **`border-top` border-divider 切割 layout**(bar 是 page 結構,不是 floating overlay,不用 box-shadow 製造「浮層」誤導)。top-toolbar 變體為未來項(見「Size canonical」)
 - **與 table 的關係**:inline composition — bar 接在 DataTable 下方,toolbar 永遠保留(見「Placement」)

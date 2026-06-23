@@ -22,6 +22,9 @@ import { readFileSync } from 'node:fs'
 const CHECK = process.argv.includes('--check')
 const PKG = 'packages/design-system'
 const SRC_GLOB = `${PKG}/src`
+// C-prime fork 治理 corpus 也 ship 進 npm(ds-canonical/fork)→ 它改了沒 bump = stale-ship 進 fork
+// (adversarial run-4 MAJOR:原 gate 只看 src/,看不到此 surface);一併納入 republish gate。
+const FORK_GLOB = `${PKG}/ds-canonical/fork`
 
 const sh = (cmd, opts = {}) => execSync(cmd, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'], ...opts }).trim()
 const warn = (msg) => { console.warn(`⚠️  ${msg}`); process.exit(0) }  // 降級:不擋
@@ -62,17 +65,18 @@ try {
 // ── ship-relevant diff:src 下、排除不 ship / 不影響 runtime 的檔 ──
 let changed = []
 try {
-  changed = sh(`git diff --name-only ${baselineTag} HEAD -- ${SRC_GLOB}`).split('\n').filter(Boolean)
+  changed = sh(`git diff --name-only ${baselineTag} HEAD -- ${SRC_GLOB} ${FORK_GLOB}`).split('\n').filter(Boolean)
 } catch (e) {
   warn(`git diff 失敗(${e.message.split('\n')[0]})→ skip republish gate`)
 }
 // 白名單反推:files 欄 ship src/**/*.{tsx,ts,css}(+ spec.md 純文件),stories 不在 files 欄。
 const isShipRelevant = (f) =>
-  /\.(tsx|ts|css)$/.test(f) &&
+  f.startsWith(`${FORK_GLOB}/`) ||  // ds-canonical/fork 整個 corpus ship + 影響 fork 治理 → 任何改動都 ship-relevant
+  (/\.(tsx|ts|css)$/.test(f) &&
   !/\.stories\.(tsx|ts)$/.test(f) &&
   !/\.spec\.md$/.test(f) &&
   !/\.spec\.ts$/.test(f) &&
-  !/\.test\.ts$/.test(f)
+  !/\.test\.ts$/.test(f))
 const shipDiff = changed.filter(isShipRelevant)
 
 // ── 判定 ──

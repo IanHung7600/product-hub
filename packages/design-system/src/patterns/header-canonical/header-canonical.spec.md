@@ -72,11 +72,11 @@ benchmark:
 - **永遠 size="sm"**(不論家族 / density):chrome / overlay header 內 button 一律 sm。**廣化(2026-06-12 user 拍板)**:header 內**所有 field-height 控件**(Button / Input / Select / SegmentedControl / Combobox 等)一律 `sm`,禁混雜不同 field height(Tabs 跟齊 chrome 高度,唯一例外 = 「Tabs 取代整個 header」的 standalone `size="lg"`,見上方表)
 - 對齊 既有 `dialog.tsx:132-153` + `sheet.tsx:122-139` + `popover.tsx:87-110`(Dialog/Sheet/Popover 已內建 close X)
 
-### 4.5 Chrome header avatar SSOT(2026-05-21 codify per user directive)
+### 4.5 Chrome header avatar SSOT(2026-05-21 codify per user directive;2026-06-17 擴涵 account entry)
 
-**Canonical**:Chrome header brand mark avatar = **24px,density-fixed,row-size-fixed**。
+**Canonical**:Chrome header avatar = **24px,density-fixed,row-size-fixed**。涵蓋同一條 chrome header 內**兩種** avatar,皆 24px:**(a) 品牌 mark**(WorkspaceBrand,左)+ **(b) 帳號入口 account entry**(primary-header globalHeader 右側的個人設定 avatar)。同一條 chrome header 內所有 avatar 尺寸一致。
 
-對齊 5 家世界級共識(Linear / Notion / Figma / Slack / Polaris chrome header brand mark 皆固定 24px,不 density-scale 也不 row-size-scale)。設計理由:avatar 是品牌識別 mark,視覺穩定優於 density 緊鬆 / row size 調整(button 跟 density 走 touch target 邏輯,avatar 不該綁同邏輯)。 <!-- @benchmark-unverified: see frontmatter benchmark list for canonical DS source URL -->
+對齊 5 家世界級共識(Linear / Notion / Figma / Slack / Polaris chrome header brand mark 皆固定 24px,不 density-scale 也不 row-size-scale;GitHub 20 / Atlassian small 24 / Linear 右上帳號 avatar 同屬此小尺寸區間)。設計理由:chrome header avatar(品牌或帳號)是身份識別 mark,視覺穩定優於 density 緊鬆 / row size 調整;**帳號入口雖可互動,互動感由 focus ring + hover 提供,不靠把 avatar 放大到 field height**(button 跟 density 走 touch target 邏輯,avatar 不綁同邏輯)。 <!-- @benchmark-unverified: see frontmatter benchmark list for canonical DS source URL -->
 
 **Chrome header 不是 row context**:無 sm/md/lg row size lookup 需求 → chrome header 內 avatar 用 **raw `<Avatar size={24}>`**,**不用 `<ItemAvatar>`**(後者是 row primitive anatomy helper,scope 是 row context — 詳 `item-anatomy.spec.md`「Scope 例外:Chrome header 不是 row context」段)。
 
@@ -88,8 +88,9 @@ benchmark:
 - 在 chrome header 內放 avatar → **必用 raw `<Avatar size={24}>`**,**禁用 `<ItemAvatar>`**(會誤啟動 row anatomy lookup)
 - SidebarHeader 收合對齊公式必消費 `var(--chrome-header-avatar-size)`,**禁** hardcode 24
 - WorkspaceBrand demo 即此 pattern 的 reference implementation(`components/AppShell/_demo-helpers.tsx:WorkspaceBrand`)
+- **帳號入口(account entry)同規則**:primary-header globalHeader 右側的個人設定 avatar 也用 raw `<Avatar size={24}>`(reference:`_demo-helpers.tsx:AccountMenu`)。放置 / 開帳號選單 / 邊距對稱 canonical 見 `../../components/AppShell/app-shell.spec.md`「帳號入口(Account entry)放置 SSOT」段。
 
-**Sync invariant**:`--chrome-header-avatar-size` CSS 值 + `<Avatar size={24}>` JS literal + `AVATAR_SIZE.inline.md = 24`(`item-anatomy.tsx:94`,L93 是 `export const AVATAR_SIZE = {` 宣告開頭)三者必同 24px 值。改 spec canonical 時 grep `--chrome-header-avatar-size` + `chrome header avatar canonical` keyword 找全 sync 點。
+**Sync invariant**:`--chrome-header-avatar-size` CSS 值 + `<Avatar size={24}>` JS literal(WorkspaceBrand + AccountMenu 兩處)+ `AVATAR_SIZE.inline.md = 24`(`item-anatomy.tsx:94`,L93 是 `export const AVATAR_SIZE = {` 宣告開頭)必同 24px 值。改 spec canonical 時 grep `--chrome-header-avatar-size` + `chrome header avatar canonical` keyword 找全 sync 點。
 
 ### 5. Title typography
 

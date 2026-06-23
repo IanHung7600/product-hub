@@ -1,0 +1,93 @@
+{
+  "_generated": "build-fork-governance.mjs",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "file": "hooks/check_consumer_app_invariants.sh",
+        "sourceHook": "check_consumer_app_invariants.sh",
+        "bucket": "SHIP_AS_IS"
+      },
+      {
+        "file": "hooks/block_prototype_imports.py",
+        "sourceHook": "block_prototype_imports.py",
+        "bucket": "SHIP_AS_IS"
+      },
+      {
+        "file": "hooks/check_layout_space_magic_numbers.sh",
+        "sourceHook": "check_layout_space_magic_numbers.sh",
+        "bucket": "SHIP_AS_IS"
+      },
+      {
+        "file": "hooks/check_tailwind_wildcard_in_docs.sh",
+        "sourceHook": "check_tailwind_wildcard_in_docs.sh",
+        "bucket": "SHIP_AS_IS"
+      },
+      {
+        "file": "hooks/check_escape_marker_abuse.sh",
+        "sourceHook": "check_escape_marker_abuse.sh",
+        "bucket": "SHIP_REWRITTEN"
+      },
+      {
+        "file": "hooks/inject_deploy_url_after_push.sh",
+        "sourceHook": "inject_deploy_url_after_push.sh",
+        "bucket": "SHIP_REWRITTEN"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "file": "hooks/check_item_list_gap.sh",
+        "sourceHook": "check_item_list_gap.sh",
+        "bucket": "SHIP_AS_IS"
+      },
+      {
+        "file": "hooks/check_pattern_invariants.sh",
+        "sourceHook": "check_pattern_invariants.sh",
+        "bucket": "SHIP_AS_IS"
+      },
+      {
+        "file": "hooks/check_field_family_invariants.sh",
+        "sourceHook": "check_field_family_invariants.sh",
+        "bucket": "SHIP_AS_IS"
+      },
+      {
+        "file": "hooks/check_sidebar_menu_button_implicit_wrap.sh",
+        "sourceHook": "check_sidebar_menu_button_implicit_wrap.sh",
+        "bucket": "SHIP_AS_IS"
+      },
+      {
+        "file": "hooks/check_chrome_header_avatar_canonical.sh",
+        "sourceHook": "check_chrome_header_avatar_canonical.sh",
+        "bucket": "SHIP_AS_IS"
+      },
+      {
+        "file": "hooks/check_opacity_token_usage.sh",
+        "sourceHook": "check_opacity_token_usage.sh",
+        "bucket": "SHIP_REWRITTEN"
+      },
+      {
+        "file": "hooks/check_ds_anchor_preflight.sh",
+        "sourceHook": "check_ds_anchor_preflight.sh",
+        "bucket": "SHIP_REWRITTEN"
+      },
+      {
+        "file": "hooks/check_fork_product_quality.sh",
+        "sourceHook": "check_substantive_edit_approval_preflight.sh",
+        "bucket": "REPLACE"
+      }
+    ]
+  },
+  "skills": [
+    "bug-fix-rhythm",
+    "code-quality-audit",
+    "delivery-handoff",
+    "performance-audit",
+    "product-ui-audit",
+    "propose-options",
+    "prototype",
+    "scan-similar-bugs",
+    "ux-audit",
+    "visual-audit"
+  ],
+  "commands": [],
+  "agents": []
+}

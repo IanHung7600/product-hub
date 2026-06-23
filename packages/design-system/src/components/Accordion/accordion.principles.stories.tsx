@@ -69,13 +69,13 @@ export const UsageGuidance: Story = {
       >
         <ul className="space-y-1">
           <li>
-            <LinkTo kind="Design System/Components/Accordion/展示" name="FAQ 常見問題"><span className="text-primary hover:underline font-medium cursor-pointer">FAQ 常見問題</span></LinkTo>
+            <LinkTo kind="Design System/Components/Accordion/展示" name="FAQ 常見問題"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">FAQ 常見問題</span></LinkTo>
           </li>
           <li>
-            <LinkTo kind="Design System/Components/Accordion/展示" name="設定分組"><span className="text-primary hover:underline font-medium cursor-pointer">設定分組</span></LinkTo>
+            <LinkTo kind="Design System/Components/Accordion/展示" name="設定分組"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">設定分組</span></LinkTo>
           </li>
           <li>
-            <LinkTo kind="Design System/Components/Accordion/展示" name="進階選項可隱藏"><span className="text-primary hover:underline font-medium cursor-pointer">進階選項可隱藏</span></LinkTo>
+            <LinkTo kind="Design System/Components/Accordion/展示" name="進階選項可隱藏"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">進階選項可隱藏</span></LinkTo>
           </li>
         </ul>
       </Rule>

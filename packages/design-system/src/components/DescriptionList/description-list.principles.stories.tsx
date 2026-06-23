@@ -53,19 +53,19 @@ export const UsageGuidance: Story = {
       <p>適合 DescriptionList 的真實業務場景(點擊跳轉「展示」頁範例):</p>
       <ul className="space-y-1">
         <li>
-          <LinkTo kind="Design System/Components/DescriptionList/展示" name="使用者個資"><span className="text-primary hover:underline font-medium cursor-pointer">使用者個資</span></LinkTo>
+          <LinkTo kind="Design System/Components/DescriptionList/展示" name="使用者個資"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">使用者個資</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/DescriptionList/展示" name="產品規格"><span className="text-primary hover:underline font-medium cursor-pointer">產品規格</span></LinkTo>
+          <LinkTo kind="Design System/Components/DescriptionList/展示" name="產品規格"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">產品規格</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/DescriptionList/展示" name="訂單明細"><span className="text-primary hover:underline font-medium cursor-pointer">訂單明細</span></LinkTo>
+          <LinkTo kind="Design System/Components/DescriptionList/展示" name="訂單明細"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">訂單明細</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/DescriptionList/展示" name="詳情面板"><span className="text-primary hover:underline font-medium cursor-pointer">詳情面板</span></LinkTo>
+          <LinkTo kind="Design System/Components/DescriptionList/展示" name="詳情面板"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">詳情面板</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/DescriptionList/展示" name="水平佈局"><span className="text-primary hover:underline font-medium cursor-pointer">水平佈局</span></LinkTo>
+          <LinkTo kind="Design System/Components/DescriptionList/展示" name="水平佈局"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">水平佈局</span></LinkTo>
         </li>
       </ul>
       <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>

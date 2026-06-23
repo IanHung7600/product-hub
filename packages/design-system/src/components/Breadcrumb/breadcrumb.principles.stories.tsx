@@ -65,15 +65,15 @@ export const UsageGuidance: Story = {
       <ul className="space-y-1">
         <li>
           電商多層分類、檔案管理器等深層頁面,路徑過長時中段折疊、點 ⋯ 可展開中間層 —— 見{' '}
-          <LinkTo kind="Design System/Components/Breadcrumb/展示" name="可互動省略"><span className="text-primary hover:underline font-medium cursor-pointer">可互動省略</span></LinkTo>
+          <LinkTo kind="Design System/Components/Breadcrumb/展示" name="可互動省略"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">可互動省略</span></LinkTo>
         </li>
         <li>
           路徑由路由 / CMS 資料動態產生,直接傳資料陣列、超過層數自動收合中段 —— 見{' '}
-          <LinkTo kind="Design System/Components/Breadcrumb/展示" name="宣告式 API + 自動收合"><span className="text-primary hover:underline font-medium cursor-pointer">宣告式 API + 自動收合</span></LinkTo>
+          <LinkTo kind="Design System/Components/Breadcrumb/展示" name="宣告式 API + 自動收合"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">宣告式 API + 自動收合</span></LinkTo>
         </li>
         <li>
           SPA 內點麵包屑要走前端路由、不整頁重載 —— 見{' '}
-          <LinkTo kind="Design System/Components/Breadcrumb/展示" name="整合 React Router / Next.js Link"><span className="text-primary hover:underline font-medium cursor-pointer">整合 React Router / Next.js Link</span></LinkTo>
+          <LinkTo kind="Design System/Components/Breadcrumb/展示" name="整合 React Router / Next.js Link"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">整合 React Router / Next.js Link</span></LinkTo>
         </li>
       </ul>
       <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用相近的其他元件(見下方「跟相近元件怎麼分」的範例)。</p>

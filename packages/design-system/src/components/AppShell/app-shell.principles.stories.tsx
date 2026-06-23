@@ -18,15 +18,15 @@ export const UsageGuidance: Story = {
         <ul className="text-body space-y-2">
           <li>
             • 多頁 web service 的主結構——Linear / Notion / Slack / GitHub / Asana 這類「左側導覽 + 中央工作區」產品。完整組合見{' '}
-            <LinkTo kind="Design System/Components/AppShell/展示" name="主側欄佈局 — Linear 式議題追蹤"><span className="text-primary hover:underline font-medium cursor-pointer">展示 → 主側欄佈局 — Linear 式議題追蹤</span></LinkTo>
+            <LinkTo kind="Design System/Components/AppShell/展示" name="主側欄佈局 — Linear 式議題追蹤"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">展示 → 主側欄佈局 — Linear 式議題追蹤</span></LinkTo>
           </li>
           <li>
             • 需要 sidebar + main 持續共存——在議題列表、看板、報表等頁面間切換時,左側導覽不重渲染、捲動位置不丟失。見{' '}
-            <LinkTo kind="Design System/Components/AppShell/展示" name="主側欄佈局 + 頁面分頁"><span className="text-primary hover:underline font-medium cursor-pointer">展示 → 主側欄佈局 + 頁面分頁</span></LinkTo>
+            <LinkTo kind="Design System/Components/AppShell/展示" name="主側欄佈局 + 頁面分頁"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">展示 → 主側欄佈局 + 頁面分頁</span></LinkTo>
           </li>
           <li>
             • 需要右側詳情面板(議題詳情 / inspector / 成員資料)跟 main 並存——如 Linear 點選議題後右側展開詳情。開合行為見{' '}
-            <LinkTo kind="Design System/Components/AppShell/設計規格" name="右側面板開合行為(兩種模式)"><span className="text-primary hover:underline font-medium cursor-pointer">設計規格 → 右側面板開合行為</span></LinkTo>
+            <LinkTo kind="Design System/Components/AppShell/設計規格" name="右側面板開合行為(兩種模式)"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">設計規格 → 右側面板開合行為</span></LinkTo>
           </li>
         </ul>
       </section>
@@ -46,7 +46,7 @@ export const UsageGuidance: Story = {
         <p className="text-body">
           兩種佈局模式(primary-sidebar / primary-header)的選型決策樹獨立成「佈局模式怎麼選」story(含
           WorkspaceBrand 放置規則),見本頁側欄或{' '}
-          <LinkTo kind="Design System/Components/AppShell/設計原則" name="佈局模式怎麼選"><span className="text-primary hover:underline font-medium cursor-pointer">設計原則 → 佈局模式怎麼選</span></LinkTo>
+          <LinkTo kind="Design System/Components/AppShell/設計原則" name="佈局模式怎麼選"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">設計原則 → 佈局模式怎麼選</span></LinkTo>
         </p>
       </section>
 
@@ -73,8 +73,9 @@ export const UsageGuidance: Story = {
   ),
 }
 
-// 佈局模式選型 deep-dive — 內容錨定 app-shell.spec.md「兩 mode 差異」(L93-94 / L105 常見誤解)
-// +「WorkspaceBrand 放置 SSOT」(L112-119);category-templates.md component-specific `{Topic}Rule` idiom
+// 佈局模式選型 deep-dive — 內容錨定 app-shell.spec.md 的「Layout mode 兩 mode 差異」+「WorkspaceBrand 放置 SSOT」
+// +「帳號入口(Account entry)放置 SSOT」段(均含 Responsive 精修子句;用段名錨定不寫死行號避免 drift)。
+// category-templates.md component-specific `{Topic}Rule` idiom
 export const LayoutModeRule: Story = {
   name: '佈局模式怎麼選',
   render: () => (
@@ -97,12 +98,12 @@ export const LayoutModeRule: Story = {
             服務整個 app(account / workspace switcher / 跨頁 search / notifications);local toolbar
             <em>仍在</em> main col 頂,只是上面多了 global header。WorkspaceBrand 改放 globalHeader 左側。
             參考 GitHub / Slack / Gmail。完整組合見{' '}
-            <LinkTo kind="Design System/Components/AppShell/展示" name="主標頭佈局 — 全域+本地兩層(GitHub/Gmail/Slack 派)"><span className="text-primary hover:underline font-medium cursor-pointer">展示 → 主標頭佈局 — 全域+本地兩層</span></LinkTo>
+            <LinkTo kind="Design System/Components/AppShell/展示" name="主標頭佈局 — 全域+本地兩層(GitHub/Gmail/Slack 派)"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">展示 → 主標頭佈局 — 全域+本地兩層</span></LinkTo>
           </li>
         </ul>
         <p className="text-caption text-fg-secondary mt-2">
           兩 mode 是 product 角色表態——啟動時固定,不該在 runtime 切換。視覺對照圖見{' '}
-          <LinkTo kind="Design System/Components/AppShell/設計規格" name="兩種布局模式對照圖"><span className="text-primary hover:underline font-medium cursor-pointer">設計規格 → 兩種布局模式對照圖</span></LinkTo>
+          <LinkTo kind="Design System/Components/AppShell/設計規格" name="兩種布局模式對照圖"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">設計規格 → 兩種布局模式對照圖</span></LinkTo>
         </p>
       </section>
 
@@ -121,6 +122,17 @@ export const LayoutModeRule: Story = {
           <li>• <strong>primary-sidebar</strong>:WorkspaceBrand 放 Sidebar 頂部(`&lt;SidebarHeader&gt;` 內)— Linear / Notion / Figma file panel</li>
           <li>• <strong>primary-header</strong>:WorkspaceBrand 改放 globalHeader 左側(搭配 SidebarTrigger),SidebarHeader 留空 — GitHub / Gmail / Figma file editor</li>
           <li>❌ 禁:`primary-header` mode 同時在 globalHeader + SidebarHeader 各放一份 = 視覺冗餘 + 跨產品識別混淆(WorkspaceBrand 視覺 SSOT,只能出現一次)</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 className="text-h4 mb-2">帳號入口(個人設定)跟著 mode 走(只能出現一次)</h2>
+        <ul className="text-body space-y-1">
+          <li>• <strong>primary-sidebar</strong>:帳號 / 個人設定放 Sidebar 底部(`&lt;SidebarFooter&gt;`)— Linear / Notion / Figma</li>
+          <li>• <strong>primary-header</strong>:帳號入口改放 globalHeader 右側 avatar(品牌左、帳號右,左右對稱),sidebar 不放 user footer — GitHub / Gmail / Slack 帳號一律在 global bar 右上</li>
+          <li>• 開「個人資料 / 設定 / 登出」帳號選單(`&lt;DropdownMenu&gt;`),<strong>不用 ProfileCard</strong>(ProfileCard 是看別人的人員卡,預設動作 Chat/通話用在自己身上不對)</li>
+          <li>• 帳號 avatar = 24px,跟左側品牌 avatar 同尺寸(header-canonical 4.5 chrome header avatar);右側邊距與品牌距分割線對稱</li>
+          <li>❌ 禁:`primary-header` mode 同時在 globalHeader + sidebar footer 各放一份 = 入口混淆(帳號入口視覺 SSOT,只能出現一次)</li>
         </ul>
       </section>
     </div>

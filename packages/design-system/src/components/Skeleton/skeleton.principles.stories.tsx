@@ -47,11 +47,11 @@ export const UsageGuidance: Story = {
         <div className="prose prose-sm max-w-prose mb-8">
           <p>適合 Skeleton 的真實業務場景(點擊跳轉「展示」頁範例):</p>
           <ul className="space-y-1">
-            <li><LinkTo kind="Design System/Components/Skeleton/展示" name="個人資料卡載入"><span className="text-primary hover:underline font-medium cursor-pointer">個人資料卡載入</span></LinkTo></li>
-            <li><LinkTo kind="Design System/Components/Skeleton/展示" name="任務列表載入"><span className="text-primary hover:underline font-medium cursor-pointer">任務列表載入</span></LinkTo></li>
-            <li><LinkTo kind="Design System/Components/Skeleton/展示" name="表格列載入"><span className="text-primary hover:underline font-medium cursor-pointer">表格列載入</span></LinkTo></li>
-            <li><LinkTo kind="Design System/Components/Skeleton/展示" name="文件載入"><span className="text-primary hover:underline font-medium cursor-pointer">文件載入</span></LinkTo></li>
-            <li><LinkTo kind="Design System/Components/Skeleton/展示" name="卡片網格載入"><span className="text-primary hover:underline font-medium cursor-pointer">卡片網格載入</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Skeleton/展示" name="個人資料卡載入"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">個人資料卡載入</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Skeleton/展示" name="任務列表載入"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">任務列表載入</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Skeleton/展示" name="表格列載入"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">表格列載入</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Skeleton/展示" name="文件載入"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">文件載入</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/Skeleton/展示" name="卡片網格載入"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">卡片網格載入</span></LinkTo></li>
           </ul>
           <p className="text-fg-muted mt-3">判斷不確定時:先確認資料回來後的佈局是否已知;若不符合載入佔位的情境,改用近親元件(見下方「vs 近親元件」段)。</p>
         </div>

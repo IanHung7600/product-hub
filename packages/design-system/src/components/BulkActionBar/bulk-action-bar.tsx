@@ -82,8 +82,9 @@ const BulkActionBar = React.forwardRef<HTMLDivElement, BulkActionBarProps>(
       [labelsOverride]
     )
 
-    // selection.length === 0 自動藏(對齊 spec 禁止事項 #3)
-    if (selection.length === 0) return null
+    // selection.length === 0 自動藏(對齊 spec 禁止事項 #3)。
+    // 反向選取(DataTable all 模式)例外:visible 全被 excluded 但 totalSelected>0 仍有選取 → 顯示(2026-06-22)
+    if (selection.length === 0 && (totalSelected ?? 0) === 0) return null
 
     return (
       <div

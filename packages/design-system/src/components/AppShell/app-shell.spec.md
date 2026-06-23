@@ -64,7 +64,7 @@ benchmark:
 </AppShell>
 ```
 
-Sub-component:`<AppShellAside title={...} width={400}>`(width consumer 自決 — `number` 或 `{ md, xl }` breakpoint-keyed,clamp `min-width: 240` / `max-width: 640`;**title prop required**,modal mode 走 Sheet → `aria-labelledby` 強制,per `sheet.spec.md:98`)。
+Sub-component:`<AppShellAside title={...} width={400}>`(width consumer 自決 — `number` 或 `{ md, xl }` breakpoint-keyed,clamp `min-width: 240` / `max-width: 640`;**title prop required**,modal mode 走 Sheet → `aria-labelledby` 強制,per `sheet.spec.md`「禁止事項」(無 title → aria-labelledby 強制))。
 
 ### Hook export:`useAppShell()`(2026-05-21 D2 codify per Phase B codex catch)
 
@@ -118,6 +118,8 @@ function CustomAside() {
 
 **Rule:WorkspaceBrand 只能出現一次**(視覺 SSOT)。`primary-header` mode 重複放(同時在 globalHeader + SidebarHeader)= 視覺冗餘 + 跨產品識別混淆 → **禁止**。
 
+**Responsive 精修(mobile-Sheet 子句,2026-06-18)**:「只能出現一次」= **同一時間一次,「一次」per breakpoint 判定**。Desktop(≥768px)brand 在 globalHeader、sidebar 內無 SidebarHeader。Mobile(<768px)sidebar 收成 Sheet(`sidebar.tsx` mobile 分支,z-50)打開時**蓋住 globalHeader** → brand 看不到、drawer 變孤兒 → 此時在 Sheet 內補 `<SidebarHeader><WorkspaceBrand/>`(globalHeader 既被蓋住,仍「同一時間一次」,非重複)。機制:consumer 讀既有 `useSidebar().isMobile`,mobile 才條件渲染**同一組 primitive**(style SSOT,與 primary-sidebar 外觀一致,非手刻對齊)。Reference:`_demo-helpers.tsx` `AcmeSidebar`(`includeWorkspaceBrand || isMobile`)。**禁止**:desktop primary-header 同時 globalHeader + SidebarHeader 放 brand(那才是真重複)。對齊 Material modal navigation drawer(手機 drawer 從 top app bar 開、蓋住內容、頂放品牌)+ Gmail / GitHub mobile 選單。
+
 **Slack 為 mixed pattern 例外**(thin workspace rail + channels sidebar 有 workspace name)— 不採用此分類,DS 採 **GitHub / Gmail / Figma** 共識(globalHeader 存在 → sidebar 內無 header)。
 
 **Consumer 實作 pattern**:
@@ -134,20 +136,44 @@ function CustomAside() {
   header={<PageHeader title="..." />}>...
 ```
 
+### 帳號入口(Account entry)放置 SSOT(2026-06-17 codify per user directive「primary-header 不該把個人設定放 sidebar footer,該放主標頭右側 avatar」)
+
+「帳號 / 個人設定入口」(目前使用者的 avatar,點開 = 帳號選單)放置同樣 **mode-dependent**,鏡像上方 WorkspaceBrand 規則:
+
+| Mode | 帳號入口放置 | Sidebar footer | 對齊 World-class |
+|---|---|---|---|
+| `primary-sidebar` | **Sidebar 底部**(`<SidebarFooter>` 內,當前使用者)| 有 — 放使用者 | Linear / Notion / Figma(無 global header,帳號自然在 sidebar 底)|
+| `primary-header` | **globalHeader 右側**(trailing slot,品牌在左、帳號在右)| **無 / 空** | GitHub / Gmail / Slack(帳號 avatar 一律在 global top bar 右上)|
+
+**Rule:帳號入口只能出現一次**(視覺 SSOT,同 WorkspaceBrand)。`primary-header` mode 同時放(globalHeader 右 + sidebar footer)= 視覺冗餘 + 入口混淆 → **禁止**;`primary-header` 的 sidebar **不放** user footer(與上方「globalHeader 存在 → sidebar 不重複 chrome 角色」同源邏輯)。
+
+**Responsive 精修(mobile-Sheet 子句,per breakpoint;2026-06-18 修正為「鏡像自己桌面的帳號家」)**:mobile(<768px)sidebar 收成 Sheet 蓋住 globalHeader(桌面帳號入口也在 globalHeader 右)→ **帳號入口鏡像桌面位置搬進 Sheet header 右**:在 `<SidebarHeader>` 內放 `<WorkspaceBrand/>`(左)+ `flex-1` + `<AccountMenu/>`(右)= 把整條 globalHeader 原封搬進 Sheet 頂排(SidebarHeader 即 ChromeHeader 基底,與 GlobalHeader 同 primitive → 帳號 avatar 24px + 右緣距 `--layout-space-loose` 由 construction 保證,**非手刻對齊**)。**不在 Sheet 底放 `<SidebarFooter>`**(footer 是 primary-sidebar 的帳號家慣例;primary-header 任何 breakpoint 帳號家都在 header 區)。Consumer 讀 `useSidebar().isMobile` + `useAppShell().layout`(`headerHasAccount = layout === 'primary-header' && isMobile`),desktop 維持無 header/footer。對齊 Material modal navigation drawer 官方「account switcher 放 drawer header 區(與 logo 同區、pinned、最高優先),footer 區放 settings/support 次要項」(<https://m3.material.io/components/navigation-drawer>)+ Gmail / GitHub mobile 選單頂部帳號慣例。**為何不放 footer**:使用者開 Sheet 看到的頂排 = 原本被蓋住的 top bar(brand 左 / 帳號右),空間記憶不斷;把帳號丟到 footer = 誤套 primary-sidebar 慣例(那 mode 桌面帳號本就在底)。Reference:`_demo-helpers.tsx` `AcmeSidebar`。
+
+**為什麼 primary-header 帳號入口在「右上」**:GitHub / Gmail / Slack / Atlassian 的全域標頭一律把「自己的帳號」放右上(品牌在左、帳號在右,左右對稱)= global chrome 標準位置,不是 sidebar footer。
+
+**入口開什麼 = 帳號選單(`<DropdownMenu>`),不是 ProfileCard**:
+- 開「個人資料 / 設定 / 登出」navigation 選單(對齊 GitHub / Gmail / Slack / Atlassian「自己的帳號入口」慣例)。
+- **不用 `ProfileCard`**:ProfileCard 的預設動作(Chat / 通話)語義是「聯絡某人」,用在**自己**身上不對 — ProfileCard 是看**別人**的人員卡。自己的帳號入口 = 選單。
+- 消費既有 `components/DropdownMenu`(`DropdownMenuTrigger asChild` 包 avatar 作 focusable 觸發點)。
+
+**Avatar 尺寸 + 邊距**:帳號 avatar = `<Avatar size={24}>`(density-fixed,跟左側品牌 avatar 同尺寸),走 `../../patterns/header-canonical/header-canonical.spec.md` 4.5 chrome header avatar SSOT(brand + account 皆 24px raw Avatar、非 ItemAvatar)。右側邊距 = 作為 ChromeHeader 主內容區最後一個 child 自然繼承 `--layout-space-loose`(16px@md / 24px@lg),**與左側品牌 avatar 距 leadingRail 分割線的距離對稱**(ChromeHeader px-loose canonical 結構性保證,**禁 hardcode margin**)。
+
+**Reference implementation**:`_demo-helpers.tsx` `AccountMenu`(帳號選單)+ `GlobalHeader`(右 slot 預設放 `<AccountMenu />`)。
+
 **真正的 distinguishing factor = Header scope(local toolbar vs global bar)**:
 - **Local toolbar 派**(當前頁 anchor / breadcrumb / page-level actions / filter / 該頁 specific 操作)→ `primary-sidebar`
 - **Global bar 派**(account avatar / workspace switcher / notifications / 跨頁 search / 跨頁導覽)→ `primary-header`
 
 **常見誤解:「multi-workspace 就必須 primary-header 派」** — workspace 多寡跟 layout 派别無相關性(world-class 反證:Linear / Notion / Figma 皆 multi-workspace 卻用 primary-sidebar;Gmail 多 account 用 primary-header)。選 mode = 表態「Header 是 local 還是 global」,**不是**「workspace 是 single 還是 multi」。
 
-**Sidebar toggle 按鈕位置**(消費既有 `sidebar.spec.md:308-360` SidebarTrigger 兩 pattern,**不發明新 toggle**):
+**Sidebar toggle 按鈕位置**(消費既有 `sidebar.spec.md`「SidebarTrigger 位置(兩種 canonical pattern)」段,**不發明新 toggle**):
 
 | Mode | 對應 Sidebar pattern | Toggle 位置 |
 |---|---|---|
 | `primary-sidebar` | `sidebar.spec.md` Pattern A(無 global top bar) | 主內容 header 最左 |
 | `primary-header` | `sidebar.spec.md` Pattern B(有 global top bar) | global top bar 最左 |
 
-**唯一 invariant**(`sidebar.spec.md:310` 既有):trigger 必在 sidebar 任何 state(offcanvas / icon / expanded)下都可見 — 收合後 sidebar 不見了,toggle 不可能留在 sidebar 內(會跟著消失)。兩 mode 結論都落在 **Header 最左**,只是該 Header 是 local toolbar(Pattern A)還是 global bar(Pattern B)。Consumer 直接 `<SidebarTrigger />` 塞 Header 最左,AppShell 不 wrap / 不發明。
+**唯一 invariant**(`sidebar.spec.md`「SidebarTrigger 位置」段既有):trigger 必在 sidebar 任何 state(offcanvas / icon / expanded)下都可見 — 收合後 sidebar 不見了,toggle 不可能留在 sidebar 內(會跟著消失)。兩 mode 結論都落在 **Header 最左**,只是該 Header 是 local toolbar(Pattern A)還是 global bar(Pattern B)。Consumer 直接 `<SidebarTrigger />` 塞 Header 最左,AppShell 不 wrap / 不發明。
 
 **層級語意差異**:`primary-sidebar` 的 Header scope = local(當前頁);`primary-header` 的 Header scope = global(整 app)。兩者是不同 product 角色,**不互通**。Consumer 選 mode = 表態 product 是哪派。
 
@@ -179,7 +205,7 @@ function CustomAside() {
 
 **Modal overlay** 行為:
 - 消費既有 `sheet.spec.md` canonical(從右滑出 + Esc 關 + click-outside 關 + focus trap + restore focus)
-- **title prop required**(per `sheet.spec.md:98` 禁無 title — `aria-labelledby` 強制)
+- **title prop required**(per `sheet.spec.md`「禁止事項」禁無 title — `aria-labelledby` 強制)
 - 跟 Sidebar mobile fallback 同 SSOT
 
 **Breakpoint**:消費既有 `useIsNarrowViewport()` hook(`hooks/use-is-narrow-viewport.ts`,`MOBILE_BREAKPOINT = 768`;與 `sidebar.spec.md`「Mobile 行為」段 768px 同值),**不發明新 breakpoint**(非 CSS token — repo 無 `--sidebar-mobile-breakpoint`)。Sidebar + Aside 同步切 Sheet。
@@ -223,7 +249,7 @@ Main 內塞什麼(table / field / card / page header / list)的 layout + spacing
 
 - 所有 modal overlay(Dialog / Sheet / Popover / HoverCard)消費既有 `overlay-surface.spec.md` SSOT
 - Mask 蓋整個 AppShell(包含 sidebar + header + aside + main)
-- Z-index:AppShell shell root **不設 z-index**(`app-shell.tsx` root `<div>` 走正常 flow / stacking context,唯一 z-* 是 SkipToMain `focus:z-50`);overlay 走既有 **`z-50` Tailwind utility**(`Sheet.tsx:53/69` SSOT canonical,**不發明 `--z-overlay` token** — repo 內無此 token,Sheet 直接 `z-50`)
+- Z-index:AppShell shell root **不設 z-index**(`app-shell.tsx` root `<div>` 走正常 flow / stacking context,唯一 z-* 是 SkipToMain `focus:z-50`);overlay 走既有 **`z-50` Tailwind utility**(`sheet.tsx` SheetOverlay / SheetContent `z-50` SSOT canonical,**不發明 `--z-overlay` token** — repo 內無此 token,Sheet 直接 `z-50`)
 - AppShell **不** export `modalOpen` prop,overlay 自管 open / close state
 
 ---
@@ -232,7 +258,7 @@ Main 內塞什麼(table / field / card / page header / list)的 layout + spacing
 
 | Shortcut | Action | Cite |
 |---|---|---|
-| **`⌘B`(macOS)/ `Ctrl+B`(Windows)** | Toggle sidebar | `sidebar.spec.md:348` SSOT「industry-standard,已內建,不該改」;`sidebar.tsx:63` code key `"b"` |
+| **`⌘B`(macOS)/ `Ctrl+B`(Windows)** | Toggle sidebar | `sidebar.spec.md`「持久化與快捷鍵」SSOT(⌘B / Ctrl+B industry-standard,已內建,不該改);`sidebar.tsx` code key `"b"` |
 | **`⌘.`(macOS)/ `Ctrl+.`(Windows)** | Toggle aside | Linear convention(新加) |
 | **Skip-to-main link** | `Tab` 第一站 focus 「Skip to content」link → `main` | A11y WCAG 2.4.1 bypass blocks;對齊 Atlassian Layout skip-link |
 
@@ -283,7 +309,7 @@ Main 內塞什麼(table / field / card / page header / list)的 layout + spacing
 | Header height | `--chrome-header-height`(`tokens/uiSize/uiSize.spec.md`)|
 | Aside width | consumer 自傳 prop(無 token)|
 | Layout spacing | `layoutSpace` 全 family(`--layout-space-{tight,loose,bottom}`)|
-| Z-index | shell root 不設 z-index;overlay 走 Sheet `z-50` Tailwind utility(`sheet.tsx:53/69`,無 `--z-overlay` token)|
+| Z-index | shell root 不設 z-index;overlay 走 Sheet `z-50` Tailwind utility(`sheet.tsx` SheetOverlay / SheetContent,無 `--z-overlay` token)|
 | Sheet fallback | `sheet.spec.md` SSOT |
 | Overlay | `overlay-surface.spec.md` SSOT |
 
@@ -322,3 +348,10 @@ Main 內塞什麼(table / field / card / page header / list)的 layout + spacing
 - `components/Sheet/sheet.spec.md` — modal fallback SSOT(`aria-labelledby` 強制 + `z-50`)
 - `tokens/layoutSpace/layoutSpace.spec.md` — Main 內 layout 6 條規則 SSOT
 - `tokens/uiSize/uiSize.spec.md` — `--chrome-header-height` 等 size token
+
+## 被引用(auto-maintained,Dim 3 reciprocal audit)
+
+> 本節由 `scripts/add-reciprocal-pointers.mjs` 自動維護,列出在 SSOT 語境下指向本 spec 的其他 spec。若要手動補充,寫在本節之前。
+
+- `header-canonical.spec.md`
+- `sidebar.spec.md`

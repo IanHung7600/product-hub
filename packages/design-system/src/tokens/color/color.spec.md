@@ -195,6 +195,8 @@ Icon 色彩 canonical 的 SSOT 住 `patterns/element-anatomy/item-anatomy.spec.m
 <a className="text-primary hover:text-primary-hover">查看詳情</a>
 ```
 
+**連結 hover = 換色(`text-primary-hover`),不用底線** —— `text-primary hover:underline` 偏離 canonical。真元件 Breadcrumb / Button / RadioGroup 已遵循。**例外:`LinkInput` 是「外部連結值」顯示,刻意保留 hover 底線作為「可點開連結」affordance(見 `link-input.spec.md`),非 violator**。story 導覽連結由 `check_story_invariants.sh` R10 機械防 drift(P1 warn,豁免 `// @link-style-allow:`)。
+
 ### Status
 
 狀態色表達系統回饋，代表「系統在告訴你什麼」，不用於互動操作。

@@ -850,7 +850,7 @@ export const StateBehavior = {
             <button
               type="button"
               onClick={() => setClearV(['electronics', 'food', 'lifestyle'])}
-              className="text-caption text-primary cursor-pointer hover:underline"
+              className="text-caption text-primary cursor-pointer hover:text-primary-hover"
             >
               重設
             </button>
@@ -876,7 +876,7 @@ export const StateBehavior = {
             <button
               type="button"
               onClick={() => setDismissV(['electronics', 'food', 'lifestyle'])}
-              className="text-caption text-primary cursor-pointer hover:underline"
+              className="text-caption text-primary cursor-pointer hover:text-primary-hover"
             >
               重設
             </button>

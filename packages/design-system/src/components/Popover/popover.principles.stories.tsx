@@ -77,7 +77,7 @@ export const UsageGuidance: Story = {
       <p>適合 Popover 的真實業務場景(點擊跳轉「展示」頁範例):</p>
       <ul className="space-y-1">
         <li>
-          <LinkTo kind="Design System/Components/Popover/展示" name="篩選面板"><span className="text-primary hover:underline font-medium cursor-pointer">篩選面板</span></LinkTo>
+          <LinkTo kind="Design System/Components/Popover/展示" name="篩選面板"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">篩選面板</span></LinkTo>
         </li>
       </ul>
       <p className="text-fg-muted mt-3">判斷不確定時:往下看下方「Popover 與近親元件的分界」三組對照(對上 Dialog、DropdownMenu、Tooltip),確認該用哪個元件。</p>
