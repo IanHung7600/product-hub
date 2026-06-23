@@ -718,7 +718,9 @@ rule_handcraft_overlay_header() {
 rule_link_canonical() {
   [ "$EVENT" = "PostToolUse" ] && return 0
   printf '%s' "$NEW_CONTENT" | grep -q '@link-style-allow:' && return 0
-  if printf '%s' "$NEW_CONTENT" | grep -qE 'text-primary[[:space:]]+hover:underline'; then
+  # text-primary …(中間可隔 tailwind class:cursor-pointer / font-medium 等)… hover:underline。
+  # 中間段限 class-char [a-z0-9:_-] → 不誤判描述用 label「text-primary · hover:underline」(· 非 class-char)。
+  if printf '%s' "$NEW_CONTENT" | grep -qE 'text-primary([[:space:]]+[a-z0-9:_-]+)*[[:space:]]+hover:underline'; then
     {
       echo ""
       echo "╔═══ R10 link_canonical — 連結 hover 樣式 drift ═══"

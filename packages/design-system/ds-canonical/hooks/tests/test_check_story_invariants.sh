@@ -363,6 +363,18 @@ run_hook "PreToolUse" "Edit" "/foo/my-project/packages/design-system/src/compone
 '
 expect_pass_silent "26. R10 @link-style-allow 豁免 → silent"
 
+# 27. R10 broadened: class-separated(cursor-pointer 隔開)text-primary … hover:underline → warn
+run_hook "PreToolUse" "Edit" "/foo/my-project/packages/design-system/src/components/Foo/foo.anatomy.stories.tsx" '
+<button className="text-caption text-primary cursor-pointer hover:underline">重設</button>
+'
+expect_warn "27. R10 class-separated text-primary…hover:underline → warn" "R10 link_canonical"
+
+# 28. R10 不誤判描述 label「text-primary · hover:underline」(· 非 class-char,如 LinkInput anatomy 註解)→ silent
+run_hook "PreToolUse" "Edit" "/foo/my-project/packages/design-system/src/components/Foo/foo.anatomy.stories.tsx" '
+<span className="text-fg-muted font-mono">text-primary · hover:underline · 點擊開啟連結</span>
+'
+expect_pass_silent "28. R10 描述 label(· 分隔)→ 不誤判"
+
 echo ""
 echo "=== Summary ==="
 echo "Passed: $PASS / $((PASS + FAIL))"
