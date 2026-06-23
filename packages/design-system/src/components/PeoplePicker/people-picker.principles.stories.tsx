@@ -58,13 +58,13 @@ export const UsageGuidance: Story = {
         >
           <ul className="space-y-1">
             <li>
-              <LinkTo kind="Design System/Components/PeoplePicker/展示" name="單人"><span className="text-primary hover:underline font-medium cursor-pointer">單人</span></LinkTo>
+              <LinkTo kind="Design System/Components/PeoplePicker/展示" name="單人"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">單人</span></LinkTo>
             </li>
             <li>
-              <LinkTo kind="Design System/Components/PeoplePicker/展示" name="多人"><span className="text-primary hover:underline font-medium cursor-pointer">多人</span></LinkTo>
+              <LinkTo kind="Design System/Components/PeoplePicker/展示" name="多人"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">多人</span></LinkTo>
             </li>
             <li>
-              <LinkTo kind="Design System/Components/PeoplePicker/展示" name="尺寸"><span className="text-primary hover:underline font-medium cursor-pointer">尺寸</span></LinkTo>
+              <LinkTo kind="Design System/Components/PeoplePicker/展示" name="尺寸"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">尺寸</span></LinkTo>
             </li>
           </ul>
         </Rule>

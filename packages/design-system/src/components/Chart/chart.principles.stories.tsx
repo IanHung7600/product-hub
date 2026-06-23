@@ -149,16 +149,16 @@ export const UsageGuidance: Story = {
       <p>適合 Chart 的真實業務場景(點擊跳轉「展示」頁範例):</p>
       <ul className="space-y-1">
         <li>
-          <LinkTo kind="Design System/Components/Chart/展示" name="長條 Chart — 月營收"><span className="text-primary hover:underline font-medium cursor-pointer">長條 Chart — 月營收</span></LinkTo>
+          <LinkTo kind="Design System/Components/Chart/展示" name="長條 Chart — 月營收"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">長條 Chart — 月營收</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/Chart/展示" name="折線 Chart — 伺服器回應時間"><span className="text-primary hover:underline font-medium cursor-pointer">折線 Chart — 伺服器回應時間</span></LinkTo>
+          <LinkTo kind="Design System/Components/Chart/展示" name="折線 Chart — 伺服器回應時間"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">折線 Chart — 伺服器回應時間</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/Chart/展示" name="環圈 Chart — 流量來源分布"><span className="text-primary hover:underline font-medium cursor-pointer">環圈 Chart — 流量來源分布</span></LinkTo>
+          <LinkTo kind="Design System/Components/Chart/展示" name="環圈 Chart — 流量來源分布"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">環圈 Chart — 流量來源分布</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/Chart/展示" name="堆疊 面積 — 部門支出"><span className="text-primary hover:underline font-medium cursor-pointer">堆疊 面積 — 部門支出</span></LinkTo>
+          <LinkTo kind="Design System/Components/Chart/展示" name="堆疊 面積 — 部門支出"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">堆疊 面積 — 部門支出</span></LinkTo>
         </li>
       </ul>
       <p className="text-fg-muted mt-3">不確定該不該用 Chart 時:先確認資料是否真的需要視覺化(單一數字、2-3 個小數字或可排序篩選的清單,通常用文字、描述清單或表格更清楚);若資料量夠多且要看趨勢、比例或分布,才用 Chart。</p>

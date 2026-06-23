@@ -245,7 +245,7 @@ export const DragAndDrop: Story = {
               {renderNodes(tree)}
             </TreeView>
           </div>
-          <button type="button" onClick={() => setTree(INITIAL_TREE)} className="text-caption text-primary hover:underline cursor-pointer self-start">
+          <button type="button" onClick={() => setTree(INITIAL_TREE)} className="text-caption text-primary hover:text-primary-hover cursor-pointer self-start">
             重設
           </button>
         </div>

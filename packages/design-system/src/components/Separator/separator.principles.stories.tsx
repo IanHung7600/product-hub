@@ -54,16 +54,16 @@ export const UsageGuidance: Story = {
       <p>適合 Separator 的真實業務場景(點擊跳轉「展示」頁範例):</p>
       <ul className="space-y-1">
         <li>
-          <LinkTo kind="Design System/Components/Separator/展示" name="水平"><span className="text-primary hover:underline font-medium cursor-pointer">水平分隔</span></LinkTo>
+          <LinkTo kind="Design System/Components/Separator/展示" name="水平"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">水平分隔</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/Separator/展示" name="垂直"><span className="text-primary hover:underline font-medium cursor-pointer">垂直分隔</span></LinkTo>
+          <LinkTo kind="Design System/Components/Separator/展示" name="垂直"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">垂直分隔</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/Separator/展示" name="在 DropdownMenu 內"><span className="text-primary hover:underline font-medium cursor-pointer">在 DropdownMenu 內</span></LinkTo>
+          <LinkTo kind="Design System/Components/Separator/展示" name="在 DropdownMenu 內"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">在 DropdownMenu 內</span></LinkTo>
         </li>
         <li>
-          <LinkTo kind="Design System/Components/Separator/展示" name="在 DescriptionList 區塊之間"><span className="text-primary hover:underline font-medium cursor-pointer">在 DescriptionList 區塊之間</span></LinkTo>
+          <LinkTo kind="Design System/Components/Separator/展示" name="在 DescriptionList 區塊之間"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">在 DescriptionList 區塊之間</span></LinkTo>
         </li>
       </ul>
       <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見 <code>Vs*Rule</code> stories)。</p>

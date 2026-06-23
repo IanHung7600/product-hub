@@ -47,9 +47,9 @@ export const UsageGuidance: Story = {
         <div className="prose prose-sm max-w-prose mb-8">
           <p>Avatar 代表「誰」——人、團隊、組織、專案的視覺身份。適合的真實業務場景(點擊跳轉「展示」頁範例):</p>
           <ul className="space-y-1">
-            <li>留言者、指派者、團隊成員列表的人員識別;workspace / 組織 / App 的身份標識 —— 見 <LinkTo kind="Design System/Components/Avatar/展示" name="四模式"><span className="text-primary hover:underline font-medium cursor-pointer">四模式</span></LinkTo></li>
-            <li>成員沒上傳照片、或頭像圖片載入失敗時,以名字首字 + 色彩維持可辨識 —— 見 <LinkTo kind="Design System/Components/Avatar/展示" name="備援顯示"><span className="text-primary hover:underline font-medium cursor-pointer">備援顯示</span></LinkTo></li>
-            <li>通訊錄、成員選單、chat 列表等列表項目的主視覺 prefix —— 見 <LinkTo kind="Design System/Components/Avatar/展示" name="情境用例"><span className="text-primary hover:underline font-medium cursor-pointer">情境用例</span></LinkTo></li>
+            <li>留言者、指派者、團隊成員列表的人員識別;workspace / 組織 / App 的身份標識 —— 見 <LinkTo kind="Design System/Components/Avatar/展示" name="四模式"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">四模式</span></LinkTo></li>
+            <li>成員沒上傳照片、或頭像圖片載入失敗時,以名字首字 + 色彩維持可辨識 —— 見 <LinkTo kind="Design System/Components/Avatar/展示" name="備援顯示"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">備援顯示</span></LinkTo></li>
+            <li>通訊錄、成員選單、chat 列表等列表項目的主視覺 prefix —— 見 <LinkTo kind="Design System/Components/Avatar/展示" name="情境用例"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">情境用例</span></LinkTo></li>
           </ul>
           <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見下方 vs 近親 段)。</p>
         </div>

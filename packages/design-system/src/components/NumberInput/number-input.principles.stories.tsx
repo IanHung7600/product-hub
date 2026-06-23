@@ -50,10 +50,10 @@ export const UsageGuidance: Story = {
         <div className="prose prose-sm max-w-prose mb-8">
           <p>適合 NumberInput 的真實業務場景(點擊跳轉「展示」頁範例):</p>
           <ul className="space-y-1">
-            <li><LinkTo kind="Design System/Components/NumberInput/展示" name="四模式"><span className="text-primary hover:underline font-medium cursor-pointer">四模式</span></LinkTo></li>
-            <li><LinkTo kind="Design System/Components/NumberInput/展示" name="尺寸與 Button 對齊"><span className="text-primary hover:underline font-medium cursor-pointer">尺寸與 Button 對齊</span></LinkTo></li>
-            <li><LinkTo kind="Design System/Components/NumberInput/展示" name="格式化選項"><span className="text-primary hover:underline font-medium cursor-pointer">格式化選項</span></LinkTo></li>
-            <li><LinkTo kind="Design System/Components/NumberInput/展示" name="DataTable 整合"><span className="text-primary hover:underline font-medium cursor-pointer">DataTable 整合</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/NumberInput/展示" name="四模式"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">四模式</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/NumberInput/展示" name="尺寸與 Button 對齊"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">尺寸與 Button 對齊</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/NumberInput/展示" name="格式化選項"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">格式化選項</span></LinkTo></li>
+            <li><LinkTo kind="Design System/Components/NumberInput/展示" name="DataTable 整合"><span className="text-primary hover:text-primary-hover font-medium cursor-pointer">DataTable 整合</span></LinkTo></li>
           </ul>
           <p className="text-fg-muted mt-3">判斷不確定時:對照 spec.md「何時用 / 何時不用」段;若仍不符,改用近親元件(見下方 vs 近親 段)。</p>
         </div>

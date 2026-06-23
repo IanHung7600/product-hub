@@ -76,7 +76,7 @@ export const Overview: Story = {
             title={
               <>
                 已選取本頁全部 50 個。{' '}
-                <button type="button" className="text-primary hover:underline">
+                <button type="button" className="text-primary hover:text-primary-hover">
                   點此選取全部 5370 個項目
                 </button>
               </>
